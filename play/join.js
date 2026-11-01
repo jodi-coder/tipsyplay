@@ -4,7 +4,7 @@ var TTL=8*60*60*1000;
 var $=function(id){return document.getElementById(id)};
 var uid=null,code=null,meta=null,players={},answered={},skips={},known={},db=null;
 var stops=[],roundStop=null,skipStop=null,revStop=null,answerStops={},fxRAF=0,revealLock="",revealKey="",promptKey="",overKey="",connStop=null,sending=false;
-var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,remove,onDisconnect,get;
+var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,set,remove,onDisconnect,get,serverTimestamp,goOnline,authObj;
 
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
 function listNames(arr){if(arr.length<=1)return arr[0]||"";if(arr.length===2)return arr[0]+" and "+arr[1];return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
@@ -13,9 +13,10 @@ function instr(){return meta&&meta.na?"Points only. Passing is always fine.":"Ta
 function roomUrl(c){return "https://tipsyplay.com/play/join.html?code="+c}
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
- var up=String(v||"").toUpperCase(),m=up.match(/CODE=([A-Z]+)/);
- if(m)up=m[1];
- return up.replace(/[^A-Z]/g,"").slice(0,4);
+ var up=String(v||"").toUpperCase();
+ var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
+ if(q)return q[1];
+ return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i;for(i=0;i<4;i++)s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)];return s}
@@ -227,8 +228,8 @@ function watchRound(){
  if(roundStop)roundStop();if(skipStop)skipStop();
  answered={};skips={};
  if(!meta||meta.status==="lobby")return;
- roundStop=onValue(ref(db,roomPath("answered/"+meta.gameId+"/"+meta.round)),function(s){answered=s.val()||{};render();maybeAuto()},listenErr);
- skipStop=onValue(ref(db,roomPath("skips/"+meta.gameId+"/"+meta.round)),function(s){skips=s.val()||{};render();maybeAuto()},listenErr);
+ roundStop=onValue(ref(db,roomPath("answered/"+meta.gameId+"/"+meta.round)),function(s){answered=s.val()||{};render();maybeAuto()},quietErr);
+ skipStop=onValue(ref(db,roomPath("skips/"+meta.gameId+"/"+meta.round)),function(s){skips=s.val()||{};render();maybeAuto()},quietErr);
 }
 function watchRevealed(){
  if(revStop)revStop();
@@ -236,14 +237,16 @@ function watchRevealed(){
  revStop=onValue(ref(db,roomPath("revealed/"+meta.gameId)),function(s){
   var map=s.val()||{};
   Object.keys(map).forEach(function(round){if(map[round])watchAnswers(meta.gameId,round)});
- },listenErr);
+ },quietErr);
 }
 function watchAnswers(gameId,round){
  var key=gameId+"/"+round;
  if(answerStops[key])return;
  answerStops[key]=onValue(ref(db,roomPath("answers/"+key)),function(s){known[key]=s.val()||{};render()},function(){});
 }
-function listenErr(e){if(e&&/permission/i.test(String(e.code||e.message||""))){clearRoom();fail("That room isn't available.");screen("home")}}
+function denied(e){return /permission|denied/i.test(String((e&&(e.code||e.message))||""))}
+function listenErr(e){if(denied(e)){clearRoom();fail("That room isn't available.");screen("home");showApp()}}
+function quietErr(){}
 function listenRoom(){
  stops.forEach(function(u){u()});stops=[];
  stops.push(onValue(ref(db,roomPath("meta")),function(s){
@@ -254,7 +257,7 @@ function listenRoom(){
   if(prev!==nowKey){watchRound();watchRevealed()}
   render();
  },listenErr));
- stops.push(onValue(ref(db,roomPath("players")),function(s){players=s.val()||{};render();maybeAuto()},listenErr));
+ stops.push(onValue(ref(db,roomPath("players")),function(s){players=s.val()||{};render();maybeAuto()},quietErr));
 }
 function maybeAuto(){
  if(!meta||!isHost()||meta.phase!=="answer")return;
@@ -296,31 +299,34 @@ function armPresence(){
  connStop=onValue(ref(db,".info/connected"),function(s){
   if(!s.val()||!code||!uid)return;
   var p=ref(db,roomPath("players/"+uid));
-  onDisconnect(p).update({connected:false}).then(function(){return update(p,{connected:true})}).catch(function(){});
+  onDisconnect(p).update({connected:false}).catch(function(){});
+  update(p,{connected:true}).catch(function(){});
  });
 }
 async function hostRoom(name){
+ await ensureAuth();
  var spice=localStorage.getItem("tp_spice")||"mild";
  if(!window.NHIE||!window.NHIE[spice])spice="mild";
- var created=Date.now(),i,claimed=null;
+ var i,claimed=null;
  for(i=0;i<6;i++){
   var c=makeCode();
   var snap=await get(ref(db,"rooms/"+c+"/meta"));
   if(snap.exists())continue;
   try{
    await update(ref(db),{["rooms/"+c+"/meta"]:{
-    hostUid:uid,createdAt:created,status:"lobby",phase:"lobby",spice:spice,rounds:10,na:localStorage.getItem("tp_na")==="on",round:0,gameId:1
+    hostUid:uid,createdAt:serverTimestamp(),status:"lobby",phase:"lobby",spice:spice,rounds:10,na:localStorage.getItem("tp_na")==="on",round:0,gameId:1
    }});
    claimed=c;break;
   }catch(e){if(!/permission/i.test(String(e.code||e.message||"")))throw e}
  }
  if(!claimed)throw new Error("room");
- await update(ref(db,"rooms/"+claimed+"/players/"+uid),myPlayer(name));
+ await set(ref(db,"rooms/"+claimed+"/players/"+uid),myPlayer(name));
  code=claimed;
  sessionStorage.setItem("tp_room",code);
  listenRoom();armPresence();
 }
 async function joinRoom(c,name){
+ await ensureAuth();
  var snap=await get(ref(db,"rooms/"+c+"/meta"));
  if(!snap.exists())throw new Error("missing");
  var m=snap.val();
@@ -333,7 +339,8 @@ async function joinRoom(c,name){
  if(!existing[uid]&&count>=12)throw new Error("full");
  var body=myPlayer(name);
  if(existing[uid]&&existing[uid].joinedAt)body.joinedAt=existing[uid].joinedAt;
- await update(ref(db,"rooms/"+c+"/players/"+uid),body);
+ if(existing[uid])await update(ref(db,"rooms/"+c+"/players/"+uid),body);
+ else await set(ref(db,"rooms/"+c+"/players/"+uid),body);
  code=c;sessionStorage.setItem("tp_room",code);
  listenRoom();armPresence();
 }
@@ -362,20 +369,27 @@ function wire(){
  if(saved)$("playername").value=saved;
  $("hostbtn").onclick=function(){
   var name=readName();if(!name)return;fail("");
-  hostRoom(name).catch(function(e){fail(e&&e.message==="room"?"Could not open a room. Try again.":friendly(e))});
+  hostRoom(name).catch(function(e){
+  if(denied(e))return ensureAuth().then(function(){return authObj.currentUser.getIdToken(true)}).then(function(){return hostRoom(name)}).catch(function(e2){fail(e2&&e2.message==="room"?"Could not open a room. Try again.":friendly(e2))});
+  fail(e&&e.message==="room"?"Could not open a room. Try again.":friendly(e));
+ });
  };
  $("joinbtn").onclick=function(){
   var name=readName();if(!name)return;
   var c=normCode($("roomcode").value);
   if(!validCode(c)){fail("Enter the 4-letter code. Rooms don't use I, L, or O.");return}
   fail("");
-  joinRoom(c,name).catch(function(e){
+  function showJoinErr(e){
    var m=String(e&&e.message||"");
    if(m==="missing")fail("No room with that code.");
    else if(m==="expired")fail("That room has expired.");
    else if(m==="started")fail("That game has already started.");
    else if(m==="full")fail("That room is full (12 players).");
    else fail(friendly(e));
+  }
+  joinRoom(c,name).catch(function(e){
+   if(!denied(e))return showJoinErr(e);
+   ensureAuth().then(function(){return authObj.currentUser.getIdToken(true)}).then(function(){return joinRoom(c,name)}).catch(showJoinErr);
   });
  };
  $("copybtn").onclick=function(){var url=roomUrl(code);if(navigator.clipboard)navigator.clipboard.writeText(url).then(function(){fail("Link copied.")}).catch(function(){fail(url)})};
@@ -421,6 +435,9 @@ function wire(){
 function lockScreen(){if("wakeLock" in navigator)navigator.wakeLock.request("screen").then(function(){}).catch(function(){})}
 document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"&&meta&&meta.status==="play")lockScreen()});
 
+async function ensureAuth(){
+ if(authObj&&authObj.currentUser)await authObj.currentUser.getIdToken();
+}
 async function boot(){
  if(!navigator.onLine){showOffline();return}
  var base="https://www.gstatic.com/firebasejs/12.4.0/";
@@ -429,11 +446,15 @@ async function boot(){
  var dbMod=await import(base+"firebase-database.js");
  var cfg=await import("../firebase-config.js");
  initializeApp=appMod.initializeApp;getAuth=authMod.getAuth;signInAnonymously=authMod.signInAnonymously;
- getDatabase=dbMod.getDatabase;ref=dbMod.ref;onValue=dbMod.onValue;update=dbMod.update;remove=dbMod.remove;onDisconnect=dbMod.onDisconnect;get=dbMod.get;
+ getDatabase=dbMod.getDatabase;ref=dbMod.ref;onValue=dbMod.onValue;update=dbMod.update;set=dbMod.set;remove=dbMod.remove;onDisconnect=dbMod.onDisconnect;get=dbMod.get;serverTimestamp=dbMod.serverTimestamp;goOnline=dbMod.goOnline;
  var app=initializeApp(cfg.firebaseConfig);
+ authObj=getAuth(app);
  db=getDatabase(app);
- var cred=await signInAnonymously(getAuth(app));
+ if(authObj.authStateReady)await authObj.authStateReady();
+ var cred=await signInAnonymously(authObj);
+ await cred.user.getIdToken();
  uid=cred.user.uid;
+ goOnline(db);
  showApp();screen("home");wire();
 }
 if(window.TPSound)TPSound.bindMute($("mute"));
