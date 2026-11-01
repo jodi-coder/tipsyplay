@@ -39,3 +39,5 @@ header.top{position:sticky;top:0;z-index:5;background:#120d1fe6;-webkit-backdrop
 .tabbar a span{font-size:1.35rem;line-height:1}.tabbar a.on{color:var(--pink)}
 .card{position:relative}.heart{position:absolute;top:10px;right:10px;width:44px;height:44px;border:0;border-radius:50%;background:var(--card2);font-size:1.3rem}
 .card h2{padding-right:48px}button,a{touch-action:manipulation}label{display:block;margin:6px 0}
+header.top nav{display:flex;align-items:center}
+button.mute{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:12px;background:transparent;color:var(--txt);font-size:1.25rem;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}

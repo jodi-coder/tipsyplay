@@ -11,7 +11,7 @@ if(localStorage.getItem("tp_age_ok")!=="yes"){
 }
 // footer
 var f=document.querySelector("footer");
-if(f)f.innerHTML='<p><strong>'+NOTICE+'</strong></p><p>Every game is opt-in. Non-alcoholic drinks are always welcome. Never drink and drive.</p><a href="'+root+'responsible.html">Responsible play</a> · <a href="'+root+'library.html">Game library</a><p>© TipsyPlay (local preview)</p>';
+if(f)f.innerHTML='<p><strong>'+NOTICE+'</strong></p><p>Every game is opt-in. Non-alcoholic drinks are always welcome. Never drink and drive.</p><a href="'+root+'responsible.html">Responsible play</a> · <a href="'+root+'library.html">Game library</a><p>© TipsyPlay</p>';
 // library filters
 var list=document.getElementById("games");
 if(list){
@@ -43,10 +43,12 @@ if(fv){var render=function(){var f=favs(),k=Object.keys(f);fv.innerHTML=k.map(fu
  fv.querySelectorAll(".card").forEach(function(c){var b=document.createElement("button");b.className="heart";b.textContent="❤️";b.setAttribute("aria-label","Remove favourite");b.onclick=function(){var f=favs();delete f[c.dataset.id];localStorage.setItem("tp_favs",JSON.stringify(f));render()};c.appendChild(b)})};render()}
 // settings
 var sn=document.getElementById("s_na");
-if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spice");
+if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spice"),sd=document.getElementById("s_sound");
  sn.checked=localStorage.getItem("tp_na")==="on";sr.checked=localStorage.getItem("tp_rem")!=="off";ss.value=localStorage.getItem("tp_spice")||"mild";
  sn.onchange=function(){localStorage.setItem("tp_na",sn.checked?"on":"off")};sr.onchange=function(){localStorage.setItem("tp_rem",sr.checked?"on":"off")};ss.onchange=function(){localStorage.setItem("tp_spice",ss.value)};
+ if(sd&&window.TPSound){sd.checked=TPSound.enabled();sd.onchange=function(){TPSound.setEnabled(sd.checked);if(sd.checked)TPSound.click()}}
  document.getElementById("s_age").onclick=function(){localStorage.removeItem("tp_age_ok");document.getElementById("s_msg").textContent="Done — reloading…";setTimeout(function(){location.reload()},600)}}
+document.addEventListener("click",function(e){var el=e.target;if(!el)return;if(el.nodeType!==1)el=el.parentElement;if(!el||!el.closest)return;var b=el.closest("button");if(!b)return;if(b.id==="next"||b.id==="shuf"||b.id==="plus"||b.id==="minus"||b.id==="mute"||b.closest("#lvls"))return;if(window.TPSound)TPSound.click()},true);
 // service worker
 if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",function(){navigator.serviceWorker.register(root+"sw.js").then(function(r){window.__swOK=true}).catch(function(e){console.warn("SW failed",e)})})}
 })();
