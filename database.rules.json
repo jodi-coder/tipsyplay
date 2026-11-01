@@ -1,0 +1,73 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      ".read": false,
+      ".write": false,
+      "$code": {
+        ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && !newData.exists() && data.exists() && (data.child('meta').child('hostUid').val() == auth.uid || data.child('meta').child('createdAt').val() + 28800000 < now || (data.child('meta').child('endedAt').isNumber() && data.child('meta').child('endedAt').val() + 1800000 < now))",
+        "meta": {
+          ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+          ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && newData.child('hostUid').val() == auth.uid && (!data.exists() || data.child('hostUid').val() == auth.uid) && (!data.exists() || data.child('createdAt').val() + 28800000 > now)",
+          ".validate": "newData.child('hostUid').isString() && newData.child('hostUid').val() == auth.uid && newData.child('createdAt').isNumber() && newData.child('createdAt').val() > 1700000000000 && newData.child('createdAt').val() <= now + 600000 && ((!data.exists() && newData.child('createdAt').val() >= now - 600000) || (data.exists() && newData.child('createdAt').val() == data.child('createdAt').val())) && (!data.exists() || newData.child('hostUid').val() == data.child('hostUid').val()) && newData.child('status').val().matches(/^(lobby|play|over)$/) && newData.child('phase').val().matches(/^(lobby|answer|reveal|over)$/) && newData.child('spice').val().matches(/^(mild|spicy|extra)$/) && (newData.child('rounds').val() == 5 || newData.child('rounds').val() == 10 || newData.child('rounds').val() == 15 || newData.child('rounds').val() == 20) && newData.child('na').isBoolean() && newData.child('round').isNumber() && newData.child('round').val() >= 0 && newData.child('round').val() < newData.child('rounds').val() && newData.child('gameId').isNumber() && newData.child('gameId').val() >= 1 && newData.child('gameId').val() <= 100 && ((newData.child('status').val() == 'lobby' && !newData.child('deck').exists() && newData.child('phase').val() == 'lobby') || (newData.child('status').val() == 'play' && newData.child('deck').numChildren() == newData.child('rounds').val() && newData.child('phase').val().matches(/^(answer|reveal)$/)) || (newData.child('status').val() == 'over' && newData.child('deck').numChildren() == newData.child('rounds').val() && newData.child('phase').val() == 'over')) && (!newData.child('endedAt').exists() || newData.child('endedAt').isNumber()) && newData.hasChildren(['hostUid','createdAt','status','phase','spice','rounds','na','round','gameId']) && newData.numChildren() <= 12",
+          "deck": {
+            "$i": {
+              ".validate": "$i.matches(/^(0|[1-9]|1[0-9])$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 240"
+            }
+          }
+        },
+        "players": {
+          ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+          "$uid": {
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && ((auth.uid == $uid && root.child('rooms').child($code).child('meta').child('hostUid').exists() && root.child('rooms').child($code).child('meta').child('createdAt').val() + 28800000 > now && (data.exists() || root.child('rooms').child($code).child('meta').child('status').val() == 'lobby') && (data.exists() || newData.parent().numChildren() <= 12)) || (root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists()))",
+            ".validate": "!newData.exists() || (newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 20 && newData.child('connected').isBoolean() && newData.child('joinedAt').isNumber() && newData.numChildren() == 3)"
+          }
+        },
+        "answered": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+              "$uid": {
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer' && !data.exists()",
+                ".validate": "newData.val() == true"
+              }
+            }
+          }
+        },
+        "answers": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('revealed').child($gameId).child($round).val() == true",
+              "$uid": {
+                ".read": "auth != null && auth.uid == $uid",
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer' && !data.exists()",
+                ".validate": "newData.isBoolean()"
+              }
+            }
+          }
+        },
+        "revealed": {
+          "$gameId": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$round": {
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && root.child('rooms').child($code).child('meta').child('createdAt').val() + 28800000 > now",
+              ".validate": "newData.val() == true"
+            }
+          }
+        },
+        "skips": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+              "$uid": {
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && root.child('rooms').child($code).child('meta').child('createdAt').val() + 28800000 > now",
+                ".validate": "newData.val() == true"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
