@@ -3,7 +3,7 @@ var ALPHABET="ABCDEFGHJKMNPQRSTUVWXYZ";
 var TTL=8*60*60*1000;
 var $=function(id){return document.getElementById(id)};
 var uid=null,code=null,meta=null,players={},answered={},skips={},known={},db=null;
-var stops=[],roundStop=null,skipStop=null,revStop=null,answerStops={},fxRAF=0,revealLock="",revealKey="",promptKey="",overKey="",connStop=null,sending=false;
+var stops=[],roundStop=null,skipStop=null,revStop=null,answerStops={},fxRAF=0,revealLock="",revealKey="",promptKey="",overKey="",connStop=null,sending=false,liveRound="";
 var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,set,remove,onDisconnect,get,serverTimestamp,goOnline,authObj;
 
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
@@ -158,6 +158,8 @@ function render(){
  if(meta.createdAt&&Date.now()-meta.createdAt>TTL){cleanupExpired();return}
  if(meta.endedAt&&Date.now()-meta.endedAt>30*60*1000){cleanupExpired();return}
  paintHost();paintChips();
+ var roundKey=meta.gameId+":"+meta.round+":"+meta.phase;
+ if(meta.phase==="answer"&&liveRound!==roundKey){liveRound=roundKey;sending=false}
  if(meta.status==="lobby"||meta.phase==="lobby"){
   screen("lobby");
   $("codebig").textContent=code;
@@ -186,10 +188,11 @@ function render(){
  $("revealbtn").classList.toggle("hide",!isHost()||phase!=="answer");
  $("nextbtn").classList.toggle("hide",!isHost()||phase!=="reveal");
  if(phase==="reveal"){
-  var names=list.filter(function(p){return known[meta.gameId+"/"+meta.round]&&known[meta.gameId+"/"+meta.round][p.uid]===true}).map(function(p){return p.name});
-  var n=names.length,title=n===0?"Nobody has!":n===1?"1 of you has!":n+" of you have!";
+  var knownKey=meta.gameId+"/"+meta.round,bag=known[knownKey],names=[];
+  if(bag)list.forEach(function(p){if(bag[p.uid]===true)names.push(p.name)});
+  var n=names.length,title=!bag?"Revealing…":n===0?"Nobody has!":n===1?"1 of you has!":n+" of you have!";
   $("prompt").textContent=title;
-  $("ask").textContent=n?listNames(names):"Clean slates — no points this round.";
+  $("ask").textContent=!bag?"":n?listNames(names):"Clean slates — no points this round.";
   $("said").textContent=prompt;
   var rk=meta.gameId+":"+meta.round;
   if(revealKey!==rk){revealKey=rk;if(window.TPSound)TPSound.roll()}
@@ -220,16 +223,24 @@ function clearRoom(){
  if(revStop)revStop();revStop=null;
  Object.keys(answerStops).forEach(function(k){answerStops[k]();delete answerStops[k]});
  code=null;meta=null;players={};answered={};skips={};known={};
- revealLock="";revealKey="";promptKey="";overKey="";
+ revealLock="";revealKey="";promptKey="";overKey="";sending=false;liveRound="";
  stopFx();
  sessionStorage.removeItem("tp_room");
 }
 function watchRound(){
  if(roundStop)roundStop();if(skipStop)skipStop();
- answered={};skips={};
+ answered={};skips={};sending=false;
  if(!meta||meta.status==="lobby")return;
- roundStop=onValue(ref(db,roomPath("answered/"+meta.gameId+"/"+meta.round)),function(s){answered=s.val()||{};render();maybeAuto()},quietErr);
- skipStop=onValue(ref(db,roomPath("skips/"+meta.gameId+"/"+meta.round)),function(s){skips=s.val()||{};render();maybeAuto()},quietErr);
+ var gameId=meta.gameId,round=meta.round;
+ roundStop=onValue(ref(db,roomPath("answered/"+gameId+"/"+round)),function(s){
+  // ignore a late snapshot from the previous question
+  if(!meta||meta.gameId!==gameId||meta.round!==round)return;
+  answered=s.val()||{};render();maybeAuto();
+ },quietErr);
+ skipStop=onValue(ref(db,roomPath("skips/"+gameId+"/"+round)),function(s){
+  if(!meta||meta.gameId!==gameId||meta.round!==round)return;
+  skips=s.val()||{};render();maybeAuto();
+ },quietErr);
 }
 function watchRevealed(){
  if(revStop)revStop();
@@ -291,7 +302,7 @@ function answer(have){
  var payload={};
  payload[base+"answers/"+meta.gameId+"/"+meta.round+"/"+uid]=!!have;
  payload[base+"answered/"+meta.gameId+"/"+meta.round+"/"+uid]=true;
- update(ref(db),payload).then(function(){sending=false}).catch(function(e){sending=false;fail(friendly(e));render()});
+ update(ref(db),payload).then(function(){sending=false;render()}).catch(function(e){sending=false;fail(friendly(e));render()});
 }
 function myPlayer(name){return {name:name,connected:true,joinedAt:Date.now()}}
 function armPresence(){
@@ -362,70 +373,73 @@ function readName(){
  localStorage.setItem("tp_online_name",name);
  return name;
 }
+function showJoinErr(e){
+ var m=String(e&&e.message||"");
+ if(m==="missing")fail("No room with that code.");
+ else if(m==="expired")fail("That room has expired.");
+ else if(m==="started")fail("That game has already started.");
+ else if(m==="full")fail("That room is full (12 players).");
+ else fail(friendly(e));
+}
+function afterDeny(run){
+ return function(e){
+  if(!denied(e))return showJoinErr(e);
+  ensureAuth().then(function(){return authObj.currentUser.getIdToken(true)}).then(run).catch(showJoinErr);
+ };
+}
+function doHost(){
+ var name=readName();if(!name)return;fail("");
+ hostRoom(name).catch(afterDeny(function(){return hostRoom(name)}));
+}
+function doJoin(){
+ var name=readName();if(!name)return;
+ var c=normCode($("roomcode").value);
+ if(!validCode(c)){fail("Enter the 4-letter code. Rooms don't use I, L, or O.");return}
+ fail("");
+ joinRoom(c,name).catch(afterDeny(function(){return joinRoom(c,name)}));
+}
+function doStart(){
+ if(!isHost())return;
+ if(playerList().length<2){fail("Need at least 2 players.");return}
+ var deck=deal(meta.spice,meta.rounds);
+ if(deck.length<+meta.rounds){fail("Not enough prompts for that spice level.");return}
+ fail("");sending=false;
+ writeMeta({status:"play",phase:"answer",round:0,deck:deck}).catch(function(e){fail(friendly(e))});
+}
+function doAgain(){
+ if(!isHost())return;
+ var deck=deal(meta.spice,meta.rounds);
+ revealKey="";promptKey="";sending=false;liveRound="";
+ writeMeta({status:"play",phase:"answer",round:0,gameId:meta.gameId+1,deck:deck,endedAt:0}).catch(function(e){fail(friendly(e))});
+}
 function wire(){
  var q=normCode(new URLSearchParams(location.search).get("code")||"");
  if(q)$("roomcode").value=q;
  var saved=localStorage.getItem("tp_online_name")||"";
  if(saved)$("playername").value=saved;
- $("hostbtn").onclick=function(){
-  var name=readName();if(!name)return;fail("");
-  hostRoom(name).catch(function(e){
-  if(denied(e))return ensureAuth().then(function(){return authObj.currentUser.getIdToken(true)}).then(function(){return hostRoom(name)}).catch(function(e2){fail(e2&&e2.message==="room"?"Could not open a room. Try again.":friendly(e2))});
-  fail(e&&e.message==="room"?"Could not open a room. Try again.":friendly(e));
+ // clicks stay on #app, so replaced buttons still work every round
+ $("app").addEventListener("click",function(e){
+  var btn=e.target.closest("[data-action]");
+  if(!btn||btn.disabled||!$("app").contains(btn))return;
+  var action=btn.getAttribute("data-action");
+  if(action==="yes")answer(true);
+  else if(action==="no")answer(false);
+  else if(action==="next")nextRound();
+  else if(action==="reveal")revealNow();
+  else if(action==="host")doHost();
+  else if(action==="join")doJoin();
+  else if(action==="start")doStart();
+  else if(action==="again")doAgain();
+  else if(action==="close")closeRoom();
+  else if(action==="leave")leaveRoom();
+  else if(action==="home")location.href="../index.html";
+  else if(action==="copy"){var url=roomUrl(code);if(navigator.clipboard)navigator.clipboard.writeText(url).then(function(){fail("Link copied.")}).catch(function(){fail(url)})}
+  else if(action==="share"){var link=roomUrl(code);if(navigator.share)navigator.share({title:"TipsyPlay",text:"Join my Never Have I Ever room "+code,url:link}).catch(function(){});else if(navigator.clipboard)navigator.clipboard.writeText(link)}
+  else if(action==="spice"&&isHost()&&meta&&meta.status==="lobby")writeMeta({spice:btn.dataset.l}).catch(function(err){fail(friendly(err))});
+  else if(action==="rounds"&&isHost()&&meta&&meta.status==="lobby")writeMeta({rounds:+btn.dataset.r}).catch(function(err){fail(friendly(err))});
  });
- };
- $("joinbtn").onclick=function(){
-  var name=readName();if(!name)return;
-  var c=normCode($("roomcode").value);
-  if(!validCode(c)){fail("Enter the 4-letter code. Rooms don't use I, L, or O.");return}
-  fail("");
-  function showJoinErr(e){
-   var m=String(e&&e.message||"");
-   if(m==="missing")fail("No room with that code.");
-   else if(m==="expired")fail("That room has expired.");
-   else if(m==="started")fail("That game has already started.");
-   else if(m==="full")fail("That room is full (12 players).");
-   else fail(friendly(e));
-  }
-  joinRoom(c,name).catch(function(e){
-   if(!denied(e))return showJoinErr(e);
-   ensureAuth().then(function(){return authObj.currentUser.getIdToken(true)}).then(function(){return joinRoom(c,name)}).catch(showJoinErr);
-  });
- };
- $("copybtn").onclick=function(){var url=roomUrl(code);if(navigator.clipboard)navigator.clipboard.writeText(url).then(function(){fail("Link copied.")}).catch(function(){fail(url)})};
- $("sharebtn").onclick=function(){
-  var url=roomUrl(code);
-  if(navigator.share)navigator.share({title:"TipsyPlay",text:"Join my Never Have I Ever room "+code,url:url}).catch(function(){});
-  else if(navigator.clipboard)navigator.clipboard.writeText(url);
- };
- document.querySelectorAll("#ospice .chip").forEach(function(b){b.onclick=function(){if(isHost()&&meta&&meta.status==="lobby")writeMeta({spice:b.dataset.l}).catch(function(e){fail(friendly(e))})}});
- document.querySelectorAll("#orounds .chip").forEach(function(b){b.onclick=function(){if(isHost()&&meta&&meta.status==="lobby")writeMeta({rounds:+b.dataset.r}).catch(function(e){fail(friendly(e))})}});
- $("ona").onchange=function(){if(isHost()&&meta&&meta.status==="lobby")writeMeta({na:$("ona").checked}).catch(function(e){fail(friendly(e))})};
- $("startbtn").onclick=function(){
-  if(!isHost())return;
-  if(playerList().length<2){fail("Need at least 2 players.");return}
-  var deck=deal(meta.spice,meta.rounds);
-  if(deck.length<+meta.rounds){fail("Not enough prompts for that spice level.");return}
-  fail("");
-  writeMeta({status:"play",phase:"answer",round:0,deck:deck}).catch(function(e){fail(friendly(e))});
- };
- $("yes").onclick=function(){answer(true)};
- $("no").onclick=function(){answer(false)};
- $("revealbtn").onclick=revealNow;
- $("nextbtn").onclick=nextRound;
- $("again").onclick=function(){
-  if(!isHost())return;
-  var deck=deal(meta.spice,meta.rounds);
-  revealKey="";promptKey="";
-  writeMeta({status:"play",phase:"answer",round:0,gameId:meta.gameId+1,deck:deck,endedAt:0}).catch(function(e){fail(friendly(e))});
- };
- $("closebtn").onclick=closeRoom;
- $("closestage").onclick=closeRoom;
- $("closeover").onclick=closeRoom;
- $("leavebtn").onclick=leaveRoom;
- $("leavestage").onclick=leaveRoom;
- $("leaveover").onclick=leaveRoom;
- $("gohome").onclick=function(){location.href="../index.html"};
+ $("joinform").addEventListener("submit",function(e){e.preventDefault();doJoin()});
+ $("ona").addEventListener("change",function(){if(isHost()&&meta&&meta.status==="lobby")writeMeta({na:$("ona").checked}).catch(function(e){fail(friendly(e))})});
  if(window.TPSound)TPSound.bindMute($("mute"));
  var back=sessionStorage.getItem("tp_room");
  if(back&&validCode(back)&&normName($("playername").value)){

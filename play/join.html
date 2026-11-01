@@ -1,40 +1,45 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#120d1f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><title>Join with code · TipsyPlay</title><link rel="stylesheet" href="../styles.css"></head><body class="party" data-root="../"><header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/never-have-i-ever.html">Rules</a><button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button></nav></header><main class="play-wrap">
 <p id="connecting">Connecting…</p>
-<div id="offline" class="card hide"><p id="offmsg"><strong>Online play needs a connection.</strong> Pass the phone instead — Party mode works offline.</p><p id="offdetail"></p><p><a class="btn" href="party.html">Party mode</a></p></div>
+<div id="offline" class="card hide"><p id="offmsg"><strong>Online play needs a connection.</strong> Join again when you're back online.</p><p id="offdetail"></p></div>
 <div id="app" class="hide">
-<section id="home">
-<h1>🔗 Join with code</h1>
-<p>Each phone answers for itself. Answers stay secret until everyone is in, or the host reveals. Sipping stays optional.</p>
-<div class="card"><label for="playername">Your name</label><input class="bigin" id="playername" maxlength="20" autocomplete="nickname" autocapitalize="words" enterkeyhint="done" placeholder="Name"></div>
-<div class="card"><h2 style="margin-top:0">Host</h2><p>Get a 4-letter code and a shareable link.</p><button type="button" class="btn" id="hostbtn">Host a room</button></div>
-<div class="card"><h2 style="margin-top:0">Join</h2><label for="roomcode">Room code</label><input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" enterkeyhint="go" placeholder="ABCD"><p class="tag">Letters only. Codes skip I, L, and O.</p><button type="button" class="btn" id="joinbtn">Join room</button></div>
+<section id="home" class="entry">
+<p class="eyebrow">Never Have I Ever</p>
+<h1>Your phone.<br>Your answer.</h1>
+<p class="lede">Everyone joins on their own phone. Sipping stays optional.</p>
+<label class="sr" for="playername">Your name</label>
+<input class="bigin" id="playername" maxlength="20" autocomplete="nickname" autocapitalize="words" enterkeyhint="done" placeholder="Your name">
+<button type="button" class="btn host-cta" id="hostbtn" data-action="host">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" enterkeyhint="go" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn" data-action="join">Join</button>
+</form>
 </section>
 <section id="lobby" class="hide">
 <h1>Lobby</h1>
 <p id="codebig" class="codebig" aria-live="polite"></p>
 <p id="sharelink" class="linkbox"></p>
-<div class="ctrl"><button type="button" class="btn alt" id="copybtn">Copy link</button><button type="button" class="btn alt" id="sharebtn">Share</button></div>
+<div class="ctrl"><button type="button" class="btn alt" id="copybtn" data-action="copy">Copy link</button><button type="button" class="btn alt" id="sharebtn" data-action="share">Share</button></div>
 <div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
-<div class="card"><h2 style="margin-top:0">Spice level</h2><div class="chips" id="ospice" role="group" aria-label="Spice level"><button type="button" class="chip" data-l="mild">🌶 Mild</button><button type="button" class="chip" data-l="spicy">🌶🌶 Spicy</button><button type="button" class="chip" data-l="extra">🌶🌶🌶 Extra</button></div></div>
-<div class="card"><h2 style="margin-top:0">Rounds</h2><div class="chips" id="orounds" role="group" aria-label="Number of prompts"><button type="button" class="chip" data-r="5">5</button><button type="button" class="chip" data-r="10">10</button><button type="button" class="chip" data-r="15">15</button><button type="button" class="chip" data-r="20">20</button></div>
+<div class="card"><h2 style="margin-top:0">Spice level</h2><div class="chips" id="ospice" role="group" aria-label="Spice level"><button type="button" class="chip" data-action="spice" data-l="mild">🌶 Mild</button><button type="button" class="chip" data-action="spice" data-l="spicy">🌶🌶 Spicy</button><button type="button" class="chip" data-action="spice" data-l="extra">🌶🌶🌶 Extra</button></div></div>
+<div class="card"><h2 style="margin-top:0">Rounds</h2><div class="chips" id="orounds" role="group" aria-label="Number of prompts"><button type="button" class="chip" data-action="rounds" data-r="5">5</button><button type="button" class="chip" data-action="rounds" data-r="10">10</button><button type="button" class="chip" data-action="rounds" data-r="15">15</button><button type="button" class="chip" data-action="rounds" data-r="20">20</button></div>
 <label class="toggle"><input type="checkbox" id="ona"> Non-alcoholic mode</label>
 <p class="tag">On: points only, no sipping.</p></div>
-<button type="button" class="btn hostonly" id="startbtn">Start game ▶</button>
-<div class="ctrl"><button type="button" class="btn alt hostonly" id="closebtn">Close room</button><button type="button" class="btn alt guestonly" id="leavebtn">Leave</button></div>
+<button type="button" class="btn host-cta hostonly" id="startbtn" data-action="start">Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closebtn" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leavebtn" data-action="leave">Leave</button></div>
 </section>
 <section id="stage" class="hide">
 <div id="board" class="plist" aria-label="Scores"></div>
 <div class="gcard" id="card" aria-live="polite"><div class="lvl" id="lvl"></div><div class="prompt" id="prompt"></div><div class="na" id="instr"></div><p class="ask" id="ask"></p><p class="said" id="said"></p></div>
-<div class="choice" id="choices"><button type="button" class="btn" id="yes" data-cue="1">I have 🙈</button><button type="button" class="btn alt" id="no" data-cue="1">Never 😇</button></div>
-<div class="ctrl"><button type="button" class="btn hostonly" id="revealbtn" data-cue="1">Reveal now</button><button type="button" class="btn hostonly" id="nextbtn" data-cue="1">Next prompt ▶</button></div>
-<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button><button type="button" class="btn alt guestonly" id="leavestage">Leave</button></div>
+<div class="choice" id="choices"><button type="button" class="btn" id="yes" data-action="yes" data-cue="1">I have 🙈</button><button type="button" class="btn alt" id="no" data-action="no" data-cue="1">Never 😇</button></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="revealbtn" data-action="reveal" data-cue="1">Reveal now</button><button type="button" class="btn hostonly" id="nextbtn" data-action="next" data-cue="1">Next prompt ▶</button></div>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leavestage" data-action="leave">Leave</button></div>
 </section>
 <section id="over" class="hide">
 <h1>Game over</h1>
 <div class="card" id="crowns"></div>
 <ol class="final" id="final"></ol>
 <p>Sipping was always optional. Points are just for fun.</p>
-<div class="ctrl"><button type="button" class="btn hostonly" id="again" data-cue="1">Play again</button><button type="button" class="btn alt hostonly" id="closeover">Close room</button><button type="button" class="btn alt guestonly" id="leaveover">Leave</button><button type="button" class="btn alt" id="gohome">Home</button></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="again" data-action="again" data-cue="1">Play again</button><button type="button" class="btn alt hostonly" id="closeover" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leaveover" data-action="leave">Leave</button><button type="button" class="btn alt" id="gohome" data-action="home">Home</button></div>
 </section>
 </div>
 <p id="perr" role="alert"></p>

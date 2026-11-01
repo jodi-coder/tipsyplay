@@ -69,3 +69,12 @@ input.bigin{font-size:16px;min-height:48px;width:100%;border-radius:12px;border:
 .plist .prow span{flex:1;font-weight:700}
 .plist .off{opacity:.5}
 .said{font-size:1.15rem;font-weight:700;margin:8px 0 0}
+.entry{padding-top:8px}
+.eyebrow{margin:0;color:var(--pink);font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:.78rem}
+.entry h1{font-size:2.7rem;letter-spacing:-.04em;margin:.2em 0 .25em}
+.lede{color:var(--mut);margin-top:0}
+.host-cta{width:100%;min-height:76px;font-size:1.35rem;margin:16px 0 18px;box-shadow:0 12px 32px #ff4fa344}
+.join-row{display:flex;gap:8px;align-items:center}
+.join-row input{flex:1;min-width:0;letter-spacing:.18em;font-weight:800;text-align:center}
+.join-row .btn{min-width:92px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
