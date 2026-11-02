@@ -14,6 +14,24 @@ python3 -m http.server
 
 Then open `http://localhost:8000`. A local server is required so the service worker and app manifest load correctly; opening `index.html` as a file will not.
 
+## Google tag
+
+Every HTML page must include the Google tag (`G-BHY4BXF3V3`) immediately after the charset `<meta>`. Paste this block exactly once:
+
+```html
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+```
+
+There is no page generator in this repo. Pages are hand-written HTML, including the spots lists and detail pages. If a template or build script is added later, it has to emit this same tag on every page it creates. The site has no Content-Security-Policy. The service worker does not intercept or cache `googletagmanager.com` requests.
+
 ## Hosting
 
 Hostinger serves this repository root as `public_html`. The site files (`index.html`, `manifest.webmanifest`, `sw.js`, and the rest) live at the root so they are the public site, with no build or copy step.

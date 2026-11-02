@@ -1,8 +1,9 @@
-const CACHE="tipsyplay-v12";
-const V="12";
+const CACHE="tipsyplay-v13";
+const V="13";
 function ver(path){return path+"?v="+V}
 const FILES=["./","index.html","library.html","favourites.html","settings.html","responsible.html","about.html","contact.html","privacy.html","terms.html","robots.txt","sitemap.xml","games/index.html","games/never-have-i-ever.html","play/never-have-i-ever.html","play/party.html","play/join.html","data/nhie.json","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","images/hero-beer-pong.webp","images/hero-beer-pong.jpg","images/friends-card-game.webp","images/friends-card-game.jpg","images/friends-phones.webp","images/friends-phones.jpg","images/og-image.jpg","spots/index.html","spots/canada-cities/index.html","spots/usa-cities/index.html","spots/canada-universities/index.html","spots/usa-universities/index.html",ver("styles.css"),ver("app.js"),ver("sounds.js"),ver("firebase-config.js"),ver("data/nhie.js"),ver("play/nhie-game.js"),ver("play/party.js"),ver("play/join.js"),ver("spots/spots.css"),ver("spots/comments.js"),ver("spots/admin-comments.js")];
 function isFirebase(url){return /firebaseio\.com|firebasedatabase\.app|firebaseapp\.com|googleapis\.com|gstatic\.com\/firebasejs|identitytoolkit|securetoken/i.test(url)}
+function isAnalytics(url){return /googletagmanager\.com|google-analytics\.com|analytics\.google\.com/i.test(url)}
 function isSpotImage(url){return /\/images\/spots\//.test(url)}
 function isHTML(req){
  if(req.mode==="navigate")return true;
@@ -17,7 +18,7 @@ self.addEventListener("install",function(e){e.waitUntil(caches.open(CACHE).then(
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE}).map(function(k){return caches.delete(k)}))}).then(function(){return self.clients.claim()}))});
 self.addEventListener("fetch",function(e){
  if(e.request.method!=="GET")return;
- if(isFirebase(e.request.url)||isSpotImage(e.request.url))return;
+ if(isFirebase(e.request.url)||isSpotImage(e.request.url)||isAnalytics(e.request.url))return;
  var url;try{url=new URL(e.request.url)}catch(err){return}
  if(url.origin!==self.location.origin)return;
  if(url.pathname.endsWith("/sw.js"))return;
