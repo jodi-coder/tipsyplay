@@ -1,11 +1,33 @@
-const CACHE="tipsyplay-v10";
-const FILES=["./","index.html","library.html","favourites.html","settings.html","responsible.html","about.html","contact.html","privacy.html","terms.html","robots.txt","sitemap.xml","games/index.html","games/never-have-i-ever.html","play/never-have-i-ever.html","play/nhie-game.js","play/party.html","play/party.js","play/join.html","play/join.js","firebase-config.js","data/nhie.js","data/nhie.json","styles.css","app.js","sounds.js","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","images/hero-beer-pong.webp","images/hero-beer-pong.jpg","images/friends-card-game.webp","images/friends-card-game.jpg","images/friends-phones.webp","images/friends-phones.jpg","images/og-image.jpg","spots/index.html","spots/spots.css","spots/comments.js","spots/canada-cities/index.html","spots/usa-cities/index.html","spots/canada-universities/index.html","spots/usa-universities/index.html"];
+const CACHE="tipsyplay-v11";
+const V="11";
+function ver(path){return path+"?v="+V}
+const FILES=["./","index.html","library.html","favourites.html","settings.html","responsible.html","about.html","contact.html","privacy.html","terms.html","robots.txt","sitemap.xml","games/index.html","games/never-have-i-ever.html","play/never-have-i-ever.html","play/party.html","play/join.html","data/nhie.json","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","images/hero-beer-pong.webp","images/hero-beer-pong.jpg","images/friends-card-game.webp","images/friends-card-game.jpg","images/friends-phones.webp","images/friends-phones.jpg","images/og-image.jpg","spots/index.html","spots/canada-cities/index.html","spots/usa-cities/index.html","spots/canada-universities/index.html","spots/usa-universities/index.html",ver("styles.css"),ver("app.js"),ver("sounds.js"),ver("firebase-config.js"),ver("data/nhie.js"),ver("play/nhie-game.js"),ver("play/party.js"),ver("play/join.js"),ver("spots/spots.css"),ver("spots/comments.js"),ver("spots/admin-comments.js")];
 function isFirebase(url){return /firebaseio\.com|firebasedatabase\.app|firebaseapp\.com|googleapis\.com|gstatic\.com\/firebasejs|identitytoolkit|securetoken/i.test(url)}
 function isSpotImage(url){return /\/images\/spots\//.test(url)}
-self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
-self.addEventListener("fetch",e=>{
+function isHTML(req){
+ if(req.mode==="navigate")return true;
+ var accept=req.headers.get("accept")||"";
+ var path="";
+ try{path=new URL(req.url).pathname}catch(e){return false}
+ return accept.indexOf("text/html")!==-1||/\.html$/.test(path)||/\/$/.test(path);
+}
+function versioned(req){try{return new URL(req.url).searchParams.has("v")}catch(e){return false}}
+function put(req,res){if(res&&res.ok){var copy=res.clone();caches.open(CACHE).then(function(c){c.put(req,copy)})}return res}
+self.addEventListener("install",function(e){e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}).then(function(){return self.skipWaiting()}))});
+self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE}).map(function(k){return caches.delete(k)}))}).then(function(){return self.clients.claim()}))});
+self.addEventListener("fetch",function(e){
  if(e.request.method!=="GET")return;
  if(isFirebase(e.request.url)||isSpotImage(e.request.url))return;
- e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(r=>r||fetch(e.request).then(res=>{const cp=res.clone();caches.open(CACHE).then(c=>c.put(e.request,cp));return res}).catch(()=>caches.match("index.html"))));
+ var url;try{url=new URL(e.request.url)}catch(err){return}
+ if(url.origin!==self.location.origin)return;
+ if(url.pathname.endsWith("/sw.js"))return;
+ if(isHTML(e.request)){
+  e.respondWith(fetch(e.request).then(function(res){return put(e.request,res)}).catch(function(){return caches.match(e.request).then(function(r){return r||caches.match("index.html")})}));
+  return;
+ }
+ var ignore=versioned(e.request)?false:true;
+ e.respondWith(caches.match(e.request,{ignoreSearch:ignore}).then(function(hit){
+  if(hit)return hit;
+  return fetch(e.request).then(function(res){return put(e.request,res)}).catch(function(){return caches.match(e.request,{ignoreSearch:ignore})});
+ }));
 });

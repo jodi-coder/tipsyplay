@@ -1,0 +1,22 @@
+# Hostinger / LiteSpeed / Apache.
+# HTML and sw.js must revalidate. CSS and JS are requested as file.css?v=11,
+# so each version can stay cached until the query changes.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} /$
+  RewriteRule ^ - [E=NO_CACHE:1]
+</IfModule>
+<IfModule mod_headers.c>
+  Header set Cache-Control "no-cache, no-store, must-revalidate" env=NO_CACHE
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <Files "sw.js">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+  </Files>
+</IfModule>
