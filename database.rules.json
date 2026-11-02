@@ -66,6 +66,71 @@
               }
             }
           }
+        },
+        "notes": {
+          "$gameId": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$round": {
+              "$uid": {
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 240"
+              }
+            }
+          }
+        },
+        "sealed": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('revealed').child($gameId).child($round).val() == true",
+              "$uid": {
+                ".read": "auth != null && auth.uid == $uid",
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 240"
+              }
+            }
+          }
+        },
+        "tally": {
+          "$gameId": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$round": {
+              "$uid": {
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 40"
+              }
+            }
+          }
+        },
+        "strokes": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+              "$uid": {
+                ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && $gameId.matches(/^[1-9][0-9]{0,2}$/) && $round.matches(/^(0|[1-9]|1[0-9])$/) && root.child('rooms').child($code).child('players').child($uid).exists() && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+                "$n": {
+                  ".validate": "!newData.exists() || ($n.matches(/^[0-9]{1,4}$/) && newData.child('x').isNumber() && newData.child('y').isNumber() && newData.child('x').val() >= 0 && newData.child('x').val() <= 1 && newData.child('y').val() >= 0 && newData.child('y').val() <= 1 && (!newData.child('d').exists() || newData.child('d').isBoolean()))"
+                }
+              }
+            }
+          }
+        },
+        "secret": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid || data.child('drawer').val() == auth.uid)",
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+              ".validate": "newData.child('word').isString() && newData.child('word').val().length > 0 && newData.child('word').val().length <= 40 && newData.child('drawer').isString() && newData.child('drawer').val().length > 0 && newData.child('drawer').val().length <= 128 && newData.hasChildren(['word','drawer'])"
+            }
+          }
+        },
+        "call": {
+          "$gameId": {
+            "$round": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('revealed').child($gameId).child($round).val() == true",
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && root.child('rooms').child($code).child('meta').child('phase').val() == 'answer'",
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+            }
+          }
         }
       }
     },
