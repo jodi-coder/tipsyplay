@@ -30,7 +30,7 @@ if(list){
 // tab bar
 var path=location.pathname,tabs=[["index.html","🏠","Home"],["games/","🎲","Games"],["favourites.html","❤️","Favourites"],["settings.html","⚙️","Settings"]];
 function tabOn(file){
- if(file==="index.html")return (path.endsWith("/")||path.endsWith("/index.html"))&&path.indexOf("/games/")===-1;
+ if(file==="index.html")return path==="/"||path==="/index.html";
  if(file==="games/")return /\/games(\/|$)/.test(path)||/\/play\//.test(path)||path.endsWith("/library.html");
  return path.endsWith("/"+file);
 }

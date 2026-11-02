@@ -1,0 +1,37 @@
+.crumbs{color:var(--mut);font-size:.92rem;margin:0 0 8px}
+.crumbs a{color:var(--cyan);font-weight:700}
+.spot-list{list-style:none;padding:0;margin:16px 0}
+.spot-card{display:grid;grid-template-columns:108px 1fr;gap:12px;align-items:center;text-decoration:none;color:inherit;background:var(--card);border:1px solid #ffffff12;border-radius:18px;padding:10px;margin:0 0 12px}
+.spot-card h2{margin:.1em 0 .2em;font-size:1.15rem;color:var(--txt)}
+.spot-card p{margin:.2em 0;color:var(--mut)}
+.rank{margin:0;color:var(--pink);font-weight:800;letter-spacing:.04em}
+.spot-thumb,.spot-hero{background:linear-gradient(145deg,#2a1450 0%,#ff4fa3 48%,#3de0d0 130%);overflow:hidden}
+.spot-thumb{margin:0;min-height:84px;border-radius:12px;position:relative}
+.spot-thumb img{width:100%;height:84px;object-fit:cover;display:block}
+.spot-hero{margin:8px 0 18px;min-height:220px;border-radius:22px;position:relative}
+.spot-hero img{width:100%;height:auto;display:block}
+.spot-thumb.is-missing picture,.spot-hero.is-missing picture{display:none}
+.spot-hero.is-missing{display:flex;align-items:flex-end;min-height:240px}
+.spot-hero.is-missing::after,.spot-thumb.is-missing::after{content:attr(data-label);font-weight:800}
+.spot-hero.is-missing::after{padding:18px;font-size:1.45rem}
+.spot-thumb.is-missing{display:flex;align-items:flex-end}
+.spot-thumb.is-missing::after{padding:8px;font-size:.78rem;line-height:1.2}
+.source-note,.fine{color:var(--mut)}
+.why{background:#2a1f47;border-radius:12px;padding:10px 12px}
+.why strong{color:var(--yel)}
+.age{font-weight:700}
+.prevnext{display:flex;gap:10px;justify-content:space-between;margin:18px 0}
+.prevnext a{flex:1;min-height:48px;display:flex;align-items:center}
+.prevnext a.next{justify-content:flex-end;text-align:right}
+.comment-form input,.comment-form textarea,.admin-tools input{width:100%;font:16px/1.4 inherit;font-family:inherit;border-radius:12px;border:1px solid #ffffff30;background:var(--card2);color:var(--txt);padding:10px}
+.comment-form textarea{min-height:120px;resize:vertical}
+.comment{border-top:1px solid #ffffff18;padding:12px 0}
+.comment-name{display:flex;justify-content:space-between;gap:8px;color:var(--mut);margin:0 0 4px}
+.comment p{margin:.2em 0 .4em;white-space:pre-wrap;overflow-wrap:anywhere}
+.uid{word-break:break-all;font-family:ui-monospace,monospace}
+.note-card h2{margin-top:0}
+@media(min-width:700px){
+ .spot-card{grid-template-columns:160px 1fr}
+ .spot-thumb img{height:108px}
+ .spot-thumb{min-height:108px}
+}

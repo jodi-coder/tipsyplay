@@ -92,6 +92,10 @@ input.bigin{font-size:16px;min-height:48px;width:100%;border-radius:12px;border:
 .site-foot a{color:var(--cyan);font-weight:700;min-height:44px;display:inline-flex;align-items:center}
 .search-row{display:flex;gap:8px;margin-top:12px}
 .search-row input{flex:1;min-width:0}
+#spots{scroll-margin-top:76px}
+a.spot-tile{display:block;text-decoration:none;color:inherit}
+a.spot-tile h3{margin:.2em 0 .35em;color:var(--txt)}
+a.spot-tile:active{transform:scale(.98)}
 @media(min-width:700px){
  .feature-grid,.why-grid{grid-template-columns:1fr 1fr}
  .steps{grid-template-columns:1fr 1fr 1fr}

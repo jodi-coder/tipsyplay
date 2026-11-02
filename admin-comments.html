@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#120d1f">
+<meta name="robots" content="noindex, nofollow">
+<title>Comment admin · TipsyPlay</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="spots/spots.css">
+</head>
+<body data-root="">
+<header class="top"><a class="logo" href="index.html">Tipsy<span>Play</span></a></header>
+<main>
+<h1>Comment admin</h1>
+<p>This page is not linked in the site, and search engines are asked not to index it. Visitors cannot delete comments. Deletes work only after <span class="uid">admins/&lt;uid&gt;</span> is true.</p>
+<p>Your uid</p>
+<p class="uid" id="uid">Signing in…</p>
+<p id="state"></p>
+<div class="card admin-tools">
+<label for="page">Page id</label>
+<input id="page" maxlength="80" placeholder="canada-cities__london-ontario" autocomplete="off">
+<div class="ctrl" style="justify-content:flex-start;margin-top:12px">
+<button type="button" class="btn" id="load">Load page</button>
+<button type="button" class="btn alt" id="all">Load all</button>
+<button type="button" class="btn alt" id="reports">Load reports</button>
+</div>
+</div>
+<p id="msg" role="status"></p>
+<div id="list"></div>
+</main>
+<footer class="site-foot" data-keep>
+<p>© TipsyPlay</p>
+</footer>
+<script src="sounds.js"></script>
+<script src="app.js"></script>
+<script src="spots/admin-comments.js"></script>
+</body>
+</html>

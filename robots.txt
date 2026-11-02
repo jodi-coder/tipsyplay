@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin-comments.html
 
 Sitemap: https://tipsyplay.com/sitemap.xml
