@@ -11,7 +11,7 @@ if(localStorage.getItem("tp_age_ok")!=="yes"){
 }
 // footer
 var f=document.querySelector("footer");
-if(f)f.innerHTML='<p><strong>'+NOTICE+'</strong></p><p>Every game is opt-in. Non-alcoholic drinks are always welcome. Never drink and drive.</p><a href="'+root+'responsible.html">Responsible play</a> · <a href="'+root+'library.html">Game library</a><p>© TipsyPlay</p>';
+if(f&&!f.hasAttribute("data-keep"))f.innerHTML='<p><strong>'+NOTICE+'</strong></p><p>Every game is opt-in. Non-alcoholic drinks are always welcome. Never drink and drive.</p><a href="'+root+'responsible.html">Responsible play</a> · <a href="'+root+'games/">Games</a><p>© TipsyPlay</p>';
 // library filters
 var list=document.getElementById("games");
 if(list){
@@ -28,9 +28,14 @@ if(list){
  apply();
 }
 // tab bar
-var path=location.pathname,tabs=[["index.html","🏠","Home"],["library.html","🎲","Games"],["favourites.html","❤️","Favourites"],["settings.html","⚙️","Settings"]];
+var path=location.pathname,tabs=[["index.html","🏠","Home"],["games/","🎲","Games"],["favourites.html","❤️","Favourites"],["settings.html","⚙️","Settings"]];
+function tabOn(file){
+ if(file==="index.html")return (path.endsWith("/")||path.endsWith("/index.html"))&&path.indexOf("/games/")===-1;
+ if(file==="games/")return /\/games(\/|$)/.test(path)||/\/play\//.test(path)||path.endsWith("/library.html");
+ return path.endsWith("/"+file);
+}
 var tb=document.createElement("nav");tb.className="tabbar";tb.setAttribute("aria-label","App tabs");
-tb.innerHTML=tabs.map(function(t){var on=path.endsWith("/"+t[0])||(t[0]=="index.html"&&path.endsWith("/"))||(t[0]=="library.html"&&/\/(games|play)\//.test(path));return '<a href="'+root+t[0]+'"'+(on?' class="on" aria-current="page"':'')+'><span>'+t[1]+'</span>'+t[2]+'</a>'}).join("");
+tb.innerHTML=tabs.map(function(t){var on=tabOn(t[0]);return '<a href="'+root+t[0]+'"'+(on?' class="on" aria-current="page"':'')+'><span>'+t[1]+'</span>'+t[2]+'</a>'}).join("");
 document.body.appendChild(tb);
 // favourites
 function favs(){try{return JSON.parse(localStorage.getItem("tp_favs")||"{}")}catch(e){return {}}}

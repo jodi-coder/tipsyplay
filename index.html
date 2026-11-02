@@ -1,9 +1,234 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#120d1f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><title>Home · TipsyPlay</title><link rel="stylesheet" href="styles.css"></head><body data-root=""><header class="top"><a class="logo" href="index.html">Tipsy<span>Play</span></a><nav><a href="library.html">Games</a><a href="responsible.html">Play safe</a></nav></header><main>
-<section class="hero"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#2a1f47"/><path d="M38 34h44l-6 40a16 16 0 0 1-32 0z" fill="#ff4fa3"/><rect x="56" y="86" width="8" height="14" fill="#3de0d0"/><rect x="44" y="98" width="32" height="6" rx="3" fill="#3de0d0"/><circle cx="52" cy="50" r="4" fill="#fff"/><circle cx="68" cy="58" r="3" fill="#fff"/><circle cx="60" cy="44" r="2" fill="#fff"/></svg>
-<h1>Party games for grown-ups 🎉</h1><p>Phone-friendly games for game night. Sip if you want, do the alternative if you don't — everyone plays, nobody's pressured.</p>
-<a class="btn host-cta" href="play/join.html">Host Game</a>
-<form class="join-row" action="play/join.html" method="get"><input class="bigin" name="code" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="Join with code" aria-label="Room code"><button class="btn alt" type="submit">Join</button></form>
-<p><a class="btn alt" href="library.html">Browse all games</a></p></section>
-<div class="card"><h2 style="margin-top:0">How TipsyPlay works</h2><p>🙋 <b>Opt-in, always.</b> Every turn is a choice.</p><p>🧃 <b>Non-alcoholic option on every game.</b> Points, finger-folds, or silly dares instead.</p><p>📱 <b>Every player, their own phone.</b> Join with a code.</p></div>
-<div class="card"><h2 style="margin-top:0">Featured: Never Have I Ever</h2><p>Three spice levels, 75+ original prompts, and a non-alcoholic mode.</p><a class="btn" href="games/never-have-i-ever.html">See how to play</a></div>
-</main><footer></footer><script src="sounds.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#120d1f">
+<meta name="description" content="Play free drinking games and party games for adults on your phone tonight. No app download. Browse card drinking games, quick rounds, and games for 2.">
+<title>TipsyPlay – Free Drinking &amp; Party Games</title>
+<link rel="canonical" href="https://tipsyplay.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TipsyPlay">
+<meta property="og:title" content="TipsyPlay – Free Drinking &amp; Party Games">
+<meta property="og:description" content="Play free drinking games and party games for adults on your phone tonight. No app download. Browse card drinking games, quick rounds, and games for 2.">
+<meta property="og:url" content="https://tipsyplay.com/">
+<meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Friends at a night party tossing a ball toward a triangle of cups">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TipsyPlay – Free Drinking &amp; Party Games">
+<meta name="twitter:description" content="Play free drinking games and party games for adults on your phone tonight. No app download. Browse card drinking games, quick rounds, and games for 2.">
+<meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "TipsyPlay",
+      "url": "https://tipsyplay.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://tipsyplay.com/games/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "TipsyPlay",
+      "url": "https://tipsyplay.com/",
+      "logo": "https://tipsyplay.com/icons/icon-512.png"
+    },
+    {
+      "@type": "ItemList",
+      "name": "Featured party games",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Never Have I Ever", "url": "https://tipsyplay.com/games/never-have-i-ever.html"},
+        {"@type": "ListItem", "position": 2, "name": "Who's Most Likely", "url": "https://tipsyplay.com/games/#whos-most-likely"},
+        {"@type": "ListItem", "position": 3, "name": "Card Lottery", "url": "https://tipsyplay.com/games/#card-lottery"},
+        {"@type": "ListItem", "position": 4, "name": "Category Countdown", "url": "https://tipsyplay.com/games/#category-countdown"},
+        {"@type": "ListItem", "position": 5, "name": "Two Truths & a Twist", "url": "https://tipsyplay.com/games/#two-truths"},
+        {"@type": "ListItem", "position": 6, "name": "Cup Toss Challenge", "url": "https://tipsyplay.com/games/#cup-toss"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is TipsyPlay?",
+          "acceptedAnswer": {"@type": "Answer", "text": "TipsyPlay is a free set of drinking games and party games for adults. You play in the browser on the phones you already have."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to download an app?",
+          "acceptedAnswer": {"@type": "Answer", "text": "No. There is no app download. Open TipsyPlay, host a room, and friends join with a code."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do these games work if someone is not drinking?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every game works with non-alcoholic drinks. Passing is always fine, and nobody has to sip."}
+        },
+        {
+          "@type": "Question",
+          "name": "Which games can we play tonight?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Never Have I Ever is ready to play now. The other party games are marked coming soon, and new games are added often."}
+        },
+        {
+          "@type": "Question",
+          "name": "Are card drinking games and games for 2 included?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. TipsyPlay is free. Filter the list for card drinking games, quick rounds, or games for 2, then hit play when you are ready."}
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body data-root="">
+<header class="top"><a class="logo" href="index.html">Tipsy<span>Play</span></a><nav><a href="games/">Games</a><a href="responsible.html">Play safe</a></nav></header>
+<main>
+<section class="entry" id="top">
+<p class="eyebrow">Games for adults</p>
+<h1>Free drinking games for your next night in</h1>
+<p class="lede">Party games for adults — host on your phone, friends join with a code.</p>
+<p><a class="btn host-cta" href="games/">Browse All Games</a></p>
+<figure class="hero-photo">
+<picture>
+<source srcset="images/hero-beer-pong.webp" type="image/webp">
+<img src="images/hero-beer-pong.jpg" width="1200" height="675" alt="Friends at a night party tossing a ball toward a triangle of cups" fetchpriority="high">
+</picture>
+</figure>
+</section>
+
+<section id="featured">
+<h2>Featured games</h2>
+<div class="feature-grid">
+<article class="card game-card">
+<h3>Never Have I Ever</h3>
+<p>A prompt and a choice: optional sip, or score a point. Opt-in every card.</p>
+<div class="meta-row"><span class="tag">3–12 players</span><span class="tag">Easy</span></div>
+<a class="btn" href="games/never-have-i-ever.html">Play</a>
+</article>
+<article class="card game-card">
+<h3>Who's Most Likely</h3>
+<p>Point to who's most likely. Most votes may take one small sip.</p>
+<div class="meta-row"><span class="tag">4–12 players</span><span class="tag">Easy</span></div>
+<p class="soon">Coming soon</p>
+</article>
+<article class="card game-card">
+<h3>Card Lottery</h3>
+<p>Guess red or black. A wrong guess is one optional sip per round, max.</p>
+<div class="meta-row"><span class="tag">2–8 players</span><span class="tag">Easy</span></div>
+<p class="soon">Coming soon</p>
+</article>
+<article class="card game-card">
+<h3>Category Countdown</h3>
+<p>Name things in a category before the timer ends. Stumble if you want a dare.</p>
+<div class="meta-row"><span class="tag">3–10 players</span><span class="tag">Easy</span></div>
+<p class="soon">Coming soon</p>
+</article>
+<article class="card game-card">
+<h3>Two Truths &amp; a Twist</h3>
+<p>Two truths and one fib. Fooled guessers hand over a point.</p>
+<div class="meta-row"><span class="tag">3–10 players</span><span class="tag">Easy</span></div>
+<p class="soon">Coming soon</p>
+</article>
+<article class="card game-card">
+<h3>Cup Toss Challenge</h3>
+<p>Toss into water-filled cups for points. Nobody drinks from the game cups.</p>
+<div class="meta-row"><span class="tag">2–8 players</span><span class="tag">Medium</span></div>
+<p class="soon">Coming soon</p>
+</article>
+</div>
+</section>
+
+<section id="how">
+<h2>How it works</h2>
+<div class="steps">
+<article class="card"><h3>1. Host</h3><p>One person starts a room and gets a short code.</p></article>
+<article class="card"><h3>2. Join</h3><p>Everyone else opens TipsyPlay on their own phone and enters the code.</p></article>
+<article class="card"><h3>3. Answer</h3><p>Each phone shows the prompt. Sip if you want, or take the non-alcoholic alternative.</p></article>
+</div>
+<figure class="shot"><picture>
+<source srcset="images/friends-phones.webp" type="image/webp">
+<img src="images/friends-phones.jpg" width="1152" height="864" alt="Friends holding up their phones to join the same party game" loading="lazy">
+</picture></figure>
+</section>
+
+<section id="categories">
+<h2>Browse by category</h2>
+<p>Jump straight to the kind of night you want.</p>
+<nav class="cat-links" aria-label="Game categories">
+<a href="games/?category=card">Card drinking games</a>
+<a href="games/?category=quick">Quick games</a>
+<a href="games/?category=two">Games for 2</a>
+<a href="games/?category=big-groups">Big groups</a>
+<a href="games/?category=no-props">No props</a>
+</nav>
+<figure class="shot"><picture>
+<source srcset="images/friends-card-game.webp" type="image/webp">
+<img src="images/friends-card-game.jpg" width="1152" height="864" alt="Friends laughing around a table during a card game" loading="lazy">
+</picture></figure>
+</section>
+
+<section id="why">
+<h2>Why TipsyPlay</h2>
+<div class="why-grid">
+<article class="card"><h3>Free</h3><p>Drinking games and party games with no paywall.</p></article>
+<article class="card"><h3>No app download</h3><p>It runs in the browser. Nothing to install.</p></article>
+<article class="card"><h3>Works on your phone</h3><p>Host and join from the phone already in your pocket.</p></article>
+<article class="card"><h3>New games often</h3><p>Never Have I Ever is live. More games are added often.</p></article>
+</div>
+</section>
+
+<section class="faq" id="faq">
+<h2>FAQ</h2>
+<h3>What is TipsyPlay?</h3>
+<p>TipsyPlay is a free set of drinking games and party games for adults. You play in the browser on the phones you already have.</p>
+<h3>Do I need to download an app?</h3>
+<p>No. There is no app download. Open TipsyPlay, host a room, and friends join with a code.</p>
+<h3>Do these games work if someone is not drinking?</h3>
+<p>Yes. Every game works with non-alcoholic drinks. Passing is always fine, and nobody has to sip.</p>
+<h3>Which games can we play tonight?</h3>
+<p>Never Have I Ever is ready to play now. The other party games are marked coming soon, and new games are added often.</p>
+<h3>Are card drinking games and games for 2 included?</h3>
+<p>Yes. TipsyPlay is free. Filter the list for card drinking games, quick rounds, or games for 2, then hit play when you are ready.</p>
+</section>
+
+<section id="responsible">
+<h2>Play responsibly</h2>
+<div class="card">
+<p><strong>You must be of legal drinking age in your location.</strong></p>
+<p>Know your limits. Sips are optional and small. There is no chugging, no races, and no pressure to finish a drink.</p>
+<p>Every game works with non-alcoholic drinks. Points, dares, and finger-folds are always a full way to play.</p>
+<p>Never drink and drive. Plan a ride home before you start.</p>
+<p><a href="responsible.html">Read the full house code</a></p>
+</div>
+</section>
+</main>
+<footer class="site-foot" data-keep>
+<nav aria-label="Footer">
+<a href="games/">Games</a>
+<a href="about.html">About</a>
+<a href="contact.html">Contact</a>
+<a href="privacy.html">Privacy</a>
+<a href="terms.html">Terms</a>
+</nav>
+<p>© TipsyPlay</p>
+</footer>
+<script src="sounds.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
