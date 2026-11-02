@@ -70,7 +70,7 @@ async function boot(){
  var appMod=await import(base+"firebase-app.js");
  var authMod=await import(base+"firebase-auth.js");
  var dbMod=await import(base+"firebase-database.js");
- var cfg=await import("/firebase-config.js");
+ var cfg=await import("/firebase-config.js?v=11");
  var app=appMod.initializeApp(cfg.firebaseConfig);
  authObj=authMod.getAuth(app);
  db=dbMod.getDatabase(app);

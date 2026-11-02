@@ -55,5 +55,5 @@ if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spi
  document.getElementById("s_age").onclick=function(){localStorage.removeItem("tp_age_ok");document.getElementById("s_msg").textContent="Done — reloading…";setTimeout(function(){location.reload()},600)}}
 document.addEventListener("click",function(e){var el=e.target;if(!el)return;if(el.nodeType!==1)el=el.parentElement;if(!el||!el.closest)return;var b=el.closest("button");if(!b)return;if(b.id==="next"||b.id==="shuf"||b.id==="plus"||b.id==="minus"||b.id==="mute"||b.closest("#lvls")||b.dataset.cue)return;if(window.TPSound)TPSound.click()},true);
 // service worker
-if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",function(){navigator.serviceWorker.register(root+"sw.js").then(function(r){window.__swOK=true}).catch(function(e){console.warn("SW failed",e)})})}
+if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",function(){navigator.serviceWorker.register(root+"sw.js",{updateViaCache:"none"}).then(function(r){window.__swOK=true}).catch(function(e){console.warn("SW failed",e)})})}
 })();
