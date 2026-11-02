@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0c0c0e">
+<title>Mockup C · Sleek App · TipsyPlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c0e;--paper:#f5f5f7;--muted:rgba(245,245,247,.72);
+  --card:#17171a;--line:rgba(245,245,247,.12);
+  --a:#7aa2ff;--b:#b07cff;
+  --font:"Inter",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--paper);font:400 1.02rem/1.55 var(--font);padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+a{color:var(--a)}
+img{max-width:100%;height:auto;display:block}
+.wrap{width:min(1040px,calc(100% - 40px));margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--paper);font-weight:600;letter-spacing:-.03em;min-height:44px}
+.brand svg{width:32px;height:32px}
+.desk{display:none;gap:8px;align-items:center}
+.desk a{color:var(--muted);text-decoration:none;font-weight:500;min-height:44px;display:inline-flex;align-items:center;padding:0 10px;border-radius:999px}
+.desk a:hover{color:var(--paper);background:rgba(245,245,247,.06)}
+.note{color:var(--muted);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px}
+h1{font-size:clamp(2.5rem,6vw,4.4rem);line-height:1.02;letter-spacing:-.045em;font-weight:700;margin:0 0 14px}
+h2{font-size:clamp(1.7rem,3vw,2.2rem);letter-spacing:-.035em;font-weight:600;margin:0 0 8px}
+h3{font-size:1.02rem;letter-spacing:-.02em;margin:10px 0 4px}
+.lede{color:var(--muted);font-size:1.12rem;max-width:34rem;margin:0 0 26px}
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:999px;
+  color:#0c0c0e;text-decoration:none;font-weight:600;
+  background:linear-gradient(100deg,var(--a),var(--b));
+  transition:transform .18s ease, filter .18s ease;
+}
+.cta:hover{transform:translateY(-1px);filter:brightness(1.06)}
+.cta:active{transform:scale(.98)}
+.cta:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--a);outline-offset:3px}
+.hero{padding:18px 0 56px;display:grid;gap:28px}
+.shot{border-radius:28px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.apps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{
+  background:var(--card);border:1px solid var(--line);border-radius:28px;padding:16px 14px 18px;
+  text-decoration:none;color:inherit;display:flex;flex-direction:column;min-height:168px;
+  transition:transform .18s ease, border-color .18s ease;
+}
+a.tile:hover{transform:translateY(-3px);border-color:rgba(122,162,255,.55)}
+.icon{
+  width:64px;height:64px;border-radius:18px;display:grid;place-items:center;
+  font-weight:700;letter-spacing:-.04em;color:#0c0c0e;font-size:1.15rem;
+  background:linear-gradient(145deg,var(--a),var(--b));
+}
+.icon.dim{background:#2a2a30;color:var(--paper)}
+.meta{color:var(--muted);font-size:.82rem;margin-top:auto}
+.soon{color:var(--muted);font-size:.82rem;font-weight:600}
+.play{margin-top:8px;align-self:flex-start;background:var(--paper);color:#0c0c0e;text-decoration:none;font-weight:600;border-radius:999px;min-height:36px;padding:0 12px;display:inline-flex;align-items:center;font-size:.9rem}
+.spots{display:grid;gap:12px}
+.spot{display:block;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 18px;text-decoration:none;color:inherit;transition:border-color .18s ease}
+.spot:hover{border-color:rgba(176,124,255,.6)}
+.spot p{color:var(--muted);margin:6px 0 0}
+.steps{display:grid;gap:12px}
+.step{background:var(--card);border-radius:22px;padding:18px;border:1px solid var(--line)}
+.step span{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(145deg,var(--a),var(--b));color:#0c0c0e;font-weight:700;font-size:.85rem;margin-bottom:8px}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.cats a{text-decoration:none;color:var(--paper);background:var(--card);border:1px solid var(--line);border-radius:999px;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;font-weight:500}
+.cats a:hover{border-color:var(--a)}
+.why{display:grid;gap:12px}
+.why article{padding:8px 0;border-top:1px solid var(--line)}
+.why p{color:var(--muted);margin:0 0 12px}
+details{border-top:1px solid var(--line)}
+summary{min-height:52px;display:flex;align-items:center;cursor:pointer;font-weight:600;letter-spacing:-.02em}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;color:var(--muted);font-weight:500}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin:0 0 16px}
+.panel{background:var(--card);border-radius:28px;padding:22px;border:1px solid var(--line)}
+.age{font-size:1.15rem;letter-spacing:-.02em}
+.foot{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 0 28px;color:var(--muted);align-items:center}
+.foot a{color:var(--muted);text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.tabs{
+  position:fixed;left:12px;right:12px;bottom:12px;z-index:20;
+  display:flex;background:rgba(23,23,26,.92);backdrop-filter:blur(16px);
+  border:1px solid var(--line);border-radius:22px;padding:6px;
+  padding-bottom:calc(6px + env(safe-area-inset-bottom));
+}
+.tabs a{flex:1;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-decoration:none;color:var(--muted);font-size:.68rem;font-weight:600;border-radius:16px}
+.tabs a.on{color:#0c0c0e;background:linear-gradient(100deg,var(--a),var(--b))}
+.tabs svg{width:20px;height:20px}
+section{padding:18px 0 36px}
+@media(min-width:900px){
+  body{padding-bottom:0}
+  .tabs{display:none}
+  .desk{display:flex}
+  .hero{grid-template-columns:1.05fr .95fr;align-items:center;padding-top:36px;min-height:78vh}
+  .apps{grid-template-columns:1fr 1fr 1fr}
+  .spots{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr 1fr}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+  .why{grid-template-columns:1fr 1fr}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important}
+  .cta:hover,.tile:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<header class="wrap top">
+<a class="brand" href="#top">
+<svg viewBox="0 0 32 32" aria-hidden="true">
+<defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7aa2ff"/><stop offset="1" stop-color="#b07cff"/></linearGradient></defs>
+<rect width="32" height="32" rx="8" fill="url(#ag)"/>
+<text x="16" y="21" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="700" fill="#0c0c0e">T</text>
+</svg>
+TipsyPlay
+</a>
+<nav class="desk" aria-label="Primary">
+<a href="#top">Home</a>
+<a href="../games/">Games</a>
+<a href="../favourites.html">Favourites</a>
+<a href="../settings.html">Settings</a>
+</nav>
+</header>
+<main id="top">
+<section class="wrap hero">
+<div>
+<p class="note">Mockup C · Sleek App</p>
+<p class="note" style="letter-spacing:.14em">Games for adults</p>
+<h1>Free drinking games for your next night in</h1>
+<p class="lede">Party games for adults — host on your phone, friends join with a code.</p>
+<p><a class="cta" href="../games/">Browse All Games</a></p>
+</div>
+<figure class="shot">
+<picture>
+<source srcset="../images/hero-beer-pong.webp" type="image/webp">
+<img src="../images/hero-beer-pong.jpg" width="1200" height="675" alt="Friends at a night party tossing a ball toward a triangle of cups" fetchpriority="high">
+</picture>
+</figure>
+</section>
+
+<section class="wrap" id="featured">
+<h2>Featured games</h2>
+<p class="lede">Open one. The rest are on the way.</p>
+<div class="apps">
+<article class="tile">
+<div class="icon">NH</div>
+<h3>Never Have I Ever</h3>
+<p>A prompt and a choice: optional sip, or score a point. Opt-in every card.</p>
+<p class="meta">3–12 players · Easy</p>
+<a class="play" href="../games/never-have-i-ever.html">Play</a>
+</article>
+<article class="tile">
+<div class="icon dim">WM</div>
+<h3>Who's Most Likely</h3>
+<p>Point to who's most likely. Most votes may take one small sip.</p>
+<p class="meta">4–12 players · Easy</p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="tile">
+<div class="icon dim">CL</div>
+<h3>Card Lottery</h3>
+<p>Guess red or black. A wrong guess is one optional sip per round, max.</p>
+<p class="meta">2–8 players · Easy</p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="tile">
+<div class="icon dim">CC</div>
+<h3>Category Countdown</h3>
+<p>Name things in a category before the timer ends. Stumble if you want a dare.</p>
+<p class="meta">3–10 players · Easy</p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="tile">
+<div class="icon dim">TT</div>
+<h3>Two Truths &amp; a Twist</h3>
+<p>Two truths and one fib. Fooled guessers hand over a point.</p>
+<p class="meta">3–10 players · Easy</p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="tile">
+<div class="icon dim">CT</div>
+<h3>Cup Toss Challenge</h3>
+<p>Toss into water-filled cups for points. Nobody drinks from the game cups.</p>
+<p class="meta">2–8 players · Medium</p>
+<p class="soon">Coming soon</p>
+</article>
+</div>
+</section>
+
+<section class="wrap" id="spots">
+<h2>Best Party Spots</h2>
+<p class="lede">Four lists for a night out or a campus weekend. Plan a ride before you go, and keep the night optional.</p>
+<div class="spots">
+<a class="spot" href="../spots/canada-cities/"><h3>Canada cities</h3><p>Ten cities from Uber's 2026 Nightlife Index, plus a Montreal note.</p></a>
+<a class="spot" href="../spots/usa-cities/"><h3>USA cities</h3><p>Community picks with a reputation for music, food, and late neighbourhoods.</p></a>
+<a class="spot" href="../spots/canada-universities/"><h3>Canada universities</h3><p>Unofficial campus picks. Not affiliated with the schools.</p></a>
+<a class="spot" href="../spots/usa-universities/"><h3>USA universities</h3><p>Unofficial campus picks. Not affiliated with the schools.</p></a>
+</div>
+<p><a href="../spots/">Open the spots hub</a></p>
+</section>
+
+<section class="wrap" id="how">
+<div class="split">
+<div>
+<h2>How it works</h2>
+<div class="steps">
+<article class="step"><span>1</span><h3>Host</h3><p>One person starts a room and gets a short code.</p></article>
+<article class="step"><span>2</span><h3>Join</h3><p>Everyone else opens TipsyPlay on their own phone and enters the code.</p></article>
+<article class="step"><span>3</span><h3>Answer</h3><p>Each phone shows the prompt. Sip if you want, or take the non-alcoholic alternative.</p></article>
+</div>
+</div>
+<figure class="shot"><picture>
+<source srcset="../images/friends-phones.webp" type="image/webp">
+<img src="../images/friends-phones.jpg" width="1152" height="864" alt="Friends holding up their phones to join the same party game">
+</picture></figure>
+</div>
+</section>
+
+<section class="wrap" id="categories">
+<div class="split">
+<div>
+<h2>Browse by category</h2>
+<p>Jump straight to the kind of night you want.</p>
+<nav class="cats" aria-label="Game categories">
+<a href="../games/?category=card">Card drinking games</a>
+<a href="../games/?category=quick">Quick games</a>
+<a href="../games/?category=two">Games for 2</a>
+<a href="../games/?category=big-groups">Big groups</a>
+<a href="../games/?category=no-props">No props</a>
+</nav>
+</div>
+<figure class="shot"><picture>
+<source srcset="../images/friends-card-game.webp" type="image/webp">
+<img src="../images/friends-card-game.jpg" width="1152" height="864" alt="Friends laughing around a table during a card game">
+</picture></figure>
+</div>
+</section>
+
+<section class="wrap" id="why">
+<h2>Why TipsyPlay</h2>
+<div class="why">
+<article><h3>Free</h3><p>Drinking games and party games with no paywall.</p></article>
+<article><h3>No app download</h3><p>It runs in the browser. Nothing to install.</p></article>
+<article><h3>Works on your phone</h3><p>Host and join from the phone already in your pocket.</p></article>
+<article><h3>New games often</h3><p>Never Have I Ever is live. More games are added often.</p></article>
+</div>
+</section>
+
+<section class="wrap" id="faq">
+<h2>FAQ</h2>
+<details>
+<summary>What is TipsyPlay?</summary>
+<p>TipsyPlay is a free set of drinking games and party games for adults. You play in the browser on the phones you already have.</p>
+</details>
+<details>
+<summary>Do I need to download an app?</summary>
+<p>No. There is no app download. Open TipsyPlay, host a room, and friends join with a code.</p>
+</details>
+<details>
+<summary>Do these games work if someone is not drinking?</summary>
+<p>Yes. Every game works with non-alcoholic drinks. Passing is always fine, and nobody has to sip.</p>
+</details>
+<details>
+<summary>Which games can we play tonight?</summary>
+<p>Never Have I Ever is ready to play now. The other party games are marked coming soon, and new games are added often.</p>
+</details>
+<details>
+<summary>Are card drinking games and games for 2 included?</summary>
+<p>Yes. TipsyPlay is free. Filter the list for card drinking games, quick rounds, or games for 2, then hit play when you are ready.</p>
+</details>
+</section>
+
+<section class="wrap" id="responsible">
+<h2>Play responsibly</h2>
+<div class="panel">
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<p>Know your limits. Sips are optional and small. There is no chugging, no races, and no pressure to finish a drink.</p>
+<p>Every game works with non-alcoholic drinks. Points, dares, and finger-folds are always a full way to play.</p>
+<p>Never drink and drive. Plan a ride home before you start.</p>
+<p><a href="../responsible.html">Read the full house code</a></p>
+</div>
+</section>
+</main>
+<footer class="wrap foot">
+<nav aria-label="Footer">
+<a href="../games/">Games</a>
+<a href="../about.html">About</a>
+<a href="../contact.html">Contact</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../terms.html">Terms</a>
+</nav>
+<p>© TipsyPlay</p>
+</footer>
+<nav class="tabs" aria-label="App tabs">
+<a class="on" href="#top" aria-current="page">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8.5z"/></svg>
+Home
+</a>
+<a href="../games/">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+Games
+</a>
+<a href="../favourites.html">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.6-7 9-7 9z"/></svg>
+Favourites
+</a>
+<a href="../settings.html">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></svg>
+Settings
+</a>
+</nav>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#07070b">
+<title>Mockup A · Neon Nightclub · TipsyPlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070b;
+  --magenta:#ff4fd8;
+  --cyan:#7dfff2;
+  --ink:#f4fffd;
+  --dim:#c9fff8;
+  --glass:rgba(8,10,16,.72);
+  --line:rgba(125,255,242,.28);
+  --font:"Outfit",system-ui,sans-serif;
+  --display:"Unbounded",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--ink);background:var(--bg);
+  font:400 1.05rem/1.6 var(--font);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body::before{
+  content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(42% 36% at 12% 8%, rgba(255,79,216,.45), transparent 70%),
+    radial-gradient(36% 32% at 88% 0%, rgba(57,242,228,.35), transparent 68%),
+    radial-gradient(40% 40% at 70% 80%, rgba(255,79,216,.18), transparent 70%),
+    var(--bg);
+  background-size:140% 140%;
+  animation:drift 18s ease-in-out infinite;
+}
+@keyframes drift{
+  0%{background-position:0% 40%}
+  50%{background-position:100% 60%}
+  100%{background-position:0% 40%}
+}
+a{color:var(--cyan)}
+img{max-width:100%;height:auto;display:block}
+.wrap{width:min(1120px,calc(100% - 40px));margin:0 auto}
+.top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 0 8px;position:sticky;top:0;z-index:5;
+  background:linear-gradient(#07070bf2, #07070bcc 70%, transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);min-height:44px}
+.brand svg{width:40px;height:40px;filter:drop-shadow(0 0 8px rgba(255,79,216,.65))}
+.word{font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:-.03em}
+.word span{color:var(--magenta)}
+header nav{display:flex;gap:22px;align-items:center}
+header nav a{color:var(--dim);text-decoration:none;font-weight:600;min-height:44px;display:inline-flex;align-items:center}
+.kicker{font-family:var(--display);letter-spacing:.16em;text-transform:uppercase;font-size:.72rem;color:var(--magenta);margin:0 0 12px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(2.5rem,8vw,5.4rem);line-height:.98;letter-spacing:-.04em;margin:0 0 18px}
+h2{font-family:var(--display);font-weight:500;font-size:clamp(1.8rem,4vw,2.8rem);letter-spacing:-.03em;line-height:1.1;margin:0 0 18px}
+h3{font-family:var(--display);font-weight:500;font-size:1.25rem;letter-spacing:-.02em;margin:0 0 8px}
+.lede{font-size:1.2rem;max-width:34rem;color:var(--dim);margin:0 0 28px}
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 28px;
+  border-radius:999px;text-decoration:none;font-weight:600;color:#07070b;background:var(--magenta);
+  box-shadow:0 0 0 1px rgba(255,255,255,.2), 0 10px 40px rgba(255,79,216,.45);
+}
+.cta:hover{box-shadow:0 0 0 1px #fff, 0 0 32px rgba(125,255,242,.55)}
+.cta:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+.hero{display:grid;gap:36px;padding:28px 0 72px}
+.frame{
+  border-radius:28px;padding:8px;
+  background:linear-gradient(140deg, rgba(255,79,216,.8), rgba(125,255,242,.55));
+  box-shadow:0 20px 80px rgba(255,79,216,.18);
+}
+.frame img{border-radius:22px;width:100%}
+section{padding:28px 0 64px}
+.glass{
+  background:var(--glass);border:1px solid var(--line);border-radius:24px;
+  padding:22px;backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.grid{display:grid;gap:16px}
+.tag{display:inline-flex;min-height:32px;align-items:center;padding:0 10px;border-radius:999px;border:1px solid var(--line);color:var(--cyan);font-size:.82rem;margin:0 6px 6px 0}
+.soon{color:var(--magenta);font-family:var(--display);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase}
+.play{color:#07070b;background:var(--cyan);text-decoration:none;font-weight:600;border-radius:999px;min-height:44px;padding:0 16px;display:inline-flex;align-items:center}
+.steps{display:grid;gap:16px}
+.shot{margin:28px 0 0;border-radius:24px;overflow:hidden;border:1px solid var(--line)}
+.cats{display:flex;flex-wrap:wrap;gap:10px}
+.cats a{text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;min-height:48px;padding:0 16px;display:inline-flex;align-items:center;background:rgba(8,10,16,.45)}
+.cats a:hover{border-color:var(--magenta);color:var(--magenta)}
+details{border-top:1px solid var(--line);padding:14px 0}
+summary{cursor:pointer;font-family:var(--display);font-size:1.05rem;min-height:44px;display:flex;align-items:center}
+details p{color:var(--dim);margin:0 0 12px}
+.age{font-size:1.15rem}
+.foot{padding:28px 0 48px;color:var(--dim);display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.foot a{color:var(--cyan);font-weight:600;text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
+.note{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin:0}
+@media(min-width:900px){
+  .hero{grid-template-columns:1.05fr .95fr;align-items:center;padding-top:48px;min-height:78vh}
+  .grid.games{grid-template-columns:1fr 1fr 1fr}
+  .grid.spots{grid-template-columns:1fr 1fr 1fr 1fr}
+  .steps,.why{grid-template-columns:1fr 1fr 1fr}
+  .why{grid-template-columns:1fr 1fr}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<header class="wrap top">
+<a class="brand" href="#top">
+<svg viewBox="0 0 40 40" aria-hidden="true">
+<circle cx="16" cy="20" r="11" fill="none" stroke="#ff4fd8" stroke-width="2.5"/>
+<circle cx="24" cy="20" r="11" fill="none" stroke="#7dfff2" stroke-width="2.5"/>
+</svg>
+<span class="word">Tipsy<span>Play</span></span>
+</a>
+<nav aria-label="Primary"><a href="../games/">Games</a><a href="../responsible.html">Play safe</a></nav>
+</header>
+<main id="top">
+<section class="wrap hero">
+<div>
+<p class="note">Mockup A · Neon Nightclub</p>
+<p class="kicker">Games for adults</p>
+<h1>Free drinking games for your next night in</h1>
+<p class="lede">Party games for adults — host on your phone, friends join with a code.</p>
+<p><a class="cta" href="../games/">Browse All Games</a></p>
+</div>
+<figure class="frame">
+<picture>
+<source srcset="../images/hero-beer-pong.webp" type="image/webp">
+<img src="../images/hero-beer-pong.jpg" width="1200" height="675" alt="Friends at a night party tossing a ball toward a triangle of cups" fetchpriority="high">
+</picture>
+</figure>
+</section>
+
+<section class="wrap" id="featured">
+<h2>Featured games</h2>
+<div class="grid games">
+<article class="glass">
+<h3>Never Have I Ever</h3>
+<p>A prompt and a choice: optional sip, or score a point. Opt-in every card.</p>
+<p><span class="tag">3–12 players</span><span class="tag">Easy</span></p>
+<a class="play" href="../games/never-have-i-ever.html">Play</a>
+</article>
+<article class="glass">
+<h3>Who's Most Likely</h3>
+<p>Point to who's most likely. Most votes may take one small sip.</p>
+<p><span class="tag">4–12 players</span><span class="tag">Easy</span></p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="glass">
+<h3>Card Lottery</h3>
+<p>Guess red or black. A wrong guess is one optional sip per round, max.</p>
+<p><span class="tag">2–8 players</span><span class="tag">Easy</span></p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="glass">
+<h3>Category Countdown</h3>
+<p>Name things in a category before the timer ends. Stumble if you want a dare.</p>
+<p><span class="tag">3–10 players</span><span class="tag">Easy</span></p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="glass">
+<h3>Two Truths &amp; a Twist</h3>
+<p>Two truths and one fib. Fooled guessers hand over a point.</p>
+<p><span class="tag">3–10 players</span><span class="tag">Easy</span></p>
+<p class="soon">Coming soon</p>
+</article>
+<article class="glass">
+<h3>Cup Toss Challenge</h3>
+<p>Toss into water-filled cups for points. Nobody drinks from the game cups.</p>
+<p><span class="tag">2–8 players</span><span class="tag">Medium</span></p>
+<p class="soon">Coming soon</p>
+</article>
+</div>
+</section>
+
+<section class="wrap" id="spots">
+<h2>Best Party Spots</h2>
+<p class="lede">Four lists for a night out or a campus weekend. Plan a ride before you go, and keep the night optional.</p>
+<div class="grid spots">
+<a class="glass" href="../spots/canada-cities/"><h3>Canada cities</h3><p>Ten cities from Uber's 2026 Nightlife Index, plus a Montreal note.</p></a>
+<a class="glass" href="../spots/usa-cities/"><h3>USA cities</h3><p>Community picks with a reputation for music, food, and late neighbourhoods.</p></a>
+<a class="glass" href="../spots/canada-universities/"><h3>Canada universities</h3><p>Unofficial campus picks. Not affiliated with the schools.</p></a>
+<a class="glass" href="../spots/usa-universities/"><h3>USA universities</h3><p>Unofficial campus picks. Not affiliated with the schools.</p></a>
+</div>
+<p><a href="../spots/">Open the spots hub</a></p>
+</section>
+
+<section class="wrap" id="how">
+<div class="split">
+<div>
+<h2>How it works</h2>
+<div class="steps">
+<article class="glass"><h3>1. Host</h3><p>One person starts a room and gets a short code.</p></article>
+<article class="glass"><h3>2. Join</h3><p>Everyone else opens TipsyPlay on their own phone and enters the code.</p></article>
+<article class="glass"><h3>3. Answer</h3><p>Each phone shows the prompt. Sip if you want, or take the non-alcoholic alternative.</p></article>
+</div>
+</div>
+<figure class="shot"><picture>
+<source srcset="../images/friends-phones.webp" type="image/webp">
+<img src="../images/friends-phones.jpg" width="1152" height="864" alt="Friends holding up their phones to join the same party game">
+</picture></figure>
+</div>
+</section>
+
+<section class="wrap" id="categories">
+<div class="split">
+<div>
+<h2>Browse by category</h2>
+<p>Jump straight to the kind of night you want.</p>
+<nav class="cats" aria-label="Game categories">
+<a href="../games/?category=card">Card drinking games</a>
+<a href="../games/?category=quick">Quick games</a>
+<a href="../games/?category=two">Games for 2</a>
+<a href="../games/?category=big-groups">Big groups</a>
+<a href="../games/?category=no-props">No props</a>
+</nav>
+</div>
+<figure class="shot"><picture>
+<source srcset="../images/friends-card-game.webp" type="image/webp">
+<img src="../images/friends-card-game.jpg" width="1152" height="864" alt="Friends laughing around a table during a card game">
+</picture></figure>
+</div>
+</section>
+
+<section class="wrap" id="why">
+<h2>Why TipsyPlay</h2>
+<div class="grid why">
+<article class="glass"><h3>Free</h3><p>Drinking games and party games with no paywall.</p></article>
+<article class="glass"><h3>No app download</h3><p>It runs in the browser. Nothing to install.</p></article>
+<article class="glass"><h3>Works on your phone</h3><p>Host and join from the phone already in your pocket.</p></article>
+<article class="glass"><h3>New games often</h3><p>Never Have I Ever is live. More games are added often.</p></article>
+</div>
+</section>
+
+<section class="wrap faq" id="faq">
+<h2>FAQ</h2>
+<details open>
+<summary>What is TipsyPlay?</summary>
+<p>TipsyPlay is a free set of drinking games and party games for adults. You play in the browser on the phones you already have.</p>
+</details>
+<details>
+<summary>Do I need to download an app?</summary>
+<p>No. There is no app download. Open TipsyPlay, host a room, and friends join with a code.</p>
+</details>
+<details>
+<summary>Do these games work if someone is not drinking?</summary>
+<p>Yes. Every game works with non-alcoholic drinks. Passing is always fine, and nobody has to sip.</p>
+</details>
+<details>
+<summary>Which games can we play tonight?</summary>
+<p>Never Have I Ever is ready to play now. The other party games are marked coming soon, and new games are added often.</p>
+</details>
+<details>
+<summary>Are card drinking games and games for 2 included?</summary>
+<p>Yes. TipsyPlay is free. Filter the list for card drinking games, quick rounds, or games for 2, then hit play when you are ready.</p>
+</details>
+</section>
+
+<section class="wrap" id="responsible">
+<h2>Play responsibly</h2>
+<div class="glass">
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<p>Know your limits. Sips are optional and small. There is no chugging, no races, and no pressure to finish a drink.</p>
+<p>Every game works with non-alcoholic drinks. Points, dares, and finger-folds are always a full way to play.</p>
+<p>Never drink and drive. Plan a ride home before you start.</p>
+<p><a href="../responsible.html">Read the full house code</a></p>
+</div>
+</section>
+</main>
+<footer class="wrap foot">
+<nav aria-label="Footer">
+<a href="../games/">Games</a>
+<a href="../about.html">About</a>
+<a href="../contact.html">Contact</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../terms.html">Terms</a>
+</nav>
+<p>© TipsyPlay</p>
+</footer>
+</body>
+</html>
