@@ -1,5 +1,5 @@
 # Hostinger / LiteSpeed / Apache.
-# HTML and sw.js must revalidate. CSS and JS are requested as file.css?v=12,
+# HTML and sw.js must revalidate. CSS and JS are requested as file.css?v=13,
 # so each version can stay cached until the query changes.
 <IfModule mod_rewrite.c>
   RewriteEngine On
