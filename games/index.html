@@ -13,11 +13,12 @@
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<link rel="stylesheet" href="../styles.css?v=11">
+<link rel="stylesheet" href="../styles.css?v=12">
 </head>
 <body data-root="../">
 <header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="./">Games</a><a href="../responsible.html">Play safe</a></nav></header>
 <main>
+<section class="entry" id="top">
 <h1>Drinking games and party games</h1>
 <p class="lede">Games for adults you can host on a phone. One is ready tonight. The rest are marked coming soon.</p>
 <form class="search-row" action="" method="get" role="search">
@@ -34,6 +35,8 @@
 <a class="chip" data-cat-link="no-props" href="?category=no-props">No props</a>
 </nav>
 <p id="gcount" class="tag" style="display:inline-block;margin-top:12px"></p>
+</section>
+<section class="band-ink">
 <div id="gamelist">
 <article class="card game-card" id="never-have-i-ever" data-cat="quick big-groups no-props" data-search="never have i ever prompt sip point phone quick big groups no props">
 <h3>Never Have I Ever</h3>
@@ -107,6 +110,7 @@
 </article>
 </div>
 <p id="empty" class="card hide">No games match that. Try another category or a shorter search.</p>
+</section>
 </main>
 <footer class="site-foot" data-keep>
 <nav aria-label="Footer">
@@ -118,8 +122,8 @@
 </nav>
 <p>© TipsyPlay</p>
 </footer>
-<script src="../sounds.js?v=11"></script>
-<script src="../app.js?v=11"></script>
+<script src="../sounds.js?v=12"></script>
+<script src="../app.js?v=12"></script>
 <script>
 (function(){
 var cards=document.querySelectorAll(".game-card"),countEl=document.getElementById("gcount"),empty=document.getElementById("empty"),input=document.getElementById("q");

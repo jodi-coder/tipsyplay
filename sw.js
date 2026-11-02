@@ -1,5 +1,5 @@
-const CACHE="tipsyplay-v11";
-const V="11";
+const CACHE="tipsyplay-v12";
+const V="12";
 function ver(path){return path+"?v="+V}
 const FILES=["./","index.html","library.html","favourites.html","settings.html","responsible.html","about.html","contact.html","privacy.html","terms.html","robots.txt","sitemap.xml","games/index.html","games/never-have-i-ever.html","play/never-have-i-ever.html","play/party.html","play/join.html","data/nhie.json","manifest.webmanifest","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","images/hero-beer-pong.webp","images/hero-beer-pong.jpg","images/friends-card-game.webp","images/friends-card-game.jpg","images/friends-phones.webp","images/friends-phones.jpg","images/og-image.jpg","spots/index.html","spots/canada-cities/index.html","spots/usa-cities/index.html","spots/canada-universities/index.html","spots/usa-universities/index.html",ver("styles.css"),ver("app.js"),ver("sounds.js"),ver("firebase-config.js"),ver("data/nhie.js"),ver("play/nhie-game.js"),ver("play/party.js"),ver("play/join.js"),ver("spots/spots.css"),ver("spots/comments.js"),ver("spots/admin-comments.js")];
 function isFirebase(url){return /firebaseio\.com|firebasedatabase\.app|firebaseapp\.com|googleapis\.com|gstatic\.com\/firebasejs|identitytoolkit|securetoken/i.test(url)}

@@ -9,24 +9,32 @@
 <meta name="description" content="A plain-language note on what TipsyPlay stores on your device and how online rooms use anonymous sign-in.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=11">
+<link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body data-root="">
 <header class="top"><a class="logo" href="index.html">Tipsy<span>Play</span></a><nav><a href="games/">Games</a><a href="responsible.html">Play safe</a></nav></header>
 <main>
+<section class="entry" id="top">
 <h1>Privacy</h1>
-<p>This is a short, plain-language note about how this site works. It is not a formal privacy policy written by a lawyer, and it does not claim compliance with any specific law.</p>
+<p class="lede">This is a short, plain-language note about how this site works. It is not a formal privacy policy written by a lawyer, and it does not claim compliance with any specific law.</p>
+</section>
+<section class="band-ink">
+<div class="card">
 <h2>On this device</h2>
 <p>TipsyPlay saves a few settings in your browser's local storage: whether you confirmed your age, favourites, sound on or off, non-alcoholic mode, reminder cards, spice level, party-mode names, and the name you type for an online room. A room code can sit in session storage so a refresh can rejoin. You can clear this data in your browser settings.</p>
+</div>
+<div class="card">
 <h2>Online rooms</h2>
 <p>If you host or join a room, the site uses Firebase Anonymous Authentication and Firebase Realtime Database so phones in that room can share the game state. The name you type is stored with that anonymous account for the life of the room. Rooms are removed when the host closes them, or after they expire.</p>
 <p>TipsyPlay does not ask for an email address or a password to play. We do not sell personal information. We do not run our own ad network on these pages.</p>
+</div>
+</section>
 </main>
 <footer class="site-foot" data-keep>
 <nav aria-label="Footer"><a href="games/">Games</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
 <p>© TipsyPlay</p>
 </footer>
-<script src="sounds.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="sounds.js?v=12"></script>
+<script src="app.js?v=12"></script>
 </body>
 </html>

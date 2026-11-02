@@ -30,7 +30,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 }
 main{max-width:1080px;margin:0 auto;padding:8px 20px 36px}
 header.top{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding:14px 20px;max-width:1080px;margin:0 auto;
   position:sticky;top:0;z-index:5;background:var(--yellow);
   border-bottom:4px solid var(--ink);
@@ -84,19 +84,23 @@ label{display:block;margin:8px 0}
 .feature-grid,.why-grid,.steps{display:grid;gap:14px}
 .game-card h3{margin:.1em 0 .3em}
 .faq h3{margin-bottom:.25em}
-#featured,#why,#faq{
+.band-ink,#featured,#why,#faq{
   background:var(--ink);color:var(--yellow);
   margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
   padding:48px max(20px,calc(50vw - 520px));
 }
+.band-ink h2,.band-ink>p,.band-ink .spot-copy p,.band-ink .source-note,.band-ink .fine,.band-ink .age,.band-ink .prevnext a,
 #featured h2,#why h2,#faq h2,#featured>p,#why>p,#faq>p,#faq h3{color:var(--yellow)}
+.band-ink .card,.band-ink .card :is(p,h2,h3,li,label,span),.band-ink .card a:not(.btn),
+.band-ink .spot-card,.band-ink .spot-card :is(p,h2),
 #featured .card,#why .card,#faq .card,#how .card,
 #featured .card :is(p,h3,h2),#why .card :is(p,h3,h2),#how .card :is(p,h3,h2){color:var(--ink)}
-#how{
+.band-pink,#how{
   background:var(--pink);color:var(--ink);
   margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);
   padding:48px max(20px,calc(50vw - 520px));
 }
+.band-ink a:not(.btn):not(.spot-card):not(.card),
 #featured a:not(.btn),#why a:not(.btn),#faq a:not(.btn){color:var(--yellow)}
 a.spot-tile{display:block;text-decoration:none;color:inherit}
 a.spot-tile h3{color:inherit}
@@ -124,6 +128,7 @@ body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 .tabbar a.on{background:var(--yellow);color:var(--ink)}
 .heart{position:absolute;top:8px;right:8px;width:44px;height:44px;border:3px solid var(--ink);border-radius:0;background:var(--yellow);font-size:1.2rem}
 .card h2{padding-right:48px}
+.band-ink .card h2,.play-wrap .card h2,.note-card h2{padding-right:0}
 button,a{touch-action:manipulation}
 button,.btn,input,.chip{scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom));scroll-margin-top:12px}
 button.mute{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0;border:3px solid var(--ink);border-radius:0;background:var(--yellow);color:var(--ink);font-size:1.2rem;cursor:pointer}
@@ -199,11 +204,11 @@ button.x{min-width:48px;min-height:48px;border:3px solid var(--ink);border-radiu
 }
 @media(min-width:980px){
   .feature-grid{grid-template-columns:1fr 1fr 1fr}
-  #top.entry{display:grid;grid-template-columns:1.05fr .9fr;gap:28px;align-items:center}
-  .entry .hero-photo{margin:0}
-  .hero-photo{transform:rotate(-1.5deg)}
+  .entry:has(.hero-photo),.entry:has(.spot-hero){display:grid;grid-template-columns:1.05fr .9fr;gap:28px;align-items:center}
+  .entry:has(.hero-photo) .hero-photo,.entry:has(.spot-hero) .spot-hero{grid-column:2;grid-row:1 / span 8;margin:0}
+  .hero-photo,.entry .spot-hero{transform:rotate(-1.5deg)}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .logo,.eyebrow,.soon,.hero-photo{transform:none}
+  .logo,.eyebrow,.soon,.hero-photo,.spot-hero{transform:none}
 }
