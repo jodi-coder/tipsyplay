@@ -164,6 +164,12 @@ input.bigin{width:100%;background:#fff}
 .prow input{flex:1;min-width:0}
 .plist .off{opacity:.55}
 button.x{min-width:48px;min-height:48px;border:3px solid var(--ink);border-radius:0;background:var(--pink);color:var(--ink);font-family:var(--display);font-size:1.2rem;cursor:pointer}
+.dock{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.dock .btn{min-height:56px}
+.boardrow{justify-content:space-between;background:#fff;border:3px solid var(--ink);padding:8px 10px}
+.turntag{font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--pink);margin:8px 0}
+.sketchpad{width:100%;height:240px;background:#fff;border:4px solid #111;touch-action:none;display:block}
+.linein{width:100%;margin:0}
 .join-row{display:flex;gap:8px;align-items:center}
 .join-row input{flex:1;min-width:0;letter-spacing:.16em;font-weight:700;text-align:center;background:#fff}
 .join-row .btn{min-width:96px;min-height:52px;box-shadow:none}
