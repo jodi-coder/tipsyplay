@@ -1,62 +1,21 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BHY4BXF3V3');
 </script>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffe14a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><title>Join with code · TipsyPlay</title><link rel="stylesheet" href="../styles.css?v=15"></head><body class="party" data-root="../"><header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/">Games</a><a href="../responsible.html">Play safe</a><a href="../games/never-have-i-ever.html">Rules</a><button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button></nav></header><main class="play-wrap">
-<p id="connecting">Connecting…</p>
-<div id="offline" class="card hide"><p id="offmsg"><strong>Online play needs a connection.</strong> Join again when you're back online.</p><p id="offdetail"></p></div>
-<div id="app" class="hide">
-<section id="home" class="entry" >
-<p class="eyebrow">Never Have I Ever</p>
-<h1>Your phone.<br>Your answer.</h1>
-<p class="lede">Everyone joins on their own phone. Sipping stays optional.</p>
-<label class="sr" for="playername">Your name</label>
-<input class="bigin" id="playername" maxlength="20" autocomplete="nickname" autocapitalize="words" enterkeyhint="done" placeholder="Your name">
-<button type="button" class="btn host-cta" id="hostbtn" data-action="host">Host Game</button>
-<form class="join-row" id="joinform">
-<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" enterkeyhint="go" placeholder="Join with code" aria-label="Room code">
-<button type="button" class="btn alt" id="joinbtn" data-action="join">Join</button>
-</form>
-<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
-</section>
-<section id="lobby" class="hide">
-<h1>Lobby</h1>
-<p id="codebig" class="codebig" aria-live="polite"></p>
-<p id="sharelink" class="linkbox"></p>
-<div class="ctrl"><button type="button" class="btn alt" id="copybtn" data-action="copy">Copy link</button><button type="button" class="btn alt" id="sharebtn" data-action="share">Share</button></div>
-<div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
-<div class="card"><h2 style="margin-top:0">Spice level</h2><div class="chips" id="ospice" role="group" aria-label="Spice level"><button type="button" class="chip" data-action="spice" data-l="mild">🌶 Mild</button><button type="button" class="chip" data-action="spice" data-l="spicy">🌶🌶 Spicy</button><button type="button" class="chip" data-action="spice" data-l="extra">🌶🌶🌶 Extra</button></div></div>
-<div class="card"><h2 style="margin-top:0">Rounds</h2><div class="chips" id="orounds" role="group" aria-label="Number of prompts"><button type="button" class="chip" data-action="rounds" data-r="5">5</button><button type="button" class="chip" data-action="rounds" data-r="10">10</button><button type="button" class="chip" data-action="rounds" data-r="15">15</button><button type="button" class="chip" data-action="rounds" data-r="20">20</button></div>
-<label class="toggle"><input type="checkbox" id="ona"> Non-alcoholic mode</label>
-<p class="tag">On: points only, no sipping.</p></div>
-<button type="button" class="btn host-cta hostonly" id="startbtn" data-action="start">Start game</button>
-<div class="ctrl"><button type="button" class="btn alt hostonly" id="closebtn" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leavebtn" data-action="leave">Leave</button></div>
-</section>
-<section id="stage" class="hide">
-<div id="board" class="plist" aria-label="Scores"></div>
-<div class="gcard" id="card" aria-live="polite"><div class="lvl" id="lvl"></div><div class="prompt" id="prompt"></div><div class="na" id="instr"></div><p class="ask" id="ask"></p><p class="said" id="said"></p></div>
-<div class="choice" id="choices"><button type="button" class="btn" id="yes" data-action="yes" data-cue="1">I have 🙈</button><button type="button" class="btn alt" id="no" data-action="no" data-cue="1">Never 😇</button></div>
-<div class="ctrl"><button type="button" class="btn hostonly" id="revealbtn" data-action="reveal" data-cue="1">Reveal now</button><button type="button" class="btn hostonly" id="nextbtn" data-action="next" data-cue="1">Next prompt ▶</button></div>
-<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leavestage" data-action="leave">Leave</button></div>
-</section>
-<section id="over" class="hide">
-<h1>Game over</h1>
-<div class="card" id="crowns"></div>
-<ol class="final" id="final"></ol>
-<p>Sipping was always optional. Points are just for fun.</p>
-<div class="ctrl"><button type="button" class="btn hostonly" id="again" data-action="again" data-cue="1">Play again</button><button type="button" class="btn alt hostonly" id="closeover" data-action="close">Close room</button><button type="button" class="btn alt guestonly" id="leaveover" data-action="leave">Leave</button><button type="button" class="btn alt" id="gohome" data-action="home">Home</button></div>
-</section>
-</div>
-<p id="perr" role="alert"></p>
-</main><footer class="site-foot" data-keep>
-<nav aria-label="Footer"><a href="../games/">Games</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
-<p>© TipsyPlay</p>
-</footer>
-<canvas id="fx" class="fx hide" aria-hidden="true"></canvas>
-<script src="../sounds.js?v=15"></script><script src="../app.js?v=15"></script><script src="../data/nhie.js?v=15"></script><script src="join.js?v=15"></script></body></html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0;url=../games/never-have-i-ever.html">
+<title>Join Never Have I Ever · TipsyPlay</title>
+<script>location.replace("../games/never-have-i-ever.html"+location.search+location.hash);</script>
+</head>
+<body>
+<p><a href="../games/never-have-i-ever.html">Continue to Never Have I Ever</a></p>
+</body>
+</html>
