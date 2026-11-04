@@ -1,28 +1,112 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BHY4BXF3V3');
 </script>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffe14a"><meta name="description" content="Everyone taps a name. Most votes may take one small sip, or give a speech."><link rel="canonical" href="https://tipsyplay.com/games/whos-most-likely.html"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><title>Who&#x27;s Most Likely · TipsyPlay</title><link rel="stylesheet" href="../styles.css?v=16"></head><body data-root="../"><header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/">Games</a><a href="../responsible.html">Play safe</a></nav></header><main>
-<section class="entry" id="top">
-<h1>👉 Who&#x27;s Most Likely</h1>
-<div class="tags"><span class="tag">👥 4–12</span><span class="tag">🧰 None</span><span class="tag">😌 easy</span><span class="tag">📱 phone</span></div>
-<div class="na"><b>Non-alcoholic alternative (always fine):</b> Most votes gives a 10-second acceptance speech.</div>
-<a class="btn host-cta" href="../play/whos-most-likely.html">Host Game</a>
-<form class="join-row" action="../play/whos-most-likely.html" method="get"><input class="bigin" name="code" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="Join with code" aria-label="Room code"><button class="btn alt" type="submit">Join</button></form>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffe14a">
+<meta name="description" content="Most Likely To party mode. Join with a PIN. One small sip or a playful challenge. Nothing stacks.">
+<link rel="canonical" href="https://tipsyplay.com/games/whos-most-likely.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Who's Most Likely · TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=17">
+</head>
+<body class="mlt" data-root="../">
+<p id="connecting">Connecting…</p>
+<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
+<div id="app" class="mlt-app hide">
+<section id="home" class="mlt-screen">
+<p class="eyebrow">Most Likely To</p>
+<h1>Point.<br>Don't tell.</h1>
+<p class="lede">A 6-character PIN. Big buttons. Secret votes.</p>
+<div class="na"><b>Opt in:</b> Sipping is optional. Water counts.</div>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
+<div class="mlt-emos" id="emojis" aria-label="Optional emoji"></div>
+<button type="button" class="btn host-cta" id="hostbtn">Host</button>
+<form id="joinform" class="join-row">
+<input class="bigin" id="pin" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="PIN" aria-label="6-character PIN">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
-<section class="band-ink">
-<div class="card"><h2 style="margin-top:0">Setup</h2><ol><li>Host a room and share the code. Four or more is ideal. Two can still play.</li><li>Agree on a spice of honesty everyone is fine with. Keep it kind.</li><li>Non-alcoholic mode swaps the sip for a speech the whole night.</li></ol></div>
-<div class="card"><h2 style="margin-top:0">Rules</h2><ol><li>A prompt shows on every phone.</li><li>Each player taps a name in secret.</li><li>The person with the most votes may take one small sip, or give a 10-second speech.</li><li>Ties sip nothing. Passing is always fine. No one has to explain a vote.</li></ol></div>
-<div class="card"><h2 style="margin-top:0">Variations</h2><ul><li><b>Speech night:</b> turn non-alcoholic mode on and skip sipping entirely.</li><li><b>Kind round:</b> only vote for compliments, like who is most likely to share fries.</li><li>The winner of the vote picks the next person&#x27;s nickname for one round.</li></ul></div>
+<section id="lobby" class="mlt-screen hide">
+<p id="pinbig" class="mlt-pin" aria-live="polite"></p>
+<canvas id="qr" class="mlt-qr" aria-label="QR code for this room"></canvas>
+<div class="mlt-packs" role="group" aria-label="Question pack">
+<button type="button" data-pack="classic">Classic</button>
+<button type="button" data-pack="spicy">Spicy</button>
+<button type="button" data-pack="couples">Couples</button>
+</div>
+<div id="plist" class="mlt-people" aria-live="polite"></div>
+<form class="join-row" id="customform" onsubmit="return false">
+<input class="bigin" id="custom" maxlength="80" placeholder="Add a question" aria-label="Custom question">
+<button type="button" class="btn alt" id="addcustom">Add</button>
+</form>
+<label class="toggle"><input type="checkbox" id="twist"> Plot twist</label>
+<label class="toggle"><input type="checkbox" id="nohost"> No-host mode</label>
+<label class="toggle hostonly"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start</button>
+<button type="button" class="btn alt hostonly" id="close">Close</button>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
-</main><footer class="site-foot" data-keep>
-<nav aria-label="Footer"><a href="../games/">Games</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
-<p>© TipsyPlay</p>
-</footer><script src="../sounds.js?v=16"></script><script src="../app.js?v=16"></script></body></html>
+<section id="play" class="mlt-screen hide">
+<h2 id="question" class="mlt-q"></h2>
+<div id="grid" class="mlt-grid" aria-label="Players"></div>
+<div id="wait" class="mlt-wait hide">
+<p>Waiting for others…</p>
+<p id="waitcount" class="mlt-count">0/0</p>
+</div>
+<div id="reveal" class="mlt-reveal hide">
+<p id="winner" class="mlt-win"></p>
+<p id="sipline" class="mlt-sip"></p>
+<p id="tie"></p>
+<div id="board" class="mlt-grid" aria-label="Leaderboard"></div>
+</div>
+<div id="twistbox" class="mlt-twist hide">
+<p class="eyebrow">Plot twist</p>
+<p id="twistwho" class="mlt-win"></p>
+<p id="twistcopy"></p>
+</div>
+<div class="mlt-bar">
+<button type="button" class="btn hostonly hide" id="next">Next</button>
+<button type="button" class="btn alt hostonly" id="packbtn">classic</button>
+<button type="button" class="btn alt" id="mixbtn">Sound</button>
+</div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+<section id="closed" class="mlt-screen card hide">
+<h1>Room closed</h1>
+<p>This PIN is done.</p>
+<a class="btn" href="./">Games</a>
+</section>
+<section id="mixer" class="mlt-mixer hide">
+<h2>Sound</h2>
+<label>Music <input id="mixmusic" type="range" min="0" max="100" value="70"></label>
+<label>SFX <input id="mixsfx" type="range" min="0" max="100" value="90"></label>
+<label>Voice <input id="mixvoice" type="range" min="0" max="100" value="85"></label>
+<button type="button" class="btn" id="mixbtn2">Done</button>
+</section>
+<p id="perr" role="alert"></p>
+</div>
+<button type="button" class="mute" id="mute" hidden aria-label="Mute sound effects">Mute</button>
+<script src="../sounds.js?v=17"></script>
+<script src="../app.js?v=17"></script>
+<script src="../data/most-likely-packs.js?v=17"></script>
+<script src="../play/party-audio.js?v=17"></script>
+<script src="../play/qr.js?v=17"></script>
+<script src="../play/most-likely.js?v=17"></script>
+</body>
+</html>

@@ -219,6 +219,50 @@
         }
       }
     },
+    "mlt": {
+      "$pin": {
+        ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && !newData.exists() && data.exists() && data.child('meta').child('hostUid').val() == auth.uid",
+        "meta": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/)",
+          ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && newData.child('hostUid').val() == auth.uid && (!data.exists() || data.child('hostUid').val() == auth.uid)",
+          ".validate": "newData.child('hostUid').isString() && newData.child('hostUid').val() == auth.uid && newData.child('createdAt').isNumber() && newData.child('createdAt').val() > 1700000000000 && newData.child('createdAt').val() <= now + 600000 && (!data.exists() || newData.child('createdAt').val() == data.child('createdAt').val()) && newData.child('status').isString() && newData.child('status').val().matches(/^(lobby|play|over)$/) && newData.child('pack').isString() && newData.child('pack').val().matches(/^(classic|spicy|couples)$/) && newData.child('twist').isBoolean() && newData.child('nohost').isBoolean() && newData.child('round').isNumber() && newData.child('round').val() >= 0 && newData.child('round').val() <= 40 && newData.hasChildren(['hostUid','createdAt','status','pack','twist','nohost','round'])"
+        },
+        "players": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/)",
+          "$uid": {
+            ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && ((auth.uid == $uid && root.child('mlt').child($pin).child('meta').child('hostUid').exists() && (data.exists() || root.child('mlt').child($pin).child('meta').child('status').val() == 'lobby')) || (root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid && !newData.exists()))",
+            ".validate": "!newData.exists() || (newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 20 && newData.child('emoji').isString() && newData.child('emoji').val().length <= 8 && newData.child('connected').isBoolean() && newData.child('joinedAt').isNumber() && newData.child('votes').isNumber() && newData.child('votes').val() >= 0 && newData.child('votes').val() <= 80 && newData.child('seen').isNumber() && newData.child('seen').val() >= 0 && newData.child('seen').val() <= 80 && newData.hasChildren(['name','emoji','connected','joinedAt','votes','seen']))"
+          }
+        },
+        "play": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/)",
+          ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid && root.child('mlt').child($pin).child('meta').child('status').val().matches(/^(lobby|play|over)$/)",
+          ".validate": "newData.child('step').isString() && newData.child('step').val().matches(/^(vote|reveal|twist|over)$/) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 120 && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 80 && newData.child('round').isNumber() && newData.child('round').val() >= 0 && newData.child('round').val() <= 40 && newData.child('opened').isNumber() && newData.child('opened').val() >= 0 && newData.child('opened').val() <= now + 600000 && newData.child('order').isString() && newData.child('order').val().length > 0 && newData.child('order').val().length <= 2000 && newData.child('got').isNumber() && newData.child('got').val() >= 0 && newData.child('got').val() <= 12 && newData.child('who').isString() && newData.child('who').val().length <= 128 && newData.hasChildren(['step','text','seq','round','opened','order','got','who'])"
+        },
+        "cast": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid",
+          "$uid": {
+            ".read": "auth != null && (auth.uid == $uid || root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid)",
+            ".write": "( auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && auth.uid == $uid && root.child('mlt').child($pin).child('players').child($uid).exists() && root.child('mlt').child($pin).child('play').child('step').val() == 'vote' && newData.exists() ) || ( auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid && !newData.exists() )",
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 128)"
+          }
+        },
+        "reveal": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/)",
+          ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && root.child('mlt').child($pin).child('meta').child('hostUid').val() == auth.uid",
+          "$uid": {
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 128)"
+          }
+        },
+        "custom": {
+          ".read": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/)",
+          "$id": {
+            ".write": "auth != null && $pin.matches(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$/) && $id.matches(/^[A-Za-z0-9]{6,24}$/) && root.child('mlt').child($pin).child('players').child(auth.uid).exists() && !data.exists() && newData.exists()",
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 80"
+          }
+        }
+      }
+    },
     "comments": {
       ".read": true,
       "$page": {
