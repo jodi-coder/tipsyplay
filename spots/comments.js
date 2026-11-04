@@ -88,7 +88,7 @@ async function boot(){
  var appMod=await import(base+"firebase-app.js");
  var authMod=await import(base+"firebase-auth.js");
  var dbMod=await import(base+"firebase-database.js");
- var cfg=await import("/firebase-config.js?v=14");
+ var cfg=await import("/firebase-config.js?v=15");
  initializeApp=appMod.initializeApp;
  getAuth=authMod.getAuth;
  signInAnonymously=authMod.signInAnonymously;
