@@ -13,7 +13,7 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffe14a">
-<meta name="description" content="King's Cup for adults. Draw a card, then one small sip or a non-alcoholic alternative. Nothing stacks.">
+<meta name="description" content="King's Cup for adults. Join with a code on your own phone. One small sip or a non-alcoholic alternative. Nothing stacks.">
 <link rel="canonical" href="https://tipsyplay.com/games/kings-cup.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -34,33 +34,52 @@
 </nav>
 </header>
 <main class="play-wrap">
-<section id="setup" class="entry">
+<p id="connecting">Connecting…</p>
+<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
+<div id="app" class="hide">
+<section id="home" class="entry">
 <p class="eyebrow">King's Cup</p>
-<h1>Draw a card.<br>Then choose.</h1>
-<p class="lede">Pass the phone. Tap to draw. Every card is one small sip or a clearly named alternative. Nothing stacks.</p>
-<div class="na"><b>Opt in before you deal:</b> Sipping is optional. Water counts. You can pass any card.</div>
+<h1>Your phone.<br>Your card.</h1>
+<p class="lede">One person hosts. Everyone else joins with the code on their own phone. Every card is one small sip or a clearly named alternative. Nothing stacks.</p>
+<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any card.</div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
-<label class="toggle"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
-<form id="addform" class="join-row">
-<input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Player name" aria-label="Player name">
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
+<label for="pgender">Fives and sixes</label>
 <select id="pgender" aria-label="Who this player matches on fives and sixes">
 <option value="everyone">Everyone</option>
 <option value="guys">Guys</option>
 <option value="girls">Girls</option>
 </select>
-<button class="btn alt" type="submit">Add</button>
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
 </form>
-<div id="plist" class="plist"></div>
-<p id="setupmsg" class="tag"></p>
-<button type="button" class="btn host-cta" id="start" disabled>Deal 52 cards</button>
-<button type="button" class="btn alt hide" id="resume">Resume this deck</button>
+</section>
+<section id="lobby" class="hide">
+<h1>Lobby</h1>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any card.</div>
+<div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
+<label class="toggle hostonly"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Deal 52 cards</button>
+<div class="ctrl">
+<button type="button" class="btn alt hostonly" id="close">Close room</button>
+<button type="button" class="btn alt guestonly" id="leave">Leave</button>
+</div>
 </section>
 <section id="table" class="hide">
-<div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<p id="away" class="na hide">The host disconnected. The deck waits here until they reconnect.</p>
 <div class="kc-cup" id="cup" aria-label="King counter"><span id="cupfill"></span><b id="cuplabel">0/4</b></div>
 <p class="tag" id="cupnote">The cup counts kings. It is not a drink.</p>
 <p class="turntag" id="turn"></p>
-<button type="button" class="btn host-cta" id="draw">Tap to draw</button>
+<p class="tag" id="left"></p>
+<p id="audioline" class="tag"></p>
+<button type="button" class="btn host-cta hide" id="draw">Tap to draw</button>
+<p id="wait" class="lede hide">Waiting for a draw.</p>
 <article id="shown" class="hide" aria-live="polite">
 <div class="kc-card" id="card">
 <div class="lvl" id="cardsuit"></div>
@@ -71,7 +90,7 @@
 <p id="who"></p>
 <div class="na" id="sipline"></div>
 <div id="extra"></div>
-<div class="choice">
+<div class="choice" id="acks">
 <button type="button" class="btn" id="next">We took one small sip</button>
 <button type="button" class="btn alt" id="altdone">We did the alternative</button>
 </div>
@@ -79,7 +98,7 @@
 <section id="finale" class="hide">
 <h2>Final King</h2>
 <p id="finalcopy"></p>
-<button type="button" class="btn host-cta" id="newdeck">New deck, same table</button>
+<button type="button" class="btn host-cta hostonly" id="newdeck">New deck, same table</button>
 </section>
 <section id="activerules" class="card">
 <h2 style="margin-top:0">Active rules</h2>
@@ -89,11 +108,11 @@
 </section>
 <div id="scores" class="plist" aria-label="Cards and points"></div>
 <div class="kc-react" id="react" aria-label="Reactions">
-<button type="button" data-emo="👏">👏</button>
-<button type="button" data-emo="😮">😮</button>
-<button type="button" data-emo="😂">😂</button>
-<button type="button" data-emo="👎">👎</button>
-<button type="button" data-emo="🎉">🎉</button>
+<button type="button" data-emo="clap">👏</button>
+<button type="button" data-emo="gasp">😮</button>
+<button type="button" data-emo="laugh">😂</button>
+<button type="button" data-emo="boo">👎</button>
+<button type="button" data-emo="party">🎉</button>
 </div>
 <button type="button" class="btn alt" id="mixbtn">Mixer</button>
 <section id="mixer" class="card kc-mixer hide">
@@ -106,7 +125,18 @@
 <label class="toggle"><input id="mutevoice" type="checkbox"> Mute voice</label>
 </section>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl">
+<button type="button" class="btn alt hostonly" id="closestage">Close room</button>
+<button type="button" class="btn alt guestonly" id="leavestage">Leave</button>
+</div>
 </section>
+<section id="closed" class="card hide">
+<h1>Room closed</h1>
+<p>The host left. This room is closed.</p>
+<a class="btn" href="./">Back to games</a>
+</section>
+<p id="perr" role="alert"></p>
+</div>
 </main>
 <footer class="site-foot" data-keep>
 <nav aria-label="Footer">
