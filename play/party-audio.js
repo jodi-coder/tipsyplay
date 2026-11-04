@@ -79,6 +79,7 @@ function create(opts){
   }
   function cue(name, level, pan){
     if(!ensure()||mix.muteSfx) return;
+    if(name==="tick"){tone(1040,"sine",audio.currentTime,0.035,0.045,0,dest(pan)); return}
     duck(0.45);
     var t=audio.currentTime, j=0.85+Math.random()*0.3, L=level==null?Math.max(0,Math.min(1,hype()/4)):level;
     var bus=dest(pan);
@@ -104,6 +105,7 @@ function create(opts){
     else if(name==="chant"){tone(196,"square",t,0.12,0.25,0,bus); tone(196,"square",t+0.2,0.12,0.25,0,bus); tone(262,"square",t+0.4,0.16,0.22,0,bus)}
     else if(name==="crickets"){var c; for(c=0;c<5;c++) tone(3200+Math.random()*400,"sine",t+c*0.16,0.05,0.08,3600,bus)}
     else if(name==="awkward"){noise(t,0.7,0.08,180,320,"lowpass",bus); tone(98,"sine",t,0.6,0.05,0,bus)}
+    else if(name==="payoff"){tone(523,"triangle",t,0.16,0.32,0,bus); tone(659,"triangle",t+0.12,0.18,0.3,0,bus); tone(784,"sine",t+0.24,0.26,0.34,0,bus); tone(1046,"sine",t+0.38,0.42,0.28,0,bus); noise(t+0.36,0.18,0.22,700,2200,null,bus)}
   }
   function say(line){
     if(!host()||mix.muteVoice||!line||!global.speechSynthesis||!global.SpeechSynthesisUtterance) return;
