@@ -1,28 +1,147 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BHY4BXF3V3');
 </script>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffe14a"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><title>Never Have I Ever · TipsyPlay</title><link rel="stylesheet" href="../styles.css?v=15"></head><body data-root="../"><header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/">Games</a><a href="../responsible.html">Play safe</a></nav></header><main>
-<section class="entry" id="top">
-<h1>🙈 Never Have I Ever</h1>
-<div class="tags"><span class="tag">👥 3–12</span><span class="tag">🧰 None</span><span class="tag">😌 chill</span><span class="tag">📱 phone</span></div>
-<div class="na"><b>Non-alcoholic alternative (always fine):</b> fold a finger or score a point instead of sipping. Toggle “Non-alcoholic mode” in the game to change all instructions.</div>
-<a class="btn host-cta" href="../play/join.html">Host Game</a>
-<form class="join-row" action="../play/join.html" method="get"><input class="bigin" name="code" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="Join with code" aria-label="Room code"><button class="btn alt" type="submit">Join</button></form>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffe14a">
+<meta name="description" content="Never Have I Ever for adults. Join with a code on your own phone. One small sip or fold a finger. Nothing stacks.">
+<link rel="canonical" href="https://tipsyplay.com/games/never-have-i-ever.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Never Have I Ever · TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=16">
+</head>
+<body class="party" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a>
+<a href="../responsible.html">Play safe</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<p id="connecting">Connecting…</p>
+<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
+<div id="app" class="hide">
+<section id="home" class="entry">
+<p class="eyebrow">Never Have I Ever</p>
+<h1>Your phone.<br>Your secret.</h1>
+<p class="lede">One person hosts. Everyone else joins with the code. The current player writes the line. After a beat, every phone answers.</p>
+<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any round.</div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
+<p class="tag">Optional emoji</p>
+<div class="kc-react" id="emojis" aria-label="Optional emoji"></div>
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
 </section>
-<section class="band-ink">
-<div class="card"><h2 style="margin-top:0">Setup</h2><ol><li>One person taps Host Game. Everyone else joins with the code on their own phone.</li><li>Everyone grabs a drink of their choice — water and mocktails count.</li><li>Pick a spice level everyone is comfy with. When in doubt, go milder.</li></ol></div>
-<div class="card"><h2 style="margin-top:0">Rules</h2><ol><li>The prompt shows on every phone.</li><li>If you <em>have</em> done it, you may take <b>one small sip</b> — or do the alt (fold a finger / score a point).</li><li>Totally opt-in: you can pass on any card, no explanation needed.</li><li>Tap I have or Never on your phone. One sip per prompt, max — no extra penalties.</li></ol></div>
-<div class="card"><h2 style="margin-top:0">Variations</h2><ul><li><b>Five Fingers:</b> start with 5 fingers up; last person with fingers up wins. No drinks needed.</li><li><b>Story Time:</b> anyone who “has” can share the story (optional) for a bonus point.</li><li><b>Team Mode:</b> split into two teams and tally points.</li></ul></div>
+<section id="lobby" class="hide">
+<h1>Lobby</h1>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any round.</div>
+<div class="chips" id="modes" role="group" aria-label="Mode">
+<button type="button" class="chip" data-mode="classic">Classic</button>
+<button type="button" class="chip" data-mode="mild">Mild</button>
+<button type="button" class="chip" data-mode="spicy">Spicy</button>
+<button type="button" class="chip" data-mode="likely">Most likely</button>
+</div>
+<div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
+<label class="toggle hostonly"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start the round</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
 </section>
-</main><footer class="site-foot" data-keep>
-<nav aria-label="Footer"><a href="../games/">Games</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
+<section id="table" class="hide">
+<div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+<p id="away" class="na hide">The host disconnected. The round waits here until they reconnect.</p>
+<p class="turntag" id="turn"></p>
+<p id="audioline" class="tag"></p>
+<div class="chips hostonly" role="group" aria-label="Mode for the next line">
+<button type="button" class="chip" data-mode="classic">Classic</button>
+<button type="button" class="chip" data-mode="mild">Mild</button>
+<button type="button" class="chip" data-mode="spicy">Spicy</button>
+<button type="button" class="chip" data-mode="likely">Most likely</button>
+</div>
+<h2 id="statement" class="nh-line">Waiting for the line.</h2>
+<p id="count" class="tag"></p>
+<div id="composer" class="hide">
+<p id="hint" class="lede"></p>
+<label class="sr" for="line">Your line</label>
+<input class="bigin" id="line" maxlength="140" placeholder="Never have I ever…" aria-label="Your line">
+<button type="button" class="btn" id="send">Send the line</button>
+<div id="suggests"></div>
+</div>
+<p id="wait" class="lede hide">Waiting for a line.</p>
+<div id="answers" class="hide"></div>
+<div id="marks"></div>
+<div class="nh-pour" id="pour" aria-hidden="true"><span id="pourfill"></span></div>
+<section id="results" class="card hide"></section>
+<section id="finale" class="hide"><h2>That's the set</h2><p>Confessions are the score. Nothing stacked.</p></section>
+<div class="ctrl"><button type="button" class="btn hostonly" id="nextround">Next round</button><button type="button" class="btn alt hostonly" id="skip">Skip</button></div>
+<section class="card">
+<h2 style="margin-top:0">Confessions</h2>
+<div id="scores" class="plist" aria-label="Confessions"></div>
+</section>
+<div class="kc-react" id="react" aria-label="Reactions">
+<button type="button" data-emo="clap">👏</button>
+<button type="button" data-emo="gasp">😮</button>
+<button type="button" data-emo="laugh">😂</button>
+<button type="button" data-emo="boo">👎</button>
+<button type="button" data-emo="party">🎉</button>
+</div>
+<button type="button" class="btn alt" id="mixbtn">Mixer</button>
+<section id="mixer" class="card kc-mixer hide">
+<h2 style="margin-top:0">Mixer</h2>
+<label>Music <input id="mixmusic" type="range" min="0" max="100" value="70"></label>
+<label class="toggle"><input id="mutemusic" type="checkbox"> Mute music</label>
+<label>SFX <input id="mixsfx" type="range" min="0" max="100" value="90"></label>
+<label class="toggle"><input id="mutesfx" type="checkbox"> Mute SFX</label>
+<label>Voice <input id="mixvoice" type="range" min="0" max="100" value="85"></label>
+<label class="toggle"><input id="mutevoice" type="checkbox"> Mute voice</label>
+</section>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+</section>
+<section id="closed" class="card hide">
+<h1>Room closed</h1>
+<p>The host left. This room is closed.</p>
+<a class="btn" href="./">Back to games</a>
+</section>
+<p id="perr" role="alert"></p>
+</div>
+</main>
+<footer class="site-foot" data-keep>
+<nav aria-label="Footer">
+<a href="./">Games</a>
+<a href="../about.html">About</a>
+<a href="../contact.html">Contact</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../terms.html">Terms</a>
+</nav>
 <p>© TipsyPlay</p>
-</footer><script src="../sounds.js?v=15"></script><script src="../app.js?v=15"></script></body></html>
+</footer>
+<canvas id="fx" class="fx" aria-hidden="true"></canvas>
+<script src="../sounds.js?v=16"></script>
+<script src="../app.js?v=16"></script>
+<script src="../data/nhie-packs.js?v=16"></script>
+<script src="../play/party-audio.js?v=16"></script>
+<script src="../play/nhie-party.js?v=16"></script>
+</body>
+</html>
