@@ -170,6 +170,32 @@ button.x{min-width:48px;min-height:48px;border:3px solid var(--ink);border-radiu
 .turntag{font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--pink);margin:8px 0}
 .sketchpad{width:100%;height:240px;background:#fff;border:4px solid #111;touch-action:none;display:block}
 .linein{width:100%;margin:0}
+.kc-lights{display:flex;gap:6px;height:16px;margin:8px 0}
+.kc-lights i{flex:1;background:#fff;border:3px solid var(--ink)}
+.kc-lights.on i:nth-child(odd){background:var(--pink)}
+.kc-lights.on i:nth-child(even){background:var(--ink)}
+.kc-cup{width:120px;height:150px;margin:8px auto;border:4px solid var(--ink);border-top:0;background:#fff;position:relative;clip-path:polygon(18% 0,82% 0,100% 100%,0 100%)}
+.kc-cup span{position:absolute;left:0;right:0;bottom:0;background:var(--pink);transition:height .35s}
+.kc-cup b{position:relative;z-index:1;display:block;text-align:center;font-family:var(--display);padding-top:8px}
+.kc-table{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.kc-table button{min-height:64px}
+.kc-card{min-height:220px;background:#fff;color:var(--ink);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--pink);padding:16px;text-align:center;animation:kcflip .45s ease}
+.kc-card .rank{font-family:var(--display);font-size:clamp(3rem,12vw,5rem);line-height:.85;color:inherit}
+.kc-card.red{color:var(--pink)}
+@keyframes kcflip{from{transform:rotateY(90deg) scale(.94)}to{transform:none}}
+body.kc-shake{animation:kcshake .55s linear}
+@keyframes kcshake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+body.kc-flash::before{content:"";position:fixed;inset:0;background:var(--pink);opacity:.28;pointer-events:none;z-index:30;animation:kcflash .45s linear forwards}
+@keyframes kcflash{to{opacity:0}}
+.kc-react{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.kc-react button{min-width:52px;min-height:52px;font-size:1.4rem;border:3px solid var(--ink);background:#fff}
+.kc-float{position:fixed;z-index:45;pointer-events:none;font-size:2rem;animation:kcfloat 1s ease forwards}
+@keyframes kcfloat{to{transform:translateY(-120px);opacity:0}}
+.kc-mixer label{font-family:var(--font);text-transform:none;font-weight:600}
+.kc-mixer input[type=range]{width:100%;accent-color:var(--pink)}
+@media (prefers-reduced-motion:reduce){
+  .kc-card,body.kc-shake,body.kc-flash::before,.kc-float{animation:none}
+}
 .join-row{display:flex;gap:8px;align-items:center}
 .join-row input{flex:1;min-width:0;letter-spacing:.16em;font-weight:700;text-align:center;background:#fff}
 .join-row .btn{min-width:96px;min-height:52px;box-shadow:none}

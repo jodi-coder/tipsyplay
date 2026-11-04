@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffe14a">
+<meta name="description" content="King's Cup for adults. Draw a card, then one small sip or a non-alcoholic alternative. Nothing stacks.">
+<link rel="canonical" href="https://tipsyplay.com/games/kings-cup.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>King's Cup · TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=15">
+</head>
+<body class="party" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a>
+<a href="../responsible.html">Play safe</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<section id="setup" class="entry">
+<p class="eyebrow">King's Cup</p>
+<h1>Draw a card.<br>Then choose.</h1>
+<p class="lede">Pass the phone. Tap to draw. Every card is one small sip or a clearly named alternative. Nothing stacks.</p>
+<div class="na"><b>Opt in before you deal:</b> Sipping is optional. Water counts. You can pass any card.</div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="toggle"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
+<form id="addform" class="join-row">
+<input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Player name" aria-label="Player name">
+<select id="pgender" aria-label="Who this player matches on fives and sixes">
+<option value="everyone">Everyone</option>
+<option value="guys">Guys</option>
+<option value="girls">Girls</option>
+</select>
+<button class="btn alt" type="submit">Add</button>
+</form>
+<div id="plist" class="plist"></div>
+<p id="setupmsg" class="tag"></p>
+<button type="button" class="btn host-cta" id="start" disabled>Deal 52 cards</button>
+<button type="button" class="btn alt hide" id="resume">Resume this deck</button>
+</section>
+<section id="table" class="hide">
+<div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="kc-cup" id="cup" aria-label="King counter"><span id="cupfill"></span><b id="cuplabel">0/4</b></div>
+<p class="tag" id="cupnote">The cup counts kings. It is not a drink.</p>
+<p class="turntag" id="turn"></p>
+<button type="button" class="btn host-cta" id="draw">Tap to draw</button>
+<article id="shown" class="hide" aria-live="polite">
+<div class="kc-card" id="card">
+<div class="lvl" id="cardsuit"></div>
+<div class="rank" id="cardrank"></div>
+<h2 id="ruletitle" style="margin:.2em 0"></h2>
+</div>
+<p id="rulebody"></p>
+<p id="who"></p>
+<div class="na" id="sipline"></div>
+<div id="extra"></div>
+<div class="choice">
+<button type="button" class="btn" id="next">We took one small sip</button>
+<button type="button" class="btn alt" id="altdone">We did the alternative</button>
+</div>
+</article>
+<section id="finale" class="hide">
+<h2>Final King</h2>
+<p id="finalcopy"></p>
+<button type="button" class="btn host-cta" id="newdeck">New deck, same table</button>
+</section>
+<section id="activerules" class="card">
+<h2 style="margin-top:0">Active rules</h2>
+<div id="mates"></div>
+<div id="house"></div>
+<div id="darelist"></div>
+</section>
+<div id="scores" class="plist" aria-label="Cards and points"></div>
+<div class="kc-react" id="react" aria-label="Reactions">
+<button type="button" data-emo="👏">👏</button>
+<button type="button" data-emo="😮">😮</button>
+<button type="button" data-emo="😂">😂</button>
+<button type="button" data-emo="👎">👎</button>
+<button type="button" data-emo="🎉">🎉</button>
+</div>
+<button type="button" class="btn alt" id="mixbtn">Mixer</button>
+<section id="mixer" class="card kc-mixer hide">
+<h2 style="margin-top:0">Mixer</h2>
+<label>Music <input id="mixmusic" type="range" min="0" max="100" value="70"></label>
+<label class="toggle"><input id="mutemusic" type="checkbox"> Mute music</label>
+<label>SFX <input id="mixsfx" type="range" min="0" max="100" value="90"></label>
+<label class="toggle"><input id="mutesfx" type="checkbox"> Mute SFX</label>
+<label>Voice <input id="mixvoice" type="range" min="0" max="100" value="85"></label>
+<label class="toggle"><input id="mutevoice" type="checkbox"> Mute voice</label>
+</section>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+</main>
+<footer class="site-foot" data-keep>
+<nav aria-label="Footer">
+<a href="./">Games</a>
+<a href="../about.html">About</a>
+<a href="../contact.html">Contact</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../terms.html">Terms</a>
+</nav>
+<p>© TipsyPlay</p>
+</footer>
+<canvas id="fx" class="fx" aria-hidden="true"></canvas>
+<script src="../sounds.js?v=15"></script>
+<script src="../app.js?v=15"></script>
+<script src="../play/kings-cup.js?v=15"></script>
+</body>
+</html>
