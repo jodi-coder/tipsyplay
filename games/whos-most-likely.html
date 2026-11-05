@@ -12,7 +12,7 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffe14a">
-<meta name="description" content="Most Likely To party mode. Join with a PIN. One small sip or a playful challenge. Nothing stacks.">
+<meta name="description" content="Play Who's Most Likely online with a PIN. Vote on your phones, then one small sip or a playful challenge. Nothing stacks. Free adult party game in the browser.">
 <link rel="canonical" href="https://tipsyplay.com/games/whos-most-likely.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -20,16 +20,26 @@
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<title>Who's Most Likely · TipsyPlay</title>
+<title>Who's Most Likely – Party Drinking Game Online | TipsyPlay</title>
 <link rel="stylesheet" href="../styles.css?v=17">
+<style>
+/* One-screen party layout: SEO title stays, Host, Join, and the age line stay on screen. */
+body.mlt #home{gap:6px}
+body.mlt #home > *{flex-shrink:0}
+body.mlt #home > h1{font-size:clamp(.95rem,3.4vw,1.15rem);line-height:1.05;margin:8px 0 0}
+body.mlt #home > h2{font-size:clamp(1.7rem,8vw,2.6rem);margin:0}
+body.mlt #home .lede{margin:.2em 0}
+body.mlt #home .na{padding:8px 10px}
+</style>
 </head>
 <body class="mlt" data-root="../">
 <p id="connecting">Connecting…</p>
 <div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
 <div id="app" class="mlt-app hide">
 <section id="home" class="mlt-screen">
-<p class="eyebrow">Most Likely To</p>
-<h1>Point.<br>Don't tell.</h1>
+<p class="eyebrow">Party drinking game</p>
+<h1>Who's Most Likely: Party Game for Adults</h1>
+<h2>Point.<br>Don't tell.</h2>
 <p class="lede">A 6-character PIN. Big buttons. Secret votes.</p>
 <div class="na"><b>Opt in:</b> Sipping is optional. Water counts.</div>
 <label class="sr" for="pname">Your name</label>
@@ -88,7 +98,7 @@
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
 <section id="closed" class="mlt-screen card hide">
-<h1>Room closed</h1>
+<h2>Room closed</h2>
 <p>This PIN is done.</p>
 <a class="btn" href="./">Games</a>
 </section>
@@ -102,6 +112,20 @@
 <p id="perr" role="alert"></p>
 </div>
 <button type="button" class="mute" id="mute" hidden aria-label="Mute sound effects">Mute</button>
+
+<section id="seo-about" class="band-ink" style="margin-top:28px;padding:28px 20px">
+<h2>How Who's Most Likely works on TipsyPlay</h2>
+<div class="card">
+<p>Who's Most Likely (also called Most Likely To) is a voting party game for adults. TipsyPlay runs it in party mode: join with a PIN, see the prompt on every phone, and point without narrating your vote out loud until the reveal.</p>
+<p>After votes land, the group sees who the table picked. That person can take one small optional sip or a playful challenge such as a bow, a pose, or a tiny speech. Nothing stacks. The next prompt starts clean so the night stays light.</p>
+<p>This page is the live room for Who's Most Likely. Host from your phone, share the PIN, and keep the mixer handy if you want music and sound effects under control. Packs such as classic stay selectable from the host bar so the table can match the vibe.</p>
+<h3>Non-alcoholic option</h3>
+<p>Skip the sip and take the challenge instead — a bow, a pose, or a short speech. Points and dares are a full way to play. Soft drinks and water always count.</p>
+<h3>Play responsibly</h3>
+<p>Of legal drinking age only. Optional small sips, no races, no pressure. Read the <a href="../responsible.html">house code</a>. More voting energy lives next door in <a href="hot-take-court.html">Hot Take Court</a>, or browse all <a href="./">party games</a>.</p>
+</div>
+</section>
+
 <script src="../sounds.js?v=17"></script>
 <script src="../app.js?v=17"></script>
 <script src="../data/most-likely-packs.js?v=17"></script>
