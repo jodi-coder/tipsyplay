@@ -210,8 +210,8 @@ function haveIds(){
   return order().filter(function(p){return answered(p.uid)==="have"}).map(function(p){return p.uid});
 }
 function allIn(){
-  var list=order();
-  if(list.length<2) return false;
+  var list=order().filter(function(p){return p.connected});
+  if(!list.length) return false;
   return list.every(function(p){var v=answered(p.uid); return v==="have"||v==="never"});
 }
 function secondsLeft(){
@@ -337,19 +337,22 @@ function paintAnswers(){
   if(never){never.disabled=!answering||!!mine; never.setAttribute("aria-pressed", mine==="never"?"true":"false")}
 }
 function paintHaves(){
-  var show=!!(table&&(table.step==="answer"||table.step==="results"));
+  var show=!!(table&&table.step==="results"&&!(meta&&meta.status==="over"));
   var wrap=$("haves"); if(wrap) wrap.classList.toggle("hide", !show);
   var box=$("havelist"); if(!box) return;
-  var ids=haveIds();
-  var empty=$("haveempty");
-  if(empty){
-    empty.classList.toggle("hide", !show||ids.length>0);
-    if(show&&!ids.length) empty.textContent=table.step==="results"?"Nobody said I have. Nothing is owed.":"Waiting for a yes.";
+  var head=$("drinkhead");
+  if(!show){
+    if(head) head.textContent="";
+    box.textContent="";
+    return;
   }
+  var ids=haveIds();
+  if(head) head.textContent=ids.length?"Take a drink":"No drinks this round";
+  box.classList.toggle("hide", !ids.length);
   box.textContent="";
   ids.forEach(function(id){
     var li=document.createElement("li");
-    var emo=document.createElement("span"); emo.className="nh-emo"; emo.textContent=(who[id]&&who[id].emoji)||"•";
+    var emo=document.createElement("span"); emo.className="nh-emo"; emo.setAttribute("aria-hidden", "true"); emo.textContent=(who[id]&&who[id].emoji)||"•";
     var nm=document.createElement("span"); nm.textContent=(players[id]&&players[id].name)||"Player";
     li.appendChild(emo); li.appendChild(nm); box.appendChild(li);
   });
@@ -419,7 +422,6 @@ function paintTable(){
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
   if(over) paintAwards();
   var custom=$("custombox"); if(custom) custom.classList.toggle("hide", over);
-  var opt=$("optline"); if(opt) opt.classList.toggle("hide", over);
   var next=$("nextround");
   if(next){
     next.classList.toggle("hide", !isHost()||!results);

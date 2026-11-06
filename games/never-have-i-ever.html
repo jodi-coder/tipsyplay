@@ -94,11 +94,9 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 .nh-binary button:disabled{opacity:.45}
 .nh-binary button[aria-pressed="true"]:disabled{opacity:1}
 .nh-hit{transform:scale(.97)}
-.nh-opt{background:#12121a;border:2px solid #2e2e3a;border-radius:16px;padding:12px 14px;margin:8px 0}
-.nh-opt p{margin:.3em 0}
-.nh-alt{background:#ffe14a;color:#111;border-radius:12px;padding:10px 12px;font-weight:800}
 .nh-haves{margin:12px 0}
-.nh-haves h2{font-size:1.15rem;letter-spacing:.08em;margin:0 0 8px}
+.nh-haves h2{font-size:clamp(2.6rem,12vw,4rem);line-height:.88;margin:0 0 10px}
+.nh-safe{margin:12px 0 0;background:#ffe14a;color:#111;border-radius:12px;padding:10px 12px;font-weight:800}
 .nh-haves ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
 .nh-haves li{display:flex;align-items:center;gap:10px;background:#12121a;border:1px solid #2a2a33;border-radius:14px;padding:10px 12px;font-weight:700}
 .nh-emo{font-size:1.5rem;width:2rem;text-align:center;line-height:1}
@@ -118,9 +116,8 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
   .nh-binary button{min-height:84px;font-size:clamp(1.4rem,6.5vw,1.9rem)}
   .nh-clock{margin:2px 0}
   .nh-clock span{font-size:2.5rem}
-  .nh-opt{padding:8px 10px;margin:4px 0}
-  .nh-alt{padding:8px 10px}
   .nh-haves{margin:8px 0}
+  .nh-haves h2{font-size:clamp(2.1rem,10vw,3rem)}
 }
 @media (prefers-reduced-motion:reduce){
   body.nhie.nh-flash::before,.nh-slam,.nh-hit{animation:none;transform:none}
@@ -207,15 +204,10 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <button type="button" class="nh-have" id="ihave">I HAVE</button>
 <button type="button" class="nh-never" id="never">NEVER</button>
 </div>
-<div class="nh-opt" id="optline">
-<p><b>Said I have?</b> One small sip.</p>
-<p class="nh-alt"><b>Or skip the sip:</b> hold a 3-second pose. Water counts.</p>
-<p>Nothing stacks. The timer is only for answering.</p>
-</div>
-<section id="haves" class="nh-haves" aria-live="polite">
-<h2>Said I have</h2>
-<p id="haveempty" class="nh-empty">Waiting for a yes.</p>
+<section id="haves" class="nh-haves hide" aria-live="polite">
+<h2 id="drinkhead">Take a drink</h2>
 <ol id="havelist"></ol>
+<p class="nh-safe">One small sip, water, or strike a pose. Always optional.</p>
 </section>
 <div class="ctrl">
 <button type="button" class="btn hostonly" id="nextround">Next round</button>
@@ -290,6 +282,6 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <script src="../app.js?v=17"></script>
 <script src="../data/nhie-packs.js?v=18"></script>
 <script src="../play/party-audio.js?v=17"></script>
-<script src="../play/nhie-party.js?v=20"></script>
+<script src="../play/nhie-party.js?v=21"></script>
 </body>
 </html>
