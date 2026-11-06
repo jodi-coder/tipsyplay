@@ -8,11 +8,13 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+
   gtag('config', 'G-BHY4BXF3V3');
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffe14a">
-<meta name="description" content="Play Never Have I Ever online. Host with a code, write prompts, answer on every phone. One small sip or fold a finger. Nothing stacks. Free browser party game.">
+<meta name="theme-color" content="#07070d">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer I HAVE or NEVER on your phone. One small sip or a pose. Nothing stacks.">
 <link rel="canonical" href="https://tipsyplay.com/games/never-have-i-ever.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -22,8 +24,110 @@
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <title>Never Have I Ever – Party Drinking Game Online | TipsyPlay</title>
 <link rel="stylesheet" href="../styles.css?v=17">
+<style>
+body.nhie{--pack:#f59e0b;background:#07070d;color:#f4f4f5}
+body.nhie[data-mode="mild"]{--pack:#38bdf8}
+body.nhie[data-mode="classic"]{--pack:#f59e0b}
+body.nhie[data-mode="spicy"]{--pack:#f43f5e}
+body.nhie header.top{background:#07070d;border-bottom-color:#241820}
+body.nhie header.top nav a{color:#f4f4f5}
+body.nhie button.mute{background:#12121a;color:#fff;border-color:#3a3a46}
+body.nhie .age{color:#f4f4f5}
+body.nhie .card,body.nhie .card h2,body.nhie .card p,body.nhie .card label{color:#111}
+body.nhie .card .age{color:#111}
+body.nhie #closed.card{background:#12121a;border-color:#3a3a46}
+body.nhie #closed.card h2,body.nhie #closed.card p,body.nhie #closed.card .age{color:#f4f4f5}
+body.nhie .tabbar{background:#07070d;border-top-color:var(--pack)}
+body.nhie .tabbar a{color:#f4f4f5}
+body.nhie .tabbar a.on{background:#16161f;color:var(--pack)}
+body.nhie input.bigin{background:#12121a;color:#fff;border-color:#3a3a46}
+body.nhie input::placeholder{color:#9a9aaa}
+body.nhie #home{padding-top:8px}
+body.nhie #home h1{font-size:clamp(1.7rem,7.2vw,2.4rem);margin:4px 0 0}
+body.nhie #home h2{font-size:clamp(1.55rem,6.6vw,2.15rem);margin:0}
+body.nhie #home .lede{font-size:1rem;margin:.25em 0}
+body.nhie #home .na{padding:8px 10px;margin-top:6px}
+body.nhie #home .age{font-size:1rem;margin:.35em 0}
+body.nhie #home .tag{margin:.25em 0}
+body.nhie #home .kc-react{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start}
+body.nhie #home .host-cta{min-height:64px;font-size:1.55rem;margin:8px 0}
+body.nhie .host-cta{min-height:68px;font-size:1.55rem;margin:10px 0}
+body.nhie #lobby h2,body.nhie .nh-players h2{font-size:1.45rem;margin:.4em 0}
+body.nhie .linkbox{color:#c9c9d6}
+body.nhie .tag{color:#f4f4f5;border-color:#3a3a46}
+body.nhie .chip{background:#12121a;color:#f4f4f5;border-color:#3a3a46}
+body.nhie .chip[data-mode="mild"]{box-shadow:inset 6px 0 0 #38bdf8}
+body.nhie .chip[data-mode="classic"]{box-shadow:inset 6px 0 0 #f59e0b}
+body.nhie .chip[data-mode="spicy"]{box-shadow:inset 6px 0 0 #f43f5e}
+body.nhie .chip[data-mode="mild"][aria-pressed="true"]{background:#38bdf8;color:#041018;border-color:#38bdf8}
+body.nhie .chip[data-mode="classic"][aria-pressed="true"]{background:#f59e0b;color:#1a1000;border-color:#f59e0b}
+body.nhie .chip[data-mode="spicy"][aria-pressed="true"]{background:#f43f5e;color:#fff;border-color:#f43f5e}
+body.nhie .chip[data-len][aria-pressed="true"]{background:var(--pack);color:#14080c;border-color:var(--pack)}
+body.nhie .kc-react button{background:#12121a;border-color:#3a3a46;color:#fff}
+body.nhie .kc-react button[aria-pressed="true"]{border-color:var(--pack);box-shadow:0 0 12px var(--pack)}
+body.nhie .kc-lights i{background:#1a1a24;border-color:#2a2a33}
+body.nhie .kc-lights.on i:nth-child(odd){background:var(--pack)}
+body.nhie .kc-lights.on i:nth-child(even){background:#fff}
+body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pack);opacity:.38;pointer-events:none;z-index:30;animation:kcflash .35s linear forwards}
+.nh-boot{padding:28px 0}
+.nh-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nh-share .btn{width:100%;min-height:52px}
+.nh-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #2a2a33;font-weight:700}
+.nh-person.off{opacity:.55}
+.nh-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
+.nh-round{margin:0;font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;font-size:1.05rem}
+.nh-badge{margin:0;border:2px solid var(--pack);color:var(--pack);border-radius:999px;padding:4px 12px;font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 14px var(--pack);font-size:.95rem}
+.nh-card{background:#0c0c14;border:2px solid var(--pack);border-radius:24px;box-shadow:0 0 28px var(--pack), inset 0 0 32px rgba(255,255,255,.03);padding:28px 18px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nh-kicker{margin:0 0 8px;letter-spacing:.16em;text-transform:uppercase;color:var(--pack);font-family:var(--display);font-size:.95rem}
+.nh-prompt{margin:0;font-family:var(--display);font-size:clamp(1.8rem,8vw,2.8rem);line-height:.95;text-transform:uppercase;color:#fff}
+.nh-slam{animation:nhslam .45s cubic-bezier(.2,1.4,.4,1)}
+.nh-clock{text-align:center;margin:8px 0;color:var(--pack);text-shadow:0 0 16px var(--pack);line-height:.8}
+.nh-clock span{font-family:var(--display);font-size:clamp(3.2rem,16vw,5rem)}
+.nh-clock small{display:block;font-family:var(--font);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-top:4px}
+.nh-clock.hot span{color:#fff}
+.nh-binary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:8px 0 12px}
+.nh-binary button{min-height:118px;border-radius:18px;border:3px solid #2a2a33;background:#14141c;color:#fff;font-family:var(--display);font-size:clamp(1.7rem,8vw,2.5rem);letter-spacing:.04em;box-shadow:none;padding:8px}
+.nh-have{border-color:var(--pack);box-shadow:0 0 22px var(--pack)}
+.nh-never{color:#eee}
+.nh-binary button[aria-pressed="true"].nh-have{background:var(--pack);color:#14080c}
+.nh-binary button[aria-pressed="true"].nh-never{background:#fff;color:#111;border-color:#fff}
+.nh-binary button:disabled{opacity:.45}
+.nh-binary button[aria-pressed="true"]:disabled{opacity:1}
+.nh-hit{transform:scale(.97)}
+.nh-opt{background:#12121a;border:2px solid #2e2e3a;border-radius:16px;padding:12px 14px;margin:8px 0}
+.nh-opt p{margin:.3em 0}
+.nh-alt{background:#ffe14a;color:#111;border-radius:12px;padding:10px 12px;font-weight:800}
+.nh-haves{margin:12px 0}
+.nh-haves h2{font-size:1.15rem;letter-spacing:.08em;margin:0 0 8px}
+.nh-haves ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.nh-haves li{display:flex;align-items:center;gap:10px;background:#12121a;border:1px solid #2a2a33;border-radius:14px;padding:10px 12px;font-weight:700}
+.nh-emo{font-size:1.5rem;width:2rem;text-align:center;line-height:1}
+.nh-empty{color:#bdbdc8;margin:.2em 0}
+.nh-custom{margin:12px 0}
+.nh-custom label{font-weight:700}
+.nh-custom label span{font-weight:600;color:#bdbdc8}
+.nh-custom .btn{margin-top:8px}
+.nh-award{border:2px solid var(--pack);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 0 16px var(--pack)}
+.nh-award-kicker{margin:0;font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--pack)}
+.nh-award-name{margin:.15em 0;font-family:var(--display);font-size:clamp(1.5rem,6vw,2.2rem);line-height:.95}
+@media (max-height:740px){
+  body.nhie .kc-lights{height:8px;margin:2px 0}
+  .nh-card{min-height:108px;padding:12px}
+  .nh-prompt{font-size:clamp(1.3rem,5.8vw,1.7rem)}
+  .nh-binary{margin:4px 0 8px}
+  .nh-binary button{min-height:84px;font-size:clamp(1.4rem,6.5vw,1.9rem)}
+  .nh-clock{margin:2px 0}
+  .nh-clock span{font-size:2.5rem}
+  .nh-opt{padding:8px 10px;margin:4px 0}
+  .nh-alt{padding:8px 10px}
+  .nh-haves{margin:8px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  body.nhie.nh-flash::before,.nh-slam,.nh-hit{animation:none;transform:none}
+}
+</style>
 </head>
-<body class="party" data-root="../">
+<body class="nhie" data-root="../" data-mode="classic">
 <header class="top">
 <a class="logo" href="../index.html">Tipsy<span>Play</span></a>
 <nav>
@@ -33,15 +137,18 @@
 </nav>
 </header>
 <main class="play-wrap">
-<p id="connecting">Connecting…</p>
-<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
+<div id="boot" class="nh-boot">
+<p id="bootmsg">Opening the game…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
 <div id="app" class="hide">
 <section id="home" class="entry">
-<p class="eyebrow">Party drinking game</p>
-<h1>Never Have I Ever: Party Game for Adults</h1>
-<h2>Your phone.<br>Your secret.</h2>
-<p class="lede">One person hosts. Everyone else joins with the code. The current player writes the line. After a beat, every phone answers.</p>
-<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any round.</div>
+<p class="eyebrow">Party game</p>
+<h1>Never Have I Ever</h1>
+<h2>Big buttons.<br>Tiny secrets.</h2>
+<p class="lede">One host. A join link. Everyone answers on their own phone.</p>
+<div class="na"><b>Opt in:</b> One small sip or a 3-second pose. Nothing stacks.</div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <label class="sr" for="pname">Your name</label>
 <input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
@@ -49,56 +156,81 @@
 <div class="kc-react" id="emojis" aria-label="Optional emoji"></div>
 <button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
 <form class="join-row" id="joinform">
-<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
 <button type="button" class="btn alt" id="joinbtn">Join</button>
 </form>
 </section>
 <section id="lobby" class="hide">
-<h2>Lobby</h2>
+<p class="eyebrow">Lobby</p>
 <p id="codebig" class="codebig" aria-live="polite"></p>
 <p id="sharelink" class="linkbox"></p>
-<div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You can pass any round.</div>
-<div class="chips" id="modes" role="group" aria-label="Mode">
-<button type="button" class="chip" data-mode="classic">Classic</button>
-<button type="button" class="chip" data-mode="mild">Mild</button>
-<button type="button" class="chip" data-mode="spicy">Spicy</button>
-<button type="button" class="chip" data-mode="likely">Most likely</button>
+<div class="nh-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
 </div>
-<div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
+<div class="na"><b>Opt in:</b> One small sip or a 3-second pose. Water counts. Nothing stacks.</div>
+<p class="tag">Pack</p>
+<div class="chips" id="modes" role="group" aria-label="Prompt pack">
+<button type="button" class="chip" data-mode="mild">Mild</button>
+<button type="button" class="chip" data-mode="classic">Classic</button>
+<button type="button" class="chip" data-mode="spicy">Spicy</button>
+</div>
+<p class="tag">Game length</p>
+<div class="chips" id="lengths" role="group" aria-label="Game length">
+<button type="button" class="chip" data-len="5">5 rounds</button>
+<button type="button" class="chip" data-len="10">10 rounds</button>
+<button type="button" class="chip" data-len="15">15 rounds</button>
+</div>
+<div class="nh-players" aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
 <label class="toggle hostonly"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
-<button type="button" class="btn host-cta hostonly" id="start" disabled>Start the round</button>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start · 15 rounds</button>
 <div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
 <section id="table" class="hide">
 <div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i></div>
 <p id="away" class="na hide">The host disconnected. The round waits here until they reconnect.</p>
-<p class="turntag" id="turn"></p>
-<p id="audioline" class="tag"></p>
-<div class="chips hostonly" role="group" aria-label="Mode for the next line">
-<button type="button" class="chip" data-mode="classic">Classic</button>
-<button type="button" class="chip" data-mode="mild">Mild</button>
-<button type="button" class="chip" data-mode="spicy">Spicy</button>
-<button type="button" class="chip" data-mode="likely">Most likely</button>
+<div class="nh-top">
+<p id="roundlabel" class="nh-round">Round 1 of 15</p>
+<p id="badge" class="nh-badge">Classic</p>
 </div>
-<h2 id="statement" class="nh-line">Waiting for the line.</h2>
-<p id="count" class="tag"></p>
-<div id="composer" class="hide">
-<p id="hint" class="lede"></p>
-<label class="sr" for="line">Your line</label>
-<input class="bigin" id="line" maxlength="140" placeholder="Never have I ever…" aria-label="Your line">
-<button type="button" class="btn" id="send">Send the line</button>
-<div id="suggests"></div>
+<article class="nh-card" id="card" aria-live="polite">
+<p class="nh-kicker" id="kicker">Never have I ever</p>
+<p class="nh-prompt" id="statement">The next secret is on the way.</p>
+</article>
+<p id="clock" class="nh-clock hide" aria-live="polite"><span id="clocknum">12</span><small>to answer</small></p>
+<div id="answers" class="nh-binary">
+<button type="button" class="nh-have" id="ihave">I HAVE</button>
+<button type="button" class="nh-never" id="never">NEVER</button>
 </div>
-<p id="wait" class="lede hide">Waiting for a line.</p>
-<div id="answers" class="hide"></div>
-<div id="marks"></div>
-<div class="nh-pour" id="pour" aria-hidden="true"><span id="pourfill"></span></div>
-<section id="results" class="card hide"></section>
-<section id="finale" class="hide"><h2>That's the set</h2><p>Confessions are the score. Nothing stacked.</p></section>
-<div class="ctrl"><button type="button" class="btn hostonly" id="nextround">Next round</button><button type="button" class="btn alt hostonly" id="skip">Skip</button></div>
-<section class="card">
-<h2 style="margin-top:0">Confessions</h2>
-<div id="scores" class="plist" aria-label="Confessions"></div>
+<div class="nh-opt" id="optline">
+<p><b>Said I have?</b> One small sip.</p>
+<p class="nh-alt"><b>Or skip the sip:</b> hold a 3-second pose. Water counts.</p>
+<p>Nothing stacks. The timer is only for answering.</p>
+</div>
+<section id="haves" class="nh-haves" aria-live="polite">
+<h2>Said I have</h2>
+<p id="haveempty" class="nh-empty">Waiting for a yes.</p>
+<ol id="havelist"></ol>
+</section>
+<div class="ctrl">
+<button type="button" class="btn hostonly" id="nextround">Next round</button>
+<button type="button" class="btn alt hostonly" id="skip">Skip line</button>
+</div>
+<div id="custombox" class="nh-custom">
+<label for="custom">Type your own line <span>(optional, next round)</span></label>
+<input class="bigin" id="custom" maxlength="140" autocomplete="off" placeholder="Never have I ever…">
+<button type="button" class="btn alt" id="queue">Use this next</button>
+<p id="queuednote"></p>
+</div>
+<section id="finale" class="hide">
+<h2>That's the game</h2>
+<p class="lede">Yeses are stories. This is not a drink score.</p>
+<div id="awards"></div>
 </section>
 <div class="kc-react" id="react" aria-label="Reactions">
 <button type="button" data-emo="clap">👏</button>
@@ -124,6 +256,7 @@
 <h2>Room closed</h2>
 <p>The host left. This room is closed.</p>
 <a class="btn" href="./">Back to games</a>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
 <p id="perr" role="alert"></p>
 </div>
@@ -131,13 +264,13 @@
 <section id="seo-about" class="band-ink" style="margin-top:28px">
 <h2>How Never Have I Ever works on TipsyPlay</h2>
 <div class="card">
-<p>Never Have I Ever is a classic party game for adults. On TipsyPlay, one host starts a room and friends join with a code. The current player writes the line. After a short beat, every phone shows the prompt so the whole group can answer together.</p>
-<p>If the line applies to you, you can take one small optional sip or fold a finger / score a point. Nothing stacks into the next round. Modes in the lobby — Classic, Mild, Spicy, and Most likely — help the table pick a tone that fits the night. Optional emoji next to your name keeps the lobby playful without changing the rules.</p>
-<p>Online play needs a connection. If the host disconnects, the round waits until they reconnect so nobody loses the room mid-prompt.</p>
+<p>Never Have I Ever is a party game for adults. One person hosts a room and shares a join link. Friends open it, type a name, and land in the same game. The host picks Mild, Classic, or Spicy, plus a game length such as 15 rounds.</p>
+<p>Each round puts one original line on every phone. A short countdown is only for answering. Tap I HAVE or NEVER once. No second confirm. If you said I have, take one small sip or hold a 3-second pose. Water counts. Nothing stacks, and there is no timer on the sip.</p>
+<p>When the rounds are done, the table gets playful awards such as The Saint and Most Chaotic. Those are about who said yes, not about who drank. You can also type your own line for the next round. The packs are there if you don't.</p>
 <h3>Non-alcoholic option</h3>
-<p>Fold a finger, take a point, or pass. Non-alcoholic mode keeps the laughs without any pressure to drink. Water always counts as a full way to play.</p>
+<p>The pose is on screen whenever a yes lands. Skip the sip and hold it for three seconds. Passing is always fine.</p>
 <h3>Play responsibly</h3>
-<p>Legal drinking age only. Sips are optional and small. No chugging and no pressure. See the <a href="../responsible.html">house code</a>. Looking for more games for adults? Open <a href="whos-most-likely.html">Who's Most Likely</a> or the full <a href="./">games list</a>.</p>
+<p>Legal drinking age only. Sips are optional and small. No chugging and no pressure. See the <a href="../responsible.html">house code</a>. Looking for another game? Open <a href="whos-most-likely.html">Who's Most Likely</a> or the full <a href="./">games list</a>.</p>
 </div>
 </section>
 
@@ -155,8 +288,8 @@
 <canvas id="fx" class="fx" aria-hidden="true"></canvas>
 <script src="../sounds.js?v=17"></script>
 <script src="../app.js?v=17"></script>
-<script src="../data/nhie-packs.js?v=17"></script>
+<script src="../data/nhie-packs.js?v=18"></script>
 <script src="../play/party-audio.js?v=17"></script>
-<script src="../play/nhie-party.js?v=17"></script>
+<script src="../play/nhie-party.js?v=20"></script>
 </body>
 </html>

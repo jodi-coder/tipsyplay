@@ -192,7 +192,7 @@
           },
           "say": {
             ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
-            ".write": "( auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('nhie').child('play').child('turn').val() == auth.uid && root.child('rooms').child($code).child('nhie').child('play').child('step').val() == 'prompt' && newData.exists() && root.child('rooms').child($code).child('players').child(auth.uid).exists() ) || ( auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists() )",
+            ".write": "( auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && newData.exists() && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (root.child('rooms').child($code).child('nhie').child('play').child('step').val() == 'answer' || root.child('rooms').child($code).child('nhie').child('play').child('step').val() == 'results' || (root.child('rooms').child($code).child('nhie').child('play').child('step').val() == 'prompt' && root.child('rooms').child($code).child('nhie').child('play').child('turn').val() == auth.uid)) ) || ( auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists() )",
             ".validate": "!newData.exists() || (newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 140 && newData.hasChildren(['text']))"
           },
           "cast": {

@@ -1,29 +1,23 @@
 (function(){
 "use strict";
-/* Moments map to the shared synth. Music and the announcer stay on the host.
-   Sip cues play on the phones of people who have, and on the host panned by seat. */
-var SOUNDS = { buses:{music:0.7,sfx:0.9,voice:0.85}, music:{bpm:112, hypePerRound:6} };
-var TRIGGERS = {
-  slam:["whoosh","sting"],
-  crickets:["crickets","awkward"],
-  few:["laugh","applause"],
-  some:["ooh","gasp"],
-  many:["cheer","sting"],
-  reaction:["clink"]
-};
-var SIPS = ["gulp","clink","can","pour","ice","cheers"];
+/* Multiplayer Never Have I Ever.
+   Pack lines play themselves. Custom typing is optional for the next round.
+   The countdown is only for answering. Sips are never timed.
+   rooms/$code/nhie */
+var ANSWER_MS = 12000;
+var LENGTHS = [5, 10, 15];
 var EMOS = {clap:"👏", gasp:"😮", laugh:"😂", boo:"👎", party:"🎉"};
 var EMO_CUE = {clap:"applause", gasp:"gasp", laugh:"laugh", boo:"boo", party:"cheer"};
-var EMOJIS = ["","😎","🦊","🌟","🎧","🍀","🔥","🌙","🎭","🍓","🎲","🦋"];
+var EMOJIS = ["", "😎", "🦊", "🌟", "🎧", "🍀", "🔥", "🌙", "🎭", "🍓", "🎲", "🦋"];
 var ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ";
 var MIXKEY = "tp_nhie_mix";
-var HAVE_LINE = "One small sip or fold a finger.";
-var VOTE_LINE = "One small sip or take a ten-second bow.";
 var $=function(id){return document.getElementById(id)};
 var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false};
 var engine=null, parts=[], raf=0;
-var uid=null, code=null, meta=null, players={}, who={}, table=null, sayBox=null, cast={}, lobbyMode="classic";
-var db, authObj, stops=[], heard=-1, slamHeard=-1, turnHeard="", seenReact=null, hostLock=false, connStop=null, openTimer=0, scoring=0;
+var uid=null, code=null, meta=null, players={}, who={}, table=null, sayBox=null, cast={};
+var lobbyMode="classic", gameLength=15, localQueue="", pendingCast="", skipN=0, scoring=0, sending=false;
+var db, authObj, stops=[], connStop=null, hostLock=false, audioOn=false, bootTimer=0, clockTimer=0, lastTick=-1;
+var heardAnswer=-1, heardResults=-1, heardOver=false, seenReact=null, deckKey="", deck=[];
 var ref, onValue, update, set, remove, onDisconnect, get, serverTimestamp, goOnline;
 
 function saveMix(){try{localStorage.setItem(MIXKEY, JSON.stringify(mix))}catch(e){} if(engine) engine.apply()}
@@ -31,20 +25,25 @@ function audioEngine(){
   if(engine||!window.PartyAudio) return engine;
   engine=PartyAudio.create({
     key:MIXKEY, mix:mix, host:isHost,
-    hype:function(){return table?+table.round||0:0},
-    bpm:SOUNDS.music.bpm, hypePer:SOUNDS.music.hypePerRound,
+    hype:function(){return table?Math.min(6, +table.round||0):0},
+    bpm:112, hypePer:6,
     pulse:function(){var el=$("lights"); if(!el) return; el.classList.add("on"); setTimeout(function(){el.classList.remove("on")}, 90)}
   });
   return engine;
 }
-function fire(moment){
-  var eng=audioEngine(); if(!eng) return;
-  (TRIGGERS[moment]||[]).forEach(function(name){try{eng.cue(name)}catch(e){}});
+function cue(name){if(!audioOn) return; var eng=audioEngine(); if(eng){try{eng.cue(name)}catch(e){}}}
+function say(line){if(!audioOn||!isHost()) return; var eng=audioEngine(); if(eng) eng.say(line)}
+function unlock(){
+  audioOn=true;
+  try{var eng=audioEngine(); if(eng) eng.unlock(); if(window.TPSound) TPSound.unlock()}catch(e){}
 }
-function cueAt(name, pan){var eng=audioEngine(); if(eng) eng.cue(name, null, pan)}
-function say(line){var eng=audioEngine(); if(eng) eng.say(line)}
-function startMusic(){var eng=audioEngine(); if(eng&&isHost()) eng.startMusic()}
-function unlock(){try{var eng=audioEngine(); if(eng){eng.unlock(); if(isHost()) eng.startMusic()} if(window.TPSound) TPSound.unlock()}catch(e){}}
+function maybeMusic(){var eng=audioEngine(); if(audioOn&&eng&&isHost()) eng.startMusic()}
+function buzz(){
+  var used=false;
+  try{if(typeof navigator.vibrate==="function") used=navigator.vibrate(30)===true}catch(e){used=false}
+  if(!used) flash();
+}
+function tapSound(name){unlock(); cue(name||"crack"); buzz()}
 function isHost(){return !!(meta&&uid&&meta.hostUid===uid)}
 function order(){
   return Object.keys(players).map(function(id){
@@ -52,98 +51,67 @@ function order(){
     return {uid:id, name:players[id].name||"Player", emoji:w.emoji||"", connected:players[id].connected!==false, joinedAt:players[id].joinedAt||0, confessions:+w.confessions||0, seen:+w.seen||0};
   }).sort(function(a,b){return a.joinedAt-b.joinedAt||a.name.localeCompare(b.name)});
 }
-function nameOf(id){var p=players[id]; return ((who[id]&&who[id].emoji)?who[id].emoji+" ":"")+((p&&p.name)||"Player")}
-function orderStr(){return (table&&table.order)||order().map(function(p){return p.uid}).join(",")||uid||"table"}
 function rpath(p){return "rooms/"+code+"/"+p}
 function fail(msg){var p=$("perr"); if(p) p.textContent=msg||""}
 function friendly(e){
   var c=String((e&&(e.code||e.message))||"");
   if(/permission|denied/i.test(c)) return "That room isn't available.";
-  if(/offline|network|fetch/i.test(c)) return "You're offline.";
+  if(/offline|network|fetch/i.test(c)) return "You're offline. Check the connection and try again.";
   return "Something went wrong. Try again.";
 }
 function normName(v){return String(v||"").replace(/[<>]/g,"").trim().slice(0,20)}
 function normCode(v){
-  var up=String(v||"").toUpperCase();
-  var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
-  if(q) return q[1];
-  return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
+  var s=String(v||"");
+  var m=s.match(/(?:room|code)=([A-Za-z]{4})/i);
+  if(m) return m[1].toUpperCase();
+  return s.toUpperCase().replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(0,4);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i; for(i=0;i<4;i++) s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)]; return s}
+function queryRoom(){
+  var raw="";
+  try{
+    var q=new URLSearchParams(location.search);
+    raw=q.get("room")||q.get("code")||"";
+  }catch(e){
+    var m=String(location.search||"").match(/[?&](?:room|code)=([A-Za-z]{4})/i);
+    if(m) raw=m[1];
+  }
+  var c=normCode(raw);
+  return validCode(c)?c:"";
+}
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
 function roomUrl(c){
   var base=/localhost|127\.0\.0\.1/.test(location.host)?location.origin+location.pathname:"https://tipsyplay.com/games/never-have-i-ever.html";
-  return base+"?code="+c;
+  return base+"?room="+c;
 }
+function spiceFor(mode){return mode==="spicy"?"spicy":mode==="classic"?"extra":"mild"}
+function modeForSpice(spice){return spice==="spicy"?"spicy":spice==="extra"?"classic":"mild"}
+function rounds(){
+  if((!meta||meta.status==="lobby")&&isHost()&&LENGTHS.indexOf(gameLength)>=0) return gameLength;
+  var n=meta&&+meta.rounds;
+  if(LENGTHS.indexOf(n)>=0) return n;
+  return LENGTHS.indexOf(gameLength)>=0?gameLength:15;
+}
+function currentMode(){
+  if(table&&table.mode&&/^(mild|classic|spicy)$/.test(table.mode)) return table.mode;
+  if(meta&&meta.status==="lobby") return isHost()?lobbyMode:modeForSpice(meta.spice);
+  return /^(mild|classic|spicy)$/.test(lobbyMode)?lobbyMode:"classic";
+}
+function modeLabel(mode){return mode==="mild"?"Mild":mode==="spicy"?"Spicy":"Classic"}
+function myEmoji(){return sessionStorage.getItem("tp_nhie_emoji")||""}
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function paintRole(){
   document.body.classList.toggle("is-host", isHost());
+  document.body.dataset.role=isHost()?"host":(meta?"player":"");
   document.querySelectorAll(".hostonly").forEach(function(n){n.classList.toggle("hide", !isHost())});
-  document.querySelectorAll(".guestonly").forEach(function(n){n.classList.toggle("hide", isHost())});
 }
-function kindFor(mode, round){
-  if(mode==="likely") return "vote";
-  if((+round)%5===4) return "vote";
-  return "have";
-}
-function lineFor(kind){return kind==="vote"?VOTE_LINE:HAVE_LINE}
-function packs(){return window.NHIE_PACKS||{classic:[],mild:[],spicy:[],likely:[]}}
-function packFor(mode, kind){
-  var all=packs();
-  if(kind==="vote") return all.likely||[];
-  return all[mode]||all.classic||[];
-}
-function suggestions(){
-  var pack=packFor(table.mode, table.kind), out=[], i, n=pack.length||1;
-  var start=((+table.round||0)*3)%n;
-  for(i=0;i<3&&pack.length;i++) out.push(pack[(start+i)%n]);
-  return out;
-}
-function cleanText(raw, kind){
-  var t=String(raw||"").replace(/<[^>]*>/g,"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,140);
-  if(!t) return "";
-  if(kind==="vote"){
-    if(!/^who/i.test(t)) t=("Who's most likely to "+t).slice(0,140);
-    return t;
-  }
-  if(!/^never have i ever/i.test(t)) t=("Never have I ever "+t.replace(/^i\s+/i,"")).slice(0,140);
-  return t;
-}
-function playObj(patch){
-  var b=Object.assign({turn:"",step:"prompt",text:"",seq:0,mode:lobbyMode||"classic",kind:"have",round:0,opened:0,order:orderStr()}, table||{}, patch||{});
-  return {turn:String(b.turn||""), step:b.step, text:String(b.text||"").slice(0,140), seq:+b.seq||0, mode:b.mode, kind:b.kind, round:+b.round||0, opened:+b.opened||0, order:b.order||orderStr()};
-}
-function fullMeta(patch){
-  var m=Object.assign({}, meta||{}, patch||{});
-  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:"mild", rounds:+m.rounds||20, na:!!m.na, round:+m.round||0, gameId:+m.gameId||1, kind:"nhie"};
-  if(m.status!=="lobby") out.deck=["Never Have I Ever"];
-  if(m.endedAt&&m.status==="over") out.endedAt=m.endedAt;
-  return out;
-}
-function myEmoji(){return sessionStorage.getItem("tp_nhie_emoji")||""}
-function seatIndex(id){var list=order(), i; for(i=0;i<list.length;i++) if(list[i].uid===id) return i; return 0}
-function panFor(id){var n=order().length; if(n<=1) return 0; return (seatIndex(id)/(n-1))*2-1}
-function haveIds(){
-  return order().filter(function(p){return cast[p.uid]==="have"}).map(function(p){return p.uid});
-}
-function voteCounts(){
-  var counts={};
-  order().forEach(function(p){
-    var v=cast[p.uid];
-    if(v&&v!=="pass"&&v!=="have"&&v!=="havent"&&players[v]) counts[v]=(counts[v]||0)+1;
-  });
-  return counts;
-}
-function winnerId(){
-  var counts=voteCounts(), best=0, wins=[];
-  Object.keys(counts).forEach(function(id){if(counts[id]>best){best=counts[id]; wins=[id]}else if(counts[id]===best) wins.push(id)});
-  return wins.length===1?wins[0]:"";
-}
+function flash(){document.body.classList.remove("nh-flash"); void document.body.offsetWidth; document.body.classList.add("nh-flash")}
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:-20,vx:(Math.random()-0.5)*8,vy:2+Math.random()*5,life:1,color:i%2?"#ff2d87":"#ffe14a"});
+  var color=document.body.dataset.mode==="mild"?"#38bdf8":document.body.dataset.mode==="spicy"?"#f43f5e":"#f59e0b";
+  for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:-20,vx:(Math.random()-0.5)*8,vy:2+Math.random()*5,life:1,color:i%2?color:"#ffe14a"});
   if(!raf) raf=requestAnimationFrame(frame);
 }
 function frame(){
@@ -154,331 +122,505 @@ function frame(){
   ctx.globalAlpha=1;
   if(parts.length) raf=requestAnimationFrame(frame); else raf=0;
 }
-function shake(){document.body.classList.remove("kc-shake"); void document.body.offsetWidth; document.body.classList.add("kc-shake")}
-function flash(){document.body.classList.remove("kc-flash"); void document.body.offsetWidth; document.body.classList.add("kc-flash")}
-function floatIcon(emoji, x){
+function floatIcon(emoji){
   var n=document.createElement("div"); n.className="kc-float"; n.textContent=emoji;
-  n.style.left=(x==null?window.innerWidth/2:x)+"px"; n.style.top="40%";
+  n.style.left=(window.innerWidth/2)+"px"; n.style.top="40%";
   document.body.appendChild(n); setTimeout(function(){n.remove()},1000);
+}
+function hashStr(s){
+  var h=2166136261, i;
+  for(i=0;i<s.length;i++){h^=s.charCodeAt(i); h=Math.imul(h, 16777619)}
+  return h>>>0;
+}
+function xorshift(seed){
+  var x=seed>>>0||1;
+  return function(){
+    x^=x<<13; x>>>=0;
+    x^=x>>>17; x>>>=0;
+    x^=x<<5; x>>>=0;
+    return (x>>>0)/4294967296;
+  };
+}
+function packs(){return window.NHIE_PACKS||{classic:[],mild:[],spicy:[]}}
+function currentDeck(){
+  var mode=currentMode();
+  var key=(code||"room")+"|"+(meta&&meta.gameId||1)+"|"+mode;
+  if(key===deckKey&&deck.length) return deck;
+  var pool=(packs()[mode]||packs().classic||[]).slice();
+  var rnd=xorshift(hashStr(key)), i, j, t;
+  for(i=pool.length-1;i>0;i--){j=Math.floor(rnd()*(i+1)); t=pool[i]; pool[i]=pool[j]; pool[j]=t}
+  deckKey=key; deck=pool; return deck;
+}
+function plannedLine(round){
+  var list=currentDeck();
+  if(!list.length) return "Never have I ever forgotten the prompt";
+  return list[(+round||0)%list.length];
+}
+function skipLineText(){
+  var list=currentDeck();
+  if(!list.length) return plannedLine(0);
+  skipN++;
+  var idx=list.length-1-((skipN-1)%Math.max(1, list.length-20));
+  if(idx<0) idx=list.length-1;
+  var text=list[idx];
+  if(table&&text===table.text&&list.length>1) text=list[(idx+list.length-1)%list.length];
+  return text;
+}
+function cleanText(raw){
+  var t=String(raw||"").replace(/<[^>]*>/g,"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,140);
+  if(!t) return "";
+  if(!/^never have i ever\b/i.test(t)) t=("Never have I ever "+t.replace(/^i\s+have\s+/i,"")).slice(0,140);
+  return t;
+}
+function splitPrompt(text){
+  var t=String(text||"");
+  var m=t.match(/^never have i ever\s+/i);
+  if(!m) return {kicker:"Never have I ever", rest:t||"The next secret is on the way."};
+  return {kicker:"Never have I ever", rest:t.slice(m[0].length)};
+}
+function playObj(patch){
+  var b=Object.assign({turn:uid||"", step:"answer", text:"", seq:0, mode:currentMode(), kind:"have", round:0, opened:0, order:order().map(function(p){return p.uid}).join(",")||uid||"table"}, table||{}, patch||{});
+  var mode=/^(mild|classic|spicy)$/.test(b.mode)?b.mode:"classic";
+  return {
+    turn:String(b.turn||uid||"host").slice(0,128),
+    step:b.step,
+    text:String(b.text||"").slice(0,140),
+    seq:Math.max(0, Math.min(40, +b.seq||0)),
+    mode:mode,
+    kind:"have",
+    round:Math.max(0, Math.min(20, +b.round||0)),
+    opened:Math.max(0, +b.opened||0),
+    order:String(b.order||uid||"table").slice(0,1500)
+  };
+}
+function fullMeta(patch){
+  var m=Object.assign({}, meta||{}, patch||{});
+  var len=LENGTHS.indexOf(+m.rounds)>=0?+m.rounds:15;
+  var spice=/^(mild|spicy|extra)$/.test(m.spice)?m.spice:"mild";
+  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:spice, rounds:len, na:!!m.na, round:0, gameId:+m.gameId||1, kind:"nhie"};
+  if(m.status!=="lobby") out.deck=["Never Have I Ever"];
+  if(m.endedAt&&m.status==="over") out.endedAt=m.endedAt;
+  return out;
+}
+function answered(id){
+  if(id===uid&&pendingCast&&!cast[id]) return pendingCast;
+  return cast[id]||"";
+}
+function haveIds(){
+  return order().filter(function(p){return answered(p.uid)==="have"}).map(function(p){return p.uid});
+}
+function allIn(){
+  var list=order();
+  if(list.length<2) return false;
+  return list.every(function(p){var v=answered(p.uid); return v==="have"||v==="never"});
+}
+function secondsLeft(){
+  if(!table||table.step!=="answer") return null;
+  var opened=+table.opened||0;
+  if(opened<1700000000000) return null;
+  return Math.max(0, Math.ceil((opened+ANSWER_MS-Date.now())/1000));
+}
+function nextUid(from){
+  var list=order().map(function(p){return p.uid});
+  if(!list.length) return from||uid;
+  var idx=list.indexOf(from); if(idx<0) idx=-1;
+  return list[(idx+1)%list.length];
+}
+function writeWho(emoji, confessions, seen){
+  return set(ref(db, rpath("nhie/who/"+uid)), {
+    emoji:String(emoji||"").slice(0,8),
+    confessions:Math.max(0, Math.min(40, confessions|0)),
+    seen:Math.max(0, Math.min(40, seen|0))
+  });
 }
 function paintEmoji(){
   var box=$("emojis"); if(!box) return;
+  var cur=myEmoji();
   box.textContent="";
   EMOJIS.forEach(function(emo){
-    var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.setAttribute("data-emoji", emo||"none");
-    b.textContent=emo||"None"; b.setAttribute("aria-pressed", (emo===myEmoji())?"true":"false");
+    var b=document.createElement("button"); b.type="button";
+    b.textContent=emo||"·";
+    b.setAttribute("aria-label", emo?emo:"No emoji");
+    b.setAttribute("aria-pressed", emo===cur?"true":"false");
+    b.addEventListener("click", function(){
+      sessionStorage.setItem("tp_nhie_emoji", emo);
+      paintEmoji();
+      if(code&&uid) writeWho(emo, (who[uid]&&who[uid].confessions)||0, (who[uid]&&who[uid].seen)||0).catch(function(e){fail(friendly(e))});
+    });
     box.appendChild(b);
   });
 }
-function paintModes(sel){
-  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.mode===sel?"true":"false")});
+function paintModes(){
+  var mode=currentMode();
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.mode===mode?"true":"false")});
+}
+function paintLengths(){
+  var n=rounds();
+  document.querySelectorAll("[data-len]").forEach(function(b){b.setAttribute("aria-pressed", +b.dataset.len===n?"true":"false")});
+}
+function copyText(text){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).catch(function(){return legacyCopy(text)});
+  }
+  return legacyCopy(text);
+}
+function legacyCopy(text){
+  return new Promise(function(resolve, reject){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.setAttribute("readonly", "");
+    ta.style.position="fixed"; ta.style.left="-9999px";
+    document.body.appendChild(ta); ta.select();
+    var ok=false;
+    try{ok=document.execCommand("copy")}catch(e){ok=false}
+    ta.remove();
+    if(ok) resolve(); else reject(new Error("copy"));
+  });
+}
+function markCopied(btn){
+  if(!btn) return;
+  var old=btn.getAttribute("data-label")||btn.textContent;
+  btn.setAttribute("data-label", old);
+  btn.textContent="Copied";
+  setTimeout(function(){if(btn.getAttribute("data-label")===old) btn.textContent=old}, 1600);
+}
+function copyLink(btn){
+  if(!code) return;
+  unlock();
+  copyText(roomUrl(code)).then(function(){cue("clink"); markCopied(btn||$("copylink")); fail("")}).catch(function(){fail("Couldn't copy. Select the link and copy it.")});
+}
+function shareRoom(){
+  if(!code) return;
+  var link=roomUrl(code);
+  unlock();
+  if(navigator.share){
+    navigator.share({title:"Never Have I Ever", text:"Join my Never Have I Ever room "+code, url:link}).then(function(){cue("clink")}).catch(function(err){
+      if(err&&err.name==="AbortError") return;
+      copyLink($("sharebtn"));
+    });
+    return;
+  }
+  copyLink($("sharebtn"));
 }
 function paintLobby(){
   $("codebig").textContent=code||"";
   $("sharelink").textContent=roomUrl(code);
   var box=$("plist"); box.textContent="";
   order().forEach(function(p){
-    var row=document.createElement("div"); row.className="prow";
-    var s=document.createElement("span"); s.textContent=(p.emoji?p.emoji+" ":"")+p.name+(p.uid===meta.hostUid?" · host":"")+(p.connected?"":" · away");
-    row.appendChild(s); box.appendChild(row);
+    var row=document.createElement("div"); row.className="nh-person"+(p.connected?"":" off");
+    var s=document.createElement("span");
+    s.textContent=(p.emoji?p.emoji+" ":"")+p.name+(p.uid===meta.hostUid?" · host":"");
+    var tag=document.createElement("span"); tag.textContent=p.connected?"":"away";
+    row.appendChild(s); row.appendChild(tag); box.appendChild(row);
   });
   var n=order().length;
-  $("start").disabled=!isHost()||!$("optin").checked||n<2||n>12;
-  paintModes(lobbyMode);
+  paintModes(); paintLengths();
+  var start=$("start");
+  if(start){
+    start.textContent="Start · "+rounds()+" rounds";
+    start.disabled=!isHost()||!$("optin").checked||n<2||n>12;
+  }
+  var note=$("lobbynote");
+  if(note){
+    if(n<2) note.textContent="Need one more player.";
+    else if(n>12) note.textContent="12 players max.";
+    else if(isHost()&&!$("optin").checked) note.textContent="Tick the opt-in, then start.";
+    else note.textContent=isHost()?"Pack's loaded. You're the host.":"You're in. The host starts when the table's ready.";
+  }
 }
-function paintScores(){
-  var box=$("scores"); box.textContent="";
-  order().forEach(function(p){
-    var row=document.createElement("div"); row.className="prow"; row.id="seat-"+p.uid;
-    if(table&&table.step==="results"&&table.kind!=="vote"&&cast[p.uid]==="have") row.classList.add("nh-hot");
-    if(table&&table.step==="results"&&winnerId()===p.uid) row.classList.add("nh-hot");
-    var s=document.createElement("span"); s.textContent=(p.emoji?p.emoji+" ":"")+p.name;
-    var b=document.createElement("b"); b.textContent=p.confessions+" confession"+(p.confessions===1?"":"s");
-    row.appendChild(s); row.appendChild(b); box.appendChild(row);
+function myCast(){return answered(uid)}
+function paintAnswers(){
+  var answering=!!(table&&table.step==="answer");
+  var box=$("answers"); if(box) box.classList.toggle("hide", !answering);
+  var mine=myCast();
+  var have=$("ihave"), never=$("never");
+  if(have){have.disabled=!answering||!!mine; have.setAttribute("aria-pressed", mine==="have"?"true":"false")}
+  if(never){never.disabled=!answering||!!mine; never.setAttribute("aria-pressed", mine==="never"?"true":"false")}
+}
+function paintHaves(){
+  var show=!!(table&&(table.step==="answer"||table.step==="results"));
+  var wrap=$("haves"); if(wrap) wrap.classList.toggle("hide", !show);
+  var box=$("havelist"); if(!box) return;
+  var ids=haveIds();
+  var empty=$("haveempty");
+  if(empty){
+    empty.classList.toggle("hide", !show||ids.length>0);
+    if(show&&!ids.length) empty.textContent=table.step==="results"?"Nobody said I have. Nothing is owed.":"Waiting for a yes.";
+  }
+  box.textContent="";
+  ids.forEach(function(id){
+    var li=document.createElement("li");
+    var emo=document.createElement("span"); emo.className="nh-emo"; emo.textContent=(who[id]&&who[id].emoji)||"•";
+    var nm=document.createElement("span"); nm.textContent=(players[id]&&players[id].name)||"Player";
+    li.appendChild(emo); li.appendChild(nm); box.appendChild(li);
   });
+}
+function awardRows(){
+  var list=order();
+  if(!list.length) return [];
+  var max=0, min=Infinity;
+  list.forEach(function(p){if(p.confessions>max) max=p.confessions; if(p.confessions<min) min=p.confessions});
+  function names(group){return group.map(function(p){return (p.emoji?p.emoji+" ":"")+p.name}).join(", ")}
+  var low=list.filter(function(p){return p.confessions===min});
+  var high=list.filter(function(p){return p.confessions===max});
+  if(max===0) return [{title:"The Saint", names:names(list), line:"A whole table of nevers. The halos stay on."}];
+  if(max===min) return [{title:"Even Stevens", names:names(list), line:"Same number of yeses. Suspiciously fair. Not a drink score."}];
+  return [
+    {title:"The Saint", names:names(low), line:min===0?"Zero yeses. Absolutely unbothered.":"Fewest yeses ("+min+"). Practically glowing."},
+    {title:"Most Chaotic", names:names(high), line:"Said yes the most ("+max+"). Chaos award. Not a prize for drinking."}
+  ];
+}
+function paintAwards(){
+  var box=$("awards"); if(!box) return;
+  box.textContent="";
+  awardRows().forEach(function(a){
+    var card=document.createElement("article"); card.className="nh-award";
+    var t=document.createElement("p"); t.className="nh-award-kicker"; t.textContent=a.title;
+    var n=document.createElement("p"); n.className="nh-award-name"; n.textContent=a.names;
+    var l=document.createElement("p"); l.textContent=a.line;
+    card.appendChild(t); card.appendChild(n); card.appendChild(l); box.appendChild(card);
+  });
+}
+function paintQueue(){
+  var note=$("queuednote"); if(!note) return;
+  if(localQueue) note.textContent="Queued on this phone for the next round.";
+  else if(sayBox&&sayBox.text) note.textContent="A custom line is queued for next round.";
+  else if(!note.dataset.sticky) note.textContent="";
+}
+function paintClock(){
+  var wrap=$("clock"); if(!wrap) return;
+  var left=secondsLeft();
+  var on=left!==null&&!!(table&&table.step==="answer");
+  wrap.classList.toggle("hide", !on);
+  if(!on){lastTick=-1; return}
+  wrap.classList.toggle("hot", left<=3);
+  var num=$("clocknum"); if(num) num.textContent=String(left);
+  wrap.setAttribute("aria-label", left+" seconds to answer");
+  if(audioOn&&left>0&&left<=3&&left!==lastTick){lastTick=left; cue("tick")}
+  if(isHost()&&left<=0) reveal();
+}
+function paintTable(){
+  var over=!!(table&&table.step==="over")||(meta&&meta.status==="over");
+  var results=!!(table&&table.step==="results"&&!over);
+  var answering=!!(table&&table.step==="answer"&&!over);
+  var mode=currentMode();
+  var total=rounds();
+  var num=table?Math.min(total, (+table.round||0)+1):1;
+  var round=$("roundlabel");
+  if(round) round.textContent=over?(total+" rounds played"):("Round "+num+" of "+total);
+  var badge=$("badge");
+  if(badge) badge.textContent=modeLabel(mode);
+  var face=splitPrompt(table&&table.text);
+  var kicker=$("kicker"); if(kicker) kicker.textContent=over?"That's the game":face.kicker;
+  var statement=$("statement"); if(statement) statement.textContent=face.rest;
+  var card=$("card"); if(card&&table) card.setAttribute("aria-label", table.text||"Never have I ever");
+  paintAnswers();
+  paintHaves();
+  paintQueue();
+  var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
+  if(over) paintAwards();
+  var custom=$("custombox"); if(custom) custom.classList.toggle("hide", over);
+  var opt=$("optline"); if(opt) opt.classList.toggle("hide", over);
+  var next=$("nextround");
+  if(next){
+    next.classList.toggle("hide", !isHost()||!results);
+    next.textContent=(table&&(+table.round||0)+1>=total)?"See the awards":"Next round";
+  }
+  var skip=$("skip"); if(skip) skip.classList.toggle("hide", !isHost()||!answering);
+  var hostP=meta&&players[meta.hostUid];
+  var away=$("away"); if(away) away.classList.toggle("hide", !hostP||hostP.connected!==false||isHost());
+  if(isHost()) maybeMusic();
+  paintClock();
 }
 function render(){
   paintRole();
+  var mode=currentMode();
+  document.body.dataset.mode=mode;
+  document.body.dataset.phase=table?table.step:(meta&&meta.status==="lobby"?"lobby":"");
   if(!meta){screen("home"); return}
-  var step=table?table.step:"lobby";
-  document.body.dataset.phase=step;
-  document.body.dataset.mode=table?table.mode:lobbyMode;
-  document.body.dataset.kind=table?table.kind:"";
-  document.body.dataset.round=table?String(table.round):"";
-  document.body.dataset.seq=table?String(table.seq):"";
-  document.body.dataset.turn=table?table.turn||"":"";
-  document.body.dataset.actor=table&&table.turn===uid?"1":"0";
-  if(meta.status==="lobby"){screen("lobby"); paintLobby(); return}
+  if(meta.status==="lobby"){screen("lobby"); paintLobby(); maybeMusic(); return}
   screen("table");
-  var hostP=players[meta.hostUid];
-  $("away").classList.toggle("hide", !hostP||hostP.connected!==false);
-  paintScores();
-  paintModes(table?table.mode:lobbyMode);
-  var list=order();
-  var turnName=table?nameOf(table.turn):"";
-  $("turn").textContent=table&&table.step==="prompt"?turnName+" picks the line":turnName;
-  $("audioline").textContent=isHost()?"Music, room tone, and the announcer play on this phone.":"Short sounds on this phone. Music stays with the host.";
-  var showText=table&&table.text&&table.step!=="prompt"&&table.step!=="over";
-  var face=$("statement");
-  face.textContent=showText?table.text:(table&&table.step==="prompt"?"Waiting for the line.":"That's the set.");
-  if(showText&&slamHeard===table.seq) face.classList.add("nh-slam");
-  $("count").textContent=table&&table.step==="slam"?"Hands down for a beat.":"";
-  var mine=table&&table.turn===uid;
-  var asking=table&&table.step==="prompt"&&mine;
-  if(asking && $("line") && $("line").dataset.round!==String(table.round) && document.activeElement!==$("line")){
-    $("line").value="";
-    $("line").dataset.round=String(table.round);
-  }
-  $("composer").classList.toggle("hide", !asking);
-  $("wait").classList.toggle("hide", !(table&&table.step==="prompt"&&!mine));
-  $("wait").textContent="Waiting for "+turnName+" to pick a line.";
-  var extra=$("suggests");
-  if(asking){
-    extra.textContent="";
-    suggestions().forEach(function(line){
-      var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.setAttribute("data-suggest", line); b.textContent=line;
-      b.addEventListener("click", function(){sendSay(line)});
-      extra.appendChild(b);
-    });
-    var hint=table.kind==="vote"?"This round is a vote. Tap a prompt or type one.":"Type a Never have I ever, or tap a prompt.";
-    $("hint").textContent=hint+(table.kind==="vote"&&table.mode!=="likely"?" Hybrid round.":"");
-  }
-  var answering=table&&(table.step==="answer"||table.step==="vote");
-  var buttons=$("answers");
-  buttons.classList.toggle("hide", !answering);
-  buttons.textContent="";
-  if(answering&&table.kind!=="vote"){
-    var have=document.createElement("button"); have.type="button"; have.id="ihave"; have.className="btn"; have.textContent="I have";
-    var not=document.createElement("button"); not.type="button"; not.id="ihavent"; not.className="btn alt"; not.textContent="I haven't";
-    have.addEventListener("click", function(){sendCast("have")});
-    not.addEventListener("click", function(){sendCast("havent")});
-    if(cast[uid]){have.disabled=true; not.disabled=true}
-    buttons.appendChild(have); buttons.appendChild(not);
-    var note=document.createElement("p"); note.className="na"; note.textContent=HAVE_LINE+" Nothing stacks.";
-    buttons.appendChild(note);
-  }
-  if(answering&&table.kind==="vote"){
-    list.forEach(function(p){
-      if(p.uid===uid) return;
-      var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.setAttribute("data-vote", p.uid);
-      b.textContent=(p.emoji?p.emoji+" ":"")+p.name; if(cast[uid]) b.disabled=true;
-      b.addEventListener("click", function(){sendCast(p.uid)});
-      buttons.appendChild(b);
-    });
-    var note2=document.createElement("p"); note2.className="na"; note2.textContent=VOTE_LINE+" A tie means nobody does either. Nothing stacks.";
-    buttons.appendChild(note2);
-  }
-  var marks=$("marks"); marks.textContent="";
-  if(isHost()&&answering){
-    list.forEach(function(p){
-      if(cast[p.uid]) return;
-      var row=document.createElement("div"); row.className="prow";
-      var s=document.createElement("span"); s.textContent="Mark "+p.name;
-      row.appendChild(s);
-      if(table.kind!=="vote"){
-        var y=document.createElement("button"); y.type="button"; y.className="btn alt"; y.setAttribute("data-mark","have"); y.setAttribute("data-who", p.uid); y.textContent="Has";
-        var n=document.createElement("button"); n.type="button"; n.className="btn alt"; n.setAttribute("data-mark","havent"); n.setAttribute("data-who", p.uid); n.textContent="Hasn't";
-        y.addEventListener("click", function(){hostMark(p.uid, "have")});
-        n.addEventListener("click", function(){hostMark(p.uid, "havent")});
-        row.appendChild(y); row.appendChild(n);
-      }else{
-        var pass=document.createElement("button"); pass.type="button"; pass.className="btn alt"; pass.setAttribute("data-mark","pass"); pass.setAttribute("data-who", p.uid); pass.textContent="Pass";
-        pass.addEventListener("click", function(){hostMark(p.uid, "pass")});
-        row.appendChild(pass);
-      }
-      marks.appendChild(row);
-    });
-  }
-  var results=table&&table.step==="results";
-  var box=$("results"); box.classList.toggle("hide", !results);
-  box.textContent="";
-  if(results){
-    var h=document.createElement("h2"); h.textContent=table.kind==="vote"?"Votes":"Who has";
-    box.appendChild(h);
-    if(table.kind==="vote"){
-      var counts=voteCounts(), win=winnerId();
-      var p=document.createElement("p");
-      p.textContent=win?(nameOf(win)+" got the most. "+VOTE_LINE):"A tie. Nobody sips. Nothing stacks.";
-      box.appendChild(p);
-      Object.keys(counts).forEach(function(id){
-        var line=document.createElement("p"); line.textContent=nameOf(id)+" · "+counts[id]; box.appendChild(line);
-      });
-    }else{
-      var ids=haveIds();
-      var p2=document.createElement("p");
-      p2.textContent=ids.length?ids.map(nameOf).join(", ")+" — "+HAVE_LINE+" Nothing stacks.":"Nobody has. Nothing is owed.";
-      box.appendChild(p2);
-      ids.forEach(function(id){var row=document.getElementById("seat-"+id); if(row){var icon=document.createElement("span"); icon.className="nh-pop"; icon.textContent="✦"; row.appendChild(icon)}});
-    }
-    var fill=$("pourfill"); if(fill){
-      var ratio=table.kind==="vote"?(winnerId()?1:0):(list.length?haveIds().length/list.length:0);
-      fill.style.height=Math.round(ratio*100)+"%";
-    }
-  }else{var fill0=$("pourfill"); if(fill0) fill0.style.height="0%"}
-  $("finale").classList.toggle("hide", !(table&&table.step==="over"));
-  if(isHost()&&meta.status==="play") startMusic();
+  paintTable();
   hear();
   maybeScore();
-  if(isHost()&&sayBox&&table&&table.step==="prompt") consumeSay(sayBox);
-  if(isHost()) maybeReveal();
+  if(isHost()&&table&&table.step==="answer"&&allIn()) reveal();
 }
 function hear(){
   if(!table) return;
-  unlock();
-  if(table.step==="prompt"&&turnHeard!==(table.round+":"+table.turn)){
-    turnHeard=table.round+":"+table.turn;
-    if(isHost()) say("Your turn, "+(players[table.turn]?players[table.turn].name:"friend")+".");
+  if(table.step==="answer"&&heardAnswer!==+table.seq){
+    heardAnswer=+table.seq;
+    cue("sting");
+    var card=$("card");
+    if(card){card.classList.remove("nh-slam"); void card.offsetWidth; card.classList.add("nh-slam")}
+    if(isHost()) say("Never have I ever.");
   }
-  if(table.step==="slam"&&slamHeard!==table.seq){
-    slamHeard=table.seq;
-    fire("slam");
-    flash();
-    if(isHost()) say(table.kind==="vote"?"Most likely...":"Never have I ever...");
-    var face=$("statement"); if(face){face.classList.remove("nh-slam"); void face.offsetWidth; face.classList.add("nh-slam")}
+  if(table.step==="results"&&heardResults!==+table.seq){
+    heardResults=+table.seq;
+    var n=haveIds().length, total=order().length;
+    if(n===0) cue("crickets");
+    else if(n<=2) cue("ooh");
+    else {cue("cheer"); if(n>=Math.max(3, total-1)) burst(50)}
   }
-  if(table.step==="results"&&heard!==table.seq){
-    heard=table.seq;
-    var total=order().length, n=haveIds().length;
-    if(table.kind==="vote"){
-      if(winnerId()){fire("some"); if(isHost()) say(((players[winnerId()]&&players[winnerId()].name)||"They")+" takes it.");}
-      else fire("crickets");
-    }else if(n===0){fire("crickets")}
-    else if(n<=2){fire("few"); if(n===1&&isHost()) say("Only one person...")}
-    else if(total>=3&&n>=total-1){fire("many"); shake(); burst(80); if(n===total&&isHost()) say("Everyone's done that!")}
-    else {fire("some"); if(n>=3) shake()}
-    if(table.mode==="spicy"||n>=Math.max(3, Math.ceil(total*0.6))) burst(60);
-    var targets=table.kind==="vote"?(winnerId()?[winnerId()]:[]):haveIds();
-    targets.forEach(function(id, i){
-      var sound=SIPS[i%SIPS.length];
-      if(isHost()) cueAt(sound, panFor(id));
-      else if(id===uid) cueAt(sound);
-      floatIcon("✦", 40+seatIndex(id)*28);
-    });
-  }
+  if(table.step==="over"&&!heardOver){heardOver=true; cue("payoff"); burst(70)}
 }
 function maybeScore(){
-  var me=who[uid]; if(!me||!table||table.step!=="results") return;
-  if((+table.seq||0)<=(+me.seen||0)||scoring===+table.seq) return;
-  scoring=+table.seq;
-  var add=0;
-  if(table.kind==="vote"){if(winnerId()===uid) add=1}
-  else if(cast[uid]==="have") add=1;
-  writeWho(me.emoji||myEmoji(), (+me.confessions||0)+add, +table.seq);
+  var me=who[uid];
+  if(!me||!table||table.step!=="results") return;
+  var seq=+table.seq||0;
+  if(seq<=(+me.seen||0)||scoring===seq) return;
+  scoring=seq;
+  var add=myCast()==="have"?1:0;
+  writeWho(me.emoji||myEmoji(), (+me.confessions||0)+add, seq).catch(function(e){
+    if(scoring===seq) scoring=0;
+    fail(friendly(e));
+  });
 }
-function writeWho(emoji, confessions, seen){
-  set(ref(db, rpath("nhie/who/"+uid)), {emoji:String(emoji||"").slice(0,8), confessions:confessions, seen:seen}).catch(function(e){fail(friendly(e))});
-}
-function nextUid(from){
-  var list=order().map(function(p){return p.uid});
-  if(!list.length) return from;
-  var idx=list.indexOf(from); if(idx<0) idx=list.length-1;
-  return list[(idx+1)%list.length];
-}
-function consumeSay(val){
-  if(!isHost()||!val||!val.text||hostLock) return;
-  if(!table||table.step!=="prompt"){update(ref(db),{[rpath("nhie/say")]:null}).catch(function(){}); return}
-  var text=cleanText(val.text, table.kind);
-  if(!text){update(ref(db),{[rpath("nhie/say")]:null}).catch(function(){}); return}
-  hostLock=true;
-  var seq=(+table.seq||0)+1, opened=Date.now();
-  update(ref(db), {
-    [rpath("nhie/play")]:playObj({step:"slam", text:text, seq:seq, opened:opened}),
-    [rpath("nhie/say")]:null
-  }).then(function(){hostLock=false; armOpen(seq, opened)}).catch(function(e){hostLock=false; fail(friendly(e))});
-}
-function armOpen(seq, opened){
-  if(openTimer) clearTimeout(openTimer);
-  var wait=Math.max(0, (opened||0)+3000-Date.now());
-  openTimer=setTimeout(function(){
-    if(!isHost()||!table||+table.seq!==seq||table.step!=="slam") return;
-    update(ref(db), {[rpath("nhie/play")]:playObj({step:table.kind==="vote"?"vote":"answer"})}).catch(function(e){fail(friendly(e))});
-  }, wait);
-}
-function maybeReveal(){
-  if(!isHost()||hostLock||!table) return;
-  if(table.step!=="answer"&&table.step!=="vote") return;
-  var list=order(); if(list.length<2) return;
-  if(!list.every(function(p){return !!cast[p.uid]})) return;
+function reveal(){
+  if(!isHost()||hostLock||!table||table.step!=="answer") return;
   hostLock=true;
   update(ref(db), {[rpath("nhie/play")]:playObj({step:"results"})}).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
 }
-function advance(){
-  if(!isHost()||!table||hostLock) return;
-  var round=(+table.round||0)+1;
-  var nxt=nextUid(table.turn);
-  var payload={};
-  if(round>=20){
-    payload[rpath("nhie/play")]=playObj({step:"over", round:round, text:table.text});
-    payload[rpath("meta")]=fullMeta({status:"over", phase:"over", endedAt:Date.now()});
-  }else{
-    var mode=table.mode||"classic";
-    payload[rpath("nhie/play")]=playObj({turn:nxt, step:"prompt", text:"", mode:mode, kind:kindFor(mode, round), round:round, opened:0});
-  }
+function clearCast(payload){
   Object.keys(cast).forEach(function(id){payload[rpath("nhie/cast/"+id)]=null});
   payload[rpath("nhie/say")]=null;
+}
+function advance(){
+  if(!isHost()||hostLock||!table||table.step!=="results") return;
+  var round=(+table.round||0)+1;
+  var total=rounds();
+  var payload={};
+  if(round>=total){
+    payload[rpath("nhie/play")]=playObj({step:"over", text:table.text||"Never have I ever finished the set"});
+    payload[rpath("meta")]=fullMeta({status:"over", phase:"over", endedAt:Date.now(), spice:spiceFor(table.mode||currentMode()), rounds:total});
+  }else{
+    var custom="";
+    if(localQueue){custom=localQueue; localQueue=""}
+    else if(sayBox&&sayBox.text) custom=cleanText(sayBox.text);
+    var text=custom||plannedLine(round);
+    payload[rpath("nhie/play")]=playObj({turn:nextUid(table.turn), step:"answer", text:text, seq:(+table.seq||0)+1, round:round, opened:Date.now(), mode:table.mode||currentMode()});
+  }
+  clearCast(payload);
   hostLock=true;
+  pendingCast="";
+  update(ref(db), payload).then(function(){hostLock=false; var note=$("queuednote"); if(note){note.textContent=""; delete note.dataset.sticky}}).catch(function(e){hostLock=false; fail(friendly(e))});
+}
+function skipLine(){
+  if(!isHost()||hostLock||!table||table.step!=="answer") return;
+  var seq=(+table.seq||0)+1;
+  if(seq>38){fail("Let's play this one."); return}
+  var text=skipLineText();
+  var payload={};
+  payload[rpath("nhie/play")]=playObj({step:"answer", text:text, seq:seq, opened:Date.now()});
+  Object.keys(cast).forEach(function(id){payload[rpath("nhie/cast/"+id)]=null});
+  hostLock=true;
+  pendingCast="";
   update(ref(db), payload).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
 }
-function sendSay(raw){
-  if(!table||table.step!=="prompt"||table.turn!==uid) return;
-  var text=cleanText(raw, table.kind);
-  if(!text){fail("Add a line first."); return}
-  fail(""); unlock();
-  update(ref(db), {[rpath("nhie/say")]:{text:text}}).catch(function(e){fail(friendly(e))});
-}
 function sendCast(value){
-  if(!table||(table.step!=="answer"&&table.step!=="vote")||cast[uid]) return;
-  unlock();
-  update(ref(db), {[rpath("nhie/cast/"+uid)]:String(value).slice(0,128)}).catch(function(e){fail(friendly(e))});
+  if(!table||table.step!=="answer"||cast[uid]||pendingCast||sending) return;
+  if(value!=="have"&&value!=="never") return;
+  pendingCast=value;
+  sending=true;
+  paintAnswers();
+  tapSound(value==="have"?"crack":"whoosh");
+  var btn=$(value==="have"?"ihave":"never");
+  if(btn){btn.classList.remove("nh-hit"); void btn.offsetWidth; btn.classList.add("nh-hit")}
+  update(ref(db), {[rpath("nhie/cast/"+uid)]:value}).then(function(){sending=false}).catch(function(e){
+    sending=false; pendingCast=""; paintAnswers(); fail(friendly(e));
+  });
 }
-function hostMark(id, value){
-  if(!isHost()||!id) return;
-  update(ref(db), {[rpath("nhie/cast/"+id)]:String(value).slice(0,128)}).catch(function(e){fail(friendly(e))});
+function queueCustom(){
+  if(!table||(table.step!=="answer"&&table.step!=="results")){fail("Wait for a round, then queue the next line."); return}
+  var text=cleanText($("custom")&&$("custom").value);
+  if(!text){fail("Type a line first."); return}
+  fail("");
+  unlock();
+  cue("flip");
+  update(ref(db), {[rpath("nhie/say")]:{text:text}}).then(function(){
+    if($("custom")) $("custom").value="";
+    if($("queuednote")){ $("queuednote").textContent="Queued for the next round."; $("queuednote").dataset.sticky="1" }
+  }).catch(function(e){
+    var denied=/permission|denied/i.test(String((e&&(e.code||e.message))||""));
+    if(isHost()){
+      localQueue=text;
+      if($("custom")) $("custom").value="";
+      if($("queuednote")){ $("queuednote").textContent="Queued on this phone for the next round."; $("queuednote").dataset.sticky="1" }
+      return;
+    }
+    if(denied) fail("The host can type that one for now.");
+    else fail(friendly(e));
+  });
 }
 function setMode(mode){
-  lobbyMode=mode; sessionStorage.setItem("tp_nhie_mode", mode); paintModes(mode);
-  if(isHost()&&table&&table.step==="prompt"){
-    update(ref(db), {[rpath("nhie/play")]:playObj({mode:mode, kind:kindFor(mode, table.round)})}).catch(function(e){fail(friendly(e))});
+  if(!/^(mild|classic|spicy)$/.test(mode)) return;
+  if(meta&&!isHost()) return;
+  lobbyMode=mode;
+  try{sessionStorage.setItem("tp_nhie_mode", mode)}catch(e){}
+  document.body.dataset.mode=currentMode();
+  paintModes();
+  if(isHost()&&meta&&meta.status==="lobby"&&meta.createdAt){
+    update(ref(db), {[rpath("meta")]:fullMeta({spice:spiceFor(mode), rounds:rounds(), status:"lobby", phase:"lobby"})}).catch(function(e){fail(friendly(e))});
   }
 }
-function sendReact(emo){
-  var id=(Date.now().toString(36)+Math.random().toString(36).slice(2,8)).replace(/[^A-Za-z0-9]/g,"").slice(0,24);
-  if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
-  update(ref(db), {[rpath("nhie/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
+function setLength(n){
+  n=+n;
+  if(LENGTHS.indexOf(n)<0) return;
+  if(meta&&!isHost()) return;
+  gameLength=n;
+  try{sessionStorage.setItem("tp_nhie_len", String(n))}catch(e){}
+  paintLengths();
+  var start=$("start"); if(start&&meta&&meta.status==="lobby") start.textContent="Start · "+n+" rounds";
+  if(isHost()&&meta&&meta.status==="lobby"&&meta.createdAt){
+    update(ref(db), {[rpath("meta")]:fullMeta({rounds:n, spice:spiceFor(currentMode()), status:"lobby", phase:"lobby"})}).catch(function(e){fail(friendly(e))});
+  }
 }
 async function begin(){
-  if(!isHost()||!meta) return;
-  var list=order(); if(list.length<2||list.length>12){fail("Need 2 to 12 players."); return}
+  if(!isHost()||!meta||sending) return;
+  var list=order();
+  if(list.length<2||list.length>12){fail("Need 2 to 12 players."); return}
+  if(!$("optin").checked){fail("Tick the opt-in first. Sips stay optional."); return}
   fail("");
-  var mode=lobbyMode||"classic";
+  sending=true;
+  var mode=currentMode();
+  var len=rounds();
   var payload={};
-  payload[rpath("meta")]=fullMeta({status:"play", phase:"answer", round:0});
-  payload[rpath("nhie/play")]=playObj({turn:list[0].uid, step:"prompt", text:"", seq:0, mode:mode, kind:kindFor(mode, 0), round:0, opened:0, order:list.map(function(p){return p.uid}).join(",")});
+  payload[rpath("meta")]=fullMeta({status:"play", phase:"answer", spice:spiceFor(mode), rounds:len});
+  payload[rpath("nhie/play")]=playObj({turn:list[0].uid, step:"answer", text:plannedLine(0), seq:1, mode:mode, kind:"have", round:0, opened:Date.now(), order:list.map(function(p){return p.uid}).join(",")});
   payload[rpath("nhie/say")]=null;
-  try{await update(ref(db), payload); unlock(); say("Never have I ever...")}catch(e){fail(friendly(e))}
+  try{await update(ref(db), payload); cue("whoosh")}catch(e){fail(friendly(e))}
+  sending=false;
 }
-function stopAll(){stops.forEach(function(fn){fn()}); stops=[]; if(connStop){connStop(); connStop=null}}
+function stopAll(){stops.forEach(function(fn){try{fn()}catch(e){}}); stops=[]; if(connStop){connStop(); connStop=null}}
 function listen(){
-  stopAll(); heard=-1; slamHeard=-1; turnHeard=""; seenReact=null;
+  stopAll();
+  heardAnswer=-1; heardResults=-1; heardOver=false; seenReact=null; scoring=0; pendingCast="";
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){stopAll(); meta=null; screen("closed"); return}
-    meta=s.val(); render();
-  }, function(){fail("That room isn't available.")}));
+    if(!s.exists()){
+      stopAll(); meta=null; table=null; code=null;
+      try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}
+      screen("closed"); return;
+    }
+    meta=s.val()||null; render();
+  }, function(){fail("That room isn't available. Check the code and try again.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("nhie/who")), function(s){who=s.val()||{}; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("nhie/play")), function(s){
     table=s.val()||null;
-    if(isHost()&&table&&table.step==="slam") armOpen(+table.seq, +table.opened||0);
+    hostLock=false;
+    if(table&&table.step==="answer") pendingCast="";
     render();
   }, function(){}));
-  stops.push(onValue(ref(db, rpath("nhie/say")), function(s){sayBox=s.val()||null; if(isHost()&&sayBox) consumeSay(sayBox); render()}, function(){}));
-  stops.push(onValue(ref(db, rpath("nhie/cast")), function(s){cast=s.val()||{}; render()}, function(){}));
+  stops.push(onValue(ref(db, rpath("nhie/say")), function(s){sayBox=s.val()||null; render()}, function(){}));
+  stops.push(onValue(ref(db, rpath("nhie/cast")), function(s){
+    cast=s.val()||{};
+    if(cast[uid]) pendingCast="";
+    render();
+  }, function(){}));
   stops.push(onValue(ref(db, rpath("nhie/react")), function(s){
     var v=s.val()||{}, first=seenReact===null; if(first) seenReact={};
     Object.keys(v).forEach(function(id){
       if(seenReact[id]) return; seenReact[id]=1;
       if(first) return;
-      var emo=v[id].e; floatIcon(EMOS[emo]||"👏"); var eng=audioEngine(); if(eng) eng.cue(EMO_CUE[emo]||"clink");
+      var emo=v[id]&&v[id].e; floatIcon(EMOS[emo]||"👏"); cue(EMO_CUE[emo]||"clink");
     });
   }, function(){}));
 }
@@ -492,26 +634,27 @@ function armPresence(){
   });
 }
 async function hostRoom(name){
-  var i, claimed=null;
+  var i, claimed=null, len=LENGTHS.indexOf(gameLength)>=0?gameLength:15;
   for(i=0;i<6;i++){
     var c=makeCode();
     var snap=await get(ref(db, "rooms/"+c+"/meta"));
     if(snap.exists()) continue;
     try{
-      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:20, na:false, round:0, gameId:1, kind:"nhie"}});
+      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:spiceFor(lobbyMode), rounds:len, na:false, round:0, gameId:1, kind:"nhie"}});
       claimed=c; break;
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
   if(!claimed) throw new Error("room");
   await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:Date.now()});
   await set(ref(db, "rooms/"+claimed+"/nhie/who/"+uid), {emoji:myEmoji(), confessions:0, seen:0});
-  code=claimed; sessionStorage.setItem("tp_nhie_room", code);
+  code=claimed;
+  try{sessionStorage.setItem("tp_nhie_room", code)}catch(e){}
   listen(); armPresence();
 }
 async function joinRoom(c, name){
   var snap=await get(ref(db, "rooms/"+c+"/meta"));
   if(!snap.exists()) throw new Error("missing");
-  var m=snap.val();
+  var m=snap.val()||{};
   if(m.kind&&m.kind!=="nhie") throw new Error("kind");
   var mine=await get(ref(db, "rooms/"+c+"/players/"+uid));
   if(m.status!=="lobby"&&!mine.exists()) throw new Error("closed");
@@ -520,44 +663,77 @@ async function joinRoom(c, name){
   var w=await get(ref(db, "rooms/"+c+"/nhie/who/"+uid));
   var cur=w.val()||{confessions:0, seen:0};
   await set(ref(db, "rooms/"+c+"/nhie/who/"+uid), {emoji:myEmoji()||cur.emoji||"", confessions:+cur.confessions||0, seen:+cur.seen||0});
-  code=c; sessionStorage.setItem("tp_nhie_room", code);
+  code=c;
+  try{sessionStorage.setItem("tp_nhie_room", code)}catch(e){}
   listen(); armPresence();
 }
-function closeRoom(){
+var closeArmed=0;
+function askClose(){
   if(!isHost()||!code) return;
+  if(Date.now()-closeArmed>2500){closeArmed=Date.now(); fail("Tap close again to end the room for everyone."); return}
+  fail("");
   remove(ref(db, "rooms/"+code)).catch(function(e){fail(friendly(e))});
-  sessionStorage.removeItem("tp_nhie_room");
+  try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}
+}
+function sendReact(emo){
+  var id=(Date.now().toString(36)+Math.random().toString(36).slice(2,8)).replace(/[^A-Za-z0-9]/g,"").slice(0,24);
+  if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
+  update(ref(db), {[rpath("nhie/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
+}
+function focusName(){
+  var el=$("pname"); if(!el) return;
+  try{el.focus({preventScroll:false})}catch(e){try{el.focus()}catch(err){}}
 }
 function wire(){
-  var saved=localStorage.getItem("tp_name"); if(saved&&!$("pname").value) $("pname").value=saved;
-  var mode=sessionStorage.getItem("tp_nhie_mode"); if(mode) lobbyMode=mode;
-  paintEmoji(); paintModes(lobbyMode);
-  var q=normCode(location.search); if(q) $("roomcode").value=q;
+  var saved=""; try{saved=localStorage.getItem("tp_name")||""}catch(e){}
+  if(saved&&$("pname")&&!$("pname").value) $("pname").value=saved;
+  try{
+    var mode=sessionStorage.getItem("tp_nhie_mode"); if(mode&&/^(mild|classic|spicy)$/.test(mode)) lobbyMode=mode;
+    var len=+sessionStorage.getItem("tp_nhie_len"); if(LENGTHS.indexOf(len)>=0) gameLength=len;
+  }catch(e){}
+  paintEmoji(); paintModes(); paintLengths();
+  document.body.dataset.mode=lobbyMode;
+  var linked=queryRoom();
+  if(linked&&$("roomcode")) $("roomcode").value=linked;
   $("hostbtn").addEventListener("click", function(){
-    var name=normName($("pname").value); if(!name){fail("Add your name first."); return}
-    localStorage.setItem("tp_name", name); fail(""); unlock();
-    hostRoom(name).catch(function(e){fail(friendly(e))});
+    var name=normName($("pname").value);
+    if(!name){fail("Add your name first."); focusName(); return}
+    if(sending) return;
+    sending=true;
+    try{localStorage.setItem("tp_name", name)}catch(e){}
+    fail(""); tapSound("whoosh");
+    hostRoom(name).catch(function(e){fail(e&&e.message==="room"?"Couldn't open a room. Try again.":friendly(e))}).then(function(){sending=false});
   });
   $("joinform").addEventListener("submit", function(e){e.preventDefault(); $("joinbtn").click()});
   $("joinbtn").addEventListener("click", function(){
     var name=normName($("pname").value), c=normCode($("roomcode").value);
-    if(!name){fail("Add your name first."); return}
-    if(!validCode(c)){fail("Enter the 4-letter code."); return}
-    localStorage.setItem("tp_name", name); fail(""); unlock();
+    if(!name){fail("Add your name first."); focusName(); return}
+    if(!validCode(c)){fail("Enter the 4-letter code."); $("roomcode").focus(); return}
+    if(sending) return;
+    sending=true;
+    try{localStorage.setItem("tp_name", name)}catch(e){}
+    fail(""); tapSound("whoosh");
     joinRoom(c, name).catch(function(e){
       var msg=String((e&&e.message)||"");
       if(msg==="kind") fail("That code is for a different game.");
-      else if(msg==="missing"||msg==="closed") fail("That room isn't available.");
+      else if(msg==="missing"||msg==="closed") fail("That room isn't open. Check the code and try again.");
       else fail(friendly(e));
-    });
+    }).then(function(){sending=false});
   });
-  $("optin").addEventListener("change", render);
+  if($("optin")) $("optin").addEventListener("change", render);
   $("start").addEventListener("click", function(){unlock(); begin()});
-  $("send").addEventListener("click", function(){sendSay($("line").value)});
-  $("skip").addEventListener("click", advance);
-  $("nextround").addEventListener("click", advance);
-  $("close").addEventListener("click", closeRoom);
-  $("closestage").addEventListener("click", closeRoom);
+  $("ihave").addEventListener("click", function(){sendCast("have")});
+  $("never").addEventListener("click", function(){sendCast("never")});
+  $("nextround").addEventListener("click", function(){unlock(); advance()});
+  $("skip").addEventListener("click", function(){unlock(); skipLine()});
+  $("close").addEventListener("click", askClose);
+  $("closestage").addEventListener("click", askClose);
+  $("copylink").addEventListener("click", function(){copyLink($("copylink"))});
+  $("sharebtn").addEventListener("click", shareRoom);
+  $("queue").addEventListener("click", queueCustom);
+  $("custom").addEventListener("keydown", function(e){if(e.key==="Enter"){e.preventDefault(); queueCustom()}});
+  document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setMode(b.dataset.mode)})});
+  document.querySelectorAll("[data-len]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setLength(b.dataset.len)})});
   $("mixbtn").addEventListener("click", function(){$("mixer").classList.toggle("hide"); unlock()});
   ["mixmusic","mixsfx","mixvoice"].forEach(function(id){
     $(id).addEventListener("input", function(){
@@ -569,30 +745,8 @@ function wire(){
   $("mutemusic").addEventListener("change", function(){mix.muteMusic=$("mutemusic").checked; saveMix()});
   $("mutesfx").addEventListener("change", function(){mix.muteSfx=$("mutesfx").checked; saveMix()});
   $("mutevoice").addEventListener("change", function(){mix.muteVoice=$("mutevoice").checked; saveMix(); if(mix.muteVoice&&window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}});
-  document.addEventListener("click", function(e){
-    var t=e.target; if(t&&t.nodeType!==1) t=t.parentElement;
-    if(!t||!t.closest) return;
-    unlock();
-    var emoBtn=t.closest("[data-emoji]");
-    if(emoBtn){
-      var emo=emoBtn.getAttribute("data-emoji");
-      sessionStorage.setItem("tp_nhie_emoji", emo==="none"?"":emo);
-      paintEmoji();
-      if(code&&uid) writeWho(myEmoji(), (who[uid]&&who[uid].confessions)||0, (who[uid]&&who[uid].seen)||0);
-      return;
-    }
-    var modeBtn=t.closest("[data-mode]");
-    if(modeBtn&&(meta?isHost():true)){setMode(modeBtn.dataset.mode); return}
-    var sug=t.closest("[data-suggest]");
-    if(sug){sendSay(sug.getAttribute("data-suggest")); return}
-    if(t.closest("#ihave")){sendCast("have"); return}
-    if(t.closest("#ihavent")){sendCast("havent"); return}
-    var vote=t.closest("[data-vote]");
-    if(vote){sendCast(vote.getAttribute("data-vote")); return}
-    var mark=t.closest("[data-mark]");
-    if(mark&&isHost()){hostMark(mark.getAttribute("data-who"), mark.getAttribute("data-mark")); return}
-    var react=t.closest("[data-emo]");
-    if(react){sendReact(react.dataset.emo); return}
+  document.querySelectorAll("[data-emo]").forEach(function(b){
+    b.addEventListener("click", function(){unlock(); if(code) sendReact(b.dataset.emo); else cue(EMO_CUE[b.dataset.emo]||"clink")});
   });
   $("mixmusic").value=Math.round(mix.music*100);
   $("mixsfx").value=Math.round(mix.sfx*100);
@@ -601,10 +755,38 @@ function wire(){
   $("mutesfx").checked=!!mix.muteSfx;
   $("mutevoice").checked=!!mix.muteVoice;
   var mute=$("mute"); if(window.TPSound&&mute) TPSound.bindMute(mute);
-  window.addEventListener("pointerdown", unlock, {passive:true});
+  if(!clockTimer) clockTimer=setInterval(paintClock, 200);
+  window.addEventListener("offline", function(){fail("You're offline. We'll keep trying when you're back.")});
+  window.addEventListener("online", function(){fail(""); if(goOnline&&db){try{goOnline(db)}catch(e){}}});
+  var back=""; try{back=sessionStorage.getItem("tp_nhie_room")||""}catch(e){}
+  var same=linked&&back&&linked===back;
+  if(linked&&!same){
+    focusName();
+    var yes=document.getElementById("gyes");
+    if(yes) yes.addEventListener("click", function(){setTimeout(focusName, 60)}, {once:true});
+  }
+  var nm=normName($("pname").value);
+  if(!linked&&back&&validCode(back)&&nm) joinRoom(back, nm).catch(function(){try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}});
+  else if(same&&nm) joinRoom(back, nm).catch(function(){focusName()});
+}
+function showReady(){
+  if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
+  var boot=$("boot"); if(boot) boot.classList.add("hide");
+  var app=$("app"); if(app) app.classList.remove("hide");
+}
+function showBootError(msg){
+  if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
+  var boot=$("boot"); if(boot) boot.classList.remove("hide");
+  var app=$("app"); if(app) app.classList.add("hide");
+  if($("bootmsg")) $("bootmsg").textContent="Couldn't open the game.";
+  if($("booterr")){$("booterr").textContent=msg||"Check your connection and try again."; $("booterr").classList.remove("hide")}
+  if($("retry")) $("retry").classList.remove("hide");
 }
 async function boot(){
-  if(!navigator.onLine&&!emuOn()){$("connecting").classList.add("hide"); $("offline").classList.remove("hide"); return}
+  bootTimer=setTimeout(function(){
+    if($("app")&&$("app").classList.contains("hide")) showBootError("This is taking too long. Check your connection and try again.");
+  }, 12000);
+  if(!navigator.onLine&&!emuOn()){showBootError("You're offline. Reconnect, then try again."); return}
   var base="https://www.gstatic.com/firebasejs/12.4.0/";
   var appMod=await import(base+"firebase-app.js");
   var authMod=await import(base+"firebase-auth.js");
@@ -624,16 +806,9 @@ async function boot(){
   uid=cred.user.uid;
   document.body.dataset.uid=uid;
   goOnline(db);
-  $("connecting").classList.add("hide");
-  $("app").classList.remove("hide");
-  wire();
-  var back=sessionStorage.getItem("tp_nhie_room");
-  var nm=normName($("pname").value);
-  if(back&&validCode(back)&&nm) joinRoom(back, nm).catch(function(){sessionStorage.removeItem("tp_nhie_room")});
+  showReady();
+  try{wire()}catch(err){console.error(err); fail("The table glitched. Reload and try again.")}
 }
-boot().catch(function(){
-  $("connecting").classList.add("hide");
-  $("offline").classList.remove("hide");
-  $("offdetail").textContent="Sign-in didn't start. Check the connection and try again.";
-});
+if($("retry")) $("retry").addEventListener("click", function(){location.reload()});
+boot().catch(function(err){console.error(err); showBootError("The game didn't open. Check your connection and try again.")});
 })();
