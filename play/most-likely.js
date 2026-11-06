@@ -410,7 +410,7 @@ function paintResults(){
   }
   if(tie){
     if(!result.n){tie.textContent="Nothing is owed."; tie.classList.remove("hide")}
-    else if(result.wins.length>1){tie.textContent="It's a tie. One small sip each, or the pose. Nothing stacks."; tie.classList.remove("hide")}
+    else if(result.wins.length>1){tie.textContent="It's a tie. Nothing stacks."; tie.classList.remove("hide")}
     else {tie.textContent=""; tie.classList.add("hide")}
   }
 }
