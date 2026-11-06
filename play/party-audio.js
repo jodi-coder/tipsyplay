@@ -1,6 +1,7 @@
 /* Shared party synth. Web Audio only: no samples, no audio files.
    Buses: music (host loop + room tone), sfx (panned), voice (host announcer).
-   Music ducks under SFX and speech. King's Cup and Never Have I Ever both use this. */
+   Music ducks under SFX and speech. King's Cup and Never Have I Ever use the loop.
+   Who's Most Likely uses the mlt* one-shots. Those cues do not start the loop. */
 (function(global){
 "use strict";
 function blank(){return {music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false}}
@@ -12,7 +13,7 @@ function load(key){
 function create(opts){
   opts=opts||{};
   var mix=opts.mix||load(opts.key||"tp_party_mix");
-  var audio=null, musicGain, sfxGain, timer=0, nextTime=0, stepN=0, duckUntil=0, ambience=false;
+  var audio=null, musicGain, sfxGain, timer=0, nextTime=0, stepN=0, duckUntil=0, ambience=false, ambienceSrc=null;
   function host(){try{return opts.host?!!opts.host():true}catch(e){return false}}
   function hype(){try{return opts.hype?+opts.hype()||0:0}catch(e){return 0}}
   function save(){try{if(opts.key) localStorage.setItem(opts.key, JSON.stringify(mix))}catch(e){}}
@@ -106,6 +107,18 @@ function create(opts){
     else if(name==="crickets"){var c; for(c=0;c<5;c++) tone(3200+Math.random()*400,"sine",t+c*0.16,0.05,0.08,3600,bus)}
     else if(name==="awkward"){noise(t,0.7,0.08,180,320,"lowpass",bus); tone(98,"sine",t,0.6,0.05,0,bus)}
     else if(name==="payoff"){tone(523,"triangle",t,0.16,0.32,0,bus); tone(659,"triangle",t+0.12,0.18,0.3,0,bus); tone(784,"sine",t+0.24,0.26,0.34,0,bus); tone(1046,"sine",t+0.38,0.42,0.28,0,bus); noise(t+0.36,0.18,0.22,700,2200,null,bus)}
+    else if(name==="mltJoin"||name==="mltVote"||name==="mltRound"||name==="mltSuspense"||name==="mltWin"||name==="mltTie"||name==="mltNone"||name==="mltTwist"||name==="mltFinale"){
+      var mb=dest(0);
+      if(name==="mltJoin"){noise(t,0.05,0.42,180,900,"lowpass",mb); tone(523,"triangle",t+0.04,0.08,0.26,0,mb); tone(659,"triangle",t+0.12,0.09,0.24,0,mb); tone(784,"sine",t+0.2,0.14,0.22,0,mb); noise(t+0.18,0.06,0.16,1800,4200,"highpass",mb)}
+      else if(name==="mltVote"){noise(t,0.028,0.38,1600,3600,"highpass",mb); tone(740,"square",t,0.045,0.18,0,mb); tone(988,"sine",t+0.05,0.08,0.14,0,mb)}
+      else if(name==="mltRound"){noise(t,0.08,0.22,400,1600,null,mb); tone(392,"triangle",t,0.09,0.24,0,mb); tone(523,"triangle",t+0.09,0.1,0.26,0,mb); tone(659,"sine",t+0.18,0.16,0.24,0,mb)}
+      else if(name==="mltSuspense"){duck(1.05); tone(196,"sine",t,0.92,0.2,880,mb); tone(247,"triangle",t,0.92,0.12,1046,mb); tone(330,"sine",t+0.16,0.1,0.1,0,mb); tone(392,"square",t+0.32,0.09,0.12,0,mb); tone(494,"square",t+0.46,0.08,0.14,0,mb); tone(587,"square",t+0.58,0.08,0.16,0,mb); tone(740,"triangle",t+0.7,0.09,0.2,0,mb); tone(880,"sine",t+0.82,0.1,0.22,0,mb); noise(t+0.7,0.22,0.22,280,1600,"lowpass",mb)}
+      else if(name==="mltWin"){noise(t,0.06,0.36,700,2800,null,mb); tone(523,"square",t,0.09,0.3,0,mb); tone(659,"square",t+0.09,0.09,0.28,0,mb); tone(784,"triangle",t+0.18,0.12,0.3,0,mb); tone(1046,"sine",t+0.3,0.24,0.32,0,mb)}
+      else if(name==="mltTie"){tone(440,"triangle",t,0.16,0.26,0,mb); tone(554,"triangle",t,0.16,0.2,0,mb); tone(659,"sine",t+0.14,0.2,0.24,0,mb); tone(880,"sine",t+0.14,0.2,0.16,0,mb)}
+      else if(name==="mltNone"){tone(494,"sine",t,0.12,0.16,392,mb); tone(349,"triangle",t+0.1,0.18,0.12,0,mb)}
+      else if(name==="mltTwist"){tone(880,"sawtooth",t,0.18,0.16,220,mb); tone(660,"triangle",t+0.08,0.14,0.12,0,mb); noise(t,0.12,0.2,900,2200,null,mb)}
+      else if(name==="mltFinale"){noise(t,0.12,0.32,500,2400,null,mb); tone(523,"square",t,0.1,0.26,0,mb); tone(659,"square",t+0.1,0.1,0.26,0,mb); tone(784,"triangle",t+0.2,0.12,0.28,0,mb); tone(1046,"sine",t+0.32,0.22,0.3,0,mb); tone(1318,"sine",t+0.46,0.28,0.18,0,mb); noise(t+0.3,0.2,0.22,800,3000,null,mb)}
+    }
   }
   function say(line){
     if(!host()||mix.muteVoice||!line||!global.speechSynthesis||!global.SpeechSynthesisUtterance) return;
@@ -126,8 +139,13 @@ function create(opts){
       var src=audio.createBufferSource(); src.buffer=buf; src.loop=true;
       var f=audio.createBiquadFilter(); f.type="lowpass"; f.frequency.value=420;
       var g=audio.createGain(); g.gain.value=0.035;
-      src.connect(f); f.connect(g); g.connect(musicGain); src.start();
-    }catch(e){}
+      src.connect(f); f.connect(g); g.connect(musicGain); ambienceSrc=src; src.start();
+    }catch(e){ambience=false; ambienceSrc=null}
+  }
+  function stopMusic(){
+    if(timer){clearInterval(timer); timer=0}
+    if(ambienceSrc){try{ambienceSrc.stop()}catch(e){} ambienceSrc=null}
+    ambience=false; nextTime=0; stepN=0; duckUntil=0;
   }
   function startMusic(){
     if(!host()||!ensure()) return;
@@ -159,7 +177,7 @@ function create(opts){
     }, 40);
   }
   function unlock(){ensure()}
-  return {mix:mix, save:save, apply:apply, cue:cue, say:say, startMusic:startMusic, unlock:unlock, duck:duck};
+  return {mix:mix, save:save, apply:apply, cue:cue, say:say, startMusic:startMusic, stopMusic:stopMusic, unlock:unlock, duck:duck};
 }
 global.PartyAudio={blank:blank, load:load, create:create};
 })(window);

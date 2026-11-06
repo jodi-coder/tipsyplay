@@ -11,8 +11,9 @@
   gtag('config', 'G-BHY4BXF3V3');
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffe14a">
-<meta name="description" content="Play Who's Most Likely online with a PIN. Vote on your phones, then one small sip or a playful challenge. Nothing stacks. Free adult party game in the browser.">
+<meta name="theme-color" content="#07070d">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Play Who's Most Likely online. Share a join link, pick a pack, and vote for a person on your phone. One small sip, water, or a pose. Nothing stacks.">
 <link rel="canonical" href="https://tipsyplay.com/games/whos-most-likely.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -23,114 +24,268 @@
 <title>Who's Most Likely – Party Drinking Game Online | TipsyPlay</title>
 <link rel="stylesheet" href="../styles.css?v=17">
 <style>
-/* One-screen party layout: SEO title stays, Host, Join, and the age line stay on screen. */
-body.mlt #home{gap:6px}
-body.mlt #home > *{flex-shrink:0}
-body.mlt #home > h1{font-size:clamp(.95rem,3.4vw,1.15rem);line-height:1.05;margin:8px 0 0}
-body.mlt #home > h2{font-size:clamp(1.7rem,8vw,2.6rem);margin:0}
-body.mlt #home .lede{margin:.2em 0}
-body.mlt #home .na{padding:8px 10px}
+body.mlt{--pack:#f59e0b;overflow:auto !important;height:auto !important;min-height:100vh;background:#07070d;color:#f4f4f5}
+body.mlt[data-pack="classic"]{--pack:#f59e0b}
+body.mlt[data-pack="spicy"]{--pack:#f43f5e}
+body.mlt[data-pack="couples"]{--pack:#c084fc}
+body.mlt header.top{background:#07070d;border-bottom-color:#241820}
+body.mlt header.top nav a{color:#f4f4f5}
+body.mlt button.mute{background:#12121a;color:#fff;border-color:#3a3a46}
+body.mlt #mute{display:inline-flex !important}
+body.mlt nav.tabbar{display:flex !important;background:#07070d;border-top-color:var(--pack)}
+body.mlt .tabbar a{color:#f4f4f5}
+body.mlt .tabbar a.on{background:#16161f;color:var(--pack)}
+body.mlt .age{color:#f4f4f5;font-size:1rem;margin:.35em 0}
+body.mlt .card,body.mlt .card h2,body.mlt .card p,body.mlt .card label{color:#111}
+body.mlt .card .age{color:#111}
+body.mlt #closed.card{background:#12121a;border-color:#3a3a46}
+body.mlt #closed.card h2,body.mlt #closed.card p,body.mlt #closed.card .age{color:#f4f4f5}
+body.mlt input.bigin{background:#12121a;color:#fff;border-color:#3a3a46}
+body.mlt input::placeholder{color:#9a9aaa}
+body.mlt #home{padding-top:8px}
+body.mlt #home h1{font-size:clamp(1.7rem,7.2vw,2.4rem);margin:4px 0 0}
+body.mlt #home h2{font-size:clamp(1.55rem,6.6vw,2.15rem);margin:0}
+body.mlt #home .lede{font-size:1rem;margin:.25em 0}
+body.mlt #home .na{padding:8px 10px;margin-top:6px}
+body.mlt #home .host-cta{min-height:64px;font-size:1.55rem;margin:8px 0}
+body.mlt .host-cta{min-height:68px;font-size:1.55rem;margin:10px 0}
+body.mlt #lobby h2,body.mlt .mlt-players h2{font-size:1.45rem;margin:.4em 0}
+body.mlt .linkbox{color:#c9c9d6}
+body.mlt .tag{color:#f4f4f5;border-color:#3a3a46}
+body.mlt .chip{background:#12121a;color:#f4f4f5;border-color:#3a3a46}
+body.mlt .chip[data-pack="classic"]{box-shadow:inset 6px 0 0 #f59e0b}
+body.mlt .chip[data-pack="spicy"]{box-shadow:inset 6px 0 0 #f43f5e}
+body.mlt .chip[data-pack="couples"]{box-shadow:inset 6px 0 0 #c084fc}
+body.mlt .chip[aria-pressed="true"]{background:var(--pack);color:#14080c;border-color:var(--pack)}
+body.mlt .kc-react button{background:#12121a;border-color:#3a3a46;color:#fff}
+body.mlt .kc-react button[aria-pressed="true"]{border-color:var(--pack);box-shadow:0 0 12px var(--pack)}
+body.mlt .kc-lights i{background:#1a1a24;border-color:#2a2a33}
+body.mlt .kc-lights.on i:nth-child(odd){background:var(--pack)}
+body.mlt .kc-lights.on i:nth-child(even){background:#fff}
+body.mlt.mlt-flash::before{content:"";position:fixed;inset:0;background:var(--pack);opacity:.38;pointer-events:none;z-index:30;animation:kcflash .35s linear forwards}
+.mlt-boot{padding:28px 0}
+.mlt-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mlt-share .btn{width:100%;min-height:52px}
+.mlt-qr{width:148px;height:148px;margin:8px auto;display:block;background:#fff;border-radius:12px}
+.mlt-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #2a2a33;font-weight:700}
+.mlt-person.off{opacity:.55}
+.mlt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
+.mlt-round{margin:0;font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;font-size:1.05rem}
+.mlt-badge{margin:0;border:2px solid var(--pack);color:var(--pack);border-radius:999px;padding:4px 12px;font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 14px var(--pack);font-size:.95rem}
+.mlt-card{background:#0c0c14;border:2px solid var(--pack);border-radius:24px;box-shadow:0 0 28px var(--pack), inset 0 0 32px rgba(255,255,255,.03);padding:28px 18px;text-align:center;min-height:168px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mlt-kicker{margin:0 0 8px;letter-spacing:.16em;text-transform:uppercase;color:var(--pack);font-family:var(--display);font-size:.95rem}
+.mlt-prompt{margin:0;font-family:var(--display);font-size:clamp(1.8rem,8vw,2.8rem);line-height:.95;text-transform:uppercase;color:#fff}
+.mlt-slam{animation:nhslam .45s cubic-bezier(.2,1.4,.4,1)}
+.mlt-clock{text-align:center;margin:8px 0;color:var(--pack);text-shadow:0 0 16px var(--pack);line-height:.8}
+.mlt-clock span{font-family:var(--display);font-size:clamp(3.2rem,16vw,5rem)}
+.mlt-clock small{display:block;font-family:var(--font);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-top:4px}
+.mlt-clock.hot span{color:#fff}
+.mlt-votes{display:flex;flex-direction:column;gap:10px;margin:8px 0 12px}
+.mlt-votes button{min-height:84px;border-radius:18px;border:3px solid #2a2a33;background:#14141c;color:#fff;font-family:var(--display);font-size:clamp(1.45rem,6.4vw,2rem);letter-spacing:.03em;text-align:left;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:none}
+.mlt-votes button .emo{font-size:1.8rem;width:2.2rem;text-align:center;line-height:1}
+.mlt-votes button[aria-pressed="true"]{background:var(--pack);color:#14080c;border-color:var(--pack);box-shadow:0 0 18px var(--pack)}
+.mlt-votes button:disabled{opacity:.45}
+.mlt-votes button[aria-pressed="true"]:disabled{opacity:1}
+.mlt-hit{transform:scale(.98)}
+.mlt-locked{text-align:center;color:#c9c9d6;font-weight:700;margin:4px 0 8px}
+.mlt-hold{text-align:center;font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--pack);margin:8px 0}
+.mlt-results{margin:12px 0}
+.mlt-results h2{font-size:clamp(2.6rem,12vw,4rem);line-height:.88;margin:0 0 10px;text-align:center}
+.mlt-results ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.mlt-results li{display:flex;align-items:center;justify-content:center;gap:10px;background:#12121a;border:2px solid var(--pack);border-radius:16px;padding:14px 12px;font-family:var(--display);font-size:clamp(1.7rem,7vw,2.4rem);line-height:.95;text-transform:uppercase;box-shadow:0 0 16px var(--pack)}
+.mlt-results .emo{font-size:1.8rem;line-height:1}
+.mlt-tie{text-align:center;font-weight:800;margin:10px 0 0}
+.mlt-safe{margin:10px 0 0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;color:#f4f4f5;font-weight:600;text-align:center;font-size:1rem;line-height:1.35}
+.mlt-twist{border:2px solid var(--pack);border-radius:16px;padding:14px;margin:10px 0;text-align:center}
+.mlt-twist .mlt-kicker{margin-bottom:4px}
+.mlt-custom{margin:12px 0}
+.mlt-custom label{font-weight:700}
+.mlt-custom label span{font-weight:600;color:#bdbdc8}
+.mlt-custom .btn{margin-top:8px}
+.mlt-award{border:2px solid var(--pack);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 0 16px var(--pack)}
+.mlt-award-kicker{margin:0;font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--pack)}
+.mlt-award-name{margin:.15em 0;font-family:var(--display);font-size:clamp(1.5rem,6vw,2.2rem);line-height:.95}
+@media (max-height:740px){
+  body.mlt .kc-lights{height:8px;margin:2px 0}
+  .mlt-card{min-height:108px;padding:12px}
+  .mlt-prompt{font-size:clamp(1.3rem,5.8vw,1.7rem)}
+  .mlt-votes{margin:4px 0 8px}
+  .mlt-votes button{min-height:68px;font-size:clamp(1.25rem,5.5vw,1.6rem)}
+  .mlt-clock{margin:2px 0}
+  .mlt-clock span{font-size:2.5rem}
+  .mlt-results{margin:8px 0}
+  .mlt-results h2{font-size:clamp(2.1rem,10vw,3rem)}
+}
+@media (prefers-reduced-motion:reduce){
+  body.mlt.mlt-flash::before,.mlt-slam,.mlt-hit{animation:none;transform:none}
+}
 </style>
 </head>
-<body class="mlt" data-root="../">
-<p id="connecting">Connecting…</p>
-<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong></p><p id="offdetail"></p></div>
-<div id="app" class="mlt-app hide">
-<section id="home" class="mlt-screen">
-<p class="eyebrow">Party drinking game</p>
-<h1>Who's Most Likely: Party Game for Adults</h1>
+<body class="mlt" data-root="../" data-pack="classic">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play safe</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="mlt-boot">
+<p id="bootmsg">Opening the game…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry" data-cue="1">Try again</button>
+</div>
+<div id="app" class="hide">
+<section id="home" class="entry">
+<p class="eyebrow">Party game</p>
+<h1>Who's Most Likely</h1>
 <h2>Point.<br>Don't tell.</h2>
-<p class="lede">A 6-character PIN. Big buttons. Secret votes.</p>
-<div class="na"><b>Opt in:</b> Sipping is optional. Water counts.</div>
+<p class="lede">One host. A join link. Everyone votes on their own phone.</p>
+<div class="na"><b>Opt in:</b> One small sip, water, or strike a pose. Nothing stacks.</div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <label class="sr" for="pname">Your name</label>
 <input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
-<div class="mlt-emos" id="emojis" aria-label="Optional emoji"></div>
-<button type="button" class="btn host-cta" id="hostbtn">Host</button>
-<form id="joinform" class="join-row">
-<input class="bigin" id="pin" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="PIN" aria-label="6-character PIN">
-<button type="button" class="btn alt" id="joinbtn">Join</button>
+<p class="tag">Optional emoji</p>
+<div class="kc-react" id="emojis" aria-label="Optional emoji"></div>
+<button type="button" class="btn host-cta" id="hostbtn" data-cue="1">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="pin" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with PIN" aria-label="6-character PIN">
+<button type="button" class="btn alt" id="joinbtn" data-cue="1">Join</button>
 </form>
-<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
-<section id="lobby" class="mlt-screen hide">
-<p id="pinbig" class="mlt-pin" aria-live="polite"></p>
+<section id="lobby" class="hide">
+<p class="eyebrow">Lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="mlt-share">
+<button type="button" class="btn" id="copylink" data-cue="1">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn" data-cue="1">Share</button>
+</div>
 <canvas id="qr" class="mlt-qr" aria-label="QR code for this room"></canvas>
-<div class="mlt-packs" role="group" aria-label="Question pack">
-<button type="button" data-pack="classic">Classic</button>
-<button type="button" data-pack="spicy">Spicy</button>
-<button type="button" data-pack="couples">Couples</button>
+<div class="na"><b>Opt in:</b> One small sip, water, or strike a pose. Nothing stacks.</div>
+<p class="tag">Pack</p>
+<div class="chips" id="packs" role="group" aria-label="Question pack">
+<button type="button" class="chip" data-pack="classic" data-cue="1">Classic</button>
+<button type="button" class="chip" data-pack="spicy" data-cue="1">Spicy</button>
+<button type="button" class="chip" data-pack="couples" data-cue="1">Couples</button>
 </div>
-<div id="plist" class="mlt-people" aria-live="polite"></div>
-<form class="join-row" id="customform" onsubmit="return false">
-<input class="bigin" id="custom" maxlength="80" placeholder="Add a question" aria-label="Custom question">
-<button type="button" class="btn alt" id="addcustom">Add</button>
+<p class="tag">Game length</p>
+<div class="chips" id="lengths" role="group" aria-label="Game length">
+<button type="button" class="chip" data-len="5" data-cue="1">5 rounds</button>
+<button type="button" class="chip" data-len="10" data-cue="1">10 rounds</button>
+<button type="button" class="chip" data-len="15" data-cue="1">15 rounds</button>
+</div>
+<div class="mlt-players" aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<form class="mlt-custom" id="customform">
+<label for="custom">Add a question <span>(optional)</span></label>
+<input class="bigin" id="custom" maxlength="80" autocomplete="off" placeholder="Who's most likely to…">
+<button type="button" class="btn alt" id="addcustom" data-cue="1">Add</button>
 </form>
-<label class="toggle"><input type="checkbox" id="twist"> Plot twist</label>
-<label class="toggle"><input type="checkbox" id="nohost"> No-host mode</label>
-<label class="toggle hostonly"><input type="checkbox" id="optin"> We're in. Sipping is optional and water counts.</label>
-<button type="button" class="btn host-cta hostonly" id="start" disabled>Start</button>
-<button type="button" class="btn alt hostonly" id="close">Close</button>
+<label class="toggle hostonly"><input type="checkbox" id="twist" data-cue="1"> Plot twist</label>
+<label class="toggle hostonly"><input type="checkbox" id="nohost" data-cue="1"> No-host mode</label>
+<label class="toggle hostonly"><input type="checkbox" id="optin" data-cue="1"> We're in. Sipping is optional and water counts.</label>
+<button type="button" class="btn host-cta hostonly" id="start" data-cue="1" disabled>Start · 10 rounds</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close" data-cue="1">Close room</button></div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
-<section id="play" class="mlt-screen hide">
-<h2 id="question" class="mlt-q"></h2>
-<div id="grid" class="mlt-grid" aria-label="Players"></div>
-<div id="wait" class="mlt-wait hide">
-<p>Waiting for others…</p>
-<p id="waitcount" class="mlt-count">0/0</p>
+<section id="table" class="hide">
+<div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+<p id="away" class="na hide">The host disconnected. This round waits until they reconnect.</p>
+<div class="mlt-top">
+<p id="roundlabel" class="mlt-round">Round 1 of 10</p>
+<p id="badge" class="mlt-badge">Classic</p>
 </div>
-<div id="reveal" class="mlt-reveal hide">
-<p id="winner" class="mlt-win"></p>
-<p id="sipline" class="mlt-sip"></p>
-<p id="tie"></p>
-<div id="board" class="mlt-grid" aria-label="Leaderboard"></div>
-</div>
+<article class="mlt-card" id="card" aria-live="polite">
+<p class="mlt-kicker" id="kicker">Who's most likely</p>
+<p class="mlt-prompt" id="statement">Point at one person.</p>
+</article>
+<p id="clock" class="mlt-clock hide" aria-live="polite"><span id="clocknum">12</span><small>to vote</small></p>
+<div id="votes" class="mlt-votes" aria-label="Players"></div>
+<p id="locked" class="mlt-locked hide">Locked in. Votes stay hidden until the reveal.</p>
+<p id="hold" class="mlt-hold hide">Counting silently…</p>
+<section id="results" class="mlt-results hide" aria-live="polite">
+<h2 id="drinkhead"></h2>
+<ol id="winners"></ol>
+<p id="tie" class="mlt-tie hide"></p>
+<p class="mlt-safe">Water or a pose works too. Always optional.</p>
+</section>
 <div id="twistbox" class="mlt-twist hide">
-<p class="eyebrow">Plot twist</p>
-<p id="twistwho" class="mlt-win"></p>
+<p class="mlt-kicker">Plot twist</p>
+<p id="twistwho" class="mlt-prompt"></p>
 <p id="twistcopy"></p>
 </div>
-<div class="mlt-bar">
-<button type="button" class="btn hostonly hide" id="next">Next</button>
-<button type="button" class="btn alt hostonly" id="packbtn">classic</button>
-<button type="button" class="btn alt" id="mixbtn">Sound</button>
+<div class="ctrl">
+<button type="button" class="btn hostonly" id="nextround" data-cue="1">Next round</button>
 </div>
-<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div id="custombox" class="mlt-custom">
+<label for="customplay">Type your own question <span>(optional, next round)</span></label>
+<input class="bigin" id="customplay" maxlength="80" autocomplete="off" placeholder="Who's most likely to…">
+<button type="button" class="btn alt" id="queue" data-cue="1">Use this next</button>
+<p id="queuednote"></p>
+</div>
+<section id="finale" class="hide">
+<h2>That's the night</h2>
+<p class="lede">Mentions are stories. This is not a drink score. Nothing extra is owed.</p>
+<div id="awards"></div>
 </section>
-<section id="closed" class="mlt-screen card hide">
-<h2>Room closed</h2>
-<p>This PIN is done.</p>
-<a class="btn" href="./">Games</a>
-</section>
-<section id="mixer" class="mlt-mixer hide">
-<h2>Sound</h2>
+<button type="button" class="btn alt" id="mixbtn" data-cue="1">Mixer</button>
+<section id="mixer" class="card kc-mixer hide">
+<h2 style="margin-top:0">Mixer</h2>
+<p>Join, vote, reveal, and the last round each play once. Music stays off until you turn it up.</p>
 <label>Music <input id="mixmusic" type="range" min="0" max="100" value="70"></label>
+<label class="toggle"><input id="mutemusic" type="checkbox"> Mute music</label>
 <label>SFX <input id="mixsfx" type="range" min="0" max="100" value="90"></label>
+<label class="toggle"><input id="mutesfx" type="checkbox"> Mute SFX</label>
 <label>Voice <input id="mixvoice" type="range" min="0" max="100" value="85"></label>
-<button type="button" class="btn" id="mixbtn2">Done</button>
+<label class="toggle"><input id="mutevoice" type="checkbox"> Mute voice</label>
+</section>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage" data-cue="1">Close room</button></div>
+</section>
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p>The host closed this PIN.</p>
+<a class="btn" href="./">Back to games</a>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
 <p id="perr" role="alert"></p>
 </div>
-<button type="button" class="mute" id="mute" hidden aria-label="Mute sound effects">Mute</button>
 
-<section id="seo-about" class="band-ink" style="margin-top:28px;padding:28px 20px">
+<section id="seo-about" class="band-ink" style="margin-top:28px">
 <h2>How Who's Most Likely works on TipsyPlay</h2>
 <div class="card">
-<p>Who's Most Likely (also called Most Likely To) is a voting party game for adults. TipsyPlay runs it in party mode: join with a PIN, see the prompt on every phone, and point without narrating your vote out loud until the reveal.</p>
-<p>After votes land, the group sees who the table picked. That person can take one small optional sip or a playful challenge such as a bow, a pose, or a tiny speech. Nothing stacks. The next prompt starts clean so the night stays light.</p>
-<p>This page is the live room for Who's Most Likely. Host from your phone, share the PIN, and keep the mixer handy if you want music and sound effects under control. Packs such as classic stay selectable from the host bar so the table can match the vibe.</p>
+<p>Who's Most Likely is a voting party game for adults. One person hosts a room and shares a join link. Friends open it, type a name, and land in the same game. The host picks Classic, Spicy, or Couples, plus a length such as 10 rounds.</p>
+<p>Each round puts one original prompt on every phone. A short countdown is only for voting. Tap one person. Votes stay hidden. When everyone still connected has voted, or the answer time runs out, the phones show Take a drink and the name of the person with the most votes. A tie names everyone tied. Each of them gets one small sip, water, or a pose. Nothing stacks, and there is no timer on the sip.</p>
+<p>A missed vote is not a vote for anyone. If someone disconnects, the table does not wait on that phone. You can add your own question for a later round. The pack keeps going if you don't.</p>
 <h3>Non-alcoholic option</h3>
-<p>Skip the sip and take the challenge instead — a bow, a pose, or a short speech. Points and dares are a full way to play. Soft drinks and water always count.</p>
+<p>Skip the sip. Water counts, and striking a pose counts. Passing is always fine.</p>
 <h3>Play responsibly</h3>
-<p>Of legal drinking age only. Optional small sips, no races, no pressure. Read the <a href="../responsible.html">house code</a>. More voting energy lives next door in <a href="hot-take-court.html">Hot Take Court</a>, or browse all <a href="./">party games</a>.</p>
+<p>Legal drinking age only. Sips are optional and small. No chugging and no pressure. See the <a href="../responsible.html">house code</a>. Looking for another game? Open <a href="never-have-i-ever.html">Never Have I Ever</a> or the full <a href="./">games list</a>.</p>
 </div>
 </section>
 
+</main>
+<footer class="site-foot" data-keep>
+<nav aria-label="Footer">
+<a href="./">Games</a><a href="../blog/">Blog</a>
+<a href="../about.html">About</a>
+<a href="../contact.html">Contact</a>
+<a href="../privacy.html">Privacy</a>
+<a href="../terms.html">Terms</a>
+</nav>
+<p>© TipsyPlay</p>
+</footer>
+<canvas id="fx" class="fx" aria-hidden="true"></canvas>
 <script src="../sounds.js?v=17"></script>
 <script src="../app.js?v=17"></script>
 <script src="../data/most-likely-packs.js?v=17"></script>
-<script src="../play/party-audio.js?v=17"></script>
+<script src="../play/party-audio.js?v=18"></script>
 <script src="../play/qr.js?v=17"></script>
-<script src="../play/most-likely.js?v=17"></script>
+<script src="../play/most-likely.js?v=19"></script>
 </body>
 </html>
