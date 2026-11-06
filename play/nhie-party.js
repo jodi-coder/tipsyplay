@@ -15,7 +15,7 @@ var $=function(id){return document.getElementById(id)};
 var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false};
 var engine=null, parts=[], raf=0;
 var uid=null, code=null, meta=null, players={}, who={}, table=null, sayBox=null, cast={};
-var lobbyMode="classic", gameLength=15, localQueue="", pendingCast="", skipN=0, scoring=0, sending=false;
+var lobbyMode="classic", gameLength=15, localQueue="", pendingCast="", scoring=0, sending=false;
 var db, authObj, stops=[], connStop=null, hostLock=false, audioOn=false, bootTimer=0, clockTimer=0, lastTick=-1;
 var heardAnswer=-1, heardResults=-1, heardOver=false, seenReact=null, deckKey="", deck=[];
 var ref, onValue, update, set, remove, onDisconnect, get, serverTimestamp, goOnline;
@@ -155,16 +155,6 @@ function plannedLine(round){
   var list=currentDeck();
   if(!list.length) return "Never have I ever forgotten the prompt";
   return list[(+round||0)%list.length];
-}
-function skipLineText(){
-  var list=currentDeck();
-  if(!list.length) return plannedLine(0);
-  skipN++;
-  var idx=list.length-1-((skipN-1)%Math.max(1, list.length-20));
-  if(idx<0) idx=list.length-1;
-  var text=list[idx];
-  if(table&&text===table.text&&list.length>1) text=list[(idx+list.length-1)%list.length];
-  return text;
 }
 function cleanText(raw){
   var t=String(raw||"").replace(/<[^>]*>/g,"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,140);
@@ -404,7 +394,6 @@ function paintClock(){
 function paintTable(){
   var over=!!(table&&table.step==="over")||(meta&&meta.status==="over");
   var results=!!(table&&table.step==="results"&&!over);
-  var answering=!!(table&&table.step==="answer"&&!over);
   var mode=currentMode();
   var total=rounds();
   var num=table?Math.min(total, (+table.round||0)+1):1;
@@ -427,7 +416,6 @@ function paintTable(){
     next.classList.toggle("hide", !isHost()||!results);
     next.textContent=(table&&(+table.round||0)+1>=total)?"See the awards":"Next round";
   }
-  var skip=$("skip"); if(skip) skip.classList.toggle("hide", !isHost()||!answering);
   var hostP=meta&&players[meta.hostUid];
   var away=$("away"); if(away) away.classList.toggle("hide", !hostP||hostP.connected!==false||isHost());
   if(isHost()) maybeMusic();
@@ -504,18 +492,6 @@ function advance(){
   hostLock=true;
   pendingCast="";
   update(ref(db), payload).then(function(){hostLock=false; var note=$("queuednote"); if(note){note.textContent=""; delete note.dataset.sticky}}).catch(function(e){hostLock=false; fail(friendly(e))});
-}
-function skipLine(){
-  if(!isHost()||hostLock||!table||table.step!=="answer") return;
-  var seq=(+table.seq||0)+1;
-  if(seq>38){fail("Let's play this one."); return}
-  var text=skipLineText();
-  var payload={};
-  payload[rpath("nhie/play")]=playObj({step:"answer", text:text, seq:seq, opened:Date.now()});
-  Object.keys(cast).forEach(function(id){payload[rpath("nhie/cast/"+id)]=null});
-  hostLock=true;
-  pendingCast="";
-  update(ref(db), payload).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
 }
 function sendCast(value){
   if(!table||table.step!=="answer"||cast[uid]||pendingCast||sending) return;
@@ -727,7 +703,6 @@ function wire(){
   $("ihave").addEventListener("click", function(){sendCast("have")});
   $("never").addEventListener("click", function(){sendCast("never")});
   $("nextround").addEventListener("click", function(){unlock(); advance()});
-  $("skip").addEventListener("click", function(){unlock(); skipLine()});
   $("close").addEventListener("click", askClose);
   $("closestage").addEventListener("click", askClose);
   $("copylink").addEventListener("click", function(){copyLink($("copylink"))});
