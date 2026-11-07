@@ -7,18 +7,19 @@
 .entry h1{margin:.2em 0 .12em}
 .lede{margin:.3em 0}
 .hero-photo{transform:none;margin:10px 0 0}
-#featured{scroll-margin-top:72px;padding-top:18px;padding-bottom:18px}
+#featured{scroll-margin-top:88px;padding-top:18px;padding-bottom:18px}
 #featured h2{margin:.1em 0 .35em}
 @media(max-width:699px){
   .entry{padding:6px 0 2px}
   .entry h1{font-size:clamp(2rem,9vw,2.5rem);margin:.1em 0 .06em}
   .lede{font-size:1.05rem;line-height:1.35;margin:.2em 0}
   .eyebrow{margin:0 0 4px}
-  .hero-photo{margin:8px 0 0}
+  .entry .host-cta{margin:4px 0}
+  .hero-photo{margin:4px 0 0}
   .hero-photo img{width:100%;height:168px;max-height:220px;object-fit:cover}
-  #featured{padding-top:14px;padding-bottom:14px}
+  #featured{padding-top:0;padding-bottom:14px}
   #featured h2{font-size:clamp(1.7rem,8vw,2.2rem)}
-  main .game-card{margin:8px 0;padding:12px}
+  main .game-card{margin:4px 0;padding:12px}
 }
 .home-cats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
 .home-cats a{
@@ -35,6 +36,7 @@ main .card{border-width:2px}
   box-shadow:4px 4px 0 var(--pink);
 }
 .game-card .btn{min-height:44px}
+main :is(a,button,summary),footer a{scroll-margin-top:88px;scroll-margin-bottom:calc(96px + env(safe-area-inset-bottom))}
 #spots > p a,#responsible a{display:inline-flex;align-items:center;min-height:44px}
 #how{padding-top:18px;padding-bottom:18px}
 #faq{
