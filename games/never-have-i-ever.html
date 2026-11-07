@@ -72,6 +72,10 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 .nh-boot{padding:28px 0}
 .nh-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .nh-share .btn{width:100%;min-height:52px}
+.nh-share .wide{grid-column:1 / -1}
+.nh-qr{margin:10px auto;text-align:center;max-width:100%}
+.nh-qr figcaption{font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
+.nh-qr canvas{width:168px;max-width:70vw;height:auto;aspect-ratio:1;background:#fff;border-radius:12px}
 .nh-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #2a2a33;font-weight:700}
 .nh-person.off{opacity:.55}
 .nh-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
@@ -164,7 +168,14 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <div class="nh-share">
 <button type="button" class="btn" id="copylink">Copy Link</button>
 <button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt wide" id="copycode">Copy code</button>
 </div>
+<figure class="nh-qr hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
 <div class="na"><b>Opt in:</b> One small sip or a 3-second pose. Water counts. Nothing stacks.</div>
 <p class="tag">Pack</p>
 <div class="chips" id="modes" role="group" aria-label="Prompt pack">
@@ -280,7 +291,10 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <script src="../sounds.js?v=17"></script>
 <script src="../app.js?v=17"></script>
 <script src="../data/nhie-packs.js?v=18"></script>
+<script src="../play/qr.js?v=17"></script>
+<script src="../play/join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","nhie");</script>
 <script src="../play/party-audio.js?v=17"></script>
-<script src="../play/nhie-party.js?v=22"></script>
+<script src="../play/nhie-party.js?v=23"></script>
 </body>
 </html>

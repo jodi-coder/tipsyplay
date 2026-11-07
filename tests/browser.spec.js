@@ -1,0 +1,331 @@
+const { test, expect } = require("@playwright/test");
+const jsqr = require("jsqr");
+const fs = require("fs");
+const path = require("path");
+
+const ART = "/opt/cursor/artifacts";
+const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
+fs.mkdirSync(ART, { recursive: true });
+
+async function shot(page, name){
+  const file = path.join(ART, name + ".png");
+  await page.screenshot({ path: file, fullPage: false });
+  return file;
+}
+async function boot(browser, gamePath, name, viewport){
+  const context = await browser.newContext({
+    serviceWorkers: "block",
+    viewport: viewport || { width: 390, height: 844 },
+    hasTouch: true
+  });
+  const ga = [];
+  const prod = [];
+  await context.route(/googletagmanager|google-analytics|analytics\.google/, (route) => {
+    ga.push(route.request().url());
+    return route.abort();
+  });
+  const page = await context.newPage();
+  page.on("request", (req) => {
+    if (/firebaseio\.com|firebaseapp\.com/.test(req.url())) prod.push(req.url());
+  });
+  await page.addInitScript((player) => {
+    localStorage.setItem("tp_age_ok", "yes");
+    localStorage.setItem("tp_sound", "off");
+    localStorage.setItem("tp_name", player);
+  }, name);
+  await page.goto(BASE + gamePath + "?emulator=1", { waitUntil: "domcontentloaded" });
+  await page.locator("#app").waitFor({ state: "visible" });
+  await page.locator("#hostbtn").waitFor({ state: "visible" });
+  return { context, page, ga, prod };
+}
+async function hostRoom(page, name){
+  await page.locator("#pname").fill(name);
+  await page.locator("#hostbtn").click();
+  await expect(page.locator("#lobby")).toBeVisible();
+  const code = (await page.locator("#codebig").innerText()).trim();
+  expect(code).toMatch(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/);
+  return code;
+}
+async function joinRoom(page, name, code){
+  await page.locator("#pname").fill(name);
+  await page.locator("#roomcode").fill(code);
+  await page.locator("#joinbtn").click();
+  await expect(page.locator("#lobby")).toBeVisible();
+}
+async function decodeQr(page){
+  const pixels = await page.locator("#qr").evaluate((canvas) => {
+    const ctx = canvas.getContext("2d");
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    return { w: canvas.width, h: canvas.height, data: Array.from(img.data) };
+  });
+  const decoded = jsqr(Uint8ClampedArray.from(pixels.data), pixels.w, pixels.h);
+  return decoded && decoded.data;
+}
+async function overflow(page){
+  return page.evaluate(() => {
+    const doc = document.documentElement;
+    return { scroll: doc.scrollWidth, client: doc.clientWidth, over: doc.scrollWidth > doc.clientWidth + 1 };
+  });
+}
+
+test("age gate keeps the invite, QR decodes, layout holds", async ({ browser }) => {
+  const context = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.addInitScript(() => localStorage.removeItem("tp_age_ok"));
+  await page.goto(BASE + "/games/split-decision.html?room=ABCD&game=split&emulator=1");
+  await expect(page.locator("#gate")).toBeVisible();
+  await expect(page.locator("#roomcode")).toHaveValue("ABCD");
+  await page.locator("#gyes").click();
+  await expect(page.locator("#gate")).toHaveCount(0);
+  await expect(page.locator("#roomcode")).toHaveValue("ABCD");
+  await expect(page.locator("body")).toContainText("You must be of legal drinking age in your location.");
+  const tags = await page.locator("script[src*='G-BHY4BXF3V3']").count();
+  expect(tags).toBe(1);
+  await shot(page, "split-home-mobile");
+
+  const host = await boot(browser, "/games/split-decision.html", "Ada");
+  const code = await hostRoom(host.page, "Ada");
+  await expect(host.page.locator("#qr")).toBeVisible();
+  await expect(host.page.getByText("Scan to join")).toBeVisible();
+  const link = (await host.page.locator("#sharelink").innerText()).trim();
+  const qr = await decodeQr(host.page);
+  expect(qr).toBe(link);
+  expect(link).toContain("room=" + code);
+  expect(link).toContain("game=split");
+  expect(link).toContain("/games/split-decision.html");
+  await shot(host.page, "split-lobby-qr-mobile");
+  const narrow = await browser.newContext({ viewport: { width: 320, height: 700 }, serviceWorkers: "block" });
+  const narrowPage = await narrow.newPage();
+  await narrowPage.addInitScript(() => { localStorage.setItem("tp_age_ok","yes"); localStorage.setItem("tp_sound","off"); });
+  await narrowPage.goto(BASE + "/games/vibe-checkpoint.html?emulator=1");
+  await narrowPage.locator("#app").waitFor({ state: "visible" });
+  expect((await overflow(narrowPage)).over).toBe(false);
+  const wide = await boot(browser, "/games/chaos-crew.html", "Ada", { width: 1280, height: 800 });
+  expect((await overflow(wide.page)).over).toBe(false);
+  await shot(wide.page, "crew-home-desktop");
+  const tiny = await wide.page.evaluate(() => {
+    return Array.from(document.querySelectorAll("button, a.btn, input")).filter((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width < 2 || r.height < 2) return false;
+      return r.width < 43.5 || r.height < 43.5;
+    }).map((el) => (el.id || el.textContent || "").trim().slice(0, 40));
+  });
+  expect(tiny).toEqual([]);
+  await context.close();
+  await host.context.close();
+  await narrow.close();
+  await wide.context.close();
+});
+
+test("split full game, hidden answers, rematch, refresh, host away", async ({ browser }) => {
+  const ada = await boot(browser, "/games/split-decision.html", "Ada");
+  const bea = await boot(browser, "/games/split-decision.html", "Bea");
+  const cal = await boot(browser, "/games/split-decision.html", "Cal");
+  const code = await hostRoom(ada.page, "Ada");
+  await joinRoom(bea.page, "Bea", code);
+  await joinRoom(cal.page, "Cal", code);
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#table")).toBeVisible();
+
+  const adaUid = await ada.page.evaluate(() => window.__tpTest.uid());
+  await ada.page.locator(".poster-choice").first().click();
+  await expect(ada.page.locator("#statusline")).toContainText(/Locked/);
+  const leaked = await bea.page.evaluate((uid) => {
+    return window.__tpTest.readPath("rooms/" + window.__tpTest.code() + "/sealed/1/0/" + uid);
+  }, adaUid);
+  expect(leaked.ok).toBe(false);
+  expect(String(leaked.error)).toMatch(/permission|denied/i);
+  const guestWrite = await bea.page.evaluate(() => window.__tpTest.guestWrite());
+  expect(guestWrite.ok).toBe(false);
+  expect(ada.prod.concat(bea.prod, cal.prod)).toEqual([]);
+
+  async function lockPref(page, letter){
+    await page.locator(".poster-choice", { hasText: new RegExp("^" + letter + " ·") }).click();
+  }
+  async function lockCount(page, n){
+    await expect(page.locator("#statusline")).toContainText("How many", { timeout: 20000 });
+    await page.locator(".poster-choice", { hasText: new RegExp("^" + n + "$") }).click();
+  }
+  await lockPref(bea.page, "A");
+  await lockPref(cal.page, "B");
+  await expect(bea.page.locator("#table")).not.toContainText("Ada ·");
+  await lockCount(ada.page, "1");
+  await lockCount(bea.page, "1");
+  await lockCount(cal.page, "0");
+  await expect(ada.page.locator("#revealbox")).toBeVisible();
+  const opened = await bea.page.evaluate((uid) => {
+    return window.__tpTest.readPath("rooms/" + window.__tpTest.code() + "/sealed/1/0/" + uid);
+  }, adaUid);
+  expect(opened.ok).toBe(true);
+  expect(String(opened.val)).toMatch(/^A\|/);
+  await shot(ada.page, "split-reveal-mobile");
+  await ada.page.locator("#nextround").click();
+
+  for (let round = 1; round < 8; round++){
+    await expect(ada.page.locator("#kicker")).toBeVisible();
+    await expect(ada.page.locator(".poster-choice").first()).toBeVisible();
+    await lockPref(ada.page, "A");
+    await lockPref(bea.page, "A");
+    await lockPref(cal.page, "B");
+    await lockCount(ada.page, "1");
+    await lockCount(bea.page, "1");
+    await lockCount(cal.page, "0");
+    await expect(ada.page.locator("#revealbox")).toBeVisible();
+    if (round < 7) await ada.page.locator("#nextround").click();
+  }
+  await ada.page.locator("#nextround").click();
+  await expect(ada.page.locator("#finale")).toBeVisible();
+  await expect(ada.page.locator("#awards")).toContainText("Shared win");
+  await shot(ada.page, "split-finale-mobile");
+
+  const before = await bea.page.evaluate(() => window.__tpTest.uid());
+  await bea.page.reload({ waitUntil: "domcontentloaded" });
+  await bea.page.locator("#app").waitFor({ state: "visible" });
+  await expect.poll(async () => bea.page.evaluate((uid) => ({
+    same: !!(window.__tpTest && window.__tpTest.uid() === uid),
+    step: window.__tpTest ? window.__tpTest.step() : null,
+    err: (document.getElementById("perr") && document.getElementById("perr").textContent) || ""
+  }), before), { timeout: 20000 }).toMatchObject({ same: true, step: "over" });
+  await expect(bea.page.locator("#finale")).toBeVisible();
+  await ada.page.locator("#again").click();
+  await expect(ada.page.locator("#lobby")).toBeVisible();
+  await expect(bea.page.locator("#lobby")).toBeVisible({ timeout: 20000 });
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(cal.page.locator("#table")).toBeVisible();
+  await ada.context.setOffline(true);
+  await expect(bea.page.locator("#away")).toBeVisible({ timeout: 20000 });
+  await ada.context.setOffline(false);
+  await ada.page.evaluate(() => window.dispatchEvent(new Event("online")));
+  await expect(bea.page.locator("#away")).toBeHidden({ timeout: 20000 });
+  await ada.context.close();
+  await bea.context.close();
+  await cal.context.close();
+});
+
+test("vibe cycle and chaos crew round with pass and retry", async ({ browser }) => {
+  const ada = await boot(browser, "/games/vibe-checkpoint.html", "Ada");
+  const bea = await boot(browser, "/games/vibe-checkpoint.html", "Bea");
+  const code = await hostRoom(ada.page, "Ada");
+  await joinRoom(bea.page, "Bea", code);
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#table")).toBeVisible();
+  await ada.page.locator("#passbtn").click();
+  async function vibePick(page, n){
+    await page.locator(".poster-choice", { hasText: new RegExp("^" + n + " ·") }).click();
+  }
+  await expect(bea.page.locator("#kicker")).toContainText("Your vibe", { timeout: 15000 });
+  await vibePick(bea.page, 4);
+  await vibePick(ada.page, 4);
+  await expect(ada.page.locator("#revealbox")).toBeVisible();
+  await ada.page.locator("#nextround").click();
+  await expect(ada.page.locator("#finale")).toBeVisible();
+  await shot(bea.page, "vibe-finale-mobile");
+  await ada.context.close();
+  await bea.context.close();
+
+  const host = await boot(browser, "/games/chaos-crew.html", "Ada");
+  const p2 = await boot(browser, "/games/chaos-crew.html", "Bea");
+  const p3 = await boot(browser, "/games/chaos-crew.html", "Cal");
+  const pin = await hostRoom(host.page, "Ada");
+  await joinRoom(p2.page, "Bea", pin);
+  await joinRoom(p3.page, "Cal", pin);
+  await host.page.locator("#optin").check();
+  await host.page.locator("#start").click();
+  async function readyAll(){
+    for (const p of [host.page, p2.page, p3.page]){
+      const ready = p.locator(".poster-choice", { hasText: "I'm ready" });
+      if (await ready.count()) await ready.click();
+    }
+    await expect(host.page.locator(".poster-choice").first()).toContainText("needs", { timeout: 20000 });
+  }
+  async function fillPerfect(){
+    const labels = await host.page.locator(".poster-choice").allInnerTexts();
+    const plan = [];
+    labels.forEach((label) => {
+      const match = label.match(/needs (\d+)/);
+      const n = match ? +match[1] : 0;
+      for (let i = 0; i < n; i++) plan.push(label);
+    });
+    const pages = [host.page, p2.page, p3.page];
+    for (let i = 0; i < plan.length; i++){
+      await pages[i].locator(".poster-choice", { hasText: plan[i] }).click();
+    }
+    await expect(host.page.locator("#revealbox")).toBeVisible();
+  }
+  await readyAll();
+  await host.page.locator(".poster-choice").first().click();
+  await p2.page.locator(".poster-choice").first().click();
+  await p3.page.locator(".poster-choice").first().click();
+  await expect(host.page.locator("#revealbox")).toBeVisible();
+  await expect(host.page.locator("#revealhead")).toContainText("no star");
+  await host.page.locator("#retrybtn").click();
+  await expect(host.page.locator(".poster-choice").first()).toContainText("needs");
+  await fillPerfect();
+  await expect(host.page.locator("#revealhead")).toHaveText(/staffed · star$/);
+  await shot(host.page, "crew-reveal-mobile");
+  for (let mission = 1; mission < 8; mission++){
+    await host.page.locator("#nextround").click();
+    await readyAll();
+    if (mission === 2){
+      await p3.page.locator("#passbtn").click();
+      await p3.page.locator("#passbtn").click();
+      await expect(host.page.locator(".poster-choice").first()).toContainText("needs");
+      const labels = await host.page.locator(".poster-choice").allInnerTexts();
+      await host.page.locator(".poster-choice", { hasText: labels[0] }).click();
+      await p2.page.locator(".poster-choice", { hasText: labels[1] }).click();
+      await expect(host.page.locator("#revealbox")).toBeVisible();
+    }else{
+      await fillPerfect();
+    }
+    if (mission < 7) continue;
+  }
+  await host.page.locator("#nextround").click();
+  await expect(host.page.locator("#finale")).toBeVisible();
+  await expect(host.page.locator("#awards")).toContainText("/ 8");
+  await shot(host.page, "crew-finale-mobile");
+  await host.context.close();
+  await p2.context.close();
+  await p3.context.close();
+});
+
+test("never have i ever still plays and shows a local QR", async ({ browser }) => {
+  const ada = await boot(browser, "/games/never-have-i-ever.html", "Ada");
+  const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
+  const cal = await boot(browser, "/games/never-have-i-ever.html", "Cal");
+  await ada.page.locator("#pname").fill("Ada");
+  await ada.page.locator("#hostbtn").click();
+  await expect(ada.page.locator("#lobby")).toBeVisible();
+  const code = (await ada.page.locator("#codebig").innerText()).trim();
+  await expect(ada.page.locator("#qr")).toBeVisible();
+  const link = (await ada.page.locator("#sharelink").innerText()).trim();
+  expect(await decodeQr(ada.page)).toBe(link);
+  expect(link).toContain("room=" + code);
+  expect(link).toContain("game=nhie");
+  expect(link.startsWith("http://127.0.0.1") || link.startsWith("http://localhost")).toBe(true);
+  await joinRoom(bea.page, "Bea", code);
+  await joinRoom(cal.page, "Cal", code);
+  await ada.page.locator("[data-len='5']").click();
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#ihave")).toBeVisible();
+  for (let round = 0; round < 5; round++){
+    await expect(bea.page.locator("#haves")).toBeHidden();
+    await ada.page.locator("#ihave").click();
+    await bea.page.locator("#never").click();
+    await cal.page.locator("#never").click();
+    await expect(ada.page.locator("#haves")).toBeVisible();
+    const hidden = await bea.page.locator("#haves").innerText();
+    expect(hidden.length).toBeGreaterThan(0);
+    if (round < 4) await ada.page.locator("#nextround").click();
+    else await ada.page.locator("#nextround").click();
+  }
+  await expect(ada.page.locator("#finale")).toBeVisible();
+  await shot(ada.page, "nhie-finale-mobile");
+  expect(ada.ga.concat(bea.ga, cal.ga).length).toBeGreaterThan(0);
+  await ada.context.close();
+  await bea.context.close();
+  await cal.context.close();
+});
