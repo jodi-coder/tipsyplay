@@ -20,3 +20,10 @@
   #featured h2{font-size:clamp(1.7rem,8vw,2.2rem)}
   main .game-card{margin:8px 0;padding:12px}
 }
+.home-cats{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.home-cats a{
+  display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 10px;
+  border:2px solid var(--yellow);background:transparent;color:var(--yellow);
+  font-family:var(--display);font-weight:400;font-size:1rem;letter-spacing:.03em;line-height:1.1;
+  text-decoration:none;text-align:center;transform:none;
+}
