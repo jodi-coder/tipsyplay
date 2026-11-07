@@ -369,6 +369,47 @@ test("nhie clock, names, join errors, and a delayed confession", async ({ browse
   await stranger.context.close();
 });
 
+test("lobby removal works and baseline rules still reject a host claim", async ({ browser }) => {
+  const ada = await boot(browser, "/games/never-have-i-ever.html", "Ada");
+  const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
+  const code = await hostRoom(ada.page, "Ada");
+  await joinRoom(bea.page, "Bea", code);
+  await expect(ada.page.locator("#plist")).toContainText("Bea");
+  await ada.page.getByRole("button", { name: "Remove Bea" }).click();
+  await expect(ada.page.locator("#plist")).not.toContainText("Bea");
+  const ns = "tipsyplay-f3c95-default-rtdb";
+  const token = await bea.page.evaluate(async () => {
+    const authMod = await import("https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js");
+    return authMod.getAuth().currentUser.getIdToken();
+  });
+  const beaUid = await bea.page.evaluate(() => window.__tpNhie.uid());
+  const read = await bea.page.request.get("http://127.0.0.1:9000/rooms/" + code + "/meta.json?ns=" + ns + "&auth=" + encodeURIComponent(token));
+  expect(read.ok(), await read.text()).toBe(true);
+  const meta = await read.json();
+  meta.hostUid = beaUid;
+  const claim = await bea.page.request.put("http://127.0.0.1:9000/rooms/" + code + "/meta.json?ns=" + ns + "&auth=" + encodeURIComponent(token), {
+    data: meta,
+    headers: { "content-type": "application/json" }
+  });
+  expect(claim.ok()).toBe(false);
+  expect(await claim.text()).toMatch(/permission|denied/i);
+  const hostToken = await ada.page.evaluate(async () => {
+    const authMod = await import("https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js");
+    return authMod.getAuth().currentUser.getIdToken();
+  });
+  const hostUid = await ada.page.evaluate(() => window.__tpNhie.uid());
+  const made = await ada.page.request.put("http://127.0.0.1:9000/rooms/" + code + "/nhie/react/clap01.json?ns=" + ns + "&auth=" + encodeURIComponent(hostToken), {
+    data: { e: "clap", u: hostUid },
+    headers: { "content-type": "application/json" }
+  });
+  expect(made.ok(), await made.text()).toBe(true);
+  const wipe = await ada.page.request.delete("http://127.0.0.1:9000/rooms/" + code + "/nhie/react/clap01.json?ns=" + ns + "&auth=" + encodeURIComponent(hostToken));
+  expect(wipe.ok()).toBe(false);
+  expect(await wipe.text()).toMatch(/permission|denied/i);
+  await ada.context.close();
+  await bea.context.close();
+});
+
 test("narrow pages do not scroll sideways", async ({ browser }) => {
   const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html"];
   for (const width of [320, 375, 390]) {

@@ -46,7 +46,7 @@ To delete comments, add your signed-in uid in the Firebase console (this bypasse
 2. In Realtime Database, set `admins/<that-uid>` to `true`.
 3. Reload `/admin-comments.html`. Delete buttons appear only after that node exists.
 
-`database.rules.json` and `firebase-rules.json` are the same ruleset. Paste one of them into the Firebase console by hand. Nothing in this repo publishes rules. Room rules, comment rules, and admin deletes all stay unpublished until that paste.
+`database.rules.json` and `firebase-rules.json` are the same ruleset, and on this branch they match `main`. Nothing here publishes rules, and this branch does not ask for a console paste. A copy of the live console rules was not available, so the repo file is not proven to be what is already published.
 
 ## Rooms, comments, and anonymous sign-in
 

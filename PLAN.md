@@ -46,7 +46,9 @@ The original ten games below are all hosted rooms now, plus King's Cup, Split De
 
 Rooms and spot comments use Firebase Anonymous Authentication. Rules in `database.rules.json` and `firebase-rules.json` match each other and are published only by pasting them in the Firebase console. This repo does not deploy rules.
 
-Host takeover is not enabled. The rules file allows a connected room member to change `hostUid` only when the current host's `connected` is false, `disconnectedAt` is a number at least 30 seconds old, and every other meta field stays the same. Realtime Database rules cannot prove that claimant has the earliest `joinedAt`. The client does not write `disconnectedAt` and does not offer a claim button, so the path stays closed even if those rules are pasted in. Host deletes of reaction nodes are allowed in the rules file and are not called by the client, so reactions are throttled in the browser and are not cleared each round.
+Host handover stays deferred. A takeover rule cannot require the earliest connected `joinedAt`, because Realtime Database rules cannot rank every player. A weaker any-member claim was not left in the rules files. The client does not record `disconnectedAt` and does not offer a claim button. `hostUid` stays with the player who created the room, which is the restriction already on `main`.
+
+Clearing reactions each round stays deferred. Current rules allow a player to create a reaction and do not allow deleting one. A host-delete permission was not left unused in the rules files. Each phone throttles its own reactions to about one every 1.5 seconds and leaves old reactions in place.
 
 ## 30-day plan
 - **Week 1:** Local PWA preview (this build); gather feedback on look & flow.
