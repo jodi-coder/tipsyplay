@@ -16,6 +16,18 @@
 <meta name="color-scheme" content="dark">
 <meta name="description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer I HAVE or NEVER on your phone. One small sip or a pose. Nothing stacks.">
 <link rel="canonical" href="https://tipsyplay.com/games/never-have-i-ever.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TipsyPlay">
+<meta property="og:title" content="Never Have I Ever – Party Drinking Game Online | TipsyPlay">
+<meta property="og:description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer I HAVE or NEVER on your phone. One small sip or a pose. Nothing stacks.">
+<meta property="og:url" content="https://tipsyplay.com/games/never-have-i-ever.html">
+<meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Never Have I Ever – Party Drinking Game Online | TipsyPlay">
+<meta name="twitter:description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer I HAVE or NEVER on your phone. One small sip or a pose. Nothing stacks.">
+<meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,6 +36,46 @@
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <title>Never Have I Ever – Party Drinking Game Online | TipsyPlay</title>
 <link rel="stylesheet" href="../styles.css?v=17">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"},
+        {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"},
+        {"@type": "ListItem", "position": 3, "name": "Never Have I Ever", "item": "https://tipsyplay.com/games/never-have-i-ever.html"}
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does Never Have I Ever work on TipsyPlay?",
+          "acceptedAnswer": {"@type": "Answer", "text": "One person hosts a room and shares a join link or code. Friends open it on their own phones, type a name, and answer I HAVE or NEVER to each prompt. The host picks a pack and a game length."}
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to drink?",
+          "acceptedAnswer": {"@type": "Answer", "text": "No. If you said I have, you can take one small sip, drink water, or hold a 3-second pose. Passing is always fine and nothing stacks."}
+        },
+        {
+          "@type": "Question",
+          "name": "How many people can play?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Two to twelve players can join one room."}
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a one-phone version?",
+          "acceptedAnswer": {"@type": "Answer", "text": "Yes. The solo card mode shows one prompt at a time on a single phone, with Mild, Spicy, and Extra levels, a non-alcoholic mode, and a points counter."}
+        }
+      ]
+    }
+  ]
+}
+</script>
 <style>
 body.nhie{--pack:#f59e0b;background:#07070d;color:#f4f4f5}
 body.nhie[data-mode="mild"]{--pack:#38bdf8}
@@ -46,6 +98,7 @@ body.nhie #home{padding-top:8px}
 body.nhie #home h1{font-size:clamp(1.7rem,7.2vw,2.4rem);margin:4px 0 0}
 body.nhie #home h2{font-size:clamp(1.55rem,6.6vw,2.15rem);margin:0}
 body.nhie #home .lede{font-size:1rem;margin:.25em 0}
+body.nhie #home .lede a{color:var(--pack);text-decoration:underline}
 body.nhie #home .na{padding:8px 10px;margin-top:6px}
 body.nhie #home .age{font-size:1rem;margin:.35em 0}
 body.nhie #home .tag{margin:.25em 0}
@@ -160,6 +213,7 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
 <button type="button" class="btn alt" id="joinbtn">Join</button>
 </form>
+<p class="lede">Only one phone? <a href="../play/never-have-i-ever.html">Play the one-phone card version</a>.</p>
 </section>
 <section id="lobby" class="hide">
 <p class="eyebrow">Lobby</p>
@@ -210,7 +264,7 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <p class="nh-kicker" id="kicker">Never have I ever</p>
 <p class="nh-prompt" id="statement">The next secret is on the way.</p>
 </article>
-<p id="clock" class="nh-clock hide" aria-live="polite"><span id="clocknum">12</span><small>to answer</small></p>
+<p id="clock" class="nh-clock hide" aria-live="off"><span id="clocknum">12</span><small>to answer</small></p>
 <div id="answers" class="nh-binary">
 <button type="button" class="nh-have" id="ihave">I HAVE</button>
 <button type="button" class="nh-never" id="never">NEVER</button>
@@ -269,6 +323,7 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <p>Never Have I Ever is a party game for adults. One person hosts a room and shares a join link. Friends open it, type a name, and land in the same game. The host picks Mild, Classic, or Spicy, plus a game length such as 15 rounds.</p>
 <p>Each round puts one original line on every phone. A short countdown is only for answering. Tap I HAVE or NEVER once. No second confirm. If you said I have, take one small sip or hold a 3-second pose. Water counts. Nothing stacks, and there is no timer on the sip.</p>
 <p>When the rounds are done, the table gets playful awards such as The Saint and Most Chaotic. Those are about who said yes, not about who drank. You can also type your own line for the next round. The packs are there if you don't.</p>
+<p>Two to twelve players can share one room. If friends can't join, or you only have one phone, use the <a href="../play/never-have-i-ever.html">one-phone card version</a> instead.</p>
 <h3>Non-alcoholic option</h3>
 <p>The pose is on screen whenever a yes lands. Skip the sip and hold it for three seconds. Passing is always fine.</p>
 <h3>Play responsibly</h3>
