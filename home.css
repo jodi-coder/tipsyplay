@@ -55,3 +55,14 @@ main .card{border-width:2px}
   #how{padding-top:14px;padding-bottom:14px}
   #how h2{font-size:clamp(1.7rem,8vw,2.2rem);margin:.15em 0 .25em}
 }
+html,body{overflow-x:clip}
+@media(max-width:390px){
+  header.top{padding:4px 10px;gap:2px 6px}
+  header.top .logo{font-size:.82rem;padding:4px 6px 3px;min-width:44px;min-height:44px;display:inline-flex;flex-direction:column;justify-content:center;transform:rotate(-1deg)}
+  header.top nav{gap:0;margin-left:auto}
+  header.top nav a{font-size:.82rem;letter-spacing:.01em;padding:0 5px;min-height:44px;min-width:44px}
+}
+@media(max-width:359px){
+  .hero-photo img{height:140px}
+  #featured{padding-top:8px}
+}
