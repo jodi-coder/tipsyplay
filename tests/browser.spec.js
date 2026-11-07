@@ -329,3 +329,64 @@ test("never have i ever still plays and shows a local QR", async ({ browser }) =
   await bea.context.close();
   await cal.context.close();
 });
+
+test("nhie clock, names, join errors, and a delayed confession", async ({ browser }) => {
+  const ada = await boot(browser, "/games/never-have-i-ever.html", "Sam");
+  const bea = await boot(browser, "/games/never-have-i-ever.html", "Sam");
+  await ada.page.goto(BASE + "/games/never-have-i-ever.html?emulator=1&fast=1");
+  await bea.page.goto(BASE + "/games/never-have-i-ever.html?emulator=1&fast=1");
+  await ada.page.locator("#app").waitFor({ state: "visible" });
+  await bea.page.locator("#app").waitFor({ state: "visible" });
+  const cleaned = await ada.page.evaluate(() => window.__tpNhie.clean("I have a secret"));
+  expect(cleaned).toBe("Never have I ever I have a secret");
+  const code = await hostRoom(ada.page, "Sam");
+  await joinRoom(bea.page, "Sam", code);
+  await expect(ada.page.locator("#plist")).toContainText("Sam 2");
+  await ada.page.locator("#roomcode").count();
+  const stranger = await boot(browser, "/games/never-have-i-ever.html", "No");
+  await stranger.page.locator("#pname").fill("No");
+  await stranger.page.locator("#roomcode").fill("ZZZZ");
+  await stranger.page.locator("#joinbtn").click();
+  await expect(stranger.page.locator("#perr")).toHaveText("No room with that code.");
+  await ada.page.locator("[data-len='5']").click();
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#ihave")).toBeVisible();
+  await stranger.page.locator("#roomcode").fill(code);
+  await stranger.page.locator("#joinbtn").click();
+  await expect(stranger.page.locator("#perr")).toHaveText("That game has already started.");
+  await bea.page.evaluate(() => { window.__tpNhie.delayCast = 2000; });
+  await ada.page.locator("#never").click();
+  await bea.page.locator("#ihave").click();
+  await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+  await expect(ada.page.locator("#havelist")).toContainText("Sam");
+  await expect.poll(async () => bea.page.evaluate(() => window.__tpNhie.confessions()), { timeout: 10000 }).toBe(1);
+  const live = await ada.page.locator("#clock").getAttribute("aria-live");
+  expect(live).toBeNull();
+  await shot(ada.page, "nhie-sip-heading");
+  await ada.context.close();
+  await bea.context.close();
+  await stranger.context.close();
+});
+
+test("narrow pages do not scroll sideways", async ({ browser }) => {
+  const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html"];
+  for (const width of [320, 375, 390]) {
+    const context = await browser.newContext({
+      serviceWorkers: "block",
+      viewport: { width, height: 700 }
+    });
+    await context.route(/googletagmanager|google-analytics|analytics\.google/, (route) => route.abort());
+    const page = await context.newPage();
+    await page.addInitScript(() => { localStorage.setItem("tp_age_ok", "yes"); localStorage.setItem("tp_sound", "off"); });
+    for (const path of pages) {
+      await page.goto(BASE + path, { waitUntil: "domcontentloaded" });
+      const box = await overflow(page);
+      expect(box.over, path + " @" + width).toBe(false);
+      if (width === 320 && path === "/") await shot(page, "home-320");
+      if (width === 375 && path === "/games/") await shot(page, "games-index-375");
+      if (width === 390 && path === "/blog/") await shot(page, "blog-index-390");
+    }
+    await context.close();
+  }
+});

@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07070d">
 <meta name="color-scheme" content="dark">
-<meta name="description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer I HAVE or NEVER on your phone. One small sip or a pose. Nothing stacks.">
+<meta name="description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer on your phone. One small sip or a pose. Nothing stacks.">
 <link rel="canonical" href="https://tipsyplay.com/games/never-have-i-ever.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -22,8 +22,8 @@
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<title>Never Have I Ever – Party Drinking Game Online | TipsyPlay</title>
-<link rel="stylesheet" href="../styles.css?v=17">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Never Have I Ever – Party Drinking Game Online | TipsyPlay"><meta property="og:description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer on your phone. One small sip or a pose. Nothing stacks."><meta property="og:url" content="https://tipsyplay.com/games/never-have-i-ever.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="Friends at a night party tossing a ball toward a triangle of cups"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Never Have I Ever – Party Drinking Game Online | TipsyPlay"><meta name="twitter:description" content="Play Never Have I Ever online. Share a join link, pick Mild, Classic, or Spicy, and answer on your phone. One small sip or a pose. Nothing stacks."><meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Never Have I Ever", "item": "https://tipsyplay.com/games/never-have-i-ever.html"}]}</script><title>Never Have I Ever – Party Drinking Game Online | TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=18">
 <style>
 body.nhie{--pack:#f59e0b;background:#07070d;color:#f4f4f5}
 body.nhie[data-mode="mild"]{--pack:#38bdf8}
@@ -210,13 +210,14 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <p class="nh-kicker" id="kicker">Never have I ever</p>
 <p class="nh-prompt" id="statement">The next secret is on the way.</p>
 </article>
-<p id="clock" class="nh-clock hide" aria-live="polite"><span id="clocknum">12</span><small>to answer</small></p>
+<p id="clock" class="nh-clock hide" aria-hidden="true"><span id="clocknum">12</span><small>to answer</small></p>
+<p id="clocklive" class="sr" aria-live="polite"></p>
 <div id="answers" class="nh-binary">
 <button type="button" class="nh-have" id="ihave">I HAVE</button>
 <button type="button" class="nh-never" id="never">NEVER</button>
 </div>
 <section id="haves" class="nh-haves hide" aria-live="polite">
-<h2 id="drinkhead">Take a drink</h2>
+<h2 id="drinkhead">Sip, water, or pose</h2>
 <ol id="havelist"></ol>
 <p class="nh-safe">One small sip, water, or strike a pose. Always optional.</p>
 </section>
@@ -233,13 +234,14 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <h2>That's the game</h2>
 <p class="lede">Yeses are stories. This is not a drink score.</p>
 <div id="awards"></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="again">Play again</button></div>
 </section>
 <div class="kc-react" id="react" aria-label="Reactions">
-<button type="button" data-emo="clap">👏</button>
-<button type="button" data-emo="gasp">😮</button>
-<button type="button" data-emo="laugh">😂</button>
-<button type="button" data-emo="boo">👎</button>
-<button type="button" data-emo="party">🎉</button>
+<button type="button" data-emo="clap" aria-label="Clap">👏</button>
+<button type="button" data-emo="gasp" aria-label="Gasp">😮</button>
+<button type="button" data-emo="laugh" aria-label="Laugh">😂</button>
+<button type="button" data-emo="boo" aria-label="Boo">👎</button>
+<button type="button" data-emo="party" aria-label="Party">🎉</button>
 </div>
 <button type="button" class="btn alt" id="mixbtn">Mixer</button>
 <section id="mixer" class="card kc-mixer hide">
@@ -289,12 +291,12 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 </footer>
 <canvas id="fx" class="fx" aria-hidden="true"></canvas>
 <script src="../sounds.js?v=17"></script>
-<script src="../app.js?v=17"></script>
+<script src="../app.js?v=18"></script>
 <script src="../data/nhie-packs.js?v=18"></script>
 <script src="../play/qr.js?v=17"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","nhie");</script>
 <script src="../play/party-audio.js?v=17"></script>
-<script src="../play/nhie-party.js?v=23"></script>
+<script src="../play/nhie-party.js?v=24"></script>
 </body>
 </html>

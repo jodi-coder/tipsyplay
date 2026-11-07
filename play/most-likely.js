@@ -4,7 +4,9 @@
    Votes are for people. They stay hidden until reveal.
    The countdown is only for voting. Sips are never timed.
    mlt/$pin */
-var ANSWER_MS=12000;
+var FAST=/[?&]emulator=1(?:&|$)/.test(location.search)&&/[?&]fast=1(?:&|$)/.test(location.search);
+var ANSWER_MS=FAST?1600:12000;
+var REVEAL_GRACE=FAST?800:1200;
 var LENGTHS=[5,10,15];
 var EMOJIS=["","😎","🦊","🌟","🎧","🍀","🔥","🌙","🎭","🍓","🎲","🦋"];
 var ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -14,6 +16,7 @@ var mix=window.PartyAudio?PartyAudio.load(MIXKEY):{music:0.7,sfx:0.9,voice:0.85,
 var engine=null, parts=[], raf=0;
 var uid=null, code=null, meta=null, players={}, table=null, casts={}, reveal={}, customs=[], mine=null;
 var lobbyPack="classic", gameLength=10, lobbyDirty=false, usedCustom={}, pendingVote="", sending=false;
+var serverOffset=0, offsetReady=false, offsetStop=null, revealWait=0, announcedSeq=-1, announcedFinal=-1, knownRematch="";
 var db, authObj, stops=[], connStop=null, castStop=null, busy=false, audioOn=false, musicWanted=false;
 var bootTimer=0, clockTimer=0, hostTimer=0, suspenseTimer=0, lightTimer=0, lastTick=-1;
 var heardRound=-1, suspenseFor=-1, stingFor=-1, heardTwist=-1, heardOver=false, showRevealNow=-1;
@@ -78,8 +81,36 @@ function order(){
   }).sort(function(a,b){return a.joinedAt-b.joinedAt||a.name.localeCompare(b.name)});
 }
 function active(){return order().filter(function(p){return p.connected})}
-function plainName(id){return (players[id]&&players[id].name)||"Player"}
-function labelOf(p){return (p.emoji?p.emoji+" ":"")+p.name}
+function plainName(id){
+  var list=order(), count={}, seen={}, map={};
+  list.forEach(function(p){count[p.name]=(count[p.name]||0)+1});
+  list.forEach(function(p){
+    if(count[p.name]<2){map[p.uid]=p.name; return}
+    seen[p.name]=(seen[p.name]||0)+1;
+    map[p.uid]=seen[p.name]===1?p.name:(p.name+" "+seen[p.name]);
+  });
+  return map[id]||(players[id]&&players[id].name)||"Player";
+}
+function labelOf(p){return (p.emoji?p.emoji+" ":"")+plainName(p.uid)}
+function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
+function armServerClock(){
+  if(!db||!ref||!onValue) return;
+  if(offsetStop) offsetStop();
+  offsetStop=onValue(ref(db, ".info/serverTimeOffset"), function(s){
+    var v=s.val();
+    if(typeof v==="number"&&isFinite(v)){serverOffset=v; offsetReady=true}
+  }, function(){offsetReady=false; serverOffset=0});
+}
+function stopServerClock(){if(offsetStop){try{offsetStop()}catch(e){} offsetStop=null}}
+function voteTarget(raw, seq){
+  var s=String(raw||"");
+  var at=s.lastIndexOf("@");
+  if(at>0&&/^\d+$/.test(s.slice(at+1))){
+    if(+s.slice(at+1)!==seq) return "";
+    return s.slice(0, at);
+  }
+  return s;
+}
 function rpath(p){return "mlt/"+code+"/"+p}
 function fail(msg){var p=$("perr"); if(p) p.textContent=msg||""}
 function friendly(e){
@@ -121,7 +152,11 @@ function currentPack(){
 }
 function packLabel(p){return p==="spicy"?"Spicy":p==="couples"?"Couples":"Classic"}
 function myEmoji(){try{return sessionStorage.getItem("tp_mlt_emoji")||""}catch(e){return ""}}
-function myVote(){return mine||pendingVote||""}
+function myVote(){
+  if(pendingVote) return pendingVote;
+  if(!mine||!table) return "";
+  return voteTarget(mine, +table.seq||0);
+}
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function paintRole(){
   document.body.classList.toggle("is-host", isHost());
@@ -165,8 +200,9 @@ function takeLine(){
     if(line&&!usedCustom[line]){usedCustom[line]=1; return line}
   }
   if(!deck.length||builtPack!==currentPack()) buildDeck();
-  return deck.shift()||"Who's most likely to keep the night kind";
+  return deck.shift()||"";
 }
+function promptsMissing(){fail("The prompts didn't load. Reload the page to try again.")}
 function cleanQ(raw){
   var t=String(raw||"").replace(/<[^>]*>/g,"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,80);
   if(!t) return "";
@@ -176,16 +212,16 @@ function cleanQ(raw){
 function splitPrompt(text){
   var t=String(text||"");
   var m=t.match(/^who(?:'|’)s most likely(?:\s+to)?\s*/i);
-  if(!m) return {kicker:"Who's most likely", rest:t||"Point at one person."};
+  if(!m) return {kicker:"Who's most likely", rest:t||"The question didn't load."};
   var rest=t.slice(m[0].length).replace(/^to\s+/i,"");
-  return {kicker:"Who's most likely", rest:rest||"to keep the night kind"};
+  return {kicker:"Who's most likely", rest:rest||"The question didn't load."};
 }
 function playObj(patch){
   var base={step:"vote", text:"", seq:0, round:0, opened:0, order:order().map(function(p){return p.uid}).join(",")||uid||"table", got:0, who:""};
   var b=Object.assign(base, table||{}, patch||{});
   var step=/^(vote|reveal|twist|over)$/.test(b.step)?b.step:"vote";
   var text=String(b.text||"").replace(/[<>]/g,"").trim().slice(0,120);
-  if(!text) text="Who's most likely to keep the night kind";
+  if(!text) return null;
   return {
     step:step,
     text:text,
@@ -202,7 +238,7 @@ function fullMeta(patch){
   var pack=/^(classic|spicy|couples)$/.test(m.pack)?m.pack:"classic";
   var len=LENGTHS.indexOf(+m.rounds)>=0?+m.rounds:(LENGTHS.indexOf(gameLength)>=0?gameLength:10);
   var status=/^(lobby|play|over)$/.test(m.status)?m.status:"lobby";
-  return {
+  var out={
     hostUid:m.hostUid,
     createdAt:m.createdAt,
     status:status,
@@ -212,6 +248,8 @@ function fullMeta(patch){
     round:Math.max(0, Math.min(40, +m.round||0)),
     rounds:len
   };
+  if(+m.rematch>0) out.rematch=Math.max(1, Math.min(100, +m.rematch||0));
+  return out;
 }
 function tally(){
   var counts={}, best=0, wins=[], n=0;
@@ -227,13 +265,14 @@ function tally(){
 function allIn(){
   var list=active();
   if(!list.length) return false;
-  return list.every(function(p){return !!casts[p.uid]});
+  var seq=table?+table.seq||0:0;
+  return list.every(function(p){return !!voteTarget(casts[p.uid], seq)});
 }
 function secondsLeft(){
   if(!table||table.step!=="vote") return null;
   var opened=+table.opened||0;
   if(opened<1700000000000) return null;
-  return Math.max(0, Math.ceil((opened+ANSWER_MS-Date.now())/1000));
+  return Math.max(0, Math.ceil((opened+ANSWER_MS-serverNow())/1000));
 }
 function resultsVisible(){
   if(!table) return false;
@@ -335,7 +374,14 @@ function paintLobby(){
       var s=document.createElement("span");
       s.textContent=labelOf(p)+(p.uid===meta.hostUid?" · host":"");
       var tag=document.createElement("span"); tag.textContent=p.connected?"":"away";
-      row.appendChild(s); row.appendChild(tag); box.appendChild(row);
+      row.appendChild(s); row.appendChild(tag);
+      if(isHost()&&p.uid!==uid){
+        var kick=document.createElement("button"); kick.type="button"; kick.className="x"; kick.textContent="Remove";
+        kick.setAttribute("aria-label", "Remove "+plainName(p.uid));
+        kick.addEventListener("click", function(){remove(ref(db, rpath("players/"+p.uid))).catch(function(e){fail(friendly(e))})});
+        row.appendChild(kick);
+      }
+      box.appendChild(row);
     });
   }
   paintPacks(); paintLengths();
@@ -395,7 +441,7 @@ function paintResults(){
     return;
   }
   var result=tally();
-  if(head) head.textContent=result.n?"Take a drink":"No drinks this round";
+  if(head) head.textContent=result.n?"Sip, water, or pose":"Nobody this round";
   if(list){
     list.textContent="";
     result.wins.forEach(function(id){
@@ -456,7 +502,13 @@ function paintClock(){
   if(!on){lastTick=-1; return}
   wrap.classList.toggle("hot", left<=3);
   var num=$("clocknum"); if(num) num.textContent=String(left);
-  wrap.setAttribute("aria-label", left+" seconds to vote");
+  wrap.setAttribute("aria-hidden", "true");
+  var live=$("clocklive");
+  var seq=table?+table.seq||0:0;
+  if(live){
+    if(announcedSeq!==seq){announcedSeq=seq; announcedFinal=-1; live.textContent="Round started. "+left+" seconds to vote."}
+    else if(left===3&&announcedFinal!==seq){announcedFinal=seq; live.textContent="3 seconds to vote."}
+  }
   if(audioOn&&sfxOn()&&left>0&&left<=3&&left!==lastTick){lastTick=left; cue("tick")}
   if(isHost()&&left<=0) publish();
 }
@@ -478,7 +530,11 @@ function paintTable(){
   paintQueue();
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
   if(over) paintAwards();
-  var custom=$("custombox"); if(custom) custom.classList.toggle("hide", over);
+  var custom=$("custombox");
+  if(custom){
+    if(custom.classList.contains("hostonly")&&!isHost()) custom.classList.add("hide");
+    else custom.classList.toggle("hide", over);
+  }
   var next=$("nextround");
   if(next){
     var showNext=isHost()&&!meta.nohost&&table&&(table.step==="twist"||(table.step==="reveal"&&resultsVisible()));
@@ -565,9 +621,9 @@ function finishReveal(seq, paint){
   if(!result.n) cue("mltNone");
   else if(result.wins.length>1) cue("mltTie");
   else cue("mltWin");
-  if(!result.n) say("No drinks this round.");
+  if(!result.n) say("Nobody this round.");
   else if(result.wins.length>1) say("It's a tie.");
-  else say("Take a drink!");
+  else say("Sip, water, or pose.");
   flash();
   buzz();
   if(result.n&&result.wins.length===1) burst(40);
@@ -584,7 +640,7 @@ function maybeScore(){
   Object.keys(reveal).forEach(function(voter){if(reveal[voter]===uid) n++});
   var me=players[uid];
   set(ref(db, rpath("players/"+uid)), {
-    name:me.name, emoji:me.emoji||"", connected:me.connected!==false, joinedAt:me.joinedAt||Date.now(),
+    name:me.name, emoji:me.emoji||"", connected:me.connected!==false, joinedAt:me.joinedAt||serverNow(),
     votes:Math.min(80,(+me.votes||0)+n), seen:seq
   }).catch(function(e){if(scoring===seq) scoring=0; fail(friendly(e))});
 }
@@ -594,24 +650,40 @@ function clearBallots(payload){
 }
 function publish(){
   if(busy||!isHost()||!table||table.step!=="vote") return;
+  if(!allIn()){
+    var left=secondsLeft();
+    if(left===null||left>0){revealWait=0; return}
+    if(!revealWait){revealWait=serverNow(); return}
+    if(serverNow()-revealWait<REVEAL_GRACE) return;
+  }
   if(revealSent===table.seq) return;
   revealSent=table.seq;
+  revealWait=0;
   busy=true;
-  var snap=Object.assign({}, casts);
-  var who="";
+  var seq=+table.seq||0;
+  var snap={};
+  Object.keys(casts).forEach(function(id){
+    var target=voteTarget(casts[id], seq);
+    if(target&&players[target]) snap[id]=target;
+  });
+  var whoId="";
   if(meta.twist&&((+table.round||0)%2===1)){
     var ids=Object.keys(snap);
-    if(ids.length) who=ids[Math.floor(Math.random()*ids.length)];
+    if(ids.length) whoId=ids[Math.floor(Math.random()*ids.length)];
   }
+  var next=playObj({step:"reveal", got:Math.min(12, Object.keys(snap).length), who:whoId, opened:serverNow()});
+  if(!next){busy=false; revealSent=""; promptsMissing(); return}
   var payload={};
-  payload[rpath("play")]=playObj({step:"reveal", got:Math.min(12, Object.keys(snap).length), who:who, opened:Date.now()});
+  payload[rpath("play")]=next;
   Object.keys(snap).forEach(function(id){payload[rpath("reveal/"+id)]=snap[id]; payload[rpath("cast/"+id)]=null});
   update(ref(db), payload).then(function(){busy=false}).catch(function(e){busy=false; revealSent=""; fail(friendly(e))});
 }
 function toTwist(){
   if(busy||!isHost()||!table||table.step!=="reveal"||!table.who) return;
   busy=true;
-  update(ref(db), {[rpath("play")]:playObj({step:"twist", opened:Date.now()})}).then(function(){busy=false}).catch(function(e){busy=false; fail(friendly(e))});
+  var twist=playObj({step:"twist", opened:serverNow()});
+  if(!twist){busy=false; promptsMissing(); return}
+  update(ref(db), {[rpath("play")]:twist}).then(function(){busy=false}).catch(function(e){busy=false; fail(friendly(e))});
 }
 function advance(){
   if(busy||!isHost()||!table||(table.step!=="reveal"&&table.step!=="twist")) return;
@@ -620,12 +692,17 @@ function advance(){
   var total=rounds();
   var payload={};
   if(round>=total){
-    payload[rpath("play")]=playObj({step:"over", text:table.text, seq:+table.seq||0, round:+table.round||0, opened:Date.now(), got:+table.got||0, who:""});
+    var overPlay=playObj({step:"over", text:table.text, seq:+table.seq||0, round:+table.round||0, opened:serverNow(), got:+table.got||0, who:""});
+    if(!overPlay){busy=false; promptsMissing(); return}
+    payload[rpath("play")]=overPlay;
     payload[rpath("meta")]=fullMeta({status:"over", round:+table.round||0, pack:meta.pack, rounds:total});
   }else{
     var text=takeLine();
+    if(!text){busy=false; promptsMissing(); return}
     var seq=(+table.seq||0)+1;
-    payload[rpath("play")]=playObj({step:"vote", text:text, seq:seq, round:round, opened:Date.now(), got:0, who:"", order:order().map(function(p){return p.uid}).join(",")});
+    var nextPlay=playObj({step:"vote", text:text, seq:seq, round:round, opened:serverNow(), got:0, who:"", order:order().map(function(p){return p.uid}).join(",")});
+    if(!nextPlay){busy=false; promptsMissing(); return}
+    payload[rpath("play")]=nextPlay;
     payload[rpath("meta")]=fullMeta({status:"play", round:round, pack:meta.pack, rounds:total});
   }
   clearBallots(payload);
@@ -639,7 +716,7 @@ function hostTick(){
   if(!isHost()||!meta||meta.status==="lobby"||!table||busy) return;
   if(table.step==="vote"){
     var opened=+table.opened||0;
-    var timed=opened>1700000000000&&Date.now()>=opened+ANSWER_MS;
+    var timed=opened>1700000000000&&serverNow()>=opened+ANSWER_MS;
     if(allIn()||timed) publish();
     return;
   }
@@ -653,13 +730,15 @@ function hostTick(){
   else if(table.step==="twist"&&age>7500){autoSent=key; advance()}
 }
 function sendVote(id, btn){
-  if(!table||table.step!=="vote"||mine||pendingVote||sending||!id||!players[id]) return;
+  if(!table||table.step!=="vote"||sending||!id||!players[id]) return;
+  var seq=+table.seq||0;
+  if(voteTarget(mine, seq)||pendingVote) return;
   pendingVote=id;
   sending=true;
   if(btn){btn.classList.remove("mlt-hit"); void btn.offsetWidth; btn.classList.add("mlt-hit"); btn.setAttribute("aria-pressed","true")}
   tapSound("mltVote");
   paintVotes();
-  set(ref(db, rpath("cast/"+uid)), id).then(function(){sending=false}).catch(function(e){
+  set(ref(db, rpath("cast/"+uid)), id+"@"+seq).then(function(){sending=false}).catch(function(e){
     sending=false; pendingVote=""; paintVotes(); fail(friendly(e));
   });
 }
@@ -714,10 +793,13 @@ async function begin(){
   sending=true;
   usedCustom={}; deck=[];
   var text=takeLine();
+  if(!text){promptsMissing(); sending=false; return}
   var len=rounds();
+  var opening=playObj({step:"vote", text:text, seq:1, round:0, opened:serverNow(), got:0, who:"", order:list.map(function(p){return p.uid}).join(",")});
+  if(!opening){promptsMissing(); sending=false; return}
   var payload={};
   payload[rpath("meta")]=fullMeta({status:"play", pack:currentPack(), rounds:len, round:0, twist:!!meta.twist, nohost:!!meta.nohost});
-  payload[rpath("play")]=playObj({step:"vote", text:text, seq:1, round:0, opened:Date.now(), got:0, who:"", order:list.map(function(p){return p.uid}).join(",")});
+  payload[rpath("play")]=opening;
   try{await update(ref(db), payload); unlock()}catch(e){fail(friendly(e))}
   sending=false;
 }
@@ -743,6 +825,7 @@ function listen(){
       screen("closed"); return;
     }
     meta=s.val()||null;
+    maybeFreshScores();
     watchCasts();
     render();
   }, function(){fail("That room isn't available. Check the PIN and try again.")}));
@@ -769,16 +852,42 @@ function listen(){
 }
 function armPresence(){
   if(connStop) connStop();
+  var drop=null;
   connStop=onValue(ref(db, ".info/connected"), function(s){
+    if(drop){try{drop.cancel()}catch(e){} drop=null}
     if(!s.val()||!code||!uid) return;
     var p=ref(db, rpath("players/"+uid));
-    onDisconnect(p).update({connected:false}).catch(function(){});
+    drop=onDisconnect(p);
+    drop.update({connected:false}).catch(function(){});
     update(p, {connected:true}).catch(function(){});
   });
 }
 function playerRec(name, prev){
   prev=prev||{};
-  return {name:name||prev.name||"Player", emoji:myEmoji()||prev.emoji||"", connected:true, joinedAt:prev.joinedAt||Date.now(), votes:+prev.votes||0, seen:+prev.seen||0};
+  return {name:name||prev.name||"Player", emoji:myEmoji()||prev.emoji||"", connected:true, joinedAt:prev.joinedAt||serverNow(), votes:+prev.votes||0, seen:+prev.seen||0};
+}
+function maybeFreshScores(){
+  if(!meta||!uid||!players[uid]) return;
+  var key=code+"|"+(+meta.rematch||0);
+  if(!knownRematch){
+    try{knownRematch=sessionStorage.getItem("tp_mlt_rematch")||""}catch(e){}
+  }
+  if(knownRematch&&knownRematch.indexOf(code+"|")===0&&knownRematch!==key&&meta.status==="lobby"){
+    var me=players[uid];
+    if((+me.votes||0)>0||(+me.seen||0)>0){
+      set(ref(db, rpath("players/"+uid)), {name:me.name, emoji:me.emoji||"", connected:me.connected!==false, joinedAt:me.joinedAt||serverNow(), votes:0, seen:0}).catch(function(e){fail(friendly(e))});
+    }
+  }
+  knownRematch=key;
+  try{sessionStorage.setItem("tp_mlt_rematch", key)}catch(e){}
+}
+function playAgain(){
+  if(!isHost()||!meta||meta.status!=="over"||busy) return;
+  var n=Math.min(100,(+meta.rematch||0)+1);
+  busy=true;
+  var patch=fullMeta({status:"lobby", round:0, pack:meta.pack, rounds:rounds(), twist:!!meta.twist, nohost:!!meta.nohost});
+  patch.rematch=n;
+  update(ref(db), {[rpath("meta")]:patch}).then(function(){busy=false}).catch(function(e){busy=false; fail(friendly(e))});
 }
 async function hostRoom(name){
   var i, claimed=null, len=LENGTHS.indexOf(gameLength)>=0?gameLength:10;
@@ -857,7 +966,8 @@ function wire(){
     tapSound("mltJoin");
     joinRoom(pin, name).catch(function(e){
       var msg=String((e&&e.message)||"");
-      if(msg==="missing"||msg==="closed") fail("That room isn't open. Check the PIN and try again.");
+      if(msg==="missing") fail("No room with that PIN.");
+      else if(msg==="closed") fail("That game has already started.");
       else if(msg==="full") fail("That room is full.");
       else fail(friendly(e));
     }).then(function(){sending=false});
@@ -875,6 +985,7 @@ function wire(){
     if(table&&table.step==="reveal"&&table.who) toTwist();
     else advance();
   });
+  if($("again")) $("again").addEventListener("click", function(){unlock(); playAgain()});
   $("close").addEventListener("click", askClose);
   $("closestage").addEventListener("click", askClose);
   $("copylink").addEventListener("click", function(){copyLink($("copylink"))});
@@ -909,8 +1020,9 @@ function wire(){
   if(!clockTimer) clockTimer=setInterval(paintClock, 200);
   if(!hostTimer) hostTimer=setInterval(hostTick, 400);
   window.addEventListener("offline", function(){fail("You're offline. We'll keep trying when you're back.")});
-  window.addEventListener("online", function(){fail(""); if(goOnline&&db){try{goOnline(db)}catch(e){}}});
+  window.addEventListener("online", function(){fail(""); if(goOnline&&db){try{goOnline(db)}catch(e){}} armServerClock()});
   window.addEventListener("pagehide", function(){
+    stopServerClock();
     stopAudioTimers();
     if(clockTimer){clearInterval(clockTimer); clockTimer=0}
     if(hostTimer){clearInterval(hostTimer); hostTimer=0}
@@ -964,6 +1076,7 @@ async function boot(){
   await cred.user.getIdToken();
   uid=cred.user.uid;
   goOnline(db);
+  armServerClock();
   showReady();
   try{wire()}catch(err){console.error(err); fail("The table glitched. Reload and try again.")}
 }

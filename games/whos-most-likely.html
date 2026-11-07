@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<title>Who's Most Likely – Party Drinking Game Online | TipsyPlay</title>
-<link rel="stylesheet" href="../styles.css?v=17">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Who&#x27;s Most Likely – Party Drinking Game Online | TipsyPlay"><meta property="og:description" content="Play Who&#x27;s Most Likely online. Share a join link, pick a pack, and vote for a person on your phone. One small sip, water, or a pose. Nothing stacks."><meta property="og:url" content="https://tipsyplay.com/games/whos-most-likely.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="Friends at a night party tossing a ball toward a triangle of cups"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Who&#x27;s Most Likely – Party Drinking Game Online | TipsyPlay"><meta name="twitter:description" content="Play Who&#x27;s Most Likely online. Share a join link, pick a pack, and vote for a person on your phone. One small sip, water, or a pose. Nothing stacks."><meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg"><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Who's Most Likely", "item": "https://tipsyplay.com/games/whos-most-likely.html"}]}</script><title>Who's Most Likely – Party Drinking Game Online | TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=18">
 <style>
 body.mlt{--pack:#f59e0b;overflow:auto !important;height:auto !important;min-height:100vh;background:#07070d;color:#f4f4f5}
 body.mlt[data-pack="classic"]{--pack:#f59e0b}
@@ -204,7 +204,8 @@ body.mlt.mlt-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <p class="mlt-kicker" id="kicker">Who's most likely</p>
 <p class="mlt-prompt" id="statement">Point at one person.</p>
 </article>
-<p id="clock" class="mlt-clock hide" aria-live="polite"><span id="clocknum">12</span><small>to vote</small></p>
+<p id="clock" class="mlt-clock hide" aria-hidden="true"><span id="clocknum">12</span><small>to vote</small></p>
+<p id="clocklive" class="sr" aria-live="polite"></p>
 <div id="votes" class="mlt-votes" aria-label="Players"></div>
 <p id="locked" class="mlt-locked hide">Locked in. Votes stay hidden until the reveal.</p>
 <p id="hold" class="mlt-hold hide">Counting silently…</p>
@@ -232,6 +233,7 @@ body.mlt.mlt-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <h2>That's the night</h2>
 <p class="lede">Mentions are stories. This is not a drink score. Nothing extra is owed.</p>
 <div id="awards"></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="again" data-cue="1">Play again</button></div>
 </section>
 <button type="button" class="btn alt" id="mixbtn" data-cue="1">Mixer</button>
 <section id="mixer" class="card kc-mixer hide">
@@ -260,7 +262,7 @@ body.mlt.mlt-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 <h2>How Who's Most Likely works on TipsyPlay</h2>
 <div class="card">
 <p>Who's Most Likely is a voting party game for adults. One person hosts a room and shares a join link. Friends open it, type a name, and land in the same game. The host picks Classic, Spicy, or Couples, plus a length such as 10 rounds.</p>
-<p>Each round puts one original prompt on every phone. A short countdown is only for voting. Tap one person. Votes stay hidden. When everyone still connected has voted, or the answer time runs out, the phones show Take a drink and the name of the person with the most votes. A tie names everyone tied. Each of them gets one small sip, water, or a pose. Nothing stacks, and there is no timer on the sip.</p>
+<p>Each round puts one original prompt on every phone. A short countdown is only for voting. Tap one person. Votes stay hidden. When everyone still connected has voted, or the answer time runs out, the phones show Sip, water, or pose and the name of the person with the most votes. A tie names everyone tied. Each of them gets one small sip, water, or a pose. Nothing stacks, and there is no timer on the sip.</p>
 <p>A missed vote is not a vote for anyone. If someone disconnects, the table does not wait on that phone. You can add your own question for a later round. The pack keeps going if you don't.</p>
 <h3>Non-alcoholic option</h3>
 <p>Skip the sip. Water counts, and striking a pose counts. Passing is always fine.</p>
@@ -282,10 +284,10 @@ body.mlt.mlt-flash::before{content:"";position:fixed;inset:0;background:var(--pa
 </footer>
 <canvas id="fx" class="fx" aria-hidden="true"></canvas>
 <script src="../sounds.js?v=17"></script>
-<script src="../app.js?v=17"></script>
+<script src="../app.js?v=18"></script>
 <script src="../data/most-likely-packs.js?v=17"></script>
 <script src="../play/party-audio.js?v=18"></script>
 <script src="../play/qr.js?v=17"></script>
-<script src="../play/most-likely.js?v=19"></script>
+<script src="../play/most-likely.js?v=20"></script>
 </body>
 </html>
