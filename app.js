@@ -36,6 +36,7 @@ function tabOn(file){
 }
 var tb=document.createElement("nav");tb.className="tabbar";tb.setAttribute("aria-label","App tabs");
 tb.innerHTML=tabs.map(function(t){var on=tabOn(t[0]);return '<a href="'+root+t[0]+'"'+(on?' class="on" aria-current="page"':'')+'><span>'+t[1]+'</span>'+t[2]+'</a>'}).join("");
+if(/\/blog(\/|$)/.test(path)||/\/spots(\/|$)/.test(path)) document.body.classList.add("no-tabs");
 document.body.appendChild(tb);
 // favourites
 function favs(){try{return JSON.parse(localStorage.getItem("tp_favs")||"{}")}catch(e){return {}}}

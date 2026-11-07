@@ -40,6 +40,14 @@ viewport-fit=cover + safe-area insets; tap targets ≥44px; inputs/selects 16px 
 ## Future step (needs explicit approval — NOT done)
 Create a GitHub repo and deploy the static files to Hostinger on TipsyPlay.com (HTTPS required for the service worker). Nothing has been connected, purchased, or deployed.
 
+## Current inventory (November 2026)
+
+The original ten games below are all hosted rooms now, plus King's Cup, Split Decision, Vibe Checkpoint, and Chaos Crew. Count-based marketing copy should follow the games list, not this historical "ten".
+
+Rooms and spot comments use Firebase Anonymous Authentication. Rules in `database.rules.json` and `firebase-rules.json` match each other and are published only by pasting them in the Firebase console. This repo does not deploy rules.
+
+Host takeover is not enabled. The rules file allows a connected room member to change `hostUid` only when the current host's `connected` is false, `disconnectedAt` is a number at least 30 seconds old, and every other meta field stays the same. Realtime Database rules cannot prove that claimant has the earliest `joinedAt`. The client does not write `disconnectedAt` and does not offer a claim button, so the path stays closed even if those rules are pasted in. Host deletes of reaction nodes are allowed in the rules file and are not called by the client, so reactions are throttled in the browser and are not cleared each round.
+
 ## 30-day plan
 - **Week 1:** Local PWA preview (this build); gather feedback on look & flow.
 - **Week 2:** Make 2–3 more games playable (Who's Most Likely, Category Countdown, Story Chain); more original prompts.

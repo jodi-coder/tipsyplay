@@ -46,4 +46,12 @@ To delete comments, add your signed-in uid in the Firebase console (this bypasse
 2. In Realtime Database, set `admins/<that-uid>` to `true`.
 3. Reload `/admin-comments.html`. Delete buttons appear only after that node exists.
 
-`database.rules.json` in this repo is the full ruleset to paste into the Firebase console. It is not deployed automatically. Room rules stay as they are. Comment deletes are allowed only when `admins/<uid>` exists.
+`database.rules.json` and `firebase-rules.json` are the same ruleset. Paste one of them into the Firebase console by hand. Nothing in this repo publishes rules. Room rules, comment rules, and admin deletes all stay unpublished until that paste.
+
+## Rooms, comments, and anonymous sign-in
+
+Online games sign each browser in with Firebase Anonymous Authentication. A room is a Realtime Database record under `rooms/$code` (or `mlt/$pin` for Who's Most Likely). The record holds the display name a player types, connection state, and the answers or votes for that room. Spot-page comments use the same anonymous sign-in and are rate-limited in the rules. There is no email or password for play.
+
+## Game inventory
+
+Fourteen games are on the games list: Never Have I Ever, Story Chain, Who's Most Likely, Hot Take Court, Card Lottery, Cup Toss Challenge, Category Countdown, Two Truths & a Twist, Sketchy Guess, Rule Maker, King's Cup, Split Decision, Vibe Checkpoint, and Chaos Crew. The solo card page at `play/never-have-i-ever.html` and the pass-the-phone page at `play/party.html` are separate from those hosted rooms.
