@@ -1,0 +1,59 @@
+/* Bold poster screen shared by Split Decision, Vibe Checkpoint, and Chaos Crew.
+   Matches the current Never Have I Ever play screen: dark field, one prompt, giant taps. */
+body.poster{--pack:#f59e0b;background:#07070d;color:#f4f4f5}
+body.poster[data-game="split"]{--pack:#38bdf8}
+body.poster[data-game="vibe"]{--pack:#f59e0b}
+body.poster[data-game="crew"]{--pack:#34d399}
+body.poster header.top{background:#07070d;border-bottom-color:#241820}
+body.poster header.top nav a,body.poster .tabbar a{color:#f4f4f5}
+body.poster button.mute{background:#12121a;color:#fff;border-color:#3a3a46}
+body.poster .age,body.poster .linkbox,body.poster .lede{color:#f4f4f5}
+body.poster .card,body.poster .card h2,body.poster .card h3,body.poster .card p,body.poster .card li{color:#111}
+body.poster .card a{color:#111;text-decoration:underline}
+body.poster .tabbar{background:#07070d;border-top-color:var(--pack)}
+body.poster .tabbar a.on{background:#16161f;color:var(--pack)}
+body.poster input.bigin,body.poster .chip{background:#12121a;color:#fff;border-color:#3a3a46}
+body.poster input::placeholder{color:#9a9aaa}
+body.poster .chip[aria-pressed="true"]{background:var(--pack);color:#041018;border-color:var(--pack)}
+body.poster #home{padding-top:8px}
+body.poster #home h1{font-size:clamp(1.7rem,7.2vw,2.4rem);margin:4px 0 0}
+body.poster #home h2{font-size:clamp(1.45rem,6.2vw,2.05rem);margin:0}
+body.poster #home .lede{font-size:1rem;margin:.25em 0}
+body.poster .host-cta{min-height:64px;font-size:clamp(1.35rem,6vw,1.7rem);margin:8px 0}
+body.poster .poster-note{margin:.4em 0;color:#f4f4f5;font-weight:650}
+body.poster .poster-card{background:#0c0c14;border:2px solid var(--pack);border-radius:24px;box-shadow:0 0 22px var(--pack);padding:22px 16px;text-align:center;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+body.poster .poster-kicker{margin:0 0 8px;letter-spacing:.14em;text-transform:uppercase;color:var(--pack);font-family:var(--display);font-size:.95rem}
+body.poster .poster-prompt{margin:0;font-family:var(--display);font-size:clamp(1.45rem,6.4vw,2.3rem);line-height:.95;text-transform:uppercase;color:#fff}
+body.poster .poster-choices{display:grid;gap:10px;margin:10px 0}
+body.poster .poster-choice{min-height:72px;border-radius:16px;border:3px solid #2a2a33;background:#14141c;color:#fff;font-family:var(--display);font-size:clamp(1.15rem,5vw,1.6rem);letter-spacing:.03em;padding:10px 12px;text-align:center;touch-action:manipulation}
+body.poster .poster-choice[aria-pressed="true"]{background:var(--pack);color:#041018;border-color:var(--pack)}
+body.poster .poster-choice:disabled{opacity:.55}
+body.poster .poster-choice[aria-pressed="true"]:disabled{opacity:1}
+body.poster .poster-pass{width:100%;min-height:56px;margin:0 0 8px}
+body.poster .poster-nums{grid-template-columns:repeat(auto-fit,minmax(64px,1fr))}
+body.poster .poster-nums .poster-choice{min-height:64px;font-size:1.8rem}
+body.poster .nh-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #2a2a33;font-weight:700}
+body.poster .nh-person.off{opacity:.55}
+body.poster .poster-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+body.poster .poster-share .btn{width:100%;min-height:48px}
+body.poster .poster-share .wide{grid-column:1 / -1}
+body.poster .poster-qr{margin:10px auto;text-align:center;max-width:100%}
+body.poster .poster-qr figcaption{font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px}
+body.poster .poster-qr canvas{width:168px;max-width:70vw;height:auto;aspect-ratio:1;background:#fff;border-radius:12px}
+body.poster .reveal-row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #2a2a33;font-weight:700}
+body.poster .reveal-row span{min-width:0}
+body.poster details.poster-rules{margin:10px 0}
+body.poster details.poster-rules summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-family:var(--display);letter-spacing:.04em}
+body.poster .poster-award{border:2px solid var(--pack);border-radius:16px;padding:14px;margin:10px 0}
+body.poster .poster-award p{margin:.2em 0}
+body.poster #closed.card{background:#12121a;border-color:#3a3a46;color:#f4f4f5}
+body.poster #closed.card h2,body.poster #closed.card p,body.poster #closed.card .age{color:#f4f4f5}
+body.poster :focus-visible{outline:3px solid #ffe14a;outline-offset:3px}
+@media (max-width:360px){
+  body.poster .poster-choice{min-height:64px;font-size:1.05rem}
+  body.poster .poster-prompt{font-size:1.35rem}
+  body.poster .host-cta{font-size:1.25rem}
+}
+@media (prefers-reduced-motion:reduce){
+  body.poster .poster-card{box-shadow:none}
+}

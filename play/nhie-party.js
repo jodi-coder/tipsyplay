@@ -82,8 +82,16 @@ function queryRoom(){
 }
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
 function roomUrl(c){
+  if(window.TipsyJoinQR) return TipsyJoinQR.pageInvite("/games/never-have-i-ever.html", c, "nhie");
   var base=/localhost|127\.0\.0\.1/.test(location.host)?location.origin+location.pathname:"https://tipsyplay.com/games/never-have-i-ever.html";
-  return base+"?room="+c;
+  return base+"?room="+c+"&game=nhie";
+}
+function paintQr(){
+  var canvas=$("qr");
+  if(!canvas||!code||!window.TipsyJoinQR||canvas.dataset.hidden==="1") return;
+  TipsyJoinQR.draw(canvas, roomUrl(code));
+  var credit=$("qrcredit");
+  if(credit && !credit.textContent) credit.textContent=TipsyJoinQR.credit;
 }
 function spiceFor(mode){return mode==="spicy"?"spicy":mode==="classic"?"extra":"mild"}
 function modeForSpice(spice){return spice==="spicy"?"spicy":spice==="extra"?"classic":"mild"}
@@ -294,6 +302,7 @@ function shareRoom(){
 function paintLobby(){
   $("codebig").textContent=code||"";
   $("sharelink").textContent=roomUrl(code);
+  paintQr();
   var box=$("plist"); box.textContent="";
   order().forEach(function(p){
     var row=document.createElement("div"); row.className="nh-person"+(p.connected?"":" off");
@@ -707,6 +716,19 @@ function wire(){
   $("closestage").addEventListener("click", askClose);
   $("copylink").addEventListener("click", function(){copyLink($("copylink"))});
   $("sharebtn").addEventListener("click", shareRoom);
+  if($("copycode")) $("copycode").addEventListener("click", function(){
+    if(!code) return;
+    unlock();
+    copyText(code).then(function(){cue("clink"); fail("")}).catch(function(){fail(code)});
+  });
+  if($("qrhide")) $("qrhide").addEventListener("click", function(){
+    var canvas=$("qr"); if(!canvas) return;
+    var hidden=canvas.dataset.hidden==="1";
+    canvas.dataset.hidden=hidden?"0":"1";
+    canvas.classList.toggle("hide", !hidden);
+    $("qrhide").textContent=hidden?"Hide QR":"Show QR";
+    if(hidden) paintQr();
+  });
   $("queue").addEventListener("click", queueCustom);
   $("custom").addEventListener("keydown", function(e){if(e.key==="Enter"){e.preventDefault(); queueCustom()}});
   document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setMode(b.dataset.mode)})});
@@ -777,8 +799,11 @@ async function boot(){
     authMod.connectAuthEmulator(authObj, "http://127.0.0.1:9099", {disableWarnings:true});
     dbMod.connectDatabaseEmulator(db, "127.0.0.1", 9000);
   }
+  if(authMod.setPersistence && authMod.browserLocalPersistence){
+    try{await authMod.setPersistence(authObj, authMod.browserLocalPersistence)}catch(e){}
+  }
   if(authObj.authStateReady) await authObj.authStateReady();
-  var cred=await authMod.signInAnonymously(authObj);
+  var cred=authObj.currentUser?{user:authObj.currentUser}:await authMod.signInAnonymously(authObj);
   await cred.user.getIdToken();
   uid=cred.user.uid;
   document.body.dataset.uid=uid;
