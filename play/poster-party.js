@@ -18,6 +18,7 @@ var uid=null, code=null, meta=null, players={}, who={}, table=null, tally={}, se
 var db, authObj, stops=[], secretUnsub=null, connStop=null, hostLock=false, hostSig="", sending=false;
 var engine=null, mix={music:0,sfx:0.9,voice:0,muteMusic:true,muteSfx:false,muteVoice:true};
 var snapKey="", snapSecrets=null, applied="", resetFor=0, passArm=0, closeArm=0, bootTimer=0, heard=-1, tallyUnsub=null, watchKey="", tallyKey="";
+var serverOffset=0, offsetReady=false, offsetStop=null;
 var ref, onValue, update, set, get, remove, onDisconnect, serverTimestamp, goOnline;
 
 function pack(){return GAME==="split"?(window.SPLIT_DECK||[]):GAME==="vibe"?(window.VIBE_DECK||[]):(window.CREW_DECK||[])}
@@ -95,7 +96,27 @@ function orderPlayers(){
   }).sort(function(a,b){return a.joinedAt-b.joinedAt||a.name.localeCompare(b.name)});
 }
 function connectedIds(){return orderPlayers().filter(function(p){return p.connected}).map(function(p){return p.uid})}
-function pname(id){var p=players[id]; var w=who[id]||{}; return ((w.emoji?w.emoji+" ":"")+(p&&p.name||"Player"))}
+function shownName(id){
+  var list=orderPlayers(), count={}, seen={}, map={};
+  list.forEach(function(p){count[p.name]=(count[p.name]||0)+1});
+  list.forEach(function(p){
+    if(count[p.name]<2){map[p.uid]=p.name; return}
+    seen[p.name]=(seen[p.name]||0)+1;
+    map[p.uid]=seen[p.name]===1?p.name:(p.name+" "+seen[p.name]);
+  });
+  return map[id]||(players[id]&&players[id].name)||"Player";
+}
+function pname(id){var w=who[id]||{}; return ((w.emoji?w.emoji+" ":"")+shownName(id))}
+function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
+function armServerClock(){
+  if(!db||!ref||!onValue) return;
+  if(offsetStop) offsetStop();
+  offsetStop=onValue(ref(db, ".info/serverTimeOffset"), function(s){
+    var v=s.val();
+    if(typeof v==="number"&&isFinite(v)){serverOffset=v; offsetReady=true}
+  }, function(){offsetReady=false; serverOffset=0});
+}
+function stopServerClock(){if(offsetStop){try{offsetStop()}catch(e){} offsetStop=null}}
 function fullMeta(patch){
   var m=Object.assign({}, meta||{}, patch||{});
   var status=/^(lobby|play|over)$/.test(m.status)?m.status:"lobby";
@@ -111,7 +132,7 @@ function fullMeta(patch){
   return out;
 }
 function playObj(patch){
-  var b=Object.assign({turn:uid||"host", step:"answer", text:GAME, seq:1, mode:"mild", kind:"have", round:0, opened:Date.now(), order:uid||"table"}, table||{}, patch||{});
+  var b=Object.assign({turn:uid||"host", step:"answer", text:GAME, seq:1, mode:"mild", kind:"have", round:0, opened:serverNow(), order:uid||"table"}, table||{}, patch||{});
   var step=/^(prompt|slam|answer|vote|results|over)$/.test(b.step)?b.step:"answer";
   var text=String(b.text||GAME).slice(0,140);
   if((step!=="prompt" && step!=="over") && !text) text=GAME;
@@ -123,7 +144,7 @@ function playObj(patch){
     mode:"mild",
     kind:/^(have|vote)$/.test(b.kind)?b.kind:"have",
     round:Math.max(0, Math.min(19, +b.round||0)),
-    opened:Math.max(0, +b.opened||Date.now()),
+    opened:Math.max(0, +b.opened||serverNow()),
     order:String(b.order||uid||"table").slice(0,1500)
   };
 }
@@ -239,9 +260,15 @@ function paintLobby(){
   var box=$("plist"); if(box){box.textContent="";
     orderPlayers().forEach(function(p){
       var row=document.createElement("div"); row.className="nh-person"+(p.connected?"":" off");
-      var s=document.createElement("span"); s.textContent=(p.emoji?p.emoji+" ":"")+p.name+(p.uid===meta.hostUid?" · host":"");
+      var s=document.createElement("span"); s.textContent=(p.emoji?p.emoji+" ":"")+shownName(p.uid)+(p.uid===meta.hostUid?" · host":"");
       var tag=document.createElement("span"); tag.textContent=p.connected?"in":"away";
-      row.appendChild(s); row.appendChild(tag); box.appendChild(row);
+      row.appendChild(s); row.appendChild(tag);
+      if(isHost()&&p.uid!==uid){
+        var kick=el("button","x","Remove"); kick.type="button"; kick.setAttribute("aria-label","Remove "+shownName(p.uid));
+        kick.addEventListener("click", function(){remove(ref(db, rpath("players/"+p.uid))).catch(function(e){fail(friendly(e))})});
+        row.appendChild(kick);
+      }
+      box.appendChild(row);
     });
   }
   var n=orderPlayers().length;
@@ -467,12 +494,12 @@ function paintAwards(){
   var title=top.length===list.length||top.length>1?"Shared win":"Top score";
   var card2=el("article","poster-award");
   card2.appendChild(el("p","", title));
-  card2.appendChild(el("h2","", top.map(function(p){return (p.emoji?p.emoji+" ":"")+p.name}).join(", ")));
+  card2.appendChild(el("h2","", top.map(function(p){return (p.emoji?p.emoji+" ":"")+shownName(p.uid)}).join(", ")));
   card2.appendChild(el("p","", max+" points."));
   box.appendChild(card2);
   list.forEach(function(p){
     var extra=GAME==="vibe"?(" · "+p.seen+" guesses"):"";
-    row(box, (p.emoji?p.emoji+" ":"")+p.name, p.points+" points"+extra);
+    row(box, (p.emoji?p.emoji+" ":"")+shownName(p.uid), p.points+" points"+extra);
   });
 }
 function paintTable(){
@@ -536,7 +563,7 @@ function moreAfter(){
 function render(){
   paintRole();
   if(!meta){screen("home"); return}
-  if(meta.createdAt && typeof meta.createdAt==="number" && Date.now()-meta.createdAt>TTL){fail("This room has expired.");}
+  if(meta.createdAt && typeof meta.createdAt==="number" && serverNow()-meta.createdAt>TTL){fail("This room has expired.");}
   if(meta.status==="lobby"){
     screen("lobby"); paintLobby();
     maybeResetScores();
@@ -630,7 +657,7 @@ function readyMeta(){return meta&&typeof meta.createdAt==="number"&&meta.created
 function writePlay(patch, phase){
   var payload={};
   payload[rpath("nhie/play")]=playObj(patch);
-  payload[rpath("meta")]=fullMeta({status:phase==="over"?"over":"play", phase:phase, deck:asDeck(meta.deck), endedAt:phase==="over"?Date.now():null});
+  payload[rpath("meta")]=fullMeta({status:phase==="over"?"over":"play", phase:phase, deck:asDeck(meta.deck), endedAt:phase==="over"?serverNow():null});
   return update(ref(db), payload);
 }
 function connectedAmong(ids){
@@ -692,7 +719,7 @@ function skipSpotlight(vb, why){
   var guessers=L.guessersFor(vb.roster, next.uid).filter(function(id){return players[id]&&players[id].connected!==false});
   var round=Math.min(19,(+table.round||0)+1);
   return writePlay({
-    step:"answer", kind:"have", round:round, turn:next.uid, opened:Date.now(),
+    step:"answer", kind:"have", round:round, turn:next.uid, opened:serverNow(),
     seq:Math.min(40,(+table.seq||1)+1),
     text:"v|c:"+vm.cycle+"|x:"+vm.max,
     order:encVibe(vb.roster, guessers, passes, next.index)
@@ -727,7 +754,7 @@ function writeCrew(st){
     kind:"have",
     round:round,
     turn:uid,
-    opened:Date.now(),
+    opened:serverNow(),
     seq:Math.min(40,(+table.seq||1)+1),
     text:encCrew(st),
     order:encLive(st.live, st.out)
@@ -770,7 +797,7 @@ function revealCrew(st){
 function finishGame(){
   return update(ref(db), {
     [rpath("nhie/play")]:playObj({step:"over", text:table.text||GAME, kind:"have"}),
-    [rpath("meta")]:fullMeta({status:"over", phase:"over", deck:asDeck(meta.deck), endedAt:Date.now()})
+    [rpath("meta")]:fullMeta({status:"over", phase:"over", deck:asDeck(meta.deck), endedAt:serverNow()})
   });
 }
 function forceReveal(){
@@ -794,7 +821,7 @@ function goNext(){
   if(GAME==="split"){
     var n=(+table.round||0)+1;
     if(n>=8) job=finishGame();
-    else job=writePlay({step:"answer", kind:"have", round:n, opened:Date.now(), seq:Math.min(40,(+table.seq||1)+1), text:"s|pref", order:csv(connectedIds()), turn:uid}, "answer");
+    else job=writePlay({step:"answer", kind:"have", round:n, opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"s|pref", order:csv(connectedIds()), turn:uid}, "answer");
   }else if(GAME==="vibe") job=nextVibe();
   else job=nextCrew();
   Promise.resolve(job).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
@@ -809,7 +836,7 @@ function nextVibe(){
     if(roster.length<2) return finishGame();
     var guessers=L.guessersFor(roster, roster[0]);
     var round=Math.min(19,(+table.round||0)+1);
-    return writePlay({step:"answer", round:round, turn:roster[0], opened:Date.now(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, guessers, {}, 0), kind:"have"}, "answer");
+    return writePlay({step:"answer", round:round, turn:roster[0], opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, guessers, {}, 0), kind:"have"}, "answer");
   }
   var spot=vb.roster[nextIndex];
   var here=function(id){return players[id]&&players[id].connected!==false};
@@ -819,12 +846,12 @@ function nextVibe(){
     return nextVibeCycle(vm);
   }
   var guessers2=L.guessersFor(vb.roster, found.uid).filter(here);
-  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:found.uid, opened:Date.now(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+vm.cycle+"|x:"+vm.max, order:encVibe(vb.roster, guessers2, vb.passes, found.index), kind:"have"}, "answer");
+  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:found.uid, opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+vm.cycle+"|x:"+vm.max, order:encVibe(vb.roster, guessers2, vb.passes, found.index), kind:"have"}, "answer");
 }
 function nextVibeCycle(vm){
   var roster=connectedIds();
   if(roster.length<2 || vm.cycle>=vm.max) return finishGame();
-  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:roster[0], opened:Date.now(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, L.guessersFor(roster, roster[0]), {}, 0), kind:"have"}, "answer");
+  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:roster[0], opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, L.guessersFor(roster, roster[0]), {}, 0), kind:"have"}, "answer");
 }
 function nextCrew(){
   var st=crewState();
@@ -865,11 +892,11 @@ async function begin(){
   var dealt=L.dealIds(ids, code+"|"+meta.gameId, used, count);
   try{sessionStorage.setItem("tp_"+GAME+"_used_"+code, JSON.stringify(dealt.used))}catch(e){}
   var patch;
-  if(GAME==="split") patch={step:"answer", text:"s|pref", kind:"have", round:0, order:csv(list), turn:list[0], seq:1, opened:Date.now()};
+  if(GAME==="split") patch={step:"answer", text:"s|pref", kind:"have", round:0, order:csv(list), turn:list[0], seq:1, opened:serverNow()};
   else if(GAME==="vibe"){
     var max=cyclesWanted();
-    patch={step:"answer", text:"v|c:1|x:"+max, kind:"have", round:0, turn:list[0], seq:1, opened:Date.now(), order:encVibe(list, L.guessersFor(list, list[0]), {}, 0)};
-  }else patch={step:"prompt", text:encCrew({pause:true, mission:0, try:0, gen:1, stars:0, knownStar:false}), kind:"have", round:0, turn:list[0], seq:1, opened:Date.now(), order:encLive(list, [])};
+    patch={step:"answer", text:"v|c:1|x:"+max, kind:"have", round:0, turn:list[0], seq:1, opened:serverNow(), order:encVibe(list, L.guessersFor(list, list[0]), {}, 0)};
+  }else patch={step:"prompt", text:encCrew({pause:true, mission:0, try:0, gen:1, stars:0, knownStar:false}), kind:"have", round:0, turn:list[0], seq:1, opened:serverNow(), order:encLive(list, [])};
   try{
     await update(ref(db), {
       [rpath("meta")]:fullMeta({status:"play", phase:"answer", deck:dealt.dealt}),
@@ -891,7 +918,7 @@ async function hostRoom(name){
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
   if(!claimed) throw new Error("room");
-  await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:Date.now()});
+  await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:serverNow()});
   await set(ref(db, "rooms/"+claimed+"/nhie/who/"+uid), {emoji:myEmoji(), confessions:0, seen:0});
   code=claimed;
   try{sessionStorage.setItem(roomStore(), code)}catch(e){}
@@ -902,14 +929,14 @@ async function joinRoom(c, name){
   if(!snap.exists()) throw new Error("missing");
   var m=snap.val()||{};
   if(m.kind!==GAME) throw new Error("kind");
-  if(m.createdAt && typeof m.createdAt==="number" && Date.now()-m.createdAt>TTL) throw new Error("expired");
+  if(m.createdAt && typeof m.createdAt==="number" && serverNow()-m.createdAt>TTL) throw new Error("expired");
   var mine=await get(ref(db, "rooms/"+c+"/players/"+uid));
   if(m.status!=="lobby" && !mine.exists()) throw new Error("started");
   var all=await get(ref(db, "rooms/"+c+"/players"));
   var count=all.exists()?Object.keys(all.val()||{}).length:0;
   if(!mine.exists() && count>=L.MAX_PLAYERS) throw new Error("full");
   var prev=mine.val()||{};
-  await set(ref(db, "rooms/"+c+"/players/"+uid), {name:name||prev.name||"Player", connected:true, joinedAt:prev.joinedAt||Date.now()});
+  await set(ref(db, "rooms/"+c+"/players/"+uid), {name:name||prev.name||"Player", connected:true, joinedAt:prev.joinedAt||serverNow()});
   var w=await get(ref(db, "rooms/"+c+"/nhie/who/"+uid));
   var cur=w.val()||{};
   await set(ref(db, "rooms/"+c+"/nhie/who/"+uid), {emoji:myEmoji()||cur.emoji||"", confessions:+cur.confessions||0, seen:+cur.seen||0});
@@ -979,10 +1006,13 @@ function stopAll(){
 }
 function armPresence(){
   if(connStop) connStop();
+  var drop=null;
   connStop=onValue(ref(db, ".info/connected"), function(s){
+    if(drop){try{drop.cancel()}catch(e){} drop=null}
     if(!s.val()||!code||!uid) return;
     var p=ref(db, rpath("players/"+uid));
-    onDisconnect(p).update({connected:false}).catch(function(){});
+    drop=onDisconnect(p);
+    drop.update({connected:false}).catch(function(){});
     update(p, {connected:true}).catch(function(){});
   });
 }
@@ -1145,6 +1175,8 @@ async function boot(){
   await cred.user.getIdToken();
   uid=cred.user.uid;
   goOnline(db);
+  armServerClock();
+  window.addEventListener("pagehide", function(){stopServerClock()});
   if(emuOn()){
     window.__tpTest={
       game:GAME,
@@ -1157,7 +1189,7 @@ async function boot(){
         return get(ref(db, path)).then(function(s){return {ok:true, val:s.val()}}, function(e){return {ok:false, error:String((e&&(e.code||e.message))||e)}});
       },
       guestWrite:function(){
-        return update(ref(db), {[rpath("nhie/play")]:{turn:"guest", step:"answer", text:"nope", seq:1, mode:"mild", kind:"have", round:0, opened:Date.now(), order:"guest"}}).then(function(){return {ok:true}}, function(e){return {ok:false, error:String((e&&(e.code||e.message))||e)}});
+        return update(ref(db), {[rpath("nhie/play")]:{turn:"guest", step:"answer", text:"nope", seq:1, mode:"mild", kind:"have", round:0, opened:serverNow(), order:"guest"}}).then(function(){return {ok:true}}, function(e){return {ok:false, error:String((e&&(e.code||e.message))||e)}});
       }
     };
   }

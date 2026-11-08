@@ -8,6 +8,7 @@ var answered={},noteMap={},tallyMap={},sealedMap={},answerMap={},callMap={},reve
 var stops=[],roundStops=[],sharedStops=[],revealStops={},revealedStop=null,seq=0,seqRound="",sending=false,built="",revealLock="",actionLock=false;
 var pend=[],flushTimer=0,lastSend=0,drawing=false,localTally=-1;
 var timerFor="",tickTimer=0,endTimer=0,roundEnds=0,secretSent="";
+var serverOffset=0,offsetReady=false,offsetStop=null,announcedTimer="";
 var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,set,remove,onDisconnect,get,serverTimestamp,goOnline;
 var connectAuthEmulator,connectDatabaseEmulator;
 
@@ -47,7 +48,48 @@ function playerList(){
 }
 function actor(){var list=playerList();if(!meta||!list.length)return null;return list[meta.round%list.length]}
 function isActor(){var a=actor();return !!(a&&a.uid===uid)}
-function pname(id){return (players[id]&&players[id].name)||"Player"}
+function pname(id){
+ var list=playerList(),count={},seen={},map={};
+ list.forEach(function(p){count[p.name]=(count[p.name]||0)+1});
+ list.forEach(function(p){
+  if(count[p.name]<2){map[p.uid]=p.name;return}
+  seen[p.name]=(seen[p.name]||0)+1;
+  map[p.uid]=seen[p.name]===1?p.name:(p.name+" "+seen[p.name]);
+ });
+ return map[id]||(players[id]&&players[id].name)||"Player";
+}
+function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
+function armServerClock(){
+ if(!db||!ref||!onValue)return;
+ if(offsetStop)offsetStop();
+ offsetStop=onValue(ref(db,".info/serverTimeOffset"),function(s){
+  var v=s.val();
+  if(typeof v==="number"&&isFinite(v)){serverOffset=v;offsetReady=true}
+ },function(){offsetReady=false;serverOffset=0});
+}
+function stopServerClock(){if(offsetStop){try{offsetStop()}catch(e){}offsetStop=null}}
+function tickNode(){
+ var n=$("tick");
+ if(n)return n;
+ var card=$("card");
+ if(!card||!card.parentNode)return null;
+ n=document.createElement("p");
+ n.id="tick";
+ n.className="tag";
+ n.setAttribute("aria-hidden","true");
+ card.insertAdjacentElement("afterend",n);
+ return n;
+}
+function roundLive(){
+ var n=$("roundlive");
+ if(n)return n;
+ n=document.createElement("p");
+ n.id="roundlive";
+ n.className="sr";
+ n.setAttribute("aria-live","polite");
+ document.body.appendChild(n);
+ return n;
+}
 function teamName(id){var list=playerList(),i;for(i=0;i<list.length;i++)if(list[i].uid===id)return i%2===0?"Yellow":"Pink";return "Yellow"}
 function roomUrl(c){
  var base=/localhost|127\.0\.0\.1/.test(location.host)?location.origin+location.pathname:"https://tipsyplay.com/play/"+GAME.id+".html";
@@ -65,7 +107,7 @@ function writeMeta(patch){return update(ref(db),{[rpath("meta")]:fullMeta(patch)
 function deckLine(){var d=meta?asDeck(meta.deck):[];return d[rnd()]||""}
 function lineText(){return (meta&&meta.na)?GAME.alt:GAME.line}
 function loadWords(){try{var raw=sessionStorage.getItem("tp_draw_"+code);if(!raw)return null;var o=JSON.parse(raw);if(!meta||o.gameId!==meta.gameId)return null;return o.words||null}catch(e){return null}}
-function myPlayer(name){return {name:name,connected:true,joinedAt:Date.now()}}
+function myPlayer(name, prev){return {name:name,connected:true,joinedAt:(prev&&prev.joinedAt)||serverNow()}}
 function splitLines(s){var p=String(s||"").split("|");while(p.length<3)p.push("");return p.slice(0,3)}
 function roundMap(map){return (map&&meta)?(map[rnd()]||{}):{}}
 
@@ -136,7 +178,7 @@ function resultLine(){
  if(!roundReady())return "Tallying…";
  var r=rnd(),list=playerList(),actorP=actor(),notes=noteMap[r]||{},sealed=sealedMap[r]||{},ans=answerMap[r]||{},tally=tallyMap[r]||{};
  if(GAME.kind==="story"){
-  return list.map(function(p){return p.name+": "+(notes[p.uid]||"(pass)")}).join(" ");
+  return list.map(function(p){return pname(p.uid)+": "+(notes[p.uid]||"(pass)")}).join(" ");
  }
  if(GAME.kind==="vote"){
   var counts={};
@@ -148,20 +190,20 @@ function resultLine(){
   var g=0,f=0;
   Object.keys(sealed).forEach(function(pid){if(sealed[pid]==="guilty")g++;else if(sealed[pid]==="free")f++});
   var verdict=g>f?"Guilty":f>g?"Not guilty":"Hung jury";
-  return (actorP?actorP.name+" is on the stand. ":"")+verdict+" · "+g+" guilty, "+f+" not guilty.";
+  return (actorP?pname(actorP.uid)+" is on the stand. ":"")+verdict+" · "+g+" guilty, "+f+" not guilty.";
  }
  if(GAME.kind==="flip"){
   var call=callMap[r]||"…";
-  var wrong=list.filter(function(p){if(notes[p.uid]==="(pass)"||!Object.prototype.hasOwnProperty.call(ans,p.uid))return false;var red=ans[p.uid]===true;return (red&&call==="black")||(!red&&call==="red")}).map(function(p){return p.name});
+  var wrong=list.filter(function(p){if(notes[p.uid]==="(pass)"||!Object.prototype.hasOwnProperty.call(ans,p.uid))return false;var red=ans[p.uid]===true;return (red&&call==="black")||(!red&&call==="red")}).map(function(p){return pname(p.uid)});
   return "The flip is "+call+". "+(wrong.length?wrong.join(", ")+" guessed wrong.":"Nobody missed.");
  }
  if(GAME.kind==="toss"){
   if(!actorP)return "";
-  if(!Object.prototype.hasOwnProperty.call(ans,actorP.uid))return actorP.name+" has not tossed yet.";
-  return actorP.name+(ans[actorP.uid]?" sank it. 1 point.":" missed. 0 points.");
+  if(!Object.prototype.hasOwnProperty.call(ans,actorP.uid))return pname(actorP.uid)+" has not tossed yet.";
+  return pname(actorP.uid)+(ans[actorP.uid]?" sank it. 1 point.":" missed. 0 points.");
  }
  if(GAME.kind==="category"){
-  return (actorP?actorP.name:"They")+" named "+((actorP&&tally[actorP.uid])||0)+".";
+  return (actorP?pname(actorP.uid):"They")+" named "+((actorP&&tally[actorP.uid])||0)+".";
  }
  if(GAME.kind==="truths"){
   var parts=splitLines(actorP?notes[actorP.uid]:""),fib=actorP?sealed[actorP.uid]:"";
@@ -170,11 +212,11 @@ function resultLine(){
  }
  if(GAME.kind==="draw"){
   var word=callMap[r]||(secret&&secret.word)||"";
-  var who=list.filter(function(p){return actorP&&p.uid!==actorP.uid&&word&&normWord(notes[p.uid])===normWord(word)}).map(function(p){return p.name});
+  var who=list.filter(function(p){return actorP&&p.uid!==actorP.uid&&word&&normWord(notes[p.uid])===normWord(word)}).map(function(p){return pname(p.uid)});
   return "The word was "+word+". "+(who.length?who.join(", ")+" got it.":"Nobody guessed it.");
  }
  if(GAME.kind==="rule"){
-  var slipped=list.filter(function(p){return ans[p.uid]===true}).map(function(p){return p.name});
+  var slipped=list.filter(function(p){return ans[p.uid]===true}).map(function(p){return pname(p.uid)});
   return slipped.length?slipped.join(", ")+" slipped.":"Nobody slipped.";
  }
  return "";
@@ -183,19 +225,19 @@ function liveLine(){
  var list=playerList(),a=actor();
  if(GAME.kind==="story"){
   var notes=roundMap(noteMap);
-  var bits=list.filter(function(p){return notes[p.uid]&&notes[p.uid]!=="(pass)"}).map(function(p){return p.name+": "+notes[p.uid]});
+  var bits=list.filter(function(p){return notes[p.uid]&&notes[p.uid]!=="(pass)"}).map(function(p){return pname(p.uid)+": "+notes[p.uid]});
   return bits.join(" ");
  }
  if(GAME.kind==="draw"){
   var notes=roundMap(noteMap);
-  var bits=list.filter(function(p){return notes[p.uid]}).map(function(p){return p.name+": "+notes[p.uid]});
+  var bits=list.filter(function(p){return notes[p.uid]}).map(function(p){return pname(p.uid)+": "+notes[p.uid]});
   return bits.join(" ");
  }
  if(GAME.kind==="category"){
   var n=a?((roundMap(tallyMap)[a.uid])||0):0;
-  return (a?a.name:"Someone")+" has named "+n+".";
+  return (a?pname(a.uid):"Someone")+" has named "+n+".";
  }
- var need=needed().filter(function(p){return !answered[p.uid]}).map(function(p){return p.name});
+ var need=needed().filter(function(p){return !answered[p.uid]}).map(function(p){return pname(p.uid)});
  if(!need.length)return "Everyone's in.";
  return "Waiting for "+need.join(", ")+".";
 }
@@ -207,11 +249,7 @@ function needed(){
  if(GAME.kind==="draw")return [];
  return list;
 }
-function clockBit(){
- if(!roundEnds||!meta||meta.phase!=="answer")return "";
- var s=Math.max(0,Math.ceil((roundEnds-Date.now())/1000));
- return " · "+s+"s";
-}
+function clockBit(){return ""}
 function paintHost(){
  document.body.classList.toggle("is-host",isHost());
  document.querySelectorAll(".hostonly").forEach(function(n){n.classList.toggle("hide",!isHost())});
@@ -221,7 +259,16 @@ function paintLobby(){
  $("codebig").textContent=code||"";
  $("sharelink").textContent=roomUrl(code);
  var box=$("plist");box.textContent="";
- playerList().forEach(function(p){var d=el("div",p.connected?"prow":"prow off",p.name+(p.connected?"":" (away)"));box.appendChild(d)});
+ playerList().forEach(function(p){
+  var d=el("div",p.connected?"prow":"prow off");
+  d.appendChild(el("span",null,pname(p.uid)+(p.connected?"":" (away)")));
+  if(isHost()&&meta.status==="lobby"&&p.uid!==uid){
+   var kick=el("button","x","Remove");kick.type="button";kick.setAttribute("aria-label","Remove "+pname(p.uid));
+   kick.addEventListener("click",function(){remove(ref(db,rpath("players/"+p.uid))).catch(function(e){fail(friendly(e))})});
+   d.appendChild(kick);
+  }
+  box.appendChild(d);
+ });
  document.querySelectorAll("#orounds .chip").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.r===+meta.rounds));b.disabled=!isHost()});
  $("ona").checked=!!meta.na;$("ona").disabled=!isHost();
  var start=$("startbtn");
@@ -232,19 +279,19 @@ function paintBoard(){
  var sc=scores();
  playerList().forEach(function(p){
   var d=el("div","prow boardrow");
-  d.appendChild(el("span",null,p.name));
+  d.appendChild(el("span",null,pname(p.uid)));
   d.appendChild(el("b",null,String(sc[p.uid]||0)));
   box.appendChild(d);
  });
 }
 function paintStage(){
  var a=actor();
- $("turn").textContent=a?(GAME.kind==="draw"?teamName(a.uid)+" draws · "+a.name:a.name+"'s turn"):"";
+ $("turn").textContent=a?(GAME.kind==="draw"?teamName(a.uid)+" draws · "+pname(a.uid):pname(a.uid)+"'s turn"):"";
  if(GAME.kind!=="draw"&&GAME.kind!=="toss"&&GAME.kind!=="category"&&GAME.kind!=="court"&&GAME.kind!=="truths")$("turn").textContent="Round "+(rnd()+1)+" of "+meta.rounds;
- if(GAME.kind==="court")$("turn").textContent=a?a.name+" is on the stand":"";
- if(GAME.kind==="truths")$("turn").textContent=a?a.name+" is telling":"";
- if(GAME.kind==="toss"||GAME.kind==="category")$("turn").textContent=a?a.name+"'s turn":"";
- $("lvl").textContent="Round "+(rnd()+1)+" of "+meta.rounds+clockBit();
+ if(GAME.kind==="court")$("turn").textContent=a?pname(a.uid)+" is on the stand":"";
+ if(GAME.kind==="truths")$("turn").textContent=a?pname(a.uid)+" is telling":"";
+ if(GAME.kind==="toss"||GAME.kind==="category")$("turn").textContent=a?pname(a.uid)+"'s turn":"";
+ $("lvl").textContent="Round "+(rnd()+1)+" of "+meta.rounds;
  if(GAME.kind==="draw"){
   if(isActor()&&secret&&secret.word)$("prompt").textContent=secret.word;
   else if(isActor())$("prompt").textContent="Picking a word…";
@@ -270,9 +317,9 @@ function paintStage(){
 function paintOver(){
  var sc=scores(),list=playerList().slice().sort(function(a,b){return (sc[b.uid]||0)-(sc[a.uid]||0)});
  var box=$("final");box.textContent="";
- list.forEach(function(p){var li=el("li");li.appendChild(el("span",null,p.name));li.appendChild(el("span",null,String(sc[p.uid]||0)+" pts"));box.appendChild(li)});
+ list.forEach(function(p){var li=el("li"); li.appendChild(el("span",null,pname(p.uid)));li.appendChild(el("span",null,String(sc[p.uid]||0)+" pts"));box.appendChild(li)});
  var top=list[0];
- $("crowns").textContent=top?(top.name+" leads with "+(sc[top.uid]||0)+" points. Sipping was always optional."):"Sipping was always optional.";
+ $("crowns").textContent=top?(pname(top.uid)+" leads with "+(sc[top.uid]||0)+" points. Sipping was always optional."):"Sipping was always optional.";
 }
 function btn(label,attrs,cls){
  var b=el("button",cls||"btn",label);
@@ -300,7 +347,7 @@ function buildDock(){
  }
  if(GAME.kind==="vote"){
   if(mine){dock.appendChild(el("p",null,"Vote locked in."));return}
-  playerList().forEach(function(p){dock.appendChild(btn(p.name,{"data-vote":p.uid}))});
+  playerList().forEach(function(p){dock.appendChild(btn(pname(p.uid),{"data-vote":p.uid}))});
   dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
   return;
  }
@@ -324,7 +371,7 @@ function buildDock(){
   return;
  }
  if(GAME.kind==="toss"){
-  if(!isActor()){dock.appendChild(el("p",null,(a?a.name:"They")+" is tossing. Cups are for points, not drinking."));return}
+  if(!isActor()){dock.appendChild(el("p",null,(a?pname(a.uid):"They")+" is tossing. Cups are for points, not drinking."));return}
   if(mine){dock.appendChild(el("p",null,"Toss logged."));return}
   var row=el("div","choice");
   row.appendChild(btn("Hit",{"data-pick":"hit"}));
@@ -333,7 +380,7 @@ function buildDock(){
   return;
  }
  if(GAME.kind==="category"){
-  if(!isActor()){dock.appendChild(el("p",null,(a?a.name:"They")+" is naming things out loud."));return}
+  if(!isActor()){dock.appendChild(el("p",null,(a?pname(a.uid):"They")+" is naming things out loud."));return}
   if(mine){dock.appendChild(el("p",null,"Turn locked in."));return}
   var count=el("p","ask");count.id="count";count.textContent=String(localTally>=0?localTally:((roundMap(tallyMap)[uid])||0));
   dock.appendChild(count);
@@ -354,7 +401,7 @@ function buildDock(){
    return;
   }
   var raw=a?(noteMap[rnd()]||{})[a.uid]:"";
-  if(!raw){dock.appendChild(el("p",null,"Waiting for "+(a?a.name:"the storyteller")+" to write."));return}
+  if(!raw){dock.appendChild(el("p",null,"Waiting for "+(a?pname(a.uid):"the storyteller")+" to write."));return}
   if(mine){dock.appendChild(el("p",null,"Guess locked in."));return}
   splitLines(raw).forEach(function(text,i){dock.appendChild(btn((i+1)+". "+text,{"data-fib":String(i+1)}))});
   dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
@@ -450,10 +497,18 @@ function armTimer(){
  if(meta.phase!=="answer")return;
  var ms=GAME.kind==="draw"?45000:GAME.kind==="category"?20000:0;
  if(!ms)return;
- roundEnds=Date.now()+ms;
- tickTimer=setInterval(function(){if($("lvl")&&meta){$("lvl").textContent="Round "+(rnd()+1)+" of "+meta.rounds+clockBit()}},250);
- if(GAME.kind==="draw"&&isHost())endTimer=setTimeout(revealNow,ms+50);
- if(GAME.kind==="category"&&isActor())endTimer=setTimeout(autoDone,ms+50);
+ roundEnds=serverNow()+ms;
+ var live=roundLive();
+ if(live&&announcedTimer!==key){announcedTimer=key;live.textContent="Round "+(rnd()+1)+" started."}
+ tickTimer=setInterval(function(){
+  var s=Math.max(0,Math.ceil((roundEnds-serverNow())/1000));
+  var tick=tickNode();
+  if(tick)tick.textContent=s?s+"s":"";
+  if(s===3&&live&&live.dataset.final!==key){live.dataset.final=key;live.textContent="3 seconds left."}
+ },250);
+ var wait=Math.max(50,roundEnds-serverNow()+50);
+ if(GAME.kind==="draw"&&isHost())endTimer=setTimeout(revealNow,wait);
+ if(GAME.kind==="category"&&isActor())endTimer=setTimeout(autoDone,wait);
 }
 function autoDone(){if(meta&&meta.phase==="answer"&&isActor()&&!answered[uid])sendAnswered()}
 function ensureSecret(){
@@ -493,7 +548,7 @@ function revealNow(){
 }
 function nextRound(){
  if(!isHost()||!meta||meta.phase!=="reveal")return;
- if(meta.round+1>=meta.rounds){writeMeta({status:"over",phase:"over",endedAt:Date.now()}).catch(function(e){fail(friendly(e))});return}
+ if(meta.round+1>=meta.rounds){writeMeta({status:"over",phase:"over",endedAt:serverNow()}).catch(function(e){fail(friendly(e))});return}
  var nr=meta.round+1;
  writeMeta({round:nr,phase:"answer"}).then(function(){
   if(GAME.kind!=="draw")return;
@@ -659,10 +714,13 @@ function clearRoom(){stopAll();code=null;meta=null;players={};sessionStorage.rem
 var connStop=null;
 function armPresence(){
  if(connStop)connStop();
+ var drop=null;
  connStop=onValue(ref(db,".info/connected"),function(s){
+  if(drop){try{drop.cancel()}catch(e){}drop=null}
   if(!s.val()||!code||!uid)return;
   var p=ref(db,rpath("players/"+uid));
-  onDisconnect(p).update({connected:false}).catch(function(){});
+  drop=onDisconnect(p);
+  drop.update({connected:false}).catch(function(){});
   update(p,{connected:true}).catch(function(){});
  });
 }
@@ -690,12 +748,11 @@ async function joinRoom(c,name){
  if(!snap.exists())throw new Error("missing");
  var m=snap.val();
  if(m.kind&&m.kind!==GAME.id)throw new Error("kind");
- if(m.createdAt&&Date.now()-m.createdAt>TTL)throw new Error("expired");
- if(m.status!=="lobby"){
-  var mine=await get(ref(db,"rooms/"+c+"/players/"+uid));
-  if(!mine.exists())throw new Error("closed");
- }
- await set(ref(db,"rooms/"+c+"/players/"+uid),myPlayer(name));
+ if(m.createdAt&&serverNow()-m.createdAt>TTL)throw new Error("expired");
+ var mine=await get(ref(db,"rooms/"+c+"/players/"+uid));
+ if(m.status!=="lobby"&&!mine.exists())throw new Error("closed");
+ var prev=mine.val()||{};
+ await set(ref(db,"rooms/"+c+"/players/"+uid),myPlayer(name||prev.name,prev));
  code=c;sessionStorage.setItem("tp_room",code);
  listenRoom();armPresence();
 }
@@ -718,7 +775,9 @@ function doJoin(){
  joinRoom(c,name).catch(function(e){
   var msg=String((e&&e.message)||"");
   if(msg==="kind")fail("That code is for a different game.");
-  else if(msg==="missing"||msg==="expired"||msg==="closed")fail("That room isn't available.");
+  else if(msg==="missing")fail("No room with that code.");
+  else if(msg==="expired")fail("That room has expired.");
+  else if(msg==="closed")fail("That game has already started.");
   else fail(friendly(e));
  }).then(function(){actionLock=false});
 }
@@ -812,6 +871,8 @@ async function boot(){
  await cred.user.getIdToken();
  uid=cred.user.uid;
  goOnline(db);
+ armServerClock();
+ window.addEventListener("pagehide",function(){stopServerClock()});
  showApp();screen("home");wire();
 }
 boot().catch(function(e){

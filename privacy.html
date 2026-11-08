@@ -18,7 +18,7 @@
 <meta name="description" content="A plain-language note on what TipsyPlay stores on your device and how online rooms use anonymous sign-in.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=17">
+<link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body data-root="">
 <header class="top"><a class="logo" href="index.html">Tipsy<span>Play</span></a><nav><a href="games/">Games</a><a href="blog/">Blog</a><a href="responsible.html">Play safe</a></nav></header>
@@ -36,6 +36,11 @@
 <h2>Online rooms</h2>
 <p>If you host or join a room, the site uses Firebase Anonymous Authentication and Firebase Realtime Database so phones in that room can share the game state. The name you type is stored with that anonymous account for the life of the room. Rooms are removed when the host closes them, or after they expire.</p>
 <p>TipsyPlay does not ask for an email address or a password to play. We do not sell personal information. We do not run our own ad network on these pages.</p>
+<p>Hosting or joining a room signs the browser in anonymously. The room stores the display name you type, whether that phone is connected, the answers or votes for that room, and enough game state for the other phones to stay in sync. Comments on spot pages use the same anonymous sign-in. Room data stays in Firebase until the host closes the room or the room expires.</p>
+</div>
+<div class="card">
+<h2>Analytics</h2>
+<p>Pages load Google Analytics with measurement ID G-BHY4BXF3V3. That script can receive the usual browser and page-view data Google collects for that tag. TipsyPlay does not add a consent banner here. Whether that is enough for your location is a legal review, not legal advice from this page.</p>
 </div>
 </section>
 </main>
@@ -44,6 +49,6 @@
 <p>© TipsyPlay</p>
 </footer>
 <script src="sounds.js?v=17"></script>
-<script src="app.js?v=17"></script>
+<script src="app.js?v=18"></script>
 </body>
 </html>

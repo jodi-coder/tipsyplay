@@ -9,7 +9,7 @@ module.exports = defineConfig({
   reporter: [["list"]],
   projects: [
     { name: "chromium", use: { browserName: "chromium" } },
-    { name: "webkit", grep: /age gate/, use: { browserName: "webkit" } }
+    { name: "webkit", grep: /age gate|narrow pages/, use: { browserName: "webkit" } }
   ],
   use: {
     baseURL: process.env.TIPSY_BASE || "http://127.0.0.1:8765",
