@@ -4,12 +4,13 @@ var TTL=8*60*60*1000;
 var $=function(id){return document.getElementById(id)};
 var uid=null,code=null,meta=null,players={},answered={},skips={},known={},db=null;
 var stops=[],roundStop=null,skipStop=null,revStop=null,answerStops={},fxRAF=0,revealLock="",revealKey="",promptKey="",overKey="",connStop=null,sending=false,liveRound="";
+var serverOffset=0,offsetReady=false,offsetStop=null;
 var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,set,remove,onDisconnect,get,serverTimestamp,goOnline,authObj;
 
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
 function listNames(arr){if(arr.length<=1)return arr[0]||"";if(arr.length===2)return arr[0]+" and "+arr[1];return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
 function motionOk(){return !(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}
-function instr(){return meta&&meta.na?"Points only. Passing is always fine.":"Take a small sip or skip; passing is always fine."}
+function instr(){return meta&&meta.na?"Points only. Passing is always fine.":"Sip, water, or pose, or skip. Passing is always fine."}
 function roomUrl(c){return "https://tipsyplay.com/play/join.html?code="+c}
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
@@ -51,6 +52,26 @@ function playerList(){
   return {uid:id,name:players[id].name||"Player",connected:players[id].connected!==false,joinedAt:players[id].joinedAt||0,score:scoreOf(id)};
  }).sort(function(a,b){return a.joinedAt-b.joinedAt||a.name.localeCompare(b.name)});
 }
+function shown(id){
+ var list=playerList(),count={},seen={},map={};
+ list.forEach(function(p){count[p.name]=(count[p.name]||0)+1});
+ list.forEach(function(p){
+  if(count[p.name]<2){map[p.uid]=p.name;return}
+  seen[p.name]=(seen[p.name]||0)+1;
+  map[p.uid]=seen[p.name]===1?p.name:(p.name+" "+seen[p.name]);
+ });
+ return map[id]||(players[id]&&players[id].name)||"Player";
+}
+function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
+function armServerClock(){
+ if(!db||!ref||!onValue)return;
+ if(offsetStop)offsetStop();
+ offsetStop=onValue(ref(db,".info/serverTimeOffset"),function(s){
+  var v=s.val();
+  if(typeof v==="number"&&isFinite(v)){serverOffset=v;offsetReady=true}
+ },function(){offsetReady=false;serverOffset=0});
+}
+function stopServerClock(){if(offsetStop){try{offsetStop()}catch(e){}offsetStop=null}}
 function scoreOf(id){
  var n=0,prefix=meta?meta.gameId+"/":"";
  Object.keys(known).forEach(function(k){if(prefix&&k.indexOf(prefix)===0&&known[k][id]===true)n++});
@@ -126,28 +147,28 @@ function renderOver(){
  if(!list.length){box.appendChild(el("p","","No players left."));return}
  if(max===min){
   box.appendChild(el("h2","","It's a tie"));
-  box.appendChild(el("p","",wildTitle+" and "+angelTitle+": "+listNames(list.map(function(p){return p.name}))));
+  box.appendChild(el("p","",wildTitle+" and "+angelTitle+": "+listNames(list.map(function(p){return shown(p.uid)}))));
  }else{
-  box.appendChild(el("p","",wildTitle+": "+listNames(wild.map(function(p){return p.name}))));
-  box.appendChild(el("p","",angelTitle+": "+listNames(angel.map(function(p){return p.name}))));
+  box.appendChild(el("p","",wildTitle+": "+listNames(wild.map(function(p){return shown(p.uid)}))));
+  box.appendChild(el("p","",angelTitle+": "+listNames(angel.map(function(p){return shown(p.uid)}))));
  }
  ranked.forEach(function(p){
   var li=el("li");
-  li.appendChild(el("span","",p.name));
+  li.appendChild(el("span","",shown(p.uid)));
   li.appendChild(el("span","",p.score+(p.score===1?" pt":" pts")));
   ol.appendChild(li);
  });
 }
 function rowButtons(p,mode){
- var wrap=el("div","prow"),label=el("span",p.connected?"":"off",p.name+(p.uid===meta.hostUid?" · host":"")+(p.uid===uid?" · you":"")+(p.connected?"":" · offline")+(mode==="lobby"?"":" · "+p.score));
+ var wrap=el("div","prow"),label=el("span",p.connected?"":"off",shown(p.uid)+(p.uid===meta.hostUid?" · host":"")+(p.uid===uid?" · you":"")+(p.connected?"":" · offline")+(mode==="lobby"?"":" · "+p.score));
  wrap.appendChild(label);
  if(isHost()&&p.uid!==uid){
-  var kick=el("button","x","Kick");kick.type="button";kick.setAttribute("aria-label","Remove "+p.name);
+  var kick=el("button","x","Remove");kick.type="button";kick.setAttribute("aria-label","Remove "+shown(p.uid));
   kick.onclick=function(){if(confirm("Remove "+p.name+" from the room?"))remove(ref(db,roomPath("players/"+p.uid))).catch(function(e){fail(friendly(e))})};
   wrap.appendChild(kick);
  }
  if(mode==="wait"&&isHost()&&!answered[p.uid]&&!skips[p.uid]){
-  var skip=el("button","x","Skip");skip.type="button";skip.setAttribute("aria-label","Skip "+p.name);
+  var skip=el("button","x","Skip");skip.type="button";skip.setAttribute("aria-label","Skip "+shown(p.uid));
   skip.onclick=function(){setSkip(p.uid)};
   wrap.appendChild(skip);
  }
@@ -155,8 +176,8 @@ function rowButtons(p,mode){
 }
 function render(){
  if(!meta)return;
- if(meta.createdAt&&Date.now()-meta.createdAt>TTL){cleanupExpired();return}
- if(meta.endedAt&&Date.now()-meta.endedAt>30*60*1000){cleanupExpired();return}
+ if(meta.createdAt&&serverNow()-meta.createdAt>TTL){cleanupExpired();return}
+ if(meta.endedAt&&serverNow()-meta.endedAt>30*60*1000){cleanupExpired();return}
  paintHost();paintChips();
  var roundKey=meta.gameId+":"+meta.round+":"+meta.phase;
  if(meta.phase==="answer"&&liveRound!==roundKey){liveRound=roundKey;sending=false}
@@ -189,7 +210,7 @@ function render(){
  $("nextbtn").classList.toggle("hide",!isHost()||phase!=="reveal");
  if(phase==="reveal"){
   var knownKey=meta.gameId+"/"+meta.round,bag=known[knownKey],names=[];
-  if(bag)list.forEach(function(p){if(bag[p.uid]===true)names.push(p.name)});
+  if(bag)list.forEach(function(p){if(bag[p.uid]===true)names.push(shown(p.uid))});
   var n=names.length,title=!bag?"Revealing…":n===0?"Nobody has!":n===1?"1 of you has!":n+" of you have!";
   $("prompt").textContent=title;
   $("ask").textContent=!bag?"":n?listNames(names):"Clean slates — no points this round.";
@@ -199,7 +220,7 @@ function render(){
  }else{
   $("prompt").textContent=prompt;
   $("ask").textContent=mine?"Answer locked in. It's secret until the reveal.":"Your answer stays secret until everyone is in.";
-  var waiting=list.filter(function(p){return !answered[p.uid]&&!skips[p.uid]}).map(function(p){return p.name});
+  var waiting=list.filter(function(p){return !answered[p.uid]&&!skips[p.uid]}).map(function(p){return shown(p.uid)});
   $("said").textContent=waiting.length?"Waiting for "+listNames(waiting)+".":"";
   var pk=meta.gameId+":"+meta.round;
   if(promptKey&&promptKey!==pk&&window.TPSound)TPSound.card();
@@ -290,7 +311,7 @@ function revealNow(){
 }
 function nextRound(){
  if(!meta||!isHost()||meta.phase!=="reveal")return;
- if(meta.round+1>=meta.rounds)writeMeta({status:"over",phase:"over",endedAt:Date.now()}).catch(function(e){fail(friendly(e))});
+ if(meta.round+1>=meta.rounds)writeMeta({status:"over",phase:"over",endedAt:serverNow()}).catch(function(e){fail(friendly(e))});
  else writeMeta({round:meta.round+1,phase:"answer"}).catch(function(e){fail(friendly(e))});
 }
 function answer(have){
@@ -304,13 +325,16 @@ function answer(have){
  payload[base+"answered/"+meta.gameId+"/"+meta.round+"/"+uid]=true;
  update(ref(db),payload).then(function(){sending=false;render()}).catch(function(e){sending=false;fail(friendly(e));render()});
 }
-function myPlayer(name){return {name:name,connected:true,joinedAt:Date.now()}}
+function myPlayer(name){return {name:name,connected:true,joinedAt:serverNow()}}
 function armPresence(){
  if(connStop)connStop();
+ var drop=null;
  connStop=onValue(ref(db,".info/connected"),function(s){
+  if(drop){try{drop.cancel()}catch(e){}drop=null}
   if(!s.val()||!code||!uid)return;
   var p=ref(db,roomPath("players/"+uid));
-  onDisconnect(p).update({connected:false}).catch(function(){});
+  drop=onDisconnect(p);
+  drop.update({connected:false}).catch(function(){});
   update(p,{connected:true}).catch(function(){});
  });
 }
@@ -341,8 +365,8 @@ async function joinRoom(c,name){
  var snap=await get(ref(db,"rooms/"+c+"/meta"));
  if(!snap.exists())throw new Error("missing");
  var m=snap.val();
- if(m.createdAt&&Date.now()-m.createdAt>TTL){remove(ref(db,"rooms/"+c)).catch(function(){});throw new Error("expired")}
- if(m.endedAt&&Date.now()-m.endedAt>30*60*1000){remove(ref(db,"rooms/"+c)).catch(function(){});throw new Error("expired")}
+ if(m.createdAt&&serverNow()-m.createdAt>TTL){remove(ref(db,"rooms/"+c)).catch(function(){});throw new Error("expired")}
+ if(m.endedAt&&serverNow()-m.endedAt>30*60*1000){remove(ref(db,"rooms/"+c)).catch(function(){});throw new Error("expired")}
  var ps=await get(ref(db,"rooms/"+c+"/players"));
  var existing=ps.exists()?ps.val():{};
  var count=Object.keys(existing).length;
@@ -469,6 +493,8 @@ async function boot(){
  await cred.user.getIdToken();
  uid=cred.user.uid;
  goOnline(db);
+ armServerClock();
+ window.addEventListener("pagehide",function(){stopServerClock()});
  showApp();screen("home");wire();
 }
 if(window.TPSound)TPSound.bindMute($("mute"));

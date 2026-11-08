@@ -1,4 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Anton&family=Outfit:wght@400;600&display=swap");
+/* Anton and Outfit, SIL Open Font License. Files and licenses are in /fonts. */
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/anton-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Anton";font-style:normal;font-weight:400;font-display:swap;src:url("fonts/anton-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Outfit";font-style:normal;font-weight:400 600;font-display:swap;src:url("fonts/outfit-latin-ext.woff2") format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Outfit";font-style:normal;font-weight:400 600;font-display:swap;src:url("fonts/outfit-latin.woff2") format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
   --ink:#111;
   --yellow:#ffe14a;
@@ -15,13 +19,13 @@
   --font:"Outfit",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
 body{
   margin:0;background:var(--yellow);color:var(--ink);
   font:400 1.08rem/1.55 var(--font);
   min-height:100vh;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  overflow-x:hidden;
+  overflow-x:clip;
 }
 img{max-width:100%;height:auto;display:block}
 a{color:var(--ink);font-weight:600}
@@ -122,13 +126,17 @@ a.spot-tile:active{transform:translate(2px,2px)}
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 html,body{overscroll-behavior:none}
 body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+body.no-tabs{padding-bottom:env(safe-area-inset-bottom)}
+body.no-tabs .tabbar{display:none}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;background:var(--ink);border-top:4px solid var(--pink);padding-bottom:env(safe-area-inset-bottom)}
 .tabbar a{flex:1;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--yellow);font-family:var(--display);font-size:.85rem;letter-spacing:.04em;font-weight:400}
 .tabbar a span{font-size:1.25rem;line-height:1}
 .tabbar a.on{background:var(--yellow);color:var(--ink)}
 .heart{position:absolute;top:8px;right:8px;width:44px;height:44px;border:3px solid var(--ink);border-radius:0;background:var(--yellow);font-size:1.2rem}
 .card h2{padding-right:48px}
+.card:has(> .heart) :is(h2,h3){padding-right:56px}
 .band-ink .card h2,.play-wrap .card h2,.note-card h2{padding-right:0}
+.band-ink .card:has(> .heart) :is(h2,h3){padding-right:56px}
 button,a{touch-action:manipulation}
 button,.btn,input,.chip{scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom));scroll-margin-top:12px}
 button.mute{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0;border:3px solid var(--ink);border-radius:0;background:var(--yellow);color:var(--ink);font-size:1.2rem;cursor:pointer}
@@ -256,8 +264,8 @@ body.mlt .host-cta{min-height:64px;font-size:1.6rem;margin:0}
 .why{background:var(--pink);color:var(--ink);border:3px solid var(--ink);padding:12px 14px}
 .why strong{color:var(--ink)}
 .source-note,.fine{color:var(--ink)}
-.prevnext{display:flex;gap:12px;justify-content:space-between;margin:18px 0}
-.prevnext a{flex:1;min-height:48px;display:flex;align-items:center;font-family:var(--display);letter-spacing:.03em;text-transform:uppercase;text-decoration:none}
+.prevnext{display:flex;gap:12px;justify-content:space-between;margin:18px 0;flex-wrap:wrap}
+.prevnext a{flex:1 1 12rem;min-width:0;min-height:48px;display:flex;align-items:center;font-family:var(--display);letter-spacing:.03em;text-transform:uppercase;text-decoration:none;overflow-wrap:anywhere}
 .prevnext a.next{justify-content:flex-end;text-align:right}
 .comment-form input,.comment-form textarea,.admin-tools input{width:100%;background:#fff}
 .comment-form textarea{min-height:120px;resize:vertical}
@@ -266,6 +274,13 @@ body.mlt .host-cta{min-height:64px;font-size:1.6rem;margin:0}
 .comment p{margin:.2em 0 .4em;white-space:pre-wrap;overflow-wrap:anywhere;text-transform:none;font-family:var(--font)}
 .uid{word-break:break-all;font-family:ui-monospace,monospace}
 .note-card h2{margin-top:0}
+@media(max-width:390px){
+  header.top{padding:8px 10px;gap:6px}
+  .logo{font-size:.95rem;padding:6px 8px 4px}
+  header.top nav{gap:2px}
+  header.top nav a{font-size:.92rem;padding:0 4px;letter-spacing:.02em}
+  h1{font-size:clamp(2.2rem,12vw,2.8rem)}
+}
 @media(min-width:700px){
   .feature-grid{grid-template-columns:1fr 1fr}
   .why-grid{grid-template-columns:1fr 1fr}

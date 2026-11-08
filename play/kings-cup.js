@@ -70,6 +70,7 @@ var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {music:0.7,sfx:0.9,voice
 var engine = null;
 var parts = [], raf = 0;
 var uid = null, code = null, meta = null, players = {}, who = {}, table = null, ask = false, house = [], mates = {}, deckMem = null;
+var serverOffset=0, offsetReady=false, offsetStop=null, lastReactAt=0;
 var db, authObj, stops = [], heard = -1, seenReact = null, hostLock = false, hostFlight = 0, pickWait = null, heldPick = null, connStop = null, scoring = 0;
 var ref, onValue, update, set, remove, onDisconnect, get, serverTimestamp, goOnline;
 
@@ -100,7 +101,26 @@ function order(){
     return {uid:id,name:players[id].name||"Player",connected:players[id].connected!==false,joinedAt:players[id].joinedAt||0,gender:w.gender||"everyone",cards:+w.cards||0,points:+w.points||0,seen:+w.seen||0};
   }).sort(function(a,b){return a.joinedAt-b.joinedAt||a.name.localeCompare(b.name)});
 }
-function nameOf(id){return (players[id]&&players[id].name)||"Player"}
+function nameOf(id){
+  var list=order(), count={}, seen={}, map={};
+  list.forEach(function(p){count[p.name]=(count[p.name]||0)+1});
+  list.forEach(function(p){
+    if(count[p.name]<2){map[p.uid]=p.name; return}
+    seen[p.name]=(seen[p.name]||0)+1;
+    map[p.uid]=seen[p.name]===1?p.name:(p.name+" "+seen[p.name]);
+  });
+  return map[id]||(players[id]&&players[id].name)||"Player";
+}
+function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
+function armServerClock(){
+  if(!db||!ref||!onValue) return;
+  if(offsetStop) offsetStop();
+  offsetStop=onValue(ref(db, ".info/serverTimeOffset"), function(s){
+    var v=s.val();
+    if(typeof v==="number"&&isFinite(v)){serverOffset=v; offsetReady=true}
+  }, function(){offsetReady=false; serverOffset=0});
+}
+function stopServerClock(){if(offsetStop){try{offsetStop()}catch(e){} offsetStop=null}}
 function mine(){for(var i=0;i<order().length;i++) if(order()[i].uid===uid) return order()[i]; return null}
 function splitCard(card){if(!card)return null; return {r:card.slice(0,-1), s:card.slice(-1)}}
 function suitOf(id){return {S:{sym:"♠",red:false},H:{sym:"♥",red:true},D:{sym:"♦",red:true},C:{sym:"♣",red:false}}[id]||{sym:"",red:false}}
@@ -189,7 +209,13 @@ function paintLobby(){
   var box=$("plist"); box.textContent="";
   order().forEach(function(p){
     var row=document.createElement("div"); row.className=p.connected?"prow":"prow off";
-    row.textContent=p.name+" · "+p.gender+(p.connected?"":" (away)");
+    row.textContent=nameOf(p.uid)+" · "+p.gender+(p.connected?"":" (away)");
+    if(isHost()&&meta&&meta.status==="lobby"&&p.uid!==uid){
+      var kick=document.createElement("button"); kick.type="button"; kick.className="x"; kick.textContent="Remove";
+      kick.setAttribute("aria-label", "Remove "+nameOf(p.uid));
+      kick.addEventListener("click", function(){remove(ref(db, rpath("players/"+p.uid))).catch(function(e){fail(friendly(e))})});
+      row.appendChild(kick);
+    }
     box.appendChild(row);
   });
   var start=$("start");
@@ -200,7 +226,7 @@ function paintScores(){
   order().forEach(function(p){
     var row=document.createElement("div"); row.className="prow boardrow";
     if(table&&table.turn===p.uid) row.style.background="#ff2d87";
-    var name=document.createElement("span"); name.textContent=p.name+(p.connected?"":" (away)");
+    var name=document.createElement("span"); name.textContent=nameOf(p.uid)+(p.connected?"":" (away)");
     var metaEl=document.createElement("b"); metaEl.textContent=p.cards+" cards · "+p.points+" pts";
     row.appendChild(name); row.appendChild(metaEl); box.appendChild(row);
   });
@@ -492,7 +518,10 @@ function sendAsk(){
   update(ref(db),{[rpath("kc/ask")]:true}).catch(function(e){fail(friendly(e))});
 }
 function sendReact(emo){
-  var id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  var now=serverNow();
+  if(now-lastReactAt<1500) return;
+  lastReactAt=now;
+  var id=now.toString(36)+Math.random().toString(36).slice(2,6);
   id=id.replace(/[^A-Za-z0-9]/g,"").slice(0,24);
   if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
   update(ref(db),{[rpath("kc/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
@@ -553,10 +582,13 @@ function listen(){
 }
 function armPresence(){
   if(connStop) connStop();
+  var drop=null;
   connStop=onValue(ref(db, ".info/connected"), function(s){
+    if(drop){try{drop.cancel()}catch(e){} drop=null}
     if(!s.val()||!code||!uid) return;
     var p=ref(db, rpath("players/"+uid));
-    onDisconnect(p).update({connected:false}).catch(function(){});
+    drop=onDisconnect(p);
+    drop.update({connected:false}).catch(function(){});
     update(p, {connected:true}).catch(function(){});
   });
 }
@@ -572,7 +604,7 @@ async function hostRoom(name, gender){
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
   if(!claimed) throw new Error("room");
-  await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:Date.now()});
+  await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:serverNow()});
   await set(ref(db, "rooms/"+claimed+"/kc/who/"+uid), {gender:gender, cards:0, points:0, seen:0});
   code=claimed; sessionStorage.setItem("tp_kc_room", code); sessionStorage.setItem("tp_kc_group", gender);
   listen(); armPresence();
@@ -585,7 +617,7 @@ async function joinRoom(c, name, gender){
   var mine=await get(ref(db, "rooms/"+c+"/players/"+uid));
   if(m.status!=="lobby"&&!mine.exists()) throw new Error("closed");
   var prev=mine.val()||{};
-  await set(ref(db, "rooms/"+c+"/players/"+uid), {name:name||prev.name||"Player", connected:true, joinedAt:prev.joinedAt||Date.now()});
+  await set(ref(db, "rooms/"+c+"/players/"+uid), {name:name||prev.name||"Player", connected:true, joinedAt:prev.joinedAt||serverNow()});
   var w=await get(ref(db, "rooms/"+c+"/kc/who/"+uid));
   var cur=w.val()||{cards:0, points:0, seen:0};
   await set(ref(db, "rooms/"+c+"/kc/who/"+uid), {gender:gender||cur.gender||"everyone", cards:+cur.cards||0, points:+cur.points||0, seen:+cur.seen||0});
@@ -621,7 +653,8 @@ function wire(){
     joinRoom(c, name, gender).catch(function(e){
       var msg=String((e&&e.message)||"");
       if(msg==="kind") fail("That code is for a different game.");
-      else if(msg==="missing"||msg==="closed") fail("That room isn't available.");
+      else if(msg==="missing") fail("No room with that code.");
+      else if(msg==="closed") fail("That game has already started.");
       else fail(friendly(e));
     });
   });
@@ -692,6 +725,8 @@ async function boot(){
   uid=cred.user.uid;
   document.body.dataset.uid=uid;
   goOnline(db);
+  armServerClock();
+  window.addEventListener("pagehide", function(){stopServerClock()});
   $("connecting").classList.add("hide");
   $("app").classList.remove("hide");
   wire();
