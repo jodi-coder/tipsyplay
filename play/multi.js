@@ -319,7 +319,8 @@ function paintStage(){
  if(rev)rev.classList.toggle("hide",!(isHost()&&meta.phase==="answer"));
  if(nxt)nxt.classList.toggle("hide",!(isHost()&&meta.phase==="reveal"));
  paintBoard();
- var sig=[meta.status,meta.phase,meta.round,isActor()?"1":"0",answered[uid]?"1":"0",playerList().map(function(p){return p.uid}).join(","),GAME.kind==="truths"?(actor()&&(noteMap[rnd()]||{})[actor().uid]||""):""].join("|");
+ var noteSig=GAME.kind==="truths"?(actor()&&(noteMap[rnd()]||{})[actor().uid]||""):GAME.kind==="draw"?myDrawNote():"";
+ var sig=[meta.status,meta.phase,meta.round,isActor()?"1":"0",answered[uid]?"1":"0",playerList().map(function(p){return p.uid}).join(","),noteSig].join("|");
  if(sig!==built){built=sig;buildDock()}
  redraw();
  ensureSecret();
@@ -425,7 +426,7 @@ function buildDock(){
   return;
  }
  if(GAME.kind==="draw"){
-  var drawn=roundMap(noteMap)[uid]||"";
+  var drawn=myDrawNote();
   if(drawn==="(pass)"){dock.appendChild(el("p",null,"Passed."));return}
   var guessed=!!drawn;
   var pad=el("canvas","sketchpad");pad.id="pad";pad.setAttribute("aria-label","Drawing");dock.appendChild(pad);
@@ -593,10 +594,16 @@ function baseKeys(extra){
  var o={};o["answered/"+gid()+"/"+rnd()+"/"+uid]=true;return Object.assign(o,extra||{});
 }
 function sendAnswered(){send(baseKeys())}
+var ownGuess="";
+function myDrawNote(){
+ var stored=roundMap(noteMap)[uid]||"";
+ if(stored)return stored;
+ return ownGuess||"";
+}
 function sendPass(){
  if(answered[uid]||!meta||meta.phase!=="answer")return;
  if(GAME.kind==="draw"){
-  var existing=roundMap(noteMap)[uid]||"";
+  var existing=myDrawNote();
   if(existing&&existing!=="(pass)")return;
  }
  if(GAME.kind==="truths"&&isActor()){
@@ -648,9 +655,11 @@ function sendFib(n){
 function sendGuess(){
  var input=$("guess");if(!input)return;
  var v=input.value.trim().slice(0,40);if(!v)return;
+ ownGuess=v;
  var o={};o["notes/"+gid()+"/"+rnd()+"/"+uid]=v;
- send(o);
  input.value="";
+ render();
+ send(o);
  if(window.TPSound)TPSound.yes();
 }
 function bump(){
@@ -669,7 +678,7 @@ function clearPad(){
 function stopAll(){stops.forEach(function(fn){fn()});stops=[];roundStops.forEach(function(fn){fn()});roundStops=[];sharedStops.forEach(function(fn){fn()});sharedStops=[];if(revealedStop)revealedStop();revealedStop=null;}
 function watchRound(){
  roundStops.forEach(function(fn){fn()});roundStops=[];
- answered={};strokes={};localTally=-1;pend=[];
+ answered={};strokes={};localTally=-1;pend=[];ownGuess="";
  if(!meta||meta.status==="lobby")return;
  var gameId=meta.gameId,round=meta.round;
  seqRound=gameId+":"+round;seq=0;
