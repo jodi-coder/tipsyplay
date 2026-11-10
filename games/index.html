@@ -68,7 +68,7 @@
 <p>Build a ridiculous story one sentence at a time.</p>
 <div class="meta-row"><span class="tag">3–10 players</span><span class="tag">Easy</span><span class="tag">No props</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> Do a 5-second dramatic pose instead.</div>
-<a class="btn" href="story-chain.html">Host</a>
+<a class="btn" href="../play/story-chain.html">Host</a>
 </article>
 <article class="card game-card" id="whos-most-likely" data-min="3" data-max="12" data-cat="quick big-groups no-props" data-search="who's most likely votes speech quick big groups no props">
 <h3>Who's Most Likely</h3>
@@ -82,49 +82,49 @@
 <p>Defend a silly opinion. The group votes guilty or not guilty.</p>
 <div class="meta-row"><span class="tag">3–8 players</span><span class="tag">Medium</span><span class="tag">No props</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> Guilty means you lose a point.</div>
-<a class="btn" href="hot-take-court.html">Host</a>
+<a class="btn" href="../play/hot-take-court.html">Host</a>
 </article>
 <article class="card game-card" id="card-lottery" data-min="2" data-max="8" data-cat="card quick two" data-search="card lottery red black guess card drinking games quick games for 2">
 <h3>Card Lottery</h3>
 <p>Flip a card and guess red or black. One optional sip per round, max.</p>
 <div class="meta-row"><span class="tag">2–8 players</span><span class="tag">Easy</span><span class="tag">Cards</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> Correct guesses score points. Pass skips the color guess.</div>
-<a class="btn" href="card-lottery.html">Host</a>
+<a class="btn" href="../play/card-lottery.html">Host</a>
 </article>
 <article class="card game-card" id="cup-toss" data-min="2" data-max="8" data-cat="two" data-search="cup toss challenge ping pong water points games for 2">
 <h3>Cup Toss Challenge</h3>
 <p>Toss a ping-pong ball into water-filled cups. Points only — no drinking from game cups.</p>
 <div class="meta-row"><span class="tag">2–8 players</span><span class="tag">Medium</span><span class="tag">Cups</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> It's already points-only. Winner picks the next song.</div>
-<a class="btn" href="cup-toss.html">Host</a>
+<a class="btn" href="../play/cup-toss.html">Host</a>
 </article>
 <article class="card game-card" id="category-countdown" data-min="3" data-max="10" data-cat="quick big-groups no-props" data-search="category countdown timer animal impression quick big groups no props">
 <h3>Category Countdown</h3>
 <p>Name things in a category before the timer ends.</p>
 <div class="meta-row"><span class="tag">3–10 players</span><span class="tag">Easy</span><span class="tag">No props</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> A stumble means your best animal impression.</div>
-<a class="btn" href="category-countdown.html">Host</a>
+<a class="btn" href="../play/category-countdown.html">Host</a>
 </article>
 <article class="card game-card" id="two-truths" data-min="3" data-max="10" data-cat="quick big-groups no-props" data-search="two truths and a twist fib point quick big groups no props">
 <h3>Two Truths &amp; a Twist</h3>
 <p>Share two truths and one fib. The group guesses the fib.</p>
 <div class="meta-row"><span class="tag">3–10 players</span><span class="tag">Easy</span><span class="tag">No props</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> Fooled guessers give you a point.</div>
-<a class="btn" href="two-truths.html">Host</a>
+<a class="btn" href="../play/two-truths.html">Host</a>
 </article>
 <article class="card game-card" id="sketchy-guess" data-min="4" data-max="12" data-cat="big-groups" data-search="sketchy guess draw word team points big groups">
 <h3>Sketchy Guess</h3>
 <p>Draw a secret word on your phone. The sketch shows up for everyone else. Points only.</p>
 <div class="meta-row"><span class="tag">4–12 players</span><span class="tag">Medium</span><span class="tag">Phones</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> The team with the most correct guesses wins.</div>
-<a class="btn" href="sketchy-guess.html">Host</a>
+<a class="btn" href="../play/sketchy-guess.html">Host</a>
 </article>
 <article class="card game-card" id="rule-maker" data-min="4" data-max="10" data-cat="card big-groups" data-search="rule maker cards table rules pirate sip point card drinking games big groups">
 <h3>Rule Maker</h3>
 <p>Cards create silly table rules. One optional sip per slip — no escalation, no king's cup.</p>
 <div class="meta-row"><span class="tag">4–10 players</span><span class="tag">Medium</span><span class="tag">Cards</span></div>
 <div class="na"><b>Non-alcoholic alt:</b> Slip-ups cost a point.</div>
-<a class="btn" href="rule-maker.html">Host</a>
+<a class="btn" href="../play/rule-maker.html">Host</a>
 </article>
 <article class="card game-card" id="split-decision" data-min="2" data-max="10" data-cat="quick big-groups no-props two" data-search="split decision predict the split phone party game points pass qr code no props">
 <h3>Split Decision</h3>
@@ -175,9 +175,10 @@
 var cards=document.querySelectorAll(".game-card"),countEl=document.getElementById("gcount"),empty=document.getElementById("empty"),input=document.getElementById("q"),people="";
 function fitsPeople(card){
  var min=+card.getAttribute("data-min"),max=+card.getAttribute("data-max");
- if(people==="2")return min<=2&&max>=2;
- if(people==="small")return min<=6&&max>=3;
- if(people==="big")return max>=7;
+ var cats=(card.getAttribute("data-cat")||"").split(/\s+/);
+ if(people==="2")return cats.indexOf("two")!==-1;
+ if(people==="small")return min<=6&&max>=3&&max<=8;
+ if(people==="big")return cats.indexOf("big-groups")!==-1;
  return true;
 }
 function state(){
