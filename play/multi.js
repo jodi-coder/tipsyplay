@@ -148,11 +148,13 @@ function scoreRound(totals,r,list){
   if(actorP)totals[actorP.uid]+=(+tally[actorP.uid]||0);
  }else if(kind==="truths"){
   var fib=actorP?sealed[actorP.uid]:"";
-  list.forEach(function(p){
-   if(!actorP||p.uid===actorP.uid)return;
-   if(sealed[p.uid]&&fib&&sealed[p.uid]===fib)totals[p.uid]++;
-   else if(sealed[p.uid]&&sealed[p.uid]!=="pass"&&fib)totals[actorP.uid]++;
-  });
+  if(fib!=="pass"&&!(actorP&&notes[actorP.uid]==="(pass)")){
+   list.forEach(function(p){
+    if(!actorP||p.uid===actorP.uid)return;
+    if(sealed[p.uid]&&fib&&sealed[p.uid]===fib)totals[p.uid]++;
+    else if(sealed[p.uid]&&sealed[p.uid]!=="pass"&&fib)totals[actorP.uid]++;
+   });
+  }
  }else if(kind==="draw"){
   var word=normWord(callMap[r]||""),hit=false;
   list.forEach(function(p){
@@ -207,6 +209,7 @@ function resultLine(){
  }
  if(GAME.kind==="truths"){
   var parts=splitLines(actorP?notes[actorP.uid]:""),fib=actorP?sealed[actorP.uid]:"";
+  if(fib==="pass"||(actorP&&notes[actorP.uid]==="(pass)"))return (actorP?pname(actorP.uid):"They")+" passed.";
   var n=+fib,fibText=n?String(parts[n-1]).replace(/\.+$/,""):"hidden";
   return "The fib was "+fibText+".";
  }
@@ -247,7 +250,14 @@ function needed(){
  if(GAME.kind==="toss"||GAME.kind==="category")return a?[a]:[];
  if(GAME.kind==="court")return list.filter(function(p){return !a||p.uid!==a.uid});
  if(GAME.kind==="draw")return [];
+ if(GAME.kind==="truths"&&actorPassedTruths()){var teller=actor();return teller?[teller]:[]}
  return list;
+}
+function actorPassedTruths(){
+ var teller=actor();if(!teller||!meta)return false;
+ var note=(noteMap[rnd()]||{})[teller.uid];
+ var fib=(sealedMap[rnd()]||{})[teller.uid];
+ return note==="(pass)"||fib==="pass";
 }
 function clockBit(){return ""}
 function paintHost(){
@@ -392,15 +402,18 @@ function buildDock(){
  }
  if(GAME.kind==="truths"){
   if(isActor()){
+   if(mine&&actorPassedTruths()){dock.appendChild(el("p",null,"Passed."));return}
    if(mine){dock.appendChild(el("p",null,"Your three lines are in."));return}
    [1,2,3].forEach(function(n){var input=el("input","bigin linein");input.id="t"+n;input.maxLength=60;input.placeholder="Statement "+n;input.setAttribute("aria-label","Statement "+n);dock.appendChild(input)});
    var fib=el("select","bigin");fib.id="fib";fib.setAttribute("aria-label","Which one is the fib");
    ["1","2","3"].forEach(function(n){var o=el("option",null,"Fib is statement "+n);o.value=n;fib.appendChild(o)});
    dock.appendChild(fib);
    dock.appendChild(btn("Share them",{"data-act":"truths"}));
+   dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
    return;
   }
   var raw=a?(noteMap[rnd()]||{})[a.uid]:"";
+  if(raw==="(pass)"){dock.appendChild(el("p",null,(a?pname(a.uid):"They")+" passed."));return}
   if(!raw){dock.appendChild(el("p",null,"Waiting for "+(a?pname(a.uid):"the storyteller")+" to write."));return}
   if(mine){dock.appendChild(el("p",null,"Guess locked in."));return}
   splitLines(raw).forEach(function(text,i){dock.appendChild(btn((i+1)+". "+text,{"data-fib":String(i+1)}))});
@@ -531,6 +544,7 @@ function tryDrawReveal(){
 }
 function maybeAuto(){
  if(!isHost()||!meta||meta.phase!=="answer"||GAME.kind==="draw")return;
+ if(GAME.kind==="truths"&&actorPassedTruths()){revealNow();return}
  var need=needed();if(!need.length)return;
  if(need.every(function(p){return answered[p.uid]}))revealNow();
 }
@@ -573,6 +587,13 @@ function baseKeys(extra){
 function sendAnswered(){send(baseKeys())}
 function sendPass(){
  if(answered[uid]||!meta||meta.phase!=="answer")return;
+ if(GAME.kind==="truths"&&isActor()){
+  var skip={};
+  skip["sealed/"+gid()+"/"+rnd()+"/"+uid]="pass";
+  skip["notes/"+gid()+"/"+rnd()+"/"+uid]="(pass)";
+  send(baseKeys(skip));
+  return;
+ }
  if(GAME.kind==="vote"||GAME.kind==="court"||GAME.kind==="truths")send(baseKeys((function(){var o={};o["sealed/"+gid()+"/"+rnd()+"/"+uid]="pass";return o})()));
  else send(baseKeys((function(){var o={};o["notes/"+gid()+"/"+rnd()+"/"+uid]="(pass)";return o})()));
 }
@@ -686,7 +707,7 @@ function watchShared(){
   noteMap={};
   var val=s.val()||{};
   Object.keys(val).forEach(function(round){noteMap[round]=val[round]||{}});
-  render();tryDrawReveal();
+  render();tryDrawReveal();maybeAuto();
  },function(){}));
  sharedStops.push(onValue(ref(db,rpath("tally/"+gameId)),function(s){
   tallyMap={};
