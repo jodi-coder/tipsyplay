@@ -1,0 +1,37 @@
+{
+  "$comment": "NOT SHIPPED. FAQPage only. Do not paste this file into a live page. Replace every {{PLACEHOLDER}} with FAQ copy that is already visible on that page. Merge this node into the page's existing BreadcrumbList script as one @graph. See docs/schema/README.md.",
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": "{{CANONICAL_URL}}#faq",
+      "url": "{{CANONICAL_URL}}",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "{{FAQ_1_QUESTION}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{FAQ_1_ANSWER}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I play {{GAME_NAME}} without drinking?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{NON_ALCOHOLIC_ANSWER}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "{{FAQ_3_QUESTION}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{FAQ_3_ANSWER}}"
+          }
+        }
+      ]
+    }
+  ]
+}
