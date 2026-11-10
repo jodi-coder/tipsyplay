@@ -3,6 +3,27 @@
 # so each version can stay cached until the query changes.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Exact category query only. Any extra parameter stays on /games/.
+  RewriteCond %{QUERY_STRING} ^category=card$
+  RewriteRule ^games/?$ /games/card/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=card$
+  RewriteRule ^games/index\.html$ /games/card/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=quick$
+  RewriteRule ^games/?$ /games/quick/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=quick$
+  RewriteRule ^games/index\.html$ /games/quick/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=two$
+  RewriteRule ^games/?$ /games/for-two/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=two$
+  RewriteRule ^games/index\.html$ /games/for-two/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=big-groups$
+  RewriteRule ^games/?$ /games/big-groups/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=big-groups$
+  RewriteRule ^games/index\.html$ /games/big-groups/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=no-props$
+  RewriteRule ^games/?$ /games/no-props/ [R=301,L,QSD]
+  RewriteCond %{QUERY_STRING} ^category=no-props$
+  RewriteRule ^games/index\.html$ /games/no-props/ [R=301,L,QSD]
   RewriteCond %{REQUEST_URI} /$
   RewriteRule ^ - [E=NO_CACHE:1]
 </IfModule>
