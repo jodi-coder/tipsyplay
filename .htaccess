@@ -3,6 +3,9 @@
 # so each version can stay cached until the query changes.
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Internal notes and rules files are not public pages.
+  RewriteRule ^docs/ - [F,L]
+  RewriteRule ^(firebase-rules|database\.rules)\.json$ - [F,L]
   # Exact category query only. Any extra parameter stays on /games/.
   RewriteCond %{QUERY_STRING} ^category=card$
   RewriteRule ^games/?$ /games/card/ [R=301,L,QSD]
