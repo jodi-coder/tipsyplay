@@ -18,7 +18,7 @@ var SOUNDS = {
    visible alternative. Nothing stacks. The cup is a counter.
    ============================================================ */
 var RULES = {
-  A: { title: "Waterfall", body: "Everyone joins for one beat, then the table stops together. It does not keep going and it does not pass down the line.", line: "One small sip or hold a silly pose, together, then stop. No continuous drinking.", say: "Waterfall!" },
+  A: { title: "One Beat", body: "Everyone joins for one beat, then the table stops together. It does not keep going and it does not pass down the line.", line: "One small sip or hold a silly pose, together, then stop. No continuous drinking.", say: "One Beat!" },
   "2": { title: "You", body: "The drawer points at one other player. That person has the card. One turn, then it is over.", line: "One small sip or take a five-second bow.", say: "You!" },
   "3": { title: "Me", body: "This card lands on the person who drew it.", line: "One small sip or take a dramatic bow.", say: "Me!" },
   "4": { title: "Floor", body: "Everyone touches the floor once. The drawer names who was last. That is the whole contest.", line: "One small sip or do one squat.", say: "Floor!" },
