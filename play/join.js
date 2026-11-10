@@ -45,7 +45,64 @@ function showApp(){
  $("offline").classList.add("hide");
  $("app").classList.remove("hide");
 }
-function screen(id){["home","lobby","stage","over"].forEach(function(s){$(s).classList.toggle("hide",s!==id)})}
+function screen(id){["home","lobby","stage","over","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide",s!==id)})}
+function savedName(){
+ var el=$("playername")||$("pname");
+ var name=el?normName(el.value):"";
+ if(!name){try{name=normName(localStorage.getItem("tp_online_name")||localStorage.getItem("tp_name")||"")}catch(e){}}
+ if(name&&el&&!normName(el.value)) el.value=name;
+ return name;
+}
+function releaseRoom(){
+ var c=code, me=uid;
+ if(connStop){connStop(); connStop=null}
+ if(c&&me){try{onDisconnect(ref(db,"rooms/"+c+"/players/"+me)).cancel()}catch(e){}}
+ clearRoom();
+}
+function openHostFlow(){
+ screen("home"); if(typeof showApp==="function") showApp();
+ var name=savedName();
+ if(!name){var el=$("playername"); if(el) el.focus(); return}
+ doHost();
+}
+function restartSame(){
+ var name=savedName();
+ if(!name){openHostFlow(); return}
+ releaseRoom();
+ screen("home");
+ hostRoom(name).catch(function(e){fail(friendly(e))});
+}
+function showClosedChoice(role){
+ var sec=$("closed");
+ if(!sec){
+  sec=document.createElement("section"); sec.id="closed"; sec.className="card";
+  var h=document.createElement("h2"); h.textContent="Room closed"; sec.appendChild(h);
+  var p=document.createElement("p"); p.id="closedmsg"; p.textContent="This room is closed to new players."; sec.appendChild(p);
+  var b=document.createElement("button"); b.type="button"; b.className="btn"; b.id="hostnew"; b.textContent="Host a new room";
+  b.addEventListener("click", function(){ if(b.dataset.role==="host") restartSame(); else openHostFlow(); });
+  sec.appendChild(b);
+  var app=$("app")||document.body; app.appendChild(sec);
+ }
+ var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
+ var btnEl=$("hostnew");
+ if(btnEl){
+  btnEl.dataset.role=role==="host"?"host":"join";
+  btnEl.textContent=role==="host"?"Restart with same game":"Host a new room";
+ }
+ fail("This room is closed to new players.");
+ screen("closed"); if(typeof showApp==="function") showApp();
+}
+function mountRestart(){
+ if(!isHost()||!meta||meta.status==="lobby") return;
+ var sec=null;
+ ["over","stage"].forEach(function(id){var n=$(id); if(n&&!n.classList.contains("hide")) sec=n});
+ if(!sec||sec.querySelector("[data-restart]")) return;
+ var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+ var p=document.createElement("p"); p.textContent="This room is closed to new players.";
+ var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
+ b.addEventListener("click", function(){restartSame()});
+ row.appendChild(p); row.appendChild(b); sec.appendChild(row);
+}
 function isHost(){return !!(meta&&uid&&meta.hostUid===uid)}
 function playerList(){
  return Object.keys(players).map(function(id){
@@ -194,11 +251,13 @@ function render(){
  if(meta.phase==="over"||meta.status==="over"){
   screen("over");
   renderOver();
+  mountRestart();
   var ok=String(meta.gameId);
   if(overKey!==ok){overKey=ok;if(window.TPSound)TPSound.celebrate();startFx()}
   return;
  }
  screen("stage");
+ mountRestart();
  stopFx();
  var deck=asDeck(meta.deck),prompt=deck[meta.round]||"",list=playerList();
  var mine=!!answered[uid],phase=meta.phase;
@@ -282,7 +341,7 @@ function quietErr(){}
 function listenRoom(){
  stops.forEach(function(u){u()});stops=[];
  stops.push(onValue(ref(db,roomPath("meta")),function(s){
-  if(!s.exists()){clearRoom();fail("This room has closed.");screen("home");showApp();return}
+  if(!s.exists()){var wasHost=isHost();clearRoom();showClosedChoice(wasHost?"host":"join");return}
   var prev=meta?meta.gameId+"/"+meta.round+"/"+meta.phase:"";
   meta=s.val();
   var nowKey=meta.gameId+"/"+meta.round+"/"+meta.phase;
@@ -401,7 +460,7 @@ function showJoinErr(e){
  var m=String(e&&e.message||"");
  if(m==="missing")fail("No room with that code.");
  else if(m==="expired")fail("That room has expired.");
- else if(m==="started")fail("That game has already started.");
+ else if(m==="started")showClosedChoice("join");
  else if(m==="full")fail("That room is full (12 players).");
  else fail(friendly(e));
 }

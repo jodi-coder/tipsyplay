@@ -354,7 +354,8 @@ test("nhie clock, names, join errors, and a delayed confession", async ({ browse
   await expect(ada.page.locator("#ihave")).toBeVisible();
   await stranger.page.locator("#roomcode").fill(code);
   await stranger.page.locator("#joinbtn").click();
-  await expect(stranger.page.locator("#perr")).toHaveText("That game has already started.");
+  await expect(stranger.page.locator("#perr")).toHaveText("This room is closed to new players.");
+  await expect(stranger.page.locator("#hostnew")).toHaveText("Host a new room");
   await bea.page.evaluate(() => { window.__tpNhie.delayCast = 2000; });
   await ada.page.locator("#never").click();
   await bea.page.locator("#ihave").click();
