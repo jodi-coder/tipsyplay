@@ -731,7 +731,17 @@ function listenRoom(){
  },function(e){if(/permission|denied/i.test(String((e&&(e.code||e.message))||""))){clearRoom();fail("That room isn't available.");screen("home");showApp()}}));
  stops.push(onValue(ref(db,rpath("players")),function(s){players=s.val()||{};render();maybeAuto()},function(){}));
 }
-function clearRoom(){stopAll();code=null;meta=null;players={};sessionStorage.removeItem("tp_room")}
+function cancelAway(){
+ var c=code,me=uid,pending=Promise.resolve();
+ if(c&&me&&onDisconnect&&ref&&db){
+  try{pending=onDisconnect(ref(db,"rooms/"+c+"/players/"+me)).cancel()}catch(e){}
+ }
+ return Promise.resolve(pending).catch(function(){});
+}
+function clearRoom(){
+ cancelAway();
+ stopAll();code=null;meta=null;players={};sessionStorage.removeItem("tp_room");
+}
 var connStop=null;
 function armPresence(){
  if(connStop)connStop();
@@ -821,10 +831,16 @@ function doAgain(){
 }
 function closeRoom(){
  if(!isHost()||!code)return;
- remove(ref(db,"rooms/"+code)).then(function(){sessionStorage.removeItem("tp_room");location.href="../games/"+GAME.id+".html"}).catch(function(e){fail(friendly(e))});
+ var c=code;
+ cancelAway().then(function(){
+  return remove(ref(db,"rooms/"+c));
+ }).then(function(){sessionStorage.removeItem("tp_room");location.href="../games/"+GAME.id+".html"}).catch(function(e){fail(friendly(e))});
 }
 function leaveRoom(){
- if(code&&uid)remove(ref(db,rpath("players/"+uid))).catch(function(){});
+ var c=code,me=uid;
+ cancelAway().then(function(){
+  if(c&&me)return remove(ref(db,"rooms/"+c+"/players/"+me));
+ }).catch(function(){});
  sessionStorage.removeItem("tp_room");
  stopAll();code=null;meta=null;players={};screen("home");fail("");
 }
