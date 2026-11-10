@@ -403,6 +403,7 @@ function render(){
   $("finale").classList.toggle("hide", !fin);
   if(fin){
     $("finalcopy").textContent="One small sip or do a dare from the cup. No downing a cup. Kings in the counter: "+kingCount()+".";
+    var line=$("recapline"); if(line) line.textContent="King's Cup, "+(meta.rounds||0)+" rounds";
     $("draw").classList.add("hide");
     $("wait").classList.add("hide");
   }
@@ -658,6 +659,7 @@ async function hostRoom(name, gender){
   await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:serverNow()});
   await set(ref(db, "rooms/"+claimed+"/kc/who/"+uid), {gender:gender, cards:0, points:0, seen:0});
   code=claimed; sessionStorage.setItem("tp_kc_room", code); sessionStorage.setItem("tp_kc_group", gender);
+  try{localStorage.setItem("tp_last_game","kings-cup")}catch(e){}
   listen(); armPresence();
 }
 async function joinRoom(c, name, gender){
@@ -673,6 +675,7 @@ async function joinRoom(c, name, gender){
   var cur=w.val()||{cards:0, points:0, seen:0};
   await set(ref(db, "rooms/"+c+"/kc/who/"+uid), {gender:gender||cur.gender||"everyone", cards:+cur.cards||0, points:+cur.points||0, seen:+cur.seen||0});
   code=c; sessionStorage.setItem("tp_kc_room", code); sessionStorage.setItem("tp_kc_group", gender||cur.gender||"everyone");
+  try{localStorage.setItem("tp_last_game","kings-cup")}catch(e){}
   listen(); armPresence();
 }
 function closeRoom(){
@@ -720,6 +723,14 @@ function wire(){
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
   $("newdeck").addEventListener("click", deal);
+  if($("playagain")) $("playagain").addEventListener("click", function(){deal()});
+  if($("recap")) $("recap").addEventListener("click", function(){
+    var text=$("recapline")&&$("recapline").textContent||"King's Cup, "+(meta&&meta.rounds||0)+" rounds";
+    var copied=function(){fail("Recap copied.")};
+    if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
+    else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+    else fail(text);
+  });
   $("close").addEventListener("click", closeRoom);
   $("closestage").addEventListener("click", closeRoom);
   $("leave").addEventListener("click", leaveRoom);

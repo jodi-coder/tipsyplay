@@ -215,6 +215,14 @@ function renderOver(){
   li.appendChild(el("span","",p.score+(p.score===1?" pt":" pts")));
   ol.appendChild(li);
  });
+ var text="Never Have I Ever, "+((meta&&meta.rounds)||0)+" rounds";
+ var line=$("recapline");
+ if(!line){
+  line=el("p","",text); line.id="recapline";
+  var share=el("button","btn alt","Share recap"); share.type="button"; share.setAttribute("data-action","recap");
+  var row=el("div","ctrl"); row.appendChild(line); row.appendChild(share);
+  var over=$("over"); if(over) over.appendChild(row);
+ }else line.textContent=text;
 }
 function rowButtons(p,mode){
  var wrap=el("div","prow"),label=el("span",p.connected?"":"off",shown(p.uid)+(p.uid===meta.hostUid?" · host":"")+(p.uid===uid?" · you":"")+(p.connected?"":" · offline")+(mode==="lobby"?"":" · "+p.score));
@@ -417,6 +425,7 @@ async function hostRoom(name){
  await set(ref(db,"rooms/"+claimed+"/players/"+uid),myPlayer(name));
  code=claimed;
  sessionStorage.setItem("tp_room",code);
+ try{localStorage.setItem("tp_last_game","never-have-i-ever")}catch(e){}
  listenRoom();armPresence();
 }
 async function joinRoom(c,name){
@@ -436,6 +445,7 @@ async function joinRoom(c,name){
  if(existing[uid])await update(ref(db,"rooms/"+c+"/players/"+uid),body);
  else await set(ref(db,"rooms/"+c+"/players/"+uid),body);
  code=c;sessionStorage.setItem("tp_room",code);
+ try{localStorage.setItem("tp_last_game","never-have-i-ever")}catch(e){}
  listenRoom();armPresence();
 }
 async function closeRoom(){
@@ -513,6 +523,13 @@ function wire(){
   else if(action==="join")doJoin();
   else if(action==="start")doStart();
   else if(action==="again")doAgain();
+  else if(action==="recap"){
+   var text=$("recapline")&&$("recapline").textContent||("Never Have I Ever, "+((meta&&meta.rounds)||0)+" rounds");
+   var copied=function(){fail("Recap copied.")};
+   if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
+   else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+   else fail(text);
+  }
   else if(action==="close")closeRoom();
   else if(action==="leave")leaveRoom();
   else if(action==="home")location.href="../index.html";

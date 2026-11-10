@@ -585,7 +585,7 @@ function paintTable(){
   paintTwist();
   paintQueue();
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
-  if(over) paintAwards();
+  if(over){paintAwards(); var line=$("recapline"); if(line) line.textContent="Who's Most Likely, "+total+" rounds"}
   var custom=$("custombox");
   if(custom){
     if(custom.classList.contains("hostonly")&&!isHost()) custom.classList.add("hide");
@@ -952,6 +952,14 @@ function maybeFreshScores(){
   knownRematch=key;
   try{sessionStorage.setItem("tp_mlt_rematch", key)}catch(e){}
 }
+function rememberGame(){try{localStorage.setItem("tp_last_game","whos-most-likely")}catch(e){}}
+function shareRecap(){
+  var text=$("recapline")&&$("recapline").textContent||("Who's Most Likely, "+(meta&&meta.rounds||0)+" rounds");
+  var copied=function(){fail("Recap copied.")};
+  if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
+  else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+  else fail(text);
+}
 function playAgain(){
   if(!isHost()||!meta||meta.status!=="over"||busy) return;
   var n=Math.min(100,(+meta.rematch||0)+1);
@@ -974,6 +982,7 @@ async function hostRoom(name){
   if(!claimed) throw new Error("room");
   await set(ref(db, "mlt/"+claimed+"/players/"+uid), playerRec(name));
   code=claimed;
+  rememberGame();
   try{sessionStorage.setItem("tp_mlt_pin", code)}catch(e){}
   listen(); armPresence();
 }
@@ -990,6 +999,7 @@ async function joinRoom(pin, name){
   }
   await set(ref(db, "mlt/"+pin+"/players/"+uid), playerRec(name, mineSnap.val()||{}));
   code=pin;
+  rememberGame();
   try{sessionStorage.setItem("tp_mlt_pin", code)}catch(e){}
   listen(); armPresence();
 }
@@ -1061,6 +1071,7 @@ function wire(){
     else advance();
   });
   if($("again")) $("again").addEventListener("click", function(){unlock(); playAgain()});
+  if($("recap")) $("recap").addEventListener("click", function(){unlock(); shareRecap()});
   $("close").addEventListener("click", askClose);
   $("closestage").addEventListener("click", askClose);
   $("copylink").addEventListener("click", function(){copyLink($("copylink"))});

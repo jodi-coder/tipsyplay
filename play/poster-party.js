@@ -524,6 +524,8 @@ function paintAwards(){
   var over=table&&table.step==="over";
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
   if(!over) return;
+  var n=meta&&meta.deck?(Array.isArray(meta.deck)?meta.deck.length:Object.keys(meta.deck).length):(GAME==="vibe"?20:8);
+  var line=$("recapline"); if(line) line.textContent=(TITLES[GAME]||"This game")+", "+n+" rounds";
   if(GAME==="crew"){
     var stars=0;
     orderPlayers().forEach(function(p){if(p.points>stars) stars=p.points});
@@ -963,7 +965,7 @@ async function hostRoom(name){
     if(snap.exists()) continue;
     try{
       await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:20, na:true, round:0, gameId:1, kind:GAME}});
-      claimed=c; break;
+      claimed=c; rememberGame(); break;
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
   if(!claimed) throw new Error("room");
@@ -990,6 +992,7 @@ async function joinRoom(c, name){
   var cur=w.val()||{};
   await set(ref(db, "rooms/"+c+"/nhie/who/"+uid), {emoji:myEmoji()||cur.emoji||"", confessions:+cur.confessions||0, seen:+cur.seen||0});
   code=c;
+  rememberGame();
   try{sessionStorage.setItem(roomStore(), code)}catch(e){}
   listen(); armPresence();
 }
@@ -1079,6 +1082,17 @@ function leaveRoom(){
   try{sessionStorage.removeItem(roomStore())}catch(e){}
   stopAll(); meta=null; table=null; code=null; screen("home");
 }
+function rememberGame(){
+  var slug=GAME==="split"?"split-decision":GAME==="vibe"?"vibe-checkpoint":GAME==="crew"?"chaos-crew":GAME;
+  try{localStorage.setItem("tp_last_game", slug)}catch(e){}
+}
+function shareRecap(){
+  var text=$("recapline")&&$("recapline").textContent||((TITLES[GAME]||"This game")+", 8 rounds");
+  var copied=function(){fail("Recap copied.")};
+  if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
+  else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+  else fail(text);
+}
 async function rematch(){
   if(!isHost()||!meta) return;
   unlock();
@@ -1149,6 +1163,7 @@ function wire(){
   if($("retrybtn")) $("retrybtn").addEventListener("click", retryCrew);
   if($("dealbtn")) $("dealbtn").addEventListener("click", dealNow);
   if($("again")) $("again").addEventListener("click", function(){rematch().catch(function(e){fail(friendly(e))})});
+  if($("recap")) $("recap").addEventListener("click", function(){shareRecap()});
   if($("close")) $("close").addEventListener("click", askClose);
   if($("closestage")) $("closestage").addEventListener("click", askClose);
   if($("leavebtn")) $("leavebtn").addEventListener("click", leaveRoom);
