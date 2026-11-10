@@ -476,7 +476,7 @@ function consumePick(pick){
   if(pick.kind==="rule"){var text=String(target).slice(0,80); if(text&&houseList.indexOf(text)===-1) houseList.push(text)}
   var shownTarget=(pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate")?target:(table.target||"");
   var echo="";
-  if(table.step==="shown"){
+  if(table.step==="shown"&&!(pick.kind==="ack"&&pick.value==="pass")){
     var whoId=actor;
     if((rank==="2"||rank==="Q"||rank==="8")&&target) whoId=target;
     var m=mateMap[whoId]||"";
@@ -509,6 +509,7 @@ function consumePick(pick){
 function sendPick(kind, value){
   if(actorUid()!==uid||!table) return;
   update(ref(db),{[rpath("kc/pick")]:{kind:kind, value:String(value).slice(0,80)}}).catch(function(e){fail(friendly(e))});
+  if(kind==="ack"&&value==="pass") return;
   fire(kind==="ack"&&value==="alt"?"alt":"sip");
 }
 function sendAsk(){
@@ -663,6 +664,7 @@ function wire(){
   $("draw").addEventListener("click", sendAsk);
   $("next").addEventListener("click", function(){sendPick("ack","sip")});
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
+  if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
   $("newdeck").addEventListener("click", deal);
   $("close").addEventListener("click", closeRoom);
   $("closestage").addEventListener("click", closeRoom);

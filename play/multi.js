@@ -145,7 +145,7 @@ function scoreRound(totals,r,list){
  }else if(kind==="toss"){
   if(actorP&&ans[actorP.uid]===true)totals[actorP.uid]++;
  }else if(kind==="category"){
-  if(actorP)totals[actorP.uid]+=(+tally[actorP.uid]||0);
+  if(actorP&&notes[actorP.uid]!=="(pass)")totals[actorP.uid]+=(+tally[actorP.uid]||0);
  }else if(kind==="truths"){
   var fib=actorP?sealed[actorP.uid]:"";
   if(fib!=="pass"&&!(actorP&&notes[actorP.uid]==="(pass)")){
@@ -171,7 +171,7 @@ function roundReady(){
  if(kind==="vote"||kind==="court"||kind==="truths")return needed().every(function(p){return !!sealed[p.uid]});
  if(kind==="flip")return !!callMap[r]&&needed().every(function(p){return notes[p.uid]==="(pass)"||Object.prototype.hasOwnProperty.call(ans,p.uid)});
  if(kind==="rule")return needed().every(function(p){return notes[p.uid]==="(pass)"||Object.prototype.hasOwnProperty.call(ans,p.uid)});
- if(kind==="toss"){var a=actor();return !!(a&&Object.prototype.hasOwnProperty.call(ans,a.uid))}
+ if(kind==="toss"){var a=actor();return !!(a&&(notes[a.uid]==="(pass)"||Object.prototype.hasOwnProperty.call(ans,a.uid)))}
  if(kind==="story")return needed().every(function(p){return !!notes[p.uid]});
  if(kind==="draw")return !!callMap[r];
  return true;
@@ -201,10 +201,12 @@ function resultLine(){
  }
  if(GAME.kind==="toss"){
   if(!actorP)return "";
+  if(notes[actorP.uid]==="(pass)")return pname(actorP.uid)+" passed.";
   if(!Object.prototype.hasOwnProperty.call(ans,actorP.uid))return pname(actorP.uid)+" has not tossed yet.";
   return pname(actorP.uid)+(ans[actorP.uid]?" sank it. 1 point.":" missed. 0 points.");
  }
  if(GAME.kind==="category"){
+  if(actorP&&notes[actorP.uid]==="(pass)")return pname(actorP.uid)+" passed.";
   return (actorP?pname(actorP.uid):"They")+" named "+((actorP&&tally[actorP.uid])||0)+".";
  }
  if(GAME.kind==="truths"){
@@ -382,22 +384,24 @@ function buildDock(){
  }
  if(GAME.kind==="toss"){
   if(!isActor()){dock.appendChild(el("p",null,(a?pname(a.uid):"They")+" is tossing. Cups are for points, not drinking."));return}
-  if(mine){dock.appendChild(el("p",null,"Toss logged."));return}
+  if(mine){dock.appendChild(el("p",null,roundMap(noteMap)[uid]==="(pass)"?"Passed.":"Toss logged."));return}
   var row=el("div","choice");
   row.appendChild(btn("Hit",{"data-pick":"hit"}));
   row.appendChild(btn("Miss",{"data-pick":"miss"},"btn alt"));
   dock.appendChild(row);
+  dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
   return;
  }
  if(GAME.kind==="category"){
   if(!isActor()){dock.appendChild(el("p",null,(a?pname(a.uid):"They")+" is naming things out loud."));return}
-  if(mine){dock.appendChild(el("p",null,"Turn locked in."));return}
+  if(mine){dock.appendChild(el("p",null,roundMap(noteMap)[uid]==="(pass)"?"Passed.":"Turn locked in."));return}
   var count=el("p","ask");count.id="count";count.textContent=String(localTally>=0?localTally:((roundMap(tallyMap)[uid])||0));
   dock.appendChild(count);
   var row=el("div","choice");
   row.appendChild(btn("+1 named",{"data-act":"plus"}));
   row.appendChild(btn("Done",{"data-act":"done"},"btn alt"));
   dock.appendChild(row);
+  dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
   return;
  }
  if(GAME.kind==="truths"){
@@ -421,14 +425,18 @@ function buildDock(){
   return;
  }
  if(GAME.kind==="draw"){
+  var drawn=roundMap(noteMap)[uid]||"";
+  if(drawn==="(pass)"){dock.appendChild(el("p",null,"Passed."));return}
+  var guessed=!!drawn;
   var pad=el("canvas","sketchpad");pad.id="pad";pad.setAttribute("aria-label","Drawing");dock.appendChild(pad);
   fitPad(pad);bindPad(pad);
   if(isActor())dock.appendChild(btn("Clear",{"data-act":"clear"},"btn alt"));
-  else if(!mine){
+  else if(!mine&&!guessed){
    var input=el("input","bigin linein");input.id="guess";input.maxLength=40;input.placeholder="Your guess";input.setAttribute("aria-label","Your guess");
    dock.appendChild(input);
    dock.appendChild(btn("Guess",{"data-act":"guess"}));
-  }
+  }else if(guessed){dock.appendChild(el("p",null,"Guess locked in."))}
+  if(!guessed)dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
   return;
  }
  if(GAME.kind==="rule"){
@@ -587,6 +595,10 @@ function baseKeys(extra){
 function sendAnswered(){send(baseKeys())}
 function sendPass(){
  if(answered[uid]||!meta||meta.phase!=="answer")return;
+ if(GAME.kind==="draw"){
+  var existing=roundMap(noteMap)[uid]||"";
+  if(existing&&existing!=="(pass)")return;
+ }
  if(GAME.kind==="truths"&&isActor()){
   var skip={};
   skip["sealed/"+gid()+"/"+rnd()+"/"+uid]="pass";

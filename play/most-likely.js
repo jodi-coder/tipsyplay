@@ -426,6 +426,14 @@ function paintVotes(){
     b.addEventListener("click", function(){sendVote(p.uid, b)});
     box.appendChild(b);
   });
+  var pass=document.createElement("button");
+  pass.type="button";
+  pass.className="btn alt";
+  pass.textContent="Pass";
+  pass.setAttribute("aria-pressed", pick==="pass"?"true":"false");
+  pass.disabled=!!pick;
+  pass.addEventListener("click", function(){sendPassVote(pass)});
+  box.appendChild(pass);
 }
 function paintResults(){
   var show=!!(table&&resultsVisible()&&(table.step==="reveal"||table.step==="twist"));
@@ -728,6 +736,19 @@ function hostTick(){
   if(table.step==="reveal"&&table.who&&age>6500){autoSent=key; toTwist()}
   else if(table.step==="reveal"&&!table.who&&age>7500){autoSent=key; advance()}
   else if(table.step==="twist"&&age>7500){autoSent=key; advance()}
+}
+function sendPassVote(btn){
+  if(!table||table.step!=="vote"||sending) return;
+  var seq=+table.seq||0;
+  if(voteTarget(mine, seq)||pendingVote) return;
+  pendingVote="pass";
+  sending=true;
+  if(btn){btn.setAttribute("aria-pressed","true")}
+  tapSound("whoosh");
+  paintVotes();
+  set(ref(db, rpath("cast/"+uid)), "pass@"+seq).then(function(){sending=false}).catch(function(e){
+    sending=false; pendingVote=""; paintVotes(); fail(friendly(e));
+  });
 }
 function sendVote(id, btn){
   if(!table||table.step!=="vote"||sending||!id||!players[id]) return;
