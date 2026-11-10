@@ -1,0 +1,73 @@
+{
+  "$comment": "NOT SHIPPED. Do not paste this file into a live page. Replace every {{PLACEHOLDER}} with copy that is already visible on that page. Merge these nodes into the page's existing BreadcrumbList script as one @graph. See docs/schema/README.md.",
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "@id": "{{CANONICAL_URL}}#faq",
+      "url": "{{CANONICAL_URL}}",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "{{FAQ_1_QUESTION}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{FAQ_1_ANSWER}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I play {{GAME_NAME}} without drinking?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{NON_ALCOHOLIC_ANSWER}}"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "{{FAQ_3_QUESTION}}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "{{FAQ_3_ANSWER}}"
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "{{CANONICAL_URL}}#howto",
+      "name": "How to play {{GAME_NAME}}",
+      "description": "{{HOWTO_DESCRIPTION}}",
+      "totalTime": "{{ISO_8601_DURATION_OR_OMIT}}",
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "{{TOOL_NAME}}"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "{{STEP_1_NAME}}",
+          "text": "{{STEP_1_TEXT}}",
+          "url": "{{CANONICAL_URL}}#setup"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "{{STEP_2_NAME}}",
+          "text": "{{STEP_2_TEXT}}",
+          "url": "{{CANONICAL_URL}}#setup"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "{{STEP_3_NAME}}",
+          "text": "{{STEP_3_TEXT}}",
+          "url": "{{CANONICAL_URL}}#rules"
+        }
+      ]
+    }
+  ]
+}
