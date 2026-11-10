@@ -364,6 +364,11 @@ function showCard(){
   $("wait").classList.toggle("hide", mineTurn);
   $("wait").textContent="Waiting for "+nameOf(actorUid())+" to choose.";
 }
+function recapText(){
+  var n=table?+table.seq:0;
+  if(n>0) return "King's Cup, "+n+(n===1?" card":" cards");
+  return "King's Cup";
+}
 function render(){
   paintRole();
   if(!meta){screen("home"); return}
@@ -403,7 +408,7 @@ function render(){
   $("finale").classList.toggle("hide", !fin);
   if(fin){
     $("finalcopy").textContent="One small sip or do a dare from the cup. No downing a cup. Kings in the counter: "+kingCount()+".";
-    var line=$("recapline"); if(line) line.textContent="King's Cup, "+(meta.rounds||0)+" rounds";
+    var line=$("recapline"); if(line) line.textContent=recapText();
     $("draw").classList.add("hide");
     $("wait").classList.add("hide");
   }
@@ -725,7 +730,7 @@ function wire(){
   $("newdeck").addEventListener("click", deal);
   if($("playagain")) $("playagain").addEventListener("click", function(){deal()});
   if($("recap")) $("recap").addEventListener("click", function(){
-    var text=$("recapline")&&$("recapline").textContent||"King's Cup, "+(meta&&meta.rounds||0)+" rounds";
+    var text=$("recapline")&&$("recapline").textContent||recapText();
     var copied=function(){fail("Recap copied.")};
     if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
     else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
