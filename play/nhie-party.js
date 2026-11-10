@@ -227,9 +227,9 @@ function fullMeta(patch){
 }
 function parsedCast(raw){
   var s=String(raw||"");
-  var m=s.match(/^(have|never):(\d+)$/);
+  var m=s.match(/^(have|never|pass):(\d+)$/);
   if(m) return {v:m[1], seq:+m[2]};
-  if(s==="have"||s==="never") return {v:s, seq:null};
+  if(s==="have"||s==="never"||s==="pass") return {v:s, seq:null};
   return null;
 }
 function roundSeq(){return table?+table.seq||0:0}
@@ -251,7 +251,7 @@ function haveIds(){
 function allIn(){
   var list=order().filter(function(p){return p.connected});
   if(!list.length) return false;
-  return list.every(function(p){var v=castValue(p.uid); return v==="have"||v==="never"});
+  return list.every(function(p){var v=castValue(p.uid); return v==="have"||v==="never"||v==="pass"});
 }
 function secondsLeft(){
   if(!table||table.step!=="answer") return null;
@@ -384,6 +384,8 @@ function paintAnswers(){
   var have=$("ihave"), never=$("never");
   if(have){have.disabled=!answering||!!mine; have.setAttribute("aria-pressed", mine==="have"?"true":"false")}
   if(never){never.disabled=!answering||!!mine; never.setAttribute("aria-pressed", mine==="never"?"true":"false")}
+  var pass=$("passbtn");
+  if(pass){pass.classList.toggle("hide", !answering); pass.disabled=!!mine; pass.setAttribute("aria-pressed", mine==="pass"?"true":"false")}
 }
 function paintHaves(){
   var show=!!(table&&table.step==="results"&&!(meta&&meta.status==="over"));
@@ -534,7 +536,7 @@ function maybeScore(){
   var info=parsedCast(cast[uid]);
   if(!info) return;
   if(info.seq!==null && info.seq!==seq) return;
-  if(info.v!=="have"&&info.v!=="never") return;
+  if(info.v!=="have"&&info.v!=="never"&&info.v!=="pass") return;
   scoring=seq;
   var add=info.v==="have"?1:0;
   writeWho(me.emoji||myEmoji(), (+me.confessions||0)+add, seq).catch(function(e){
@@ -600,12 +602,12 @@ function sendCast(value){
   var seq=+table.seq||0;
   if(castValue(uid)) return;
   if(pendingCast&&pendingCast.seq===seq) return;
-  if(value!=="have"&&value!=="never") return;
+  if(value!=="have"&&value!=="never"&&value!=="pass") return;
   pendingCast={v:value, seq:seq};
   sending=true;
   paintAnswers();
   tapSound(value==="have"?"crack":"whoosh");
-  var btn=$(value==="have"?"ihave":"never");
+  var btn=$(value==="have"?"ihave":value==="never"?"never":"passbtn");
   if(btn){btn.classList.remove("nh-hit"); void btn.offsetWidth; btn.classList.add("nh-hit")}
   var wait=window.__tpNhie&&+window.__tpNhie.delayCast||0;
   var write=function(){
@@ -830,6 +832,7 @@ function wire(){
   $("start").addEventListener("click", function(){unlock(); begin()});
   $("ihave").addEventListener("click", function(){sendCast("have")});
   $("never").addEventListener("click", function(){sendCast("never")});
+  if($("passbtn")) $("passbtn").addEventListener("click", function(){sendCast("pass")});
   $("nextround").addEventListener("click", function(){unlock(); advance()});
   if($("again")) $("again").addEventListener("click", function(){unlock(); playAgain()});
   $("close").addEventListener("click", askClose);

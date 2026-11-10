@@ -509,6 +509,7 @@ function consumePick(pick){
 function sendPick(kind, value){
   if(actorUid()!==uid||!table) return;
   update(ref(db),{[rpath("kc/pick")]:{kind:kind, value:String(value).slice(0,80)}}).catch(function(e){fail(friendly(e))});
+  if(kind==="ack"&&value==="pass") return;
   fire(kind==="ack"&&value==="alt"?"alt":"sip");
 }
 function sendAsk(){
@@ -663,6 +664,7 @@ function wire(){
   $("draw").addEventListener("click", sendAsk);
   $("next").addEventListener("click", function(){sendPick("ack","sip")});
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
+  if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
   $("newdeck").addEventListener("click", deal);
   $("close").addEventListener("click", closeRoom);
   $("closestage").addEventListener("click", closeRoom);
