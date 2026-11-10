@@ -534,7 +534,8 @@ function consumePick(pick){
   var echo="";
   if(table.step==="shown"&&!(pick.kind==="ack"&&pick.value==="pass")){
     var whoId=actor;
-    if((rank==="2"||rank==="Q"||rank==="8")&&target) whoId=target;
+    var picked=(pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate")?target:"";
+    if((rank==="2"||rank==="Q"||rank==="8")&&picked) whoId=picked;
     var m=mateMap[whoId]||"";
     if(m&&m!==whoId) echo=m;
   }
