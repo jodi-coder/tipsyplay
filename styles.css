@@ -106,6 +106,7 @@ label{display:block;margin:8px 0}
 }
 .band-ink a:not(.btn):not(.spot-card):not(.card),
 #featured a:not(.btn),#why a:not(.btn),#faq a:not(.btn){color:var(--yellow)}
+.band-ink .card a:not(.btn):not(.spot-card){color:var(--ink);text-decoration:underline;text-underline-offset:.12em}
 a.spot-tile{display:block;text-decoration:none;color:inherit}
 a.spot-tile h3{color:inherit}
 a.spot-tile:active{transform:translate(2px,2px)}
