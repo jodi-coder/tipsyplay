@@ -197,6 +197,55 @@ function floatIcon(emoji, x){
 }
 
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
+function savedName(){
+  var el=$("pname")||$("playername");
+  var name=el?normName(el.value):"";
+  if(!name){try{name=normName(localStorage.getItem("tp_name")||"")}catch(e){}}
+  if(name&&el&&!normName(el.value)) el.value=name;
+  return name;
+}
+function releaseRoom(){
+  var c=code, me=uid;
+  if(connStop){connStop(); connStop=null}
+  if(c&&me){try{onDisconnect(ref(db, rpath("players/"+me))).cancel()}catch(e){}}
+  stopAll();
+  code=null; meta=null; players={};
+  try{sessionStorage.removeItem("tp_kc_room")}catch(e){}
+}
+function openHostFlow(){
+  screen("home");
+  var name=savedName();
+  if(!name){var el=$("pname"); if(el) el.focus(); return}
+  if($("hostbtn")) $("hostbtn").click();
+}
+function restartSame(){
+  var name=savedName();
+  var gender=($("pgender")&&$("pgender").value)||sessionStorage.getItem("tp_kc_group")||"everyone";
+  if(!name){openHostFlow(); return}
+  releaseRoom();
+  screen("home");
+  hostRoom(name, gender).catch(function(e){fail(friendly(e))});
+}
+function showClosedChoice(role){
+  var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
+  var b=$("hostnew");
+  if(b){
+    b.dataset.role=role==="host"?"host":"join";
+    b.textContent=role==="host"?"Restart with same game":"Host a new room";
+  }
+  fail("This room is closed to new players.");
+  screen("closed");
+}
+function mountRestart(){
+  if(!isHost()||!meta||meta.status==="lobby") return;
+  var sec=$("table");
+  if(!sec||sec.classList.contains("hide")||sec.querySelector("[data-restart]")) return;
+  var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+  var p=document.createElement("p"); p.textContent="This room is closed to new players.";
+  var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
+  b.addEventListener("click", function(){restartSame()});
+  row.appendChild(p); row.appendChild(b); sec.appendChild(row);
+}
 function paintRole(){
   document.body.classList.toggle("is-host", isHost());
   document.body.dataset.role=isHost()?"host":"player";
@@ -327,6 +376,7 @@ function render(){
   document.body.dataset.card=table&&table.card||"";
   if(meta.status==="lobby"){screen("lobby"); paintLobby(); return}
   screen("table");
+  mountRestart();
   var hostP=players[meta.hostUid];
   $("away").classList.toggle("hide", !hostP || hostP.connected!==false);
   var list=order();
@@ -548,7 +598,7 @@ function stopAll(){stops.forEach(function(fn){fn()}); stops=[]; if(connStop){con
 function listen(){
   stopAll(); heard=-1; seenReact=null;
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){stopAll(); meta=null; screen("closed"); $("closed").classList.remove("hide"); return}
+    if(!s.exists()){var wasHost=isHost(); stopAll(); meta=null; code=null; showClosedChoice(wasHost?"host":"join"); return}
     meta=s.val(); render();
   }, function(){fail("That room isn't available.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
@@ -639,6 +689,10 @@ function wire(){
   var saved=localStorage.getItem("tp_name"); if(saved&&!$("pname").value) $("pname").value=saved;
   var g=sessionStorage.getItem("tp_kc_group"); if(g) $("pgender").value=g;
   var q=normCode(location.search); if(q) $("roomcode").value=q;
+  if($("hostnew")) $("hostnew").addEventListener("click", function(){
+    if($("hostnew").dataset.role==="host") restartSame();
+    else openHostFlow();
+  });
   $("hostbtn").addEventListener("click", function(){
     var name=normName($("pname").value), gender=$("pgender").value||"everyone";
     if(!name){fail("Add your name first."); return}
@@ -655,7 +709,7 @@ function wire(){
       var msg=String((e&&e.message)||"");
       if(msg==="kind") fail("That code is for a different game.");
       else if(msg==="missing") fail("No room with that code.");
-      else if(msg==="closed") fail("That game has already started.");
+      else if(msg==="closed") showClosedChoice("join");
       else fail(friendly(e));
     });
   });

@@ -123,7 +123,8 @@
 </section>
 <section id="closed" class="card hide">
 <h2>Room closed</h2>
-<p>This room is closed. Start a new one from the game page.</p>
+<p id="closedmsg">This room is closed to new players.</p>
+<button type="button" class="btn" id="hostnew">Host a new room</button>
 <a class="btn" href="./">Back to games</a>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
@@ -173,6 +174,6 @@
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","split");</script>
 <script src="../play/party-audio.js?v=17"></script>
-<script src="../play/poster-party.js?v=2"></script>
+<script src="../play/poster-party.js?v=3"></script>
 </body>
 </html>

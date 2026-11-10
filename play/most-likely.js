@@ -158,6 +158,54 @@ function myVote(){
   return voteTarget(mine, +table.seq||0);
 }
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
+function savedName(){
+  var el=$("pname")||$("playername");
+  var name=el?normName(el.value):"";
+  if(!name){try{name=normName(localStorage.getItem("tp_name")||"")}catch(e){}}
+  if(name&&el&&!normName(el.value)) el.value=name;
+  return name;
+}
+function releaseRoom(){
+  var c=code, me=uid;
+  if(connStop){connStop(); connStop=null}
+  if(c&&me){try{onDisconnect(ref(db, rpath("players/"+me))).cancel()}catch(e){}}
+  stopAll();
+  code=null; meta=null; players={};
+  try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
+}
+function openHostFlow(){
+  screen("home");
+  var name=savedName();
+  if(!name){focusName(); return}
+  if($("hostbtn")) $("hostbtn").click();
+}
+function restartSame(){
+  var name=savedName();
+  if(!name){openHostFlow(); return}
+  releaseRoom();
+  screen("home");
+  hostRoom(name).catch(function(e){fail(friendly(e))});
+}
+function showClosedChoice(role){
+  var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
+  var b=$("hostnew");
+  if(b){
+    b.dataset.role=role==="host"?"host":"join";
+    b.textContent=role==="host"?"Restart with same game":"Host a new room";
+  }
+  fail("This room is closed to new players.");
+  screen("closed");
+}
+function mountRestart(){
+  if(!isHost()||!meta||meta.status==="lobby") return;
+  var sec=$("table");
+  if(!sec||sec.classList.contains("hide")||sec.querySelector("[data-restart]")) return;
+  var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+  var p=document.createElement("p"); p.textContent="This room is closed to new players.";
+  var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
+  b.addEventListener("click", function(){restartSame()});
+  row.appendChild(p); row.appendChild(b); sec.appendChild(row);
+}
 function paintRole(){
   document.body.classList.toggle("is-host", isHost());
   document.querySelectorAll(".hostonly").forEach(function(n){n.classList.toggle("hide", !isHost())});
@@ -577,6 +625,7 @@ function render(){
     return;
   }
   screen("table");
+  mountRestart();
   hear();
   paintTable();
   maybeScore();
@@ -841,9 +890,10 @@ function listen(){
   scoring=0; pendingVote=""; revealSent=""; autoSent=""; casts={}; reveal={};
   stops.push(onValue(ref(db, rpath("meta")), function(s){
     if(!s.exists()){
+      var wasHost=isHost();
       stopAll(); meta=null; table=null; code=null;
       try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
-      screen("closed"); return;
+      showClosedChoice(wasHost?"host":"join"); return;
     }
     meta=s.val()||null;
     maybeFreshScores();
@@ -965,6 +1015,10 @@ function wire(){
   document.body.dataset.pack=lobbyPack;
   var linked=queryPin();
   if(linked&&$("pin")) $("pin").value=linked;
+  if($("hostnew")) $("hostnew").addEventListener("click", function(){
+    if($("hostnew").dataset.role==="host") restartSame();
+    else openHostFlow();
+  });
   $("hostbtn").addEventListener("click", function(){
     var name=normName($("pname").value);
     if(!name){fail("Add your name first."); focusName(); return}
@@ -988,7 +1042,7 @@ function wire(){
     joinRoom(pin, name).catch(function(e){
       var msg=String((e&&e.message)||"");
       if(msg==="missing") fail("No room with that code.");
-      else if(msg==="closed") fail("That game has already started.");
+      else if(msg==="closed") showClosedChoice("join");
       else if(msg==="full") fail("That room is full.");
       else fail(friendly(e));
     }).then(function(){sending=false});
