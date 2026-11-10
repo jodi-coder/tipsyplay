@@ -849,7 +849,7 @@ function listen(){
     maybeFreshScores();
     watchCasts();
     render();
-  }, function(){fail("That room isn't available. Check the PIN and try again.")}));
+  }, function(){fail("That room isn't available. Check the code and try again.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("play")), function(s){
     var next=s.val()||null;
@@ -979,7 +979,7 @@ function wire(){
   $("joinbtn").addEventListener("click", function(){
     var name=normName($("pname").value), pin=normPin($("pin").value);
     if(!name){fail("Add your name first."); focusName(); return}
-    if(!validPin(pin)){fail("Enter the 6-character PIN."); $("pin").focus(); return}
+    if(!validPin(pin)){fail("Enter the 6-character code."); $("pin").focus(); return}
     if(sending) return;
     sending=true;
     try{localStorage.setItem("tp_name", name)}catch(e){}
@@ -987,7 +987,7 @@ function wire(){
     tapSound("mltJoin");
     joinRoom(pin, name).catch(function(e){
       var msg=String((e&&e.message)||"");
-      if(msg==="missing") fail("No room with that PIN.");
+      if(msg==="missing") fail("No room with that code.");
       else if(msg==="closed") fail("That game has already started.");
       else if(msg==="full") fail("That room is full.");
       else fail(friendly(e));
