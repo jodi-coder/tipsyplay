@@ -145,7 +145,7 @@ function scoreRound(totals,r,list){
  }else if(kind==="toss"){
   if(actorP&&ans[actorP.uid]===true)totals[actorP.uid]++;
  }else if(kind==="category"){
-  if(actorP)totals[actorP.uid]+=(+tally[actorP.uid]||0);
+  if(actorP&&notes[actorP.uid]!=="(pass)")totals[actorP.uid]+=(+tally[actorP.uid]||0);
  }else if(kind==="truths"){
   var fib=actorP?sealed[actorP.uid]:"";
   if(fib!=="pass"&&!(actorP&&notes[actorP.uid]==="(pass)")){
@@ -425,16 +425,18 @@ function buildDock(){
   return;
  }
  if(GAME.kind==="draw"){
-  if(roundMap(noteMap)[uid]==="(pass)"){dock.appendChild(el("p",null,"Passed."));return}
+  var drawn=roundMap(noteMap)[uid]||"";
+  if(drawn==="(pass)"){dock.appendChild(el("p",null,"Passed."));return}
+  var guessed=!!drawn;
   var pad=el("canvas","sketchpad");pad.id="pad";pad.setAttribute("aria-label","Drawing");dock.appendChild(pad);
   fitPad(pad);bindPad(pad);
   if(isActor())dock.appendChild(btn("Clear",{"data-act":"clear"},"btn alt"));
-  else if(!mine){
+  else if(!mine&&!guessed){
    var input=el("input","bigin linein");input.id="guess";input.maxLength=40;input.placeholder="Your guess";input.setAttribute("aria-label","Your guess");
    dock.appendChild(input);
    dock.appendChild(btn("Guess",{"data-act":"guess"}));
-  }
-  dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
+  }else if(guessed){dock.appendChild(el("p",null,"Guess locked in."))}
+  if(!guessed)dock.appendChild(btn("Pass",{"data-act":"pass"},"btn alt"));
   return;
  }
  if(GAME.kind==="rule"){
@@ -593,6 +595,10 @@ function baseKeys(extra){
 function sendAnswered(){send(baseKeys())}
 function sendPass(){
  if(answered[uid]||!meta||meta.phase!=="answer")return;
+ if(GAME.kind==="draw"){
+  var existing=roundMap(noteMap)[uid]||"";
+  if(existing&&existing!=="(pass)")return;
+ }
  if(GAME.kind==="truths"&&isActor()){
   var skip={};
   skip["sealed/"+gid()+"/"+rnd()+"/"+uid]="pass";

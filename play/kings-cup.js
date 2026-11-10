@@ -476,7 +476,7 @@ function consumePick(pick){
   if(pick.kind==="rule"){var text=String(target).slice(0,80); if(text&&houseList.indexOf(text)===-1) houseList.push(text)}
   var shownTarget=(pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate")?target:(table.target||"");
   var echo="";
-  if(table.step==="shown"){
+  if(table.step==="shown"&&!(pick.kind==="ack"&&pick.value==="pass")){
     var whoId=actor;
     if((rank==="2"||rank==="Q"||rank==="8")&&target) whoId=target;
     var m=mateMap[whoId]||"";
