@@ -1,59 +1,18 @@
-# Game page FAQ schema (template only)
+# Game page FAQ schema
 
-This folder is a wiring guide. It is not live markup. Nothing here is included from a page, and the placeholders must not be copied into `games/*.html` until the visible FAQ exists.
+The 14 game pages now include a visible FAQ (`<section class="faq" id="faq">`) and a `FAQPage` node in the same `<script type="application/ld+json">` as the existing `BreadcrumbList`. The JSON question and answer strings match the visible text. There is no `HowTo` node.
 
-The template is `FAQPage` only. It does not include `HowTo`.
-
-The site root is what Hostinger publishes from `main`. Keep this change off `main` until Jeff approves a separate pass that inserts real copy.
-
-## Pages this template is for
-
-Each of these 14 pages already has one `BreadcrumbList` JSON-LD block and no `FAQPage` block:
-
-1. `games/never-have-i-ever.html`
-2. `games/story-chain.html`
-3. `games/whos-most-likely.html`
-4. `games/hot-take-court.html`
-5. `games/card-lottery.html`
-6. `games/cup-toss.html`
-7. `games/category-countdown.html`
-8. `games/two-truths.html`
-9. `games/sketchy-guess.html`
-10. `games/rule-maker.html`
-11. `games/split-decision.html`
-12. `games/vibe-checkpoint.html`
-13. `games/chaos-crew.html`
-14. `games/kings-cup.html`
-
-`games/index.html` is the catalog, not one of the 14. Leave it alone in the schema pass.
-
-## Visible FAQ content is required
-
-Every question and answer in the JSON-LD must already be visible on that page. The homepage FAQ uses `<details>` and `<summary>` (`index.html`). Game pages can do the same. If a question is not on the page, leave it out of the script. Do not add JSON for copy that only exists in this template.
+`game-faq-template.json` is the empty shape used before the copy existed. Do not paste the placeholders onto a page.
 
 ## Google guidance (needs review)
 
-Checked against the Google Search Central changelog on 2026-11-10:
+Checked against the Google Search Central changelog on 2026-11-10: FAQ rich results stopped for every site on 7 May 2026, and the docs were removed on 15 June 2026. Unused structured data does not cause problems for Search and also has no visible effect. Recheck the changelog before anyone promises a rich result.
 
-- **FAQ rich results are retired for every site.** The 8 May 2026 changelog entry says the FAQ rich result would no longer appear in Google Search starting 7 May 2026. The 15 June 2026 entry says the FAQ rich-result documentation was removed for that reason. The 2023 restriction to government and health sites is no longer the current line.
-- Google's 2023 post still says unused structured data does not cause problems for Search and also has no visible effect. That sentence is why markup can stay once it matches the page. It is not a reason to expect a rich result.
-- **Needs review** before anyone tells SEO that this markup will change Google's result appearance. Re-read the Search Central changelog on the day of the real insert. Other consumers of schema.org are outside this note.
+## Left off the public page (needs review)
 
-The visible questions are the part that helps a reader. The JSON-LD only restates them.
+These handoff sentences are editor notes, not player copy, so they are not in the visible FAQ or the JSON-LD:
 
-## Wiring, when copy exists
-
-1. SEO writes 3 to 5 questions per game, including "Can I play without drinking?". The words have to be safe for the house rules: one optional sip or a named alternative, passing is fine, nothing stacks, no chugging.
-2. Put that copy on the page in HTML the reader can open. Do not paste the script until those questions and answers are visible.
-3. Replace every `{{PLACEHOLDER}}` in `game-faq-template.json`. Delete `$comment`. The question "Can I play {{GAME_NAME}} without drinking?" can be reworded, but the visible sentence and the JSON sentence must match. Drop any question that is not on the page.
-4. Merge the `FAQPage` node into the page's existing `<script type="application/ld+json">` as one `@graph` that still contains the current `BreadcrumbList`. One script per page. Do not add a second, conflicting graph, and do not leave placeholder braces in the page.
-5. Check the JSON parses. Google's Rich Results Test will not show an FAQ appearance; use it only as a syntax check. Confirm the age line on the page is still exactly `You must be of legal drinking age in your location.` and that the existing `G-BHY4BXF3V3` tag is unchanged.
-
-`{{CANONICAL_URL}}` is the page's current canonical, for example `https://tipsyplay.com/games/kings-cup.html`.
-
-## What this pass must not do
-
-- Do not add the template, or empty FAQ schema, to a live page.
-- Do not add `HowTo` markup.
-- Do not edit `sitemap.xml`, `sw.js`, Firebase rules, or `firebase-config.js` for this template.
-- Do not add a new third-party script. The Google tag already on each game page stays as it is.
+- Story Chain player-count answer: the “Earlier Dev notes” sentence and the “NEEDS DEV SOURCE CHECK” instruction. The page says the public listing is 3–10.
+- Hot Take Court: the “Dev notes” sentence and “Do not describe that checkbox…”.
+- Split Decision: “Do not call it points-only…”.
+- Category Countdown: “Dev notes the timer is a naming timer, not a sip timer.”
