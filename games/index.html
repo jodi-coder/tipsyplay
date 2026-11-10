@@ -175,10 +175,9 @@
 var cards=document.querySelectorAll(".game-card"),countEl=document.getElementById("gcount"),empty=document.getElementById("empty"),input=document.getElementById("q"),people="";
 function fitsPeople(card){
  var min=+card.getAttribute("data-min"),max=+card.getAttribute("data-max");
- var cats=(card.getAttribute("data-cat")||"").split(/\s+/);
- if(people==="2")return cats.indexOf("two")!==-1;
- if(people==="small")return min<=6&&max>=3&&max<=8;
- if(people==="big")return cats.indexOf("big-groups")!==-1;
+ if(people==="2")return min<=2&&max>=2;
+ if(people==="small")return min<=6&&max>=3;
+ if(people==="big")return max>=7;
  return true;
 }
 function state(){
