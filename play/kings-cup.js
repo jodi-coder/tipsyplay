@@ -611,8 +611,16 @@ function sendReact(emo){
   if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
   update(ref(db),{[rpath("kc/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
 }
+function playAgain(){
+  if(!isHost()||!meta) return;
+  clearOptIns();
+  var next=Math.min(100,(+meta.gameId||1)+1);
+  if(next===(+meta.gameId||1)){fail("This room has used its rematches."); return}
+  update(ref(db), {[rpath("meta")]:fullMeta({status:"lobby", phase:"lobby", round:0, gameId:next, na:false})}).catch(function(e){fail(friendly(e))});
+}
 async function deal(){
   if(!isHost()||!meta) return;
+  if(!$("optin")||!$("optin").checked){fail("Tick the opt-in first. Sipping is optional and water counts."); return}
   var list=order(); if(list.length<2){fail("Need 2 players on their phones."); return}
   fail("");
   var deck=buildDeck();
@@ -756,7 +764,7 @@ function wire(){
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
   $("newdeck").addEventListener("click", deal);
-  if($("playagain")) $("playagain").addEventListener("click", function(){deal()});
+  if($("playagain")) $("playagain").addEventListener("click", playAgain);
   if($("recap")) $("recap").addEventListener("click", function(){
     var text=$("recapline")&&$("recapline").textContent||recapText();
     var copied=function(){fail("Recap copied.")};
