@@ -218,13 +218,46 @@ function openHostFlow(){
   if(!name){var el=$("pname"); if(el) el.focus(); return}
   if($("hostbtn")) $("hostbtn").click();
 }
+var dropping=false;
+function clearOptIns(){
+  var box=$("optin"); if(box) box.checked=false;
+  var na=$("ona"); if(na) na.checked=false;
+}
+function showRoomEnded(){
+  stopAll();
+  code=null; meta=null; players={}; table=null;
+  try{sessionStorage.removeItem("tp_kc_room")}catch(e){}
+  fail("This room has closed.");
+  screen("home");
+  var input=$("roomcode"); if(input) input.focus();
+}
 function restartSame(){
   var name=savedName();
   var gender=($("pgender")&&$("pgender").value)||sessionStorage.getItem("tp_kc_group")||"everyone";
   if(!name){openHostFlow(); return}
-  releaseRoom();
-  screen("home");
-  hostRoom(name, gender).catch(function(e){fail(friendly(e))});
+  var old=code;
+  if(!old){clearOptIns(); screen("home"); hostRoom(name, gender).catch(function(e){fail(friendly(e))}); return}
+  var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
+  clearOptIns();
+  dropping=old;
+  hostRoom(name, gender).then(function(){
+    var cancel=Promise.resolve();
+    if(uid){try{cancel=onDisconnect(ref(db, "rooms/"+old+"/players/"+uid)).cancel()}catch(e){}}
+    return Promise.resolve(cancel).catch(function(){}).then(function(){return remove(ref(db, "rooms/"+old))});
+  }).then(function(){
+    if(dropping===old) dropping=false;
+  }).catch(function(e){
+    var still=code===old;
+    if(dropping===old) dropping=false;
+    if(still){
+      if($("optin")) $("optin").checked=!!optinWas;
+      if($("ona")) $("ona").checked=!!onaWas;
+      try{render()}catch(err){}
+      fail("Couldn't start a new room. Your current room is still open.");
+      return;
+    }
+    fail(friendly(e));
+  });
 }
 function showClosedChoice(role){
   var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
@@ -240,7 +273,7 @@ function mountRestart(){
   if(!isHost()||!meta||meta.status==="lobby") return;
   var sec=$("table");
   if(!sec||sec.classList.contains("hide")||sec.querySelector("[data-restart]")) return;
-  var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+  var row=document.createElement("div"); row.className="card"; row.setAttribute("data-restart","1");
   var p=document.createElement("p"); p.textContent="This room is closed to new players.";
   var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
   b.addEventListener("click", function(){restartSame()});
@@ -584,8 +617,16 @@ function sendReact(emo){
   if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
   update(ref(db),{[rpath("kc/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
 }
+function playAgain(){
+  if(!isHost()||!meta) return;
+  clearOptIns();
+  var next=Math.min(100,(+meta.gameId||1)+1);
+  if(next===(+meta.gameId||1)){fail("This room has used its rematches."); return}
+  update(ref(db), {[rpath("meta")]:fullMeta({status:"lobby", phase:"lobby", round:0, gameId:next, na:false})}).catch(function(e){fail(friendly(e))});
+}
 async function deal(){
   if(!isHost()||!meta) return;
+  if(!$("optin")||!$("optin").checked){fail("Tick the opt-in first. Sipping is optional and water counts."); return}
   var list=order(); if(list.length<2){fail("Need 2 players on their phones."); return}
   fail("");
   var deck=buildDeck();
@@ -604,8 +645,9 @@ async function deal(){
 function stopAll(){stops.forEach(function(fn){fn()}); stops=[]; if(connStop){connStop(); connStop=null}}
 function listen(){
   stopAll(); heard=-1; seenReact=null;
+  var watched=code;
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){var wasHost=isHost(); stopAll(); meta=null; code=null; showClosedChoice(wasHost?"host":"join"); return}
+    if(!s.exists()){if(dropping===watched||watched!==code) return; showRoomEnded(); return}
     meta=s.val(); render();
   }, function(){fail("That room isn't available.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
@@ -729,7 +771,7 @@ function wire(){
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
   $("newdeck").addEventListener("click", deal);
-  if($("playagain")) $("playagain").addEventListener("click", function(){deal()});
+  if($("playagain")) $("playagain").addEventListener("click", playAgain);
   if($("recap")) $("recap").addEventListener("click", function(){
     var text=$("recapline")&&$("recapline").textContent||recapText();
     var copied=function(){fail("Recap copied.")};
@@ -806,7 +848,10 @@ async function boot(){
   var back=sessionStorage.getItem("tp_kc_room");
   var nm=normName($("pname").value);
   if(back&&validCode(back)&&nm){
-    joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(){sessionStorage.removeItem("tp_kc_room")});
+    joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(e){
+      sessionStorage.removeItem("tp_kc_room");
+      if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+    });
   }
 }
 boot().catch(function(){

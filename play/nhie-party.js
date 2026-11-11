@@ -154,12 +154,45 @@ function openHostFlow(){
   if(!name){focusName(); return}
   if($("hostbtn")) $("hostbtn").click();
 }
+var dropping=false;
+function clearOptIns(){
+  var box=$("optin"); if(box) box.checked=false;
+  var na=$("ona"); if(na) na.checked=false;
+}
+function showRoomEnded(){
+  stopAll();
+  code=null; meta=null; table=null; players={};
+  try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}
+  fail("This room has closed.");
+  screen("home");
+  var input=$("roomcode"); if(input) input.focus();
+}
 function restartSame(){
   var name=savedName();
   if(!name){openHostFlow(); return}
-  releaseRoom();
-  screen("home");
-  hostRoom(name).catch(function(e){fail(friendly(e))});
+  var old=code;
+  if(!old){clearOptIns(); screen("home"); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
+  var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
+  clearOptIns();
+  dropping=old;
+  hostRoom(name).then(function(){
+    var cancel=Promise.resolve();
+    if(uid){try{cancel=onDisconnect(ref(db, "rooms/"+old+"/players/"+uid)).cancel()}catch(e){}}
+    return Promise.resolve(cancel).catch(function(){}).then(function(){return remove(ref(db, "rooms/"+old))});
+  }).then(function(){
+    if(dropping===old) dropping=false;
+  }).catch(function(e){
+    var still=code===old;
+    if(dropping===old) dropping=false;
+    if(still){
+      if($("optin")) $("optin").checked=!!optinWas;
+      if($("ona")) $("ona").checked=!!onaWas;
+      try{render()}catch(err){}
+      fail("Couldn't start a new room. Your current room is still open.");
+      return;
+    }
+    fail(friendly(e));
+  });
 }
 function showClosedChoice(role){
   var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
@@ -175,7 +208,7 @@ function mountRestart(){
   if(!isHost()||!meta||meta.status==="lobby") return;
   var sec=$("table");
   if(!sec||sec.classList.contains("hide")||sec.querySelector("[data-restart]")) return;
-  var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+  var row=document.createElement("div"); row.className="card"; row.setAttribute("data-restart","1");
   var p=document.createElement("p"); p.textContent="This room is closed to new players.";
   var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
   b.addEventListener("click", function(){restartSame()});
@@ -733,13 +766,9 @@ function stopAll(){stops.forEach(function(fn){try{fn()}catch(e){}}); stops=[]; i
 function listen(){
   stopAll();
   heardAnswer=-1; heardResults=-1; heardOver=false; seenReact=null; scoring=0; pendingCast=null; revealWait=0; announcedSeq=-1; announcedFinal=-1;
+  var watched=code;
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){
-      var wasHost=isHost();
-      stopAll(); meta=null; table=null; code=null;
-      try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}
-      showClosedChoice(wasHost?"host":"join"); return;
-    }
+    if(!s.exists()){if(dropping===watched||watched!==code) return; showRoomEnded(); return}
     meta=s.val()||null; maybeFreshScores(); render();
   }, function(){fail("That room isn't available. Check the code and try again.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
@@ -844,8 +873,9 @@ function playAgain(){
   if(!isHost()||!meta||meta.status!=="over"||hostLock) return;
   var next=Math.min(100,(+meta.gameId||1)+1);
   if(next===(+meta.gameId||1)){fail("This room has used its rematches."); return}
+  clearOptIns();
   hostLock=true;
-  update(ref(db), {[rpath("meta")]:fullMeta({status:"lobby", phase:"lobby", gameId:next, spice:meta.spice, rounds:rounds()})}).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
+  update(ref(db), {[rpath("meta")]:fullMeta({status:"lobby", phase:"lobby", gameId:next, spice:meta.spice, rounds:rounds(), na:false})}).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
 }
 function focusName(){
   var el=$("pname"); if(!el) return;
@@ -954,8 +984,14 @@ function wire(){
     if(yes) yes.addEventListener("click", function(){setTimeout(focusName, 60)}, {once:true});
   }
   var nm=normName($("pname").value);
-  if(!linked&&back&&validCode(back)&&nm) joinRoom(back, nm).catch(function(){try{sessionStorage.removeItem("tp_nhie_room")}catch(e){}});
-  else if(same&&nm) joinRoom(back, nm).catch(function(){focusName()});
+  if(!linked&&back&&validCode(back)&&nm) joinRoom(back, nm).catch(function(e){
+    try{sessionStorage.removeItem("tp_nhie_room")}catch(err){}
+    if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+  });
+  else if(same&&nm) joinRoom(back, nm).catch(function(e){
+    if(String((e&&e.message)||"")==="missing"){try{sessionStorage.removeItem("tp_nhie_room")}catch(err){} fail("This room has closed.")}
+    else focusName();
+  });
 }
 function showReady(){
   if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
