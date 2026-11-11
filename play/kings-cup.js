@@ -307,7 +307,7 @@ function paintScores(){
   var box=$("scores"); box.textContent="";
   order().forEach(function(p){
     var row=document.createElement("div"); row.className="prow boardrow";
-    if(table&&table.turn===p.uid) row.style.background="#ff2d87";
+    if(table&&actorUid()===p.uid) row.style.background="#ff2d87";
     var name=document.createElement("span"); name.textContent=nameOf(p.uid)+(p.connected?"":" (away)");
     var metaEl=document.createElement("b"); metaEl.textContent=p.cards+" cards · "+p.points+" pts";
     row.appendChild(name); row.appendChild(metaEl); box.appendChild(row);
@@ -342,10 +342,24 @@ function lineFor(card){
   if(card.r==="K"&&kingCount()>=4) return "One small sip or do a dare from the cup. No downing a cup.";
   return RULES[card.r].line;
 }
+function cardRank(){
+  return table&&table.card?String(table.card).slice(0,-1):"";
+}
+function pointedRank(rank){
+  return rank==="2"||rank==="8"||rank==="Q";
+}
+function handedUid(){
+  if(!table||table.step!=="shown"||!table.target||!pointedRank(cardRank())) return "";
+  return table.target;
+}
 function actorUid(){
   if(!table) return "";
   if(table.step==="echo") return table.echo||"";
-  return table.turn||"";
+  return handedUid()||table.turn||"";
+}
+function playMark(){
+  if(!table) return "";
+  return [table.step||"",+table.seq||0,table.turn||"",table.echo||"",table.target||""].join("|");
 }
 function showCard(){
   var card=splitCard(table.card); if(!card) return;
@@ -368,7 +382,8 @@ function showCard(){
   $("sipline").textContent=lineFor(card);
   var extra=$("extra");
   var mineTurn=actorUid()===uid;
-  var choice=mineTurn&&table.step==="shown"&&(card.r==="2"||card.r==="8"||card.r==="J"||card.r==="Q");
+  var needsPick=table.step==="shown"&&!table.target&&(card.r==="2"||card.r==="8"||card.r==="J"||card.r==="Q");
+  var choice=table.turn===uid&&needsPick;
   var sig=[table.step,table.seq,table.card,actorUid(),table.target||"",table.echo||"",order().map(function(p){return p.uid}).join(",")].join("|");
   if(showCard.sig!==sig){
     showCard.sig=sig;
@@ -417,9 +432,8 @@ function render(){
   mountRestart();
   var hostP=players[meta.hostUid];
   $("away").classList.toggle("hide", !hostP || hostP.connected!==false);
-  var list=order();
-  var turnName=table?nameOf(table.turn):"";
-  $("turn").textContent=table&&table.step==="echo"?nameOf(table.echo)+" matches once":turnName+(table&&table.step==="draw"?" draws":" has the card");
+  var actorName=table?nameOf(actorUid()):"";
+  $("turn").textContent=!table?"":table.step==="echo"?actorName+" matches once":actorName+(table.step==="draw"?" draws":" has the card");
   $("left").textContent=(table?table.left:0)+" cards left in the deck";
   $("audioline").textContent=isHost()?"Music, room tone, and the announcer play on this phone.":"Short sounds on this phone. Music stays with the host.";
   var span=$("cupfill"); if(span) span.style.height=(Math.min(kingCount(),4)*25)+"%";
@@ -435,7 +449,7 @@ function render(){
     showCard.sig=""; showCard.seq=-1;
     $("shown").classList.add("hide");
     $("wait").classList.toggle("hide", !!myDraw);
-    $("wait").textContent="Waiting for "+turnName+" to draw.";
+    $("wait").textContent="Waiting for "+actorName+" to draw.";
   }
   var fin=table&&table.step==="finale";
   $("finale").classList.toggle("hide", !fin);
@@ -556,34 +570,41 @@ function consumePick(pick){
   consumePick.sent=mark;
   hostLock=true;
   var mine=++hostFlight;
-  var rank=table.card?table.card.slice(0,-1):"";
-  var actor=table.step==="echo"?table.echo:table.turn;
-  var target=pick.value||"";
+  var rank=cardRank();
+  var actor=actorUid();
+  var picked=String(pick.value||"");
+  var choosing=pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate";
   var mateMap=Object.assign({}, mates);
   var houseList=house.slice();
-  if(pick.kind==="mate"&&target&&target!==actor){mateMap[actor]=target; mateMap[target]=actor}
-  if(pick.kind==="rule"){var text=String(target).slice(0,80); if(text&&houseList.indexOf(text)===-1) houseList.push(text)}
-  var shownTarget=(pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate")?target:(table.target||"");
+  var validSeat=!!(picked&&picked!==table.turn&&turnList().indexOf(picked)>=0);
+  // 2, Queen, and 8 name someone. That player chooses before a mate can match.
+  var handTo=table.step==="shown"&&!table.target&&choosing&&pointedRank(rank)&&validSeat;
+  if(pick.kind==="mate"&&handTo){mateMap[table.turn]=picked; mateMap[picked]=table.turn}
+  if(pick.kind==="rule"){var text=picked.slice(0,80); if(text&&houseList.indexOf(text)===-1) houseList.push(text)}
+  var shownTarget=choosing?picked:(table.target||"");
   var echo="";
-  if(table.step==="shown"&&!(pick.kind==="ack"&&pick.value==="pass")){
-    var whoId=actor;
-    var picked=(pick.kind==="target"||pick.kind==="ask"||pick.kind==="mate")?target:"";
-    if((rank==="2"||rank==="Q"||rank==="8")&&picked) whoId=picked;
-    var m=mateMap[whoId]||"";
-    if(m&&m!==whoId) echo=m;
+  var playNext=null;
+  var ord=orderStr();
+  var stalePoint=table.step==="shown"&&choosing&&pointedRank(rank)&&!handTo;
+  if(handTo){
+    playNext={turn:table.turn,kings:+table.kings||0,step:"shown",card:table.card||"",echo:"",seq:+table.seq||0,left:+table.left||0,target:picked,order:ord};
+  }else if(!stalePoint&&table.step==="shown"&&!(pick.kind==="ack"&&pick.value==="pass")){
+    var m=mateMap[actor]||"";
+    if(m&&m!==actor) echo=m;
   }
-  var playNext, ord=orderStr();
-  if(table.step==="finale"||(rank==="K"&&(+table.kings||0)>=4)){
-    playNext={turn:table.turn,kings:+table.kings||0,step:"finale",card:table.card||"",echo:"",seq:+table.seq||0,left:+table.left||0,target:shownTarget,order:ord};
-  }else if(echo){
-    playNext={turn:table.turn,kings:+table.kings||0,step:"echo",card:table.card||"",echo:echo,seq:+table.seq||0,left:+table.left||0,target:shownTarget,order:ord};
-  }else{
-    var nxt=nextUid(table.turn);
-    playNext={turn:nxt,kings:+table.kings||0,step:(+table.left||0)?"draw":"finale",card:"",echo:"",seq:+table.seq||0,left:+table.left||0,target:"",order:ord};
+  if(!handTo&&!stalePoint){
+    if(table.step==="finale"||(rank==="K"&&(+table.kings||0)>=4)){
+      playNext={turn:table.turn,kings:+table.kings||0,step:"finale",card:table.card||"",echo:"",seq:+table.seq||0,left:+table.left||0,target:shownTarget,order:ord};
+    }else if(echo){
+      playNext={turn:table.turn,kings:+table.kings||0,step:"echo",card:table.card||"",echo:echo,seq:+table.seq||0,left:+table.left||0,target:shownTarget,order:ord};
+    }else{
+      var nxt=nextUid(table.turn);
+      playNext={turn:nxt,kings:+table.kings||0,step:(+table.left||0)?"draw":"finale",card:"",echo:"",seq:+table.seq||0,left:+table.left||0,target:"",order:ord};
+    }
   }
-  var before=(table.step||"")+"|"+(table.seq||0)+"|"+(table.turn||"")+"|"+(table.echo||"");
+  var before=playMark();
   var payload={};
-  payload[rpath("kc/play")]=playNext;
+  if(playNext) payload[rpath("kc/play")]=playNext;
   payload[rpath("kc/pick")]=null;
   Object.keys(mates).forEach(function(k){if(!mateMap[k]) payload[rpath("kc/mates/"+k)]=null});
   Object.keys(mateMap).forEach(function(k){payload[rpath("kc/mates/"+k)]=mateMap[k]});
@@ -592,8 +613,7 @@ function consumePick(pick){
   update(ref(db), payload).then(function(){releaseHost(mine, false)}).catch(function(e){fail(friendly(e)); releaseHost(mine, true)});
   setTimeout(function(){
     if(mine!==hostFlight||!hostLock) return;
-    var now=(table.step||"")+"|"+(table.seq||0)+"|"+(table.turn||"")+"|"+(table.echo||"");
-    releaseHost(mine, now===before);
+    releaseHost(mine, !!playNext&&playMark()===before);
   }, 900);
 }
 function sendPick(kind, value){
