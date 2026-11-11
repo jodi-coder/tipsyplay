@@ -78,24 +78,33 @@ function showRoomEnded(){
  var input=$("roomcode"); if(input) input.focus();
 }
 function restartSame(){
- clearOptIns();
  var name=savedName();
  if(!name){openHostFlow(); return}
  var old=code;
- if(!old){restarting=true; screen("home"); hostRoom(name).catch(function(e){restarting=false; fail(friendly(e))}); return}
- dropping=true;
- var cancel=Promise.resolve();
- if(uid){try{cancel=onDisconnect(ref(db,"rooms/"+old+"/players/"+uid)).cancel()}catch(e){}}
- Promise.resolve(cancel).catch(function(){}).then(function(){
-  return remove(ref(db,"rooms/"+old));
+ if(!old){clearOptIns(); restarting=true; screen("home"); hostRoom(name).catch(function(e){restarting=false; fail(friendly(e))}); return}
+ var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
+ clearOptIns();
+ dropping=old;
+ restarting=true;
+ hostRoom(name).then(function(){
+  var cancel=Promise.resolve();
+  if(uid){try{cancel=onDisconnect(ref(db,"rooms/"+old+"/players/"+uid)).cancel()}catch(e){}}
+  return Promise.resolve(cancel).catch(function(){}).then(function(){return remove(ref(db,"rooms/"+old))});
  }).then(function(){
-  if(connStop){connStop(); connStop=null}
-  clearRoom();
-  dropping=false;
-  restarting=true;
-  screen("home"); showApp();
-  return hostRoom(name);
- }).catch(function(e){dropping=false; restarting=false; fail(friendly(e))});
+  if(dropping===old) dropping=false;
+ }).catch(function(e){
+  var still=code===old;
+  if(dropping===old) dropping=false;
+  restarting=false;
+  if(still){
+   if($("optin")) $("optin").checked=!!optinWas;
+   if($("ona")) $("ona").checked=!!onaWas;
+   try{render()}catch(err){}
+   fail("Couldn't start a new room. Your current room is still open.");
+   return;
+  }
+  fail(friendly(e));
+ });
 }
 function showClosedChoice(role){
  var sec=$("closed");
@@ -373,8 +382,9 @@ function listenErr(e){if(denied(e)){clearRoom();fail("That room isn't available.
 function quietErr(){}
 function listenRoom(){
  stops.forEach(function(u){u()});stops=[];
+ var watched=code;
  stops.push(onValue(ref(db,roomPath("meta")),function(s){
-  if(!s.exists()){if(dropping)return; showRoomEnded();return}
+  if(!s.exists()){if(dropping===watched||watched!==code)return; showRoomEnded();return}
   var prev=meta?meta.gameId+"/"+meta.round+"/"+meta.phase:"";
   meta=s.val();
   var nowKey=meta.gameId+"/"+meta.round+"/"+meta.phase;

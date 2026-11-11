@@ -193,25 +193,31 @@ function showRoomEnded(){
   var input=$("pin"); if(input) input.focus();
 }
 function restartSame(){
-  clearOptIns();
   var name=savedName();
   if(!name){openHostFlow(); return}
   var old=code;
-  if(!old){screen("home"); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
-  dropping=true;
-  var cancel=Promise.resolve();
-  if(uid){try{cancel=onDisconnect(ref(db, "mlt/"+old+"/players/"+uid)).cancel()}catch(e){}}
-  Promise.resolve(cancel).catch(function(){}).then(function(){
-    return remove(ref(db, "mlt/"+old));
+  if(!old){clearOptIns(); screen("home"); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
+  var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
+  clearOptIns();
+  dropping=old;
+  hostRoom(name).then(function(){
+    var cancel=Promise.resolve();
+    if(uid){try{cancel=onDisconnect(ref(db, "mlt/"+old+"/players/"+uid)).cancel()}catch(e){}}
+    return Promise.resolve(cancel).catch(function(){}).then(function(){return remove(ref(db, "mlt/"+old))});
   }).then(function(){
-    if(connStop){connStop(); connStop=null}
-    stopAll();
-    code=null; meta=null; players={};
-    try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
-    dropping=false;
-    screen("home");
-    return hostRoom(name);
-  }).catch(function(e){dropping=false; fail(friendly(e))});
+    if(dropping===old) dropping=false;
+  }).catch(function(e){
+    var still=code===old;
+    if(dropping===old) dropping=false;
+    if(still){
+      if($("optin")) $("optin").checked=!!optinWas;
+      if($("ona")) $("ona").checked=!!onaWas;
+      try{render()}catch(err){}
+      fail("Couldn't start a new room. Your current room is still open.");
+      return;
+    }
+    fail(friendly(e));
+  });
 }
 function showClosedChoice(role){
   var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
@@ -915,8 +921,9 @@ function listen(){
   stopAll();
   heardRound=-1; suspenseFor=-1; stingFor=-1; heardTwist=-1; heardOver=false; showRevealNow=-1;
   scoring=0; pendingVote=""; revealSent=""; autoSent=""; casts={}; reveal={};
+  var watched=code;
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){if(dropping) return; showRoomEnded(); return}
+    if(!s.exists()){if(dropping===watched||watched!==code) return; showRoomEnded(); return}
     meta=s.val()||null;
     maybeFreshScores();
     watchCasts();

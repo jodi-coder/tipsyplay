@@ -67,22 +67,31 @@ function showRoomEnded(){
  var input=$("roomcode"); if(input) input.focus();
 }
 function restartSame(){
- clearOptIns();
  var name=savedName();
  if(!name){openHostFlow(); return}
  var old=code;
- if(!old){screen("home"); showApp(); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
- dropping=true;
- cancelAway().then(function(){
-  return remove(ref(db,"rooms/"+old));
+ if(!old){clearOptIns(); screen("home"); showApp(); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
+ var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
+ clearOptIns();
+ dropping=old;
+ hostRoom(name).then(function(){
+  var cancel=Promise.resolve();
+  if(uid){try{cancel=onDisconnect(ref(db,"rooms/"+old+"/players/"+uid)).cancel()}catch(e){}}
+  return Promise.resolve(cancel).catch(function(){}).then(function(){return remove(ref(db,"rooms/"+old))});
  }).then(function(){
-  stopAll();
-  code=null; meta=null; players={};
-  try{sessionStorage.removeItem("tp_room")}catch(e){}
-  dropping=false;
-  screen("home"); showApp();
-  return hostRoom(name);
- }).catch(function(e){dropping=false; fail(friendly(e))});
+  if(dropping===old) dropping=false;
+ }).catch(function(e){
+  var still=code===old;
+  if(dropping===old) dropping=false;
+  if(still){
+   if($("optin")) $("optin").checked=!!optinWas;
+   if($("ona")) $("ona").checked=!!onaWas;
+   try{render()}catch(err){}
+   fail("Couldn't start a new room. Your current room is still open.");
+   return;
+  }
+  fail(friendly(e));
+ });
 }
 function showClosedChoice(role){
  var sec=$("closed");
@@ -833,9 +842,9 @@ function watchShared(){
 }
 function listenRoom(){
  stopAll();revealStops={};revealedMap={};noteMap={};tallyMap={};sealedMap={};answerMap={};callMap={};secret=null;secretSent="";
- var seen="";
+ var seen="", watched=code;
  stops.push(onValue(ref(db,rpath("meta")),function(s){
-  if(!s.exists()){if(dropping)return; showRoomEnded();return}
+  if(!s.exists()){if(dropping===watched||watched!==code)return; showRoomEnded();return}
   var prev=seen;
   meta=s.val();
   seen=meta.gameId+"/"+meta.round+"/"+meta.phase+"/"+meta.status;
