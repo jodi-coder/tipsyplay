@@ -529,7 +529,7 @@ function paintTable(){
   paintHaves();
   paintQueue();
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
-  if(over) paintAwards();
+  if(over){paintAwards(); var line=$("recapline"); if(line) line.textContent="Never Have I Ever, "+total+" rounds"}
   var custom=$("custombox");
   if(custom){
     if(custom.classList.contains("hostonly")&&!isHost()) custom.classList.add("hide");
@@ -795,6 +795,7 @@ async function hostRoom(name){
   await set(ref(db, "rooms/"+claimed+"/players/"+uid), {name:name, connected:true, joinedAt:serverNow()});
   await set(ref(db, "rooms/"+claimed+"/nhie/who/"+uid), {emoji:myEmoji(), confessions:0, seen:0});
   code=claimed;
+  rememberGame();
   try{sessionStorage.setItem("tp_nhie_room", code)}catch(e){}
   listen(); armPresence();
 }
@@ -811,6 +812,7 @@ async function joinRoom(c, name){
   var cur=w.val()||{confessions:0, seen:0};
   await set(ref(db, "rooms/"+c+"/nhie/who/"+uid), {emoji:myEmoji()||cur.emoji||"", confessions:+cur.confessions||0, seen:+cur.seen||0});
   code=c;
+  rememberGame();
   try{sessionStorage.setItem("tp_nhie_room", code)}catch(e){}
   listen(); armPresence();
 }
@@ -829,6 +831,14 @@ function sendReact(emo){
   var id=(now.toString(36)+Math.random().toString(36).slice(2,8)).replace(/[^A-Za-z0-9]/g,"").slice(0,24);
   if(id.length<6) id=("react"+id+"xxxxxx").slice(0,12);
   update(ref(db), {[rpath("nhie/react/"+id)]:{e:emo, u:uid}}).catch(function(e){fail(friendly(e))});
+}
+function rememberGame(){try{localStorage.setItem("tp_last_game","never-have-i-ever")}catch(e){}}
+function shareRecap(){
+  var text=$("recapline")&&$("recapline").textContent||("Never Have I Ever, "+(meta&&meta.rounds||0)+" rounds");
+  var copied=function(){fail("Recap copied.")};
+  if(navigator.share) navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)});
+  else if(navigator.clipboard) navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+  else fail(text);
 }
 function playAgain(){
   if(!isHost()||!meta||meta.status!=="over"||hostLock) return;
@@ -889,6 +899,7 @@ function wire(){
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendCast("pass")});
   $("nextround").addEventListener("click", function(){unlock(); advance()});
   if($("again")) $("again").addEventListener("click", function(){unlock(); playAgain()});
+  if($("recap")) $("recap").addEventListener("click", function(){unlock(); shareRecap()});
   $("close").addEventListener("click", askClose);
   $("closestage").addEventListener("click", askClose);
   $("copylink").addEventListener("click", function(){copyLink($("copylink"))});

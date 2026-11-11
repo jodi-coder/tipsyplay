@@ -389,12 +389,23 @@ function paintStage(){
  armTimer();
  tryDrawReveal();
 }
+function rememberGame(){if(GAME&&GAME.id){try{localStorage.setItem("tp_last_game", GAME.id)}catch(e){}}}
+function recapText(){return (GAME&&GAME.title?GAME.title:"This game")+", "+((meta&&meta.rounds)||0)+" rounds"}
+function shareRecap(){
+ var text=recapText();
+ var line=$("recapline"); if(line) line.textContent=text;
+ var copied=function(){fail("Recap copied.")};
+ if(navigator.share){navigator.share({text:text}).catch(function(){if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)}); else fail(text)})}
+ else if(navigator.clipboard)navigator.clipboard.writeText(text).then(copied).catch(function(){fail(text)});
+ else fail(text);
+}
 function paintOver(){
  var sc=scores(),list=playerList().slice().sort(function(a,b){return (sc[b.uid]||0)-(sc[a.uid]||0)});
  var box=$("final");box.textContent="";
  list.forEach(function(p){var li=el("li"); li.appendChild(el("span",null,pname(p.uid)));li.appendChild(el("span",null,String(sc[p.uid]||0)+" pts"));box.appendChild(li)});
  var top=list[0];
  $("crowns").textContent=top?(pname(top.uid)+" leads with "+(sc[top.uid]||0)+" points. Sipping was always optional."):"Sipping was always optional.";
+ var line=$("recapline"); if(line) line.textContent=recapText();
 }
 function btn(label,attrs,cls){
  var b=el("button",cls||"btn",label);
@@ -854,6 +865,7 @@ async function hostRoom(name){
  if(!claimed)throw new Error("room");
  await set(ref(db,"rooms/"+claimed+"/players/"+uid),myPlayer(name));
  code=claimed;sessionStorage.setItem("tp_room",code);
+ rememberGame();
  listenRoom();armPresence();
 }
 async function joinRoom(c,name){
@@ -868,6 +880,7 @@ async function joinRoom(c,name){
  var prev=mine.val()||{};
  await set(ref(db,"rooms/"+c+"/players/"+uid),myPlayer(name||prev.name,prev));
  code=c;sessionStorage.setItem("tp_room",code);
+ rememberGame();
  listenRoom();armPresence();
 }
 function doHost(){
@@ -898,7 +911,7 @@ function doJoin(){
 function doStart(){
  if(!isHost()||!meta)return;
  if(playerList().length<2){fail("Need 2 players on their phones.");return}
- fail("");
+ fail(""); rememberGame();
  var rounds=+meta.rounds||5,deck,words;
  if(GAME.kind==="draw"){
   words=shuffle(GAME.prompts).slice(0,rounds);
@@ -940,6 +953,7 @@ function wire(){
   else if(act==="join")doJoin();
   else if(act==="start")doStart();
   else if(act==="again")doAgain();
+  else if(act==="recap")shareRecap();
   else if(act==="close")closeRoom();
   else if(act==="leave")leaveRoom();
   else if(act==="home")location.href="../index.html";
