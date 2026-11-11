@@ -179,12 +179,39 @@ function openHostFlow(){
   if(!name){focusName(); return}
   if($("hostbtn")) $("hostbtn").click();
 }
+var dropping=false;
+function clearOptIns(){
+  var box=$("optin"); if(box) box.checked=false;
+  var na=$("ona"); if(na) na.checked=false;
+}
+function showRoomEnded(){
+  stopAll();
+  code=null; meta=null; players={};
+  try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
+  fail("This room has closed.");
+  screen("home");
+  var input=$("pin"); if(input) input.focus();
+}
 function restartSame(){
+  clearOptIns();
   var name=savedName();
   if(!name){openHostFlow(); return}
-  releaseRoom();
-  screen("home");
-  hostRoom(name).catch(function(e){fail(friendly(e))});
+  var old=code;
+  if(!old){screen("home"); hostRoom(name).catch(function(e){fail(friendly(e))}); return}
+  dropping=true;
+  var cancel=Promise.resolve();
+  if(uid){try{cancel=onDisconnect(ref(db, "mlt/"+old+"/players/"+uid)).cancel()}catch(e){}}
+  Promise.resolve(cancel).catch(function(){}).then(function(){
+    return remove(ref(db, "mlt/"+old));
+  }).then(function(){
+    if(connStop){connStop(); connStop=null}
+    stopAll();
+    code=null; meta=null; players={};
+    try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
+    dropping=false;
+    screen("home");
+    return hostRoom(name);
+  }).catch(function(e){dropping=false; fail(friendly(e))});
 }
 function showClosedChoice(role){
   var msg=$("closedmsg"); if(msg) msg.textContent="This room is closed to new players.";
@@ -200,7 +227,7 @@ function mountRestart(){
   if(!isHost()||!meta||meta.status==="lobby") return;
   var sec=$("table");
   if(!sec||sec.classList.contains("hide")||sec.querySelector("[data-restart]")) return;
-  var row=document.createElement("div"); row.className="ctrl"; row.setAttribute("data-restart","1");
+  var row=document.createElement("div"); row.className="card"; row.setAttribute("data-restart","1");
   var p=document.createElement("p"); p.textContent="This room is closed to new players.";
   var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.textContent="Restart with same game";
   b.addEventListener("click", function(){restartSame()});
@@ -889,12 +916,7 @@ function listen(){
   heardRound=-1; suspenseFor=-1; stingFor=-1; heardTwist=-1; heardOver=false; showRevealNow=-1;
   scoring=0; pendingVote=""; revealSent=""; autoSent=""; casts={}; reveal={};
   stops.push(onValue(ref(db, rpath("meta")), function(s){
-    if(!s.exists()){
-      var wasHost=isHost();
-      stopAll(); meta=null; table=null; code=null;
-      try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}
-      showClosedChoice(wasHost?"host":"join"); return;
-    }
+    if(!s.exists()){if(dropping) return; showRoomEnded(); return}
     meta=s.val()||null;
     maybeFreshScores();
     watchCasts();
@@ -962,6 +984,7 @@ function shareRecap(){
 }
 function playAgain(){
   if(!isHost()||!meta||meta.status!=="over"||busy) return;
+  clearOptIns();
   var n=Math.min(100,(+meta.rematch||0)+1);
   busy=true;
   var patch=fullMeta({status:"lobby", round:0, pack:meta.pack, rounds:rounds(), twist:!!meta.twist, nohost:!!meta.nohost});
@@ -1123,8 +1146,14 @@ function wire(){
     if(yes) yes.addEventListener("click", function(){setTimeout(focusName, 60)}, {once:true});
   }
   var nm=normName($("pname").value);
-  if(!linked&&back&&validPin(back)&&nm) joinRoom(back, nm).catch(function(){try{sessionStorage.removeItem("tp_mlt_pin")}catch(e){}});
-  else if(same&&nm) joinRoom(back, nm).catch(function(){focusName()});
+  if(!linked&&back&&validPin(back)&&nm) joinRoom(back, nm).catch(function(e){
+    try{sessionStorage.removeItem("tp_mlt_pin")}catch(err){}
+    if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+  });
+  else if(same&&nm) joinRoom(back, nm).catch(function(e){
+    if(String((e&&e.message)||"")==="missing"){try{sessionStorage.removeItem("tp_mlt_pin")}catch(err){} fail("This room has closed.")}
+    else focusName();
+  });
 }
 function showReady(){
   if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
