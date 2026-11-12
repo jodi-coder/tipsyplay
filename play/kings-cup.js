@@ -3,13 +3,10 @@
 /* ============================================================
    SOUNDS
    Procedural Web Audio only. No samples, no audio files.
-   Buses: music (host loop + room tone), sfx (panned, every
-   phone), voice (host announcer). Music ducks for SFX/voice.
+   Short effects on every phone. No music, no announcer.
    ============================================================ */
 var SOUNDS = {
-  buses: { music: 0.7, sfx: 0.9, voice: 0.85 },
-  music: { bpm: 108, hypePerKing: 14 },
-  sfx: ["flip","shuffle","whoosh","gulp","clink","crack","pour","ice","cheers","cupPour","sting","heavyPour"],
+  sfx: ["flip","shuffle","whoosh","clink","ice","cupPour","sting"],
   crowd: { cheer: "cheer", ooh: "ooh", gasp: "gasp", boo: "boo", applause: "applause", laugh: "laugh", chant: "chant" }
 };
 /* ============================================================
@@ -34,8 +31,7 @@ var RULES = {
 };
 /* ============================================================
    TRIGGERS
-   Moment -> sound cues. Host music/voice stay off this map.
-   Phones play the short cues locally. The host also speaks.
+   Moment -> sound cues. Phones play the short cues locally.
    ============================================================ */
 var TRIGGERS = {
   shuffle: ["shuffle","whoosh"],
@@ -66,7 +62,7 @@ var SEED_DARES = ["Take a dramatic bow.","Compliment every player in four words.
 var ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ";
 var MIXKEY = "tp_kc_mix";
 var $=function(id){return document.getElementById(id)};
-var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false};
+var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {sfx:0.7,muteSfx:false};
 var engine = null;
 var parts = [], raf = 0;
 var uid = null, code = null, meta = null, players = {}, who = {}, table = null, ask = false, house = [], mates = {}, deckMem = null;
@@ -80,9 +76,7 @@ function audioEngine(){
   if(engine||!window.PartyAudio) return engine;
   engine = PartyAudio.create({
     key:MIXKEY, mix:mix, host:isHost,
-    hype:function(){return kingCount()},
-    bpm:SOUNDS.music.bpm, hypePer:SOUNDS.music.hypePerKing,
-    pulse:function(){var el=$("lights"); if(!el) return; el.classList.add("on"); setTimeout(function(){el.classList.remove("on")}, 90)}
+    hype:function(){return kingCount()}
   });
   return engine;
 }
@@ -90,9 +84,7 @@ function fire(moment, level){
   var eng=audioEngine(); if(!eng) return;
   (TRIGGERS[moment]||[]).forEach(function(name){try{eng.cue(name, level)}catch(e){}});
 }
-function say(line){var eng=audioEngine(); if(eng) eng.say(line)}
-function startMusic(){var eng=audioEngine(); if(eng&&isHost()) eng.startMusic()}
-function unlock(){try{var eng=audioEngine(); if(eng){eng.unlock(); if(isHost()) eng.startMusic()} if(window.TPSound) TPSound.unlock()}catch(e){}}
+function unlock(){try{var eng=audioEngine(); if(eng) eng.unlock(); if(window.TPSound) TPSound.unlock()}catch(e){}}
 function kingCount(){return table&&table.kings?+table.kings:0}
 function isHost(){return !!(meta&&uid&&meta.hostUid===uid)}
 function order(){
@@ -422,7 +414,7 @@ function render(){
   var turnName=table?nameOf(table.turn):"";
   $("turn").textContent=table&&table.step==="echo"?nameOf(table.echo)+" matches once":turnName+(table&&table.step==="draw"?" draws":" has the card");
   $("left").textContent=(table?table.left:0)+" cards left in the deck";
-  $("audioline").textContent=isHost()?"Music, room tone, and the announcer play on this phone.":"Short sounds on this phone. Music stays with the host.";
+  $("audioline").textContent="Short sounds only. Use the speaker button at the top to mute them.";
   var span=$("cupfill"); if(span) span.style.height=(Math.min(kingCount(),4)*25)+"%";
   $("cuplabel").textContent=Math.min(kingCount(),4)+"/4";
   paintScores(); paintRules();
@@ -446,7 +438,6 @@ function render(){
     $("draw").classList.add("hide");
     $("wait").classList.add("hide");
   }
-  if(isHost()&&meta.status==="play") startMusic();
   if(isHost()&&!hostLock&&ask&&table){
     if(table.step==="draw"&&deckMem&&deckMem.length) consumeAsk(true);
     else if(table.step!=="draw") update(ref(db),{[rpath("kc/ask")]:null}).catch(function(){});
@@ -460,7 +451,7 @@ function hear(next){
   unlock();
   flash();
   if(isHost()){
-    if(next.step==="finale"){fire("draw"); fire("finalKing",1); say("Final King!"); shake(); burst(90)}
+    if(next.step==="finale"){fire("draw"); fire("finalKing",1); shake(); burst(90)}
     else{
       fire("draw");
       var rule=RULES[card.r];
@@ -472,7 +463,6 @@ function hear(next){
       else if(card.r==="9") fire("rhyme");
       else if(card.r==="10") fire("category");
       else if(card.r==="4"||card.r==="7") fire("floor");
-      say(rule.say);
       burst(12);
     }
   }else{
@@ -640,7 +630,7 @@ async function deal(){
   payload[rpath("kc/pick")]=null;
   Object.keys(mates).forEach(function(k){payload[rpath("kc/mates/"+k)]=null});
   house.forEach(function(_,i){payload[rpath("kc/house/"+i)]=null});
-  try{await update(ref(db), payload); fire("shuffle"); say("King's Cup!"); unlock()}
+  try{await update(ref(db), payload); fire("shuffle"); unlock()}
   catch(e){fail(friendly(e))}
 }
 function stopAll(){stops.forEach(function(fn){fn()}); stops=[]; if(connStop){connStop(); connStop=null}}
@@ -784,17 +774,6 @@ function wire(){
   $("closestage").addEventListener("click", closeRoom);
   $("leave").addEventListener("click", leaveRoom);
   $("leavestage").addEventListener("click", leaveRoom);
-  $("mixbtn").addEventListener("click", function(){$("mixer").classList.toggle("hide"); unlock()});
-  ["mixmusic","mixsfx","mixvoice"].forEach(function(id){
-    $(id).addEventListener("input", function(){
-      var v=$(id).value/100;
-      if(id==="mixmusic") mix.music=v; else if(id==="mixsfx") mix.sfx=v; else mix.voice=v;
-      saveMix(); applyMix();
-    });
-  });
-  $("mutemusic").addEventListener("change", function(){mix.muteMusic=$("mutemusic").checked; saveMix(); applyMix()});
-  $("mutesfx").addEventListener("change", function(){mix.muteSfx=$("mutesfx").checked; saveMix(); applyMix()});
-  $("mutevoice").addEventListener("change", function(){mix.muteVoice=$("mutevoice").checked; saveMix(); if(mix.muteVoice&&window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}});
   document.addEventListener("click", function(e){
     var t=e.target; if(t&&t.nodeType!==1) t=t.parentElement;
     if(!t||!t.closest) return;
@@ -810,12 +789,6 @@ function wire(){
       update(ref(db),{[rpath("kc/house/"+i)]:null}).catch(function(err){fail(friendly(err))});
     }
   });
-  $("mixmusic").value=Math.round(mix.music*100);
-  $("mixsfx").value=Math.round(mix.sfx*100);
-  $("mixvoice").value=Math.round(mix.voice*100);
-  $("mutemusic").checked=!!mix.muteMusic;
-  $("mutesfx").checked=!!mix.muteSfx;
-  $("mutevoice").checked=!!mix.muteVoice;
   var mute=$("mute");
   if(window.TPSound&&mute) TPSound.bindMute(mute);
   window.addEventListener("pointerdown", unlock, {passive:true});

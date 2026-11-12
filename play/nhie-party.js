@@ -14,7 +14,7 @@ var EMOJIS = ["", "😎", "🦊", "🌟", "🎧", "🍀", "🔥", "🌙", "🎭"
 var ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ";
 var MIXKEY = "tp_nhie_mix";
 var $=function(id){return document.getElementById(id)};
-var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false};
+var mix = window.PartyAudio ? PartyAudio.load(MIXKEY) : {sfx:0.7,muteSfx:false};
 var engine=null, parts=[], raf=0;
 var uid=null, code=null, meta=null, players={}, who={}, table=null, sayBox=null, cast={};
 var lobbyMode="classic", gameLength=15, localQueue="", pendingCast=null, scoring=0, sending=false;
@@ -28,19 +28,15 @@ function audioEngine(){
   if(engine||!window.PartyAudio) return engine;
   engine=PartyAudio.create({
     key:MIXKEY, mix:mix, host:isHost,
-    hype:function(){return table?Math.min(6, +table.round||0):0},
-    bpm:112, hypePer:6,
-    pulse:function(){var el=$("lights"); if(!el) return; el.classList.add("on"); setTimeout(function(){el.classList.remove("on")}, 90)}
+    hype:function(){return table?Math.min(6, +table.round||0):0}
   });
   return engine;
 }
 function cue(name){if(!audioOn) return; var eng=audioEngine(); if(eng){try{eng.cue(name)}catch(e){}}}
-function say(line){if(!audioOn||!isHost()) return; var eng=audioEngine(); if(eng) eng.say(line)}
 function unlock(){
   audioOn=true;
   try{var eng=audioEngine(); if(eng) eng.unlock(); if(window.TPSound) TPSound.unlock()}catch(e){}
 }
-function maybeMusic(){var eng=audioEngine(); if(audioOn&&eng&&isHost()) eng.startMusic()}
 function buzz(){
   var used=false;
   try{if(typeof navigator.vibrate==="function") used=navigator.vibrate(30)===true}catch(e){used=false}
@@ -575,7 +571,6 @@ function paintTable(){
   }
   var hostP=meta&&players[meta.hostUid];
   var away=$("away"); if(away) away.classList.toggle("hide", !hostP||hostP.connected!==false||isHost());
-  if(isHost()) maybeMusic();
   paintClock();
 }
 function render(){
@@ -584,7 +579,7 @@ function render(){
   document.body.dataset.mode=mode;
   document.body.dataset.phase=table?table.step:(meta&&meta.status==="lobby"?"lobby":"");
   if(!meta){screen("home"); return}
-  if(meta.status==="lobby"){screen("lobby"); paintLobby(); maybeMusic(); return}
+  if(meta.status==="lobby"){screen("lobby"); paintLobby(); return}
   screen("table");
   mountRestart();
   paintTable();
@@ -599,7 +594,6 @@ function hear(){
     cue("sting");
     var card=$("card");
     if(card){card.classList.remove("nh-slam"); void card.offsetWidth; card.classList.add("nh-slam")}
-    if(isHost()) say("Never have I ever.");
   }
   if(table.step==="results"&&heardResults!==+table.seq){
     heardResults=+table.seq;
@@ -951,26 +945,9 @@ function wire(){
   $("custom").addEventListener("keydown", function(e){if(e.key==="Enter"){e.preventDefault(); queueCustom()}});
   document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setMode(b.dataset.mode)})});
   document.querySelectorAll("[data-len]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setLength(b.dataset.len)})});
-  $("mixbtn").addEventListener("click", function(){$("mixer").classList.toggle("hide"); unlock()});
-  ["mixmusic","mixsfx","mixvoice"].forEach(function(id){
-    $(id).addEventListener("input", function(){
-      var v=$(id).value/100;
-      if(id==="mixmusic") mix.music=v; else if(id==="mixsfx") mix.sfx=v; else mix.voice=v;
-      saveMix();
-    });
-  });
-  $("mutemusic").addEventListener("change", function(){mix.muteMusic=$("mutemusic").checked; saveMix()});
-  $("mutesfx").addEventListener("change", function(){mix.muteSfx=$("mutesfx").checked; saveMix()});
-  $("mutevoice").addEventListener("change", function(){mix.muteVoice=$("mutevoice").checked; saveMix(); if(mix.muteVoice&&window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}});
   document.querySelectorAll("[data-emo]").forEach(function(b){
     b.addEventListener("click", function(){unlock(); if(code) sendReact(b.dataset.emo); else cue(EMO_CUE[b.dataset.emo]||"clink")});
   });
-  $("mixmusic").value=Math.round(mix.music*100);
-  $("mixsfx").value=Math.round(mix.sfx*100);
-  $("mixvoice").value=Math.round(mix.voice*100);
-  $("mutemusic").checked=!!mix.muteMusic;
-  $("mutesfx").checked=!!mix.muteSfx;
-  $("mutevoice").checked=!!mix.muteVoice;
   var mute=$("mute"); if(window.TPSound&&mute) TPSound.bindMute(mute);
   if(!clockTimer) clockTimer=setInterval(paintClock, 200);
   window.addEventListener("offline", function(){fail("You're offline. We'll keep trying when you're back.")});

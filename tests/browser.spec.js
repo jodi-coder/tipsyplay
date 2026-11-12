@@ -376,6 +376,7 @@ test("lobby removal works and baseline rules still reject a host claim", async (
   const code = await hostRoom(ada.page, "Ada");
   await joinRoom(bea.page, "Bea", code);
   await expect(ada.page.locator("#plist")).toContainText("Bea");
+  await ada.page.locator("#rmmenubtn").click(); // Remove moved into the Menu
   await ada.page.getByRole("button", { name: "Remove Bea" }).click();
   await expect(ada.page.locator("#plist")).not.toContainText("Bea");
   const ns = "tipsyplay-f3c95-default-rtdb";
