@@ -1,7 +1,7 @@
 const { defineConfig } = require("@playwright/test");
 module.exports = defineConfig({
   testDir: ".",
-  testMatch: "browser.spec.js",
+  testMatch: ["browser.spec.js", "audio.spec.js", "room-ui.spec.js"],
   timeout: 240000,
   expect: { timeout: 20000 },
   workers: 1,
@@ -9,7 +9,7 @@ module.exports = defineConfig({
   reporter: [["list"]],
   projects: [
     { name: "chromium", use: { browserName: "chromium" } },
-    { name: "webkit", grep: /age gate|narrow pages/, use: { browserName: "webkit" } }
+    { name: "webkit", grep: /age gate|narrow pages|mute toggle|first tap/, use: { browserName: "webkit" } }
   ],
   use: {
     baseURL: process.env.TIPSY_BASE || "http://127.0.0.1:8765",

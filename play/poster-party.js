@@ -16,7 +16,7 @@ var TTL=8*60*60*1000;
 var $=function(id){return document.getElementById(id)};
 var uid=null, code=null, meta=null, players={}, who={}, table=null, tally={}, secrets={}, secretsLoaded=false;
 var db, authObj, stops=[], secretUnsub=null, connStop=null, hostLock=false, hostSig="", sending=false;
-var engine=null, mix={music:0,sfx:0.9,voice:0,muteMusic:true,muteSfx:false,muteVoice:true};
+var engine=null, mix={sfx:0.7,muteSfx:false};
 var snapKey="", snapSecrets=null, applied="", resetFor=0, passArm=0, closeArm=0, bootTimer=0, heard=-1, tallyUnsub=null, watchKey="", tallyKey="";
 var serverOffset=0, offsetReady=false, offsetStop=null;
 var ref, onValue, update, set, get, remove, onDisconnect, serverTimestamp, goOnline;
@@ -81,7 +81,6 @@ function blip(kind){
     else if(kind==="win" && TPSound.celebrate) TPSound.celebrate();
     else if(TPSound.click) TPSound.click();
   }
-  cue(kind==="win"?"payoff":kind==="roll"?"sting":kind==="no"?"whoosh":"crack");
 }
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function savedName(){
@@ -625,6 +624,7 @@ function paintTable(){
   if(GAME==="crew" && table.step==="prompt"){ids=connectedIds(); pred=function(id){return tally[id]===7}}
   if(GAME==="crew" && table.step==="answer"){ids=crewState().live; pred=function(id){return L.crewMarked(tally[id], crewState().gen)}}
   var prog=countProgress(ids, pred);
+  document.body.setAttribute("data-rm-allin", prog.total&&prog.done>=prog.total?"1":"0");
   if($("progress")) $("progress").textContent=table.step==="results"||table.step==="over"?"":(prog.total?prog.done+" of "+prog.total+" in":"");
   var reveal=$("revealbtn"), next=$("nextround"), retry=$("retrybtn"), deal=$("dealbtn");
   if(reveal) reveal.classList.toggle("hide", !isHost()||(table.step!=="answer"&&table.step!=="vote"));

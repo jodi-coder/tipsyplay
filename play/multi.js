@@ -318,6 +318,8 @@ function resultLine(){
 }
 function liveLine(){
  var list=playerList(),a=actor();
+ /* story, drawing and category rounds are paced by the host, so there is no "everyone is in" moment to wait for */
+ if(GAME.kind==="story"||GAME.kind==="draw"||GAME.kind==="category") document.body.setAttribute("data-rm-allin","1");
  if(GAME.kind==="story"){
   var notes=roundMap(noteMap);
   var bits=list.filter(function(p){return notes[p.uid]&&notes[p.uid]!=="(pass)"}).map(function(p){return pname(p.uid)+": "+notes[p.uid]});
@@ -333,6 +335,7 @@ function liveLine(){
   return (a?pname(a.uid):"Someone")+" has named "+n+".";
  }
  var need=needed().filter(function(p){return !answered[p.uid]}).map(function(p){return pname(p.uid)});
+ document.body.setAttribute("data-rm-allin",need.length?"0":"1");
  if(!need.length)return "Everyone's in.";
  return "Waiting for "+need.join(", ")+".";
 }

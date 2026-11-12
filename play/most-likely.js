@@ -12,12 +12,12 @@ var EMOJIS=["","😎","🦊","🌟","🎧","🍀","🔥","🌙","🎭","🍓","�
 var ALPHABET="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 var MIXKEY="tp_mlt_mix";
 var $=function(id){return document.getElementById(id)};
-var mix=window.PartyAudio?PartyAudio.load(MIXKEY):{music:0.7,sfx:0.9,voice:0.85,muteMusic:false,muteSfx:false,muteVoice:false};
+var mix=window.PartyAudio?PartyAudio.load(MIXKEY):{sfx:0.7,muteSfx:false};
 var engine=null, parts=[], raf=0;
 var uid=null, code=null, meta=null, players={}, table=null, casts={}, reveal={}, customs=[], mine=null;
 var lobbyPack="classic", gameLength=10, lobbyDirty=false, usedCustom={}, pendingVote="", sending=false;
 var serverOffset=0, offsetReady=false, offsetStop=null, revealWait=0, announcedSeq=-1, announcedFinal=-1, knownRematch="";
-var db, authObj, stops=[], connStop=null, castStop=null, busy=false, audioOn=false, musicWanted=false;
+var db, authObj, stops=[], connStop=null, castStop=null, busy=false, audioOn=false;
 var bootTimer=0, clockTimer=0, hostTimer=0, suspenseTimer=0, lightTimer=0, lastTick=-1;
 var heardRound=-1, suspenseFor=-1, stingFor=-1, heardTwist=-1, heardOver=false, showRevealNow=-1;
 var revealSent="", autoSent="", deck=[], builtPack="", scoring=0, closeArmed=0;
@@ -28,46 +28,21 @@ function audioEngine(){
   if(engine||!window.PartyAudio) return engine;
   engine=PartyAudio.create({
     key:MIXKEY, mix:mix, host:isHost,
-    hype:function(){return table?Math.min(6,+table.round||0):0},
-    bpm:104, hypePer:4
+    hype:function(){return table?Math.min(6,+table.round||0):0}
   });
   return engine;
 }
 function headerMuted(){return !!(window.TPSound&&!TPSound.enabled())}
 function sfxOn(){return !mix.muteSfx&&!headerMuted()}
-function voiceOn(){return !mix.muteVoice&&!headerMuted()}
-function pushMix(){
-  if(!engine) return;
-  var ps=mix.muteSfx, pv=mix.muteVoice, pm=mix.muteMusic;
-  if(headerMuted()){mix.muteSfx=true; mix.muteVoice=true; mix.muteMusic=true}
-  try{engine.apply()}catch(e){}
-  mix.muteSfx=ps; mix.muteVoice=pv; mix.muteMusic=pm;
-  if(headerMuted()){
-    if(engine.stopMusic) engine.stopMusic();
-    if(window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}
-  }
-}
+function pushMix(){if(engine){try{engine.apply()}catch(e){}}}
 function cue(name){
   if(!audioOn||!sfxOn()) return;
   var eng=audioEngine();
   if(eng){try{eng.cue(name)}catch(e){}}
 }
-function say(line){
-  if(!audioOn||!voiceOn()||!isHost()||!line) return;
-  var eng=audioEngine();
-  if(eng){try{eng.say(line)}catch(e){}}
-}
 function unlock(){
   audioOn=true;
   try{var eng=audioEngine(); if(eng) eng.unlock(); if(window.TPSound) TPSound.unlock()}catch(e){}
-}
-function maybeMusic(){
-  if(!audioOn||!isHost()||headerMuted()||mix.muteMusic||!(mix.music>0)||!musicWanted){
-    if(engine&&engine.stopMusic&&(!musicWanted||mix.muteMusic||headerMuted())) engine.stopMusic();
-    return;
-  }
-  var eng=audioEngine();
-  if(eng) eng.startMusic();
 }
 function buzz(){
   try{if(typeof navigator.vibrate==="function") navigator.vibrate(20)}catch(e){}
@@ -711,9 +686,6 @@ function finishReveal(seq, paint){
   if(!result.n) cue("mltNone");
   else if(result.wins.length>1) cue("mltTie");
   else cue("mltWin");
-  if(!result.n) say("Nobody this round.");
-  else if(result.wins.length>1) say("It's a tie.");
-  else say("Sip, water, or pose.");
   flash();
   buzz();
   if(result.n&&result.wins.length===1) burst(40);
@@ -1108,26 +1080,6 @@ function wire(){
   $("sharebtn").addEventListener("click", shareRoom);
   document.querySelectorAll("#packs [data-pack]").forEach(function(b){b.addEventListener("click", function(){setPack(b.dataset.pack)})});
   document.querySelectorAll("[data-len]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setLength(+b.dataset.len)})});
-  $("mixbtn").addEventListener("click", function(){var box=$("mixer"); if(box) box.classList.toggle("hide"); unlock()});
-  ["mixmusic","mixsfx","mixvoice"].forEach(function(id){
-    $(id).addEventListener("input", function(){
-      var v=$(id).value/100;
-      if(id==="mixmusic"){mix.music=v; musicWanted=v>0&&!$("mutemusic").checked} else if(id==="mixsfx") mix.sfx=v; else mix.voice=v;
-      saveMix(); maybeMusic();
-    });
-  });
-  $("mutemusic").addEventListener("change", function(){mix.muteMusic=$("mutemusic").checked; if(!mix.muteMusic) musicWanted=mix.music>0; saveMix(); maybeMusic()});
-  $("mutesfx").addEventListener("change", function(){mix.muteSfx=$("mutesfx").checked; saveMix()});
-  $("mutevoice").addEventListener("change", function(){
-    mix.muteVoice=$("mutevoice").checked; saveMix();
-    if(mix.muteVoice&&window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}
-  });
-  $("mixmusic").value=Math.round(mix.music*100);
-  $("mixsfx").value=Math.round(mix.sfx*100);
-  $("mixvoice").value=Math.round(mix.voice*100);
-  $("mutemusic").checked=!!mix.muteMusic;
-  $("mutesfx").checked=!!mix.muteSfx;
-  $("mutevoice").checked=!!mix.muteVoice;
   var mute=$("mute");
   if(window.TPSound&&mute){
     TPSound.bindMute(mute);
@@ -1142,8 +1094,6 @@ function wire(){
     stopAudioTimers();
     if(clockTimer){clearInterval(clockTimer); clockTimer=0}
     if(hostTimer){clearInterval(hostTimer); hostTimer=0}
-    if(engine&&engine.stopMusic) engine.stopMusic();
-    if(window.speechSynthesis){try{window.speechSynthesis.cancel()}catch(e){}}
   });
   var back=""; try{back=sessionStorage.getItem("tp_mlt_pin")||""}catch(e){}
   var same=linked&&back&&linked===back;
