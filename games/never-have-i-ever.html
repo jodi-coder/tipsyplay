@@ -23,7 +23,7 @@
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Never Have I Ever: Classic Party Game | TipsyPlay"><meta property="og:description" content="A classic never-have-I-ever game for adults. Answer on your phone: one small optional sip or a 3-second pose. Water counts. Nothing stacks."><meta property="og:url" content="https://tipsyplay.com/games/never-have-i-ever.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a teal background with a yellow goblet and the words Free Drinking and Party Games"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Never Have I Ever: Classic Party Game | TipsyPlay"><meta name="twitter:description" content="A classic never-have-I-ever game for adults. Answer on your phone: one small optional sip or a 3-second pose. Water counts. Nothing stacks."><meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg"><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Never Have I Ever", "item": "https://tipsyplay.com/games/never-have-i-ever.html"}]}, {"@type": "FAQPage", "@id": "https://tipsyplay.com/games/never-have-i-ever.html#faq", "url": "https://tipsyplay.com/games/never-have-i-ever.html", "mainEntity": [{"@type": "Question", "name": "Can I play without drinking?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. If you tap I HAVE, the screen offers one small optional sip, water, or a 3-second pose. Skip the sip. You may also decline both a drink and the pose — you do not owe a replacement action. If a screen only offers an action you have declined, pause or stop instead of recording a choice you did not make."}}, {"@type": "Question", "name": "How many people can play?", "acceptedAnswer": {"@type": "Answer", "text": "2–12 players. One person hosts; everyone else joins from their own phone."}}, {"@type": "Question", "name": "Is there a Pass button?", "acceptedAnswer": {"@type": "Answer", "text": "Pass sits with I HAVE and NEVER. A pass is not a yes, adds no sip, and does not stack. You may still decline a drink and any alternative."}}, {"@type": "Question", "name": "Does anything stack?", "acceptedAnswer": {"@type": "Answer", "text": "No drink penalties stack. Yeses are stories, not a drink score, and there is no timer on the sip."}}, {"@type": "Question", "name": "Do I need to download an app?", "acceptedAnswer": {"@type": "Answer", "text": "No. Host a room on TipsyPlay and share the code. Play in the browser on the phones you already have."}}]}]}</script><title>Never Have I Ever: Classic Party Game | TipsyPlay</title>
-<link rel="stylesheet" href="../styles.css?v=23">
+<link rel="stylesheet" href="../styles.css?v=24">
 <style>
 body.nhie{--pack:var(--text);background:var(--bg);color:var(--text)}
 body.nhie header.top{background:var(--bg);border-bottom-color:var(--hairline)}
@@ -84,6 +84,23 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--da
 .nh-haves{margin:12px 0}
 .nh-haves h2{font-size:clamp(2.6rem,12vw,4rem);line-height:.88;margin:0 0 10px}
 .nh-safe{margin:12px 0 0;background:var(--surface);color:var(--text);border:2px solid var(--outline);border-radius:12px;padding:10px 12px;font-weight:700}
+.nh-count{margin:0 0 8px;font-family:var(--display);font-size:clamp(1.3rem,5.6vw,1.8rem);line-height:1.05}
+.nh-count b{font-size:1.5em}
+.nh-banner{margin:0 0 12px!important;padding:14px 12px;border-radius:16px;background:var(--danger);color:var(--on-danger);outline:2px solid var(--ink);text-align:center;font-size:clamp(1.5rem,7vw,2.2rem)!important;line-height:1!important;animation:nhslam .45s cubic-bezier(.2,1.4,.4,1)}
+.nh-banner.none{background:transparent;color:var(--text);outline:2px solid var(--outline)}
+.nh-haves li{animation:nhslam .4s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i,0) * 120ms + 150ms)}
+.nh-story{margin:12px 0 0;padding:12px;border-radius:14px;background:var(--surface);color:var(--ink);display:flex;align-items:center;gap:10px;justify-content:space-between}
+.nh-story p{margin:0;font-weight:700}
+.nh-story .btn{min-height:var(--tap);width:auto;padding:0 16px;flex:none}
+.nh-bar{display:block;height:10px;margin:8px auto 0;max-width:260px;border-radius:999px;border:2px solid var(--outline);overflow:hidden}
+.nh-bar i{display:block;height:100%;width:100%;background:var(--primary);transform-origin:left;transition:transform .25s linear}
+.nh-clock.hot .nh-bar i{background:var(--text)}
+.nh-locked{margin:6px 0 4px;text-align:center;font-weight:700;min-height:1.4em}
+.nh-locked:empty{display:none}
+.nh-dots{display:inline-flex;gap:6px;vertical-align:middle;margin-left:8px}
+.nh-dots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--outline);background:transparent}
+.nh-dots i.in{background:var(--primary)}
+.nh-binary button[aria-pressed="true"]::after{content:"Locked in \2713";display:block;margin-top:4px;font:700 .8rem var(--font);letter-spacing:.06em;text-transform:uppercase}
 .nh-haves ol{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
 .nh-haves li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--hairline);border-radius:14px;padding:10px 12px;font-weight:700}
 .nh-emo{font-size:1.5rem;width:2rem;text-align:center;line-height:1}
@@ -92,7 +109,10 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--da
 .nh-custom label{font-weight:700}
 .nh-custom label span{font-weight:600;color:var(--text-2)}
 .nh-custom .btn{margin-top:8px}
-.nh-award{border:2px solid var(--pack);border-radius:16px;padding:14px;margin:10px 0;box-shadow:none}
+.nh-award{background:var(--surface);border-radius:20px;padding:16px;margin:12px 0;display:grid;grid-template-columns:56px 1fr;gap:2px 14px;align-items:center;animation:nhslam .45s cubic-bezier(.2,1.4,.4,1) both}
+.nh-award:nth-child(2){animation-delay:.2s}
+.nh-award-emo{grid-row:1 / span 3;font-size:2.6rem;line-height:1;text-align:center}
+.nh-award p{margin:0}
 .nh-award-kicker{margin:0;font-family:var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--pack)}
 .nh-award-name{margin:.15em 0;font-family:var(--display);font-size:clamp(1.5rem,6vw,2.2rem);line-height:.95}
 @media (max-height:740px){
@@ -107,6 +127,8 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--da
   .nh-haves h2{font-size:clamp(2.1rem,10vw,3rem)}
 }
 @media (prefers-reduced-motion:reduce){
+  .nh-banner,.nh-haves li{animation:none}
+  .nh-bar i{transition:none}
   body.nhie.nh-flash::before,.nh-slam,.nh-hit{animation:none;transform:none}
 }
 </style>
@@ -193,16 +215,19 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--da
 <p class="nh-kicker" id="kicker">Never have I ever</p>
 <p class="nh-prompt" id="statement">The next secret is on the way.</p>
 </article>
-<p id="clock" class="nh-clock hide" aria-hidden="true"><span id="clocknum">12</span><small>to answer</small></p>
+<p id="clock" class="nh-clock hide" aria-hidden="true"><span id="clocknum">12</span><small>to answer</small><span class="nh-bar"><i id="clockbar"></i></span></p>
 <p id="clocklive" class="sr" aria-live="polite"></p>
 <div id="answers" class="nh-binary">
 <button type="button" class="nh-have" id="ihave">I HAVE</button>
 <button type="button" class="nh-never" id="never">NEVER</button>
 </div>
+<p id="locked" class="nh-locked" aria-live="polite"></p>
 <button type="button" class="btn alt" id="passbtn">Pass</button>
 <section id="haves" class="nh-haves hide" aria-live="polite">
-<h2 id="drinkhead">Sip, water, or pose</h2>
+<p id="havecount" class="nh-count"></p>
+<h2 id="drinkhead" class="nh-banner">Sip, water, or pose</h2>
 <ol id="havelist"></ol>
+<div id="story" class="nh-story hide"><p id="storyline"></p><button type="button" class="btn alt" id="storyskip">Skip</button></div>
 <p class="nh-safe">One small sip, water, or strike a pose. Always optional.</p>
 </section>
 <div class="ctrl">
@@ -291,11 +316,11 @@ body.nhie.nh-flash::before{content:"";position:fixed;inset:0;background:var(--da
 <canvas id="fx" class="fx" aria-hidden="true"></canvas>
 <script src="../sounds.js?v=18"></script>
 <script src="../app.js?v=21"></script>
-<script src="../data/nhie-packs.js?v=18"></script>
+<script src="../data/nhie-packs.js?v=19"></script>
 <script src="../play/qr.js?v=18"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","nhie");</script>
 <script src="../play/party-audio.js?v=18"></script>
-<script src="../play/nhie-party.js?v=31"></script><script src="../play/room-ui.js?v=1"></script>
+<script src="../play/nhie-party.js?v=32"></script><script src="../play/room-ui.js?v=1"></script>
 </body>
 </html>

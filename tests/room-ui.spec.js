@@ -84,9 +84,13 @@ test("lobby: one Invite, one pinned Start, the rest in the Menu, responsible-pla
   await expect(p.locator("#rminvite")).toBeVisible();
   await expect(p.locator("#rmcodebig")).toHaveText(code);
   await expect.poll(() => p.locator("#rmqr").evaluate((c) => { const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data; let k = 0; for (let i = 0; i < d.length; i += 4) if (d[i] < 60) k++; return k > 200; })).toBe(true);
-  const pixels = await p.locator("#rmqr").evaluate((c) => { const x = c.getContext("2d").getImageData(0, 0, c.width, c.height); return { w: c.width, h: c.height, data: Array.from(x.data) }; });
-  const decoded = jsqr(Uint8ClampedArray.from(pixels.data), pixels.w, pixels.h);
-  expect(decoded && decoded.data).toContain("code=" + code);
+  // wait until the code is fully drawn and readable: a half-painted canvas has dark pixels but does not decode
+  let decoded = null;
+  await expect.poll(async () => {
+    const pixels = await p.locator("#rmqr").evaluate((c) => { const x = c.getContext("2d").getImageData(0, 0, c.width, c.height); return { w: c.width, h: c.height, data: Array.from(x.data) }; });
+    decoded = jsqr(Uint8ClampedArray.from(pixels.data), pixels.w, pixels.h);
+    return decoded ? decoded.data : null;
+  }, { timeout: 10000 }).toContain("code=" + code);
   expect(decoded.data).toBe((await p.locator("#rmlink").innerText()).trim());
   for (const id of ["#rmshare", "#rmcopylink", "#rmcopycode", "#rminviteclose"]) {
     if (await p.locator(id).isVisible()) expect((await p.locator(id).boundingBox()).height, id).toBeGreaterThanOrEqual(44);

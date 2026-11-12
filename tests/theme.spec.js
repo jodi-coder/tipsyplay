@@ -140,3 +140,31 @@ test("on a phone the header folds into a Menu and the Pick a game bar appears on
   await page.keyboard.press("Escape");
   await expect(page.locator(".rm-sheet")).toBeHidden();
 });
+
+/* A white surface only reads correctly if it is in the white-surface scope in styles.css, which turns the text ink.
+   Any rule that paints var(--surface) must be in that list, sit inside something that is, or set its own ink text. */
+const NO_TEXT_OF_THEIR_OWN = [".hero-photo", ".shot", ".kc-lights i", ".spot-hero", ".pscreens"]; // images, light bars, the phone-preview screen (its text sets ink)
+test("every rule that paints a white surface is in the white-surface scope", () => {
+  const strip = (t) => t.replace(/\/\*[\s\S]*?\*\//g, "");
+  const css = strip(read("styles.css"));
+  const scopeMatch = css.match(/([^{}]+)\{[^{}]*--text:var\(--ink\)[^{}]*--text-2:var\(--ink-2\)[^{}]*\}/);
+  expect(scopeMatch, "scope rule not found").toBeTruthy();
+  const norm = (t) => t.replace(/\s+/g, " ").trim();
+  const splitSel = (t) => t.split(/,(?![^(]*\))/).map(norm);
+  const scope = splitSel(scopeMatch[1]);
+  const lead = (sel) => sel.split(/[ >+~]/)[0];
+  const sources = [css, ...htmlFiles(path.join(ROOT, "games")).map((f) => strip(fs.readFileSync(f, "utf8"))), strip(read("play/poster.css")), strip(read("home.css"))];
+  const bad = [];
+  for (const src of sources) {
+    for (const m of src.matchAll(/([^{}<]+)\{([^{}]*background:var\(--surface\)[^{}]*)\}/g)) {
+      if (/color:var\(--ink\)|--text:var\(--ink\)|color:var\(--on-/.test(m[2])) continue;
+      for (const sel of splitSel(m[1])) {
+        const bare = sel.replace(/^body\.[\w-]+(\[[^\]]*\])?\s+/, "");
+        const ok = scope.includes(sel) || scope.includes(bare) || scope.includes(lead(bare)) || scope.includes(bare.replace(/\.[\w-]+$/, "")) ||
+          NO_TEXT_OF_THEIR_OWN.includes(bare) || /^(html|body|:root)/.test(sel);
+        if (!ok) bad.push(sel);
+      }
+    }
+  }
+  expect([...new Set(bad)], "white surfaces outside the scope: add them to the list in styles.css").toEqual([]);
+});

@@ -370,6 +370,51 @@ test("nhie clock, names, join errors, and a delayed confession", async ({ browse
   await stranger.context.close();
 });
 
+test("nhie round feel: who has answered, the reveal count, one shared storyteller, and award cards", async ({ browser }) => {
+  const ada = await boot(browser, "/games/never-have-i-ever.html", "Ada");
+  const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
+  await ada.page.goto(BASE + "/games/never-have-i-ever.html?emulator=1&fast=1");
+  await bea.page.goto(BASE + "/games/never-have-i-ever.html?emulator=1&fast=1");
+  await ada.page.locator("#app").waitFor({ state: "visible" });
+  await bea.page.locator("#app").waitFor({ state: "visible" });
+  const code = await hostRoom(ada.page, "Ada");
+  await joinRoom(bea.page, "Bea", code);
+  await ada.page.locator("[data-len='5']").click();
+  await ada.page.locator("#optin").check();
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#ihave")).toBeVisible();
+  await expect(ada.page.locator("#locked")).toContainText("0 of 2 answered");
+  await expect(ada.page.locator("#clockbar")).toBeAttached();
+  await ada.page.locator("#ihave").click();
+  await expect(ada.page.locator("#ihave")).toHaveAttribute("aria-pressed", "true");
+  await expect(ada.page.locator("#locked")).toContainText("Locked in");
+  await bea.page.locator("#ihave").click();
+  await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+  await expect(ada.page.locator("#havecount")).toContainText("2 of 2 said I HAVE");
+  // both phones name the same storyteller, and Skip hides it on that phone only
+  await expect.poll(async () => {
+    const a = (await ada.page.locator("#storyline").innerText()).includes("You're up");
+    const b = (await bea.page.locator("#storyline").innerText()).includes("You're up");
+    return a !== b;
+  }, { timeout: 10000 }).toBe(true);
+  await ada.page.locator("#storyskip").click();
+  await expect(ada.page.locator("#story")).toBeHidden();
+  await expect(bea.page.locator("#story")).toBeVisible();
+  // play to the end: the awards are cards with an emoji
+  for (let r = 2; r <= 5; r++) {
+    await ada.page.locator("#nextround").click();
+    await expect(ada.page.locator("#ihave")).toBeVisible();
+    await ada.page.locator("#ihave").click();
+    await bea.page.locator("#never").click();
+    await expect(ada.page.locator("#drinkhead")).toBeVisible({ timeout: 15000 });
+  }
+  await ada.page.locator("#nextround").click();
+  await expect(ada.page.locator("#awards .nh-award").first()).toBeVisible({ timeout: 15000 });
+  await expect(ada.page.locator("#awards .nh-award-emo").first()).not.toBeEmpty();
+  await ada.context.close();
+  await bea.context.close();
+});
+
 test("lobby removal works and baseline rules still reject a host claim", async ({ browser }) => {
   const ada = await boot(browser, "/games/never-have-i-ever.html", "Ada");
   const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
