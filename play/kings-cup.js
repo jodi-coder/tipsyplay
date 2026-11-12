@@ -177,7 +177,8 @@ function pilePayload(list, prevLen){
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:n>40?-20:c.height*0.35,vx:(Math.random()-0.5)*(n>40?8:4),vy:n>40?2+Math.random()*5:-3-Math.random()*3,life:1,color:i%2?"#ff2d87":"#111"});
+  var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF5C5C",c2=cs.getPropertyValue("--text-2").trim()||"#A8A8B3";
+  for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:n>40?-20:c.height*0.35,vx:(Math.random()-0.5)*(n>40?8:4),vy:n>40?2+Math.random()*5:-3-Math.random()*3,life:1,color:i%2?c1:c2});
   if(!raf) raf=requestAnimationFrame(frame);
 }
 function frame(){
@@ -307,7 +308,7 @@ function paintScores(){
   var box=$("scores"); box.textContent="";
   order().forEach(function(p){
     var row=document.createElement("div"); row.className="prow boardrow";
-    if(table&&table.turn===p.uid) row.style.background="#ff2d87";
+    if(table&&table.turn===p.uid) row.classList.add("kc-turn");
     var name=document.createElement("span"); name.textContent=nameOf(p.uid)+(p.connected?"":" (away)");
     var metaEl=document.createElement("b"); metaEl.textContent=p.cards+" cards · "+p.points+" pts";
     row.appendChild(name); row.appendChild(metaEl); box.appendChild(row);

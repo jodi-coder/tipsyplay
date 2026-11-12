@@ -151,7 +151,7 @@ function startFx(){
  h=c.height=Math.floor(window.innerHeight*dpr);
  if(w<10||h<10){c.classList.add("hide");return}
  g=c.getContext("2d");if(!g)return;
- colors=["#ff4fa3","#3de0d0","#ffd166","#f4efff","#b388ff"];
+ colors=["--text","--text-2","--primary","--danger"].map(function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#F5F5F0"});
  bits=[];sparks=[];rockets=[];launches=0;t0=performance.now();
  for(var i=0;i<70;i++)bits.push({x:Math.random()*w,y:-Math.random()*h*0.5,w:(4+Math.random()*5)*dpr,h:(7+Math.random()*8)*dpr,vy:(1.5+Math.random()*2.2)*dpr,vx:(Math.random()-0.5)*1.3*dpr,rot:Math.random()*6,vr:(Math.random()-0.5)*0.2,c:colors[i%colors.length]});
  function burst(x,y,col){for(var k=0;k<32;k++){var a=Math.random()*Math.PI*2,sp=(0.5+Math.random()*2.6)*dpr;sparks.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c:col})}}

@@ -4,7 +4,7 @@ var root=document.body.dataset.root||"";
 // age gate
 if(localStorage.getItem("tp_age_ok")!=="yes"){
  var g=document.createElement("div");g.id="gate";
- g.innerHTML='<div class="card"><div style="font-size:3rem">🥂</div><h1>Welcome to TipsyPlay</h1><p><strong>'+NOTICE+'</strong></p><p>Are you of legal drinking age where you are?</p><div class="row"><button class="btn" id="gyes">Yes, I am</button><button class="btn alt" id="gno">No</button></div><p id="gmsg" class="hide">Thanks for being honest! TipsyPlay isn\'t for you just yet — come back when you\'re of legal age. Take care! 👋</p></div>';
+ g.innerHTML='<div class="card"><div style="font-size:3rem">🥂</div><h1>Welcome to TipsyPlay</h1><p><strong>'+NOTICE+'</strong></p><p>Are you of legal drinking age where you are?</p><div class="row"><button class="btn primary" id="gyes">Yes, I am</button><button class="btn alt" id="gno">No</button></div><p id="gmsg" class="hide">Thanks for being honest! TipsyPlay isn\'t for you just yet — come back when you\'re of legal age. Take care! 👋</p></div>';
  document.body.appendChild(g);document.documentElement.style.overflow="hidden";
  g.querySelector("#gyes").onclick=function(){localStorage.setItem("tp_age_ok","yes");g.remove();document.documentElement.style.overflow=""};
  g.querySelector("#gno").onclick=function(){g.querySelector(".row").classList.add("hide");g.querySelector("#gmsg").classList.remove("hide")};
