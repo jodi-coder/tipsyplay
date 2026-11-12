@@ -12,7 +12,7 @@ Adults of legal drinking age hosting casual game nights, pre-games, or hangouts 
 - Original copy and visuals only (CSS, emoji, self-authored SVG/PNG icons).
 
 ## App approach: Progressive Web App
-- Plain HTML/CSS/JS, no build step, no backend, no accounts, no payments, no database.
+- Plain HTML/CSS/JS, no build step, no server code of our own, no accounts (anonymous sign-in only), no payments. Online rooms and spot comments use Firebase Realtime Database.
 - `manifest.webmanifest` (standalone, dark theme), generated icons (192/512, 180 apple-touch).
 - `sw.js` caches all app files on install → works offline after first load; cache-first with network fallback.
 - Apple meta tags (`apple-mobile-web-app-capable`, `black-translucent` status bar) so “Add to Home Screen” launches full-screen.
