@@ -2,7 +2,9 @@
 
 TipsyPlay is a phone-friendly party-game app for adults of legal drinking age. One phone runs the night: every game is opt-in, and every game offers a non-alcoholic alternative (points, finger-folds, or silly dares) so mixed groups can play together.
 
-It is a static progressive web app — plain HTML, CSS, and JavaScript. There is no build step, no backend, and no package install. Open the files as they are.
+It is a static progressive web app — plain HTML, CSS, and JavaScript. There is no build step, no server code of our own, and no package install. Open the files as they are.
+
+Online rooms use Firebase. Each game room is a Firebase Realtime Database record, and players join with Firebase Anonymous Authentication, so there are no accounts. Spot-page comments use the same Firebase setup. Pass-the-phone play and the solo card page work without it. See [Rooms, comments, and anonymous sign-in](#rooms-comments-and-anonymous-sign-in) below.
 
 ## Preview locally
 
