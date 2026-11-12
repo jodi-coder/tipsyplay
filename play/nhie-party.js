@@ -454,6 +454,18 @@ function paintLobby(){
   }
 }
 function myCast(){return answered(uid)}
+/* Who has locked in. This shows that someone answered, never what they answered. */
+function paintIn(answering, mine){
+  var note=$("locked"); if(!note) return;
+  note.textContent="";
+  if(!answering) return;
+  var list=order().filter(function(p){return p.connected});
+  var done=list.filter(function(p){return castValue(p.uid)||(p.uid===uid&&mine)}).length;
+  var dots=document.createElement("span"); dots.className="nh-dots"; dots.setAttribute("aria-hidden", "true");
+  list.forEach(function(p,i){var d=document.createElement("i"); if(i<done) d.className="in"; dots.appendChild(d)});
+  note.appendChild(document.createTextNode(mine?("Locked in. "+done+" of "+list.length+" answered"):(done+" of "+list.length+" answered")));
+  note.appendChild(dots);
+}
 function paintAnswers(){
   var answering=!!(table&&table.step==="answer");
   var box=$("answers"); if(box) box.classList.toggle("hide", !answering);
@@ -461,6 +473,7 @@ function paintAnswers(){
   var have=$("ihave"), never=$("never");
   if(have){have.disabled=!answering||!!mine; have.setAttribute("aria-pressed", mine==="have"?"true":"false")}
   if(never){never.disabled=!answering||!!mine; never.setAttribute("aria-pressed", mine==="never"?"true":"false")}
+  paintIn(answering, mine);
   var pass=$("passbtn");
   if(pass){pass.classList.toggle("hide", !answering); pass.disabled=!!mine; pass.setAttribute("aria-pressed", mine==="pass"?"true":"false")}
 }
@@ -475,15 +488,40 @@ function paintHaves(){
     return;
   }
   var ids=haveIds();
-  if(head) head.textContent=ids.length?"Sip, water, or pose":"Nobody this round";
+  var count=$("havecount"), everyone=order().length;
+  if(count){
+    count.textContent="";
+    if(ids.length){
+      var b=document.createElement("b"); b.textContent=String(ids.length);
+      count.appendChild(b); count.appendChild(document.createTextNode(" of "+everyone+" said I HAVE"));
+    }
+  }
+  if(head){head.textContent=ids.length?"Sip, water, or pose":"Nobody this round"; head.classList.toggle("none", !ids.length)}
   box.classList.toggle("hide", !ids.length);
   box.textContent="";
-  ids.forEach(function(id){
-    var li=document.createElement("li");
+  paintStory(ids);
+  ids.forEach(function(id, i){
+    var li=document.createElement("li"); li.style.setProperty("--i", String(i));
     var emo=document.createElement("span"); emo.className="nh-emo"; emo.setAttribute("aria-hidden", "true"); emo.textContent=(who[id]&&who[id].emoji)||"•";
     var nm=document.createElement("span"); nm.textContent=shown(id);
     li.appendChild(emo); li.appendChild(nm); box.appendChild(li);
   });
+}
+/* Every phone picks the same storyteller from the round number, so nothing extra is written to the database. */
+var storySkipped=-1;
+function storyteller(ids){
+  if(!ids.length) return "";
+  var seq=roundSeq(), salt=0, i;
+  for(i=0;i<(code||"").length;i++) salt+=code.charCodeAt(i);
+  return ids[(seq*7+salt)%ids.length];
+}
+function paintStory(ids){
+  var box=$("story"), line=$("storyline"); if(!box||!line) return;
+  var pick=storyteller(ids);
+  var hide=!pick||storySkipped===roundSeq();
+  box.classList.toggle("hide", hide);
+  if(hide) return;
+  line.textContent=pick===uid?"You're up: tell the story. Totally optional.":shown(pick)+", tell the story. Totally optional.";
 }
 function awardRows(){
   var list=order();
@@ -493,11 +531,11 @@ function awardRows(){
   function names(group){return group.map(function(p){return (p.emoji?p.emoji+" ":"")+shown(p.uid)}).join(", ")}
   var low=list.filter(function(p){return p.confessions===min});
   var high=list.filter(function(p){return p.confessions===max});
-  if(max===0) return [{title:"The Saint", names:names(list), line:"A whole table of nevers. The halos stay on."}];
-  if(max===min) return [{title:"Even Stevens", names:names(list), line:"Same number of yeses. Suspiciously fair. Not a drink score."}];
+  if(max===0) return [{title:"The Saint", emoji:"\ud83d\ude07", names:names(list), line:"A whole table of nevers. The halos stay on."}];
+  if(max===min) return [{title:"Even Stevens", emoji:"\ud83e\udd1d", names:names(list), line:"Same number of yeses. Suspiciously fair. Not a drink score."}];
   return [
-    {title:"The Saint", names:names(low), line:min===0?"Zero yeses. Absolutely unbothered.":"Fewest yeses ("+min+"). Practically glowing."},
-    {title:"Most Chaotic", names:names(high), line:"Said yes the most ("+max+"). Chaos award. Not a prize for drinking."}
+    {title:"The Saint", emoji:"\ud83d\ude07", names:names(low), line:min===0?"Zero yeses. Absolutely unbothered.":"Fewest yeses ("+min+"). Practically glowing."},
+    {title:"Most Chaotic", emoji:"\ud83d\udd25", names:names(high), line:"Said yes the most ("+max+"). Chaos award. Not a prize for drinking."}
   ];
 }
 function paintAwards(){
@@ -505,6 +543,8 @@ function paintAwards(){
   box.textContent="";
   awardRows().forEach(function(a){
     var card=document.createElement("article"); card.className="nh-award";
+    var em=document.createElement("span"); em.className="nh-award-emo"; em.setAttribute("aria-hidden", "true"); em.textContent=a.emoji||"";
+    card.appendChild(em);
     var t=document.createElement("p"); t.className="nh-award-kicker"; t.textContent=a.title;
     var n=document.createElement("p"); n.className="nh-award-name"; n.textContent=a.names;
     var l=document.createElement("p"); l.textContent=a.line;
@@ -525,6 +565,7 @@ function paintClock(){
   if(!on){lastTick=-1; return}
   wrap.classList.toggle("hot", left<=3);
   var num=$("clocknum"); if(num) num.textContent=String(left);
+  var bar=$("clockbar"); if(bar) bar.style.transform="scaleX("+Math.max(0, Math.min(1, left/(ANSWER_MS/1000)))+")";
   wrap.setAttribute("aria-hidden", "true");
   var live=$("clocklive");
   var seq=table?+table.seq||0:0;
@@ -921,6 +962,7 @@ function wire(){
   $("ihave").addEventListener("click", function(){sendCast("have")});
   $("never").addEventListener("click", function(){sendCast("never")});
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendCast("pass")});
+  if($("storyskip")) $("storyskip").addEventListener("click", function(){storySkipped=roundSeq(); var b=$("story"); if(b) b.classList.add("hide")});
   $("nextround").addEventListener("click", function(){unlock(); advance()});
   if($("again")) $("again").addEventListener("click", function(){unlock(); playAgain()});
   if($("recap")) $("recap").addEventListener("click", function(){unlock(); shareRecap()});

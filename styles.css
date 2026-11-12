@@ -42,7 +42,7 @@
 }
 /* White surfaces. Anything white re-points the text, border and selection tokens to ink, so the same component
    rules read correctly on teal and on white. Add a new white component to this list, not a colour to the component. */
-.card,.gcard,.na,.nh-card,.mlt-card,.poster-card,.kc-card,.why,.spot-card,.tabbar,.board span,.boardrow,ol.final li,
+.card,.gcard,.nh-award,.nh-story,.nh-safe,.nh-haves li,.mlt-results li,.nh-hot,.spot-hero.is-missing,.na,.nh-card,.mlt-card,.poster-card,.kc-card,.why,.spot-card,.tabbar,.board span,.boardrow,ol.final li,
 .rm-sheet,.rm-invite,.rm-chip,.rm-menubtn,.rm-x,.rm-emo,.rm-item,body.rm-on[data-rm-state="lobby"] label.toggle:has(> #optin),
 select,input,textarea,.heart,button.mute,button.x,.safe-pill,
 .nh-binary button,.mlt-votes button,.poster-choice,.mlt-grid button,.mlt-cell,.mlt-emos button,.kc-react button,.kc-table button{
