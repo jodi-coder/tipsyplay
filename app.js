@@ -34,10 +34,11 @@ function tabOn(file){
  if(file==="games/")return /\/games(\/|$)/.test(path)||/\/play\//.test(path)||path.endsWith("/library.html");
  return path.endsWith("/"+file);
 }
+var isHome=document.body.classList.contains("home");
 var tb=document.createElement("nav");tb.className="tabbar";tb.setAttribute("aria-label","App tabs");
 tb.innerHTML=tabs.map(function(t){var on=tabOn(t[0]);return '<a href="'+root+t[0]+'"'+(on?' class="on" aria-current="page"':'')+'><span>'+t[1]+'</span>'+t[2]+'</a>'}).join("");
-if(/\/blog(\/|$)/.test(path)||/\/spots(\/|$)/.test(path)) document.body.classList.add("no-tabs");
-document.body.appendChild(tb);
+if(isHome||/\/blog(\/|$)/.test(path)||/\/spots(\/|$)/.test(path)) document.body.classList.add("no-tabs");
+if(!isHome) document.body.appendChild(tb);
 // favourites
 function favs(){try{return JSON.parse(localStorage.getItem("tp_favs")||"{}")}catch(e){return {}}}
 if(list){list.querySelectorAll(".card").forEach(function(c){var b=document.createElement("button");b.className="heart";var id=c.dataset.id;
@@ -56,10 +57,42 @@ if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spi
  document.getElementById("s_age").onclick=function(){localStorage.removeItem("tp_age_ok");document.getElementById("s_msg").textContent="Done — reloading…";setTimeout(function(){location.reload()},600)}}
 document.addEventListener("click",function(e){var el=e.target;if(!el)return;if(el.nodeType!==1)el=el.parentElement;if(!el||!el.closest)return;var b=el.closest("button");if(!b)return;/* A soft click only on the one main action of a screen. Every other tap is silent. */
 if(!b.matches(".host-cta,.btn.primary,[data-primary]")||b.dataset.cue)return;if(window.TPSound)TPSound.click()},true);
-// mute toggle: present in the header of every page, one flag for all sound, remembered between visits
-(function(){var hdr=document.querySelector("header.top");if(!hdr||!window.TPSound)return;var btn=document.getElementById("mute");
- if(!btn){btn=document.createElement("button");btn.type="button";btn.className="mute";btn.id="mute";(hdr.querySelector("nav")||hdr).appendChild(btn)}
- TPSound.bindMute(btn)})();
+// header: mute and a Menu button on the right of every page. On phones the nav links collapse into the Menu.
+(function(){
+ var hdr=document.querySelector("header.top");if(!hdr)return;
+ var nav=hdr.querySelector("nav"),right=document.createElement("div");right.className="hdr-right";
+ var btn=document.getElementById("mute");
+ if(window.TPSound){
+  if(!btn){btn=document.createElement("button");btn.type="button";btn.className="mute";btn.id="mute"}
+  right.appendChild(btn);TPSound.bindMute(btn); // one flag for all sound, remembered between visits
+ }
+ if(nav){
+  var seen={},links=[];
+  [].slice.call(nav.querySelectorAll("a")).forEach(function(a){var h=a.getAttribute("href");if(!seen[h]){seen[h]=1;links.push([h,a.textContent.trim()])}});
+  [[root+"favourites.html","Favourites"],[root+"settings.html","Settings"]].forEach(function(l){if(!seen[l[0]]){seen[l[0]]=1;links.push(l)}});
+  var mb=document.createElement("button");mb.type="button";mb.className="menu-btn";mb.setAttribute("aria-haspopup","dialog");mb.setAttribute("aria-expanded","false");
+  mb.innerHTML='<span aria-hidden="true">☰</span> <span>Menu</span>';right.appendChild(mb);
+  var scrim=document.createElement("div"),sheet=document.createElement("div");
+  scrim.className="rm-scrim";scrim.hidden=true;sheet.className="rm-sheet";sheet.hidden=true;
+  sheet.setAttribute("role","dialog");sheet.setAttribute("aria-modal","true");sheet.setAttribute("aria-label","Site menu");
+  sheet.innerHTML='<div class="rm-sheet-head"><h3>Menu</h3><button type="button" class="rm-x" aria-label="Close menu">Close</button></div><div class="rm-items">'+links.map(function(l){return '<a class="rm-item" href="'+l[0]+'">'+l[1]+'</a>'}).join("")+'</div>';
+  document.body.appendChild(scrim);document.body.appendChild(sheet);
+  var open=function(){scrim.hidden=false;sheet.hidden=false;mb.setAttribute("aria-expanded","true");sheet.querySelector("a").focus()};
+  var close=function(){if(sheet.hidden)return;scrim.hidden=true;sheet.hidden=true;mb.setAttribute("aria-expanded","false");mb.focus()};
+  mb.addEventListener("click",function(){sheet.hidden?open():close()});
+  scrim.addEventListener("click",close);sheet.querySelector(".rm-x").addEventListener("click",close);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape")close()});
+ }
+ hdr.appendChild(right);document.documentElement.classList.add("hdr-js");
+})();
+// homepage: a fixed "Pick a game" bar that shows only once the hero button and the game list are both out of view
+(function(){
+ var bar=document.getElementById("pickbar"),cta=document.querySelector(".hero .cta"),feat=document.getElementById("featured");
+ if(!bar||!cta||!feat||!("IntersectionObserver" in window))return;
+ var st={cta:true,feat:false},upd=function(){bar.classList.toggle("on",!st.cta&&!st.feat)};
+ new IntersectionObserver(function(e){st.cta=e[0].isIntersecting;upd()}).observe(cta);
+ new IntersectionObserver(function(e){st.feat=e[0].isIntersecting;upd()},{rootMargin:"0px 0px -30% 0px"}).observe(feat);
+})();
 // service worker
 if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",function(){navigator.serviceWorker.register(root+"sw.js",{updateViaCache:"none"}).then(function(r){window.__swOK=true}).catch(function(e){console.warn("SW failed",e)})})}
 })();

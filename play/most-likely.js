@@ -231,7 +231,7 @@ function flashLights(){
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  var cs=getComputedStyle(document.documentElement),color=cs.getPropertyValue(document.body.dataset.pack==="spicy"?"--danger":"--text").trim()||"#F5F5F0",alt=cs.getPropertyValue("--text-2").trim()||"#A8A8B3";
+  var cs=getComputedStyle(document.documentElement),color=cs.getPropertyValue(document.body.dataset.pack==="spicy"?"--danger":"--text").trim()||"#FFFFFF",alt=cs.getPropertyValue("--text-2").trim()||"#F0FAF9";
   for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:-20,vx:(Math.random()-0.5)*8,vy:2+Math.random()*5,life:1,color:i%2?color:alt});
   if(!raf) raf=requestAnimationFrame(frame);
 }

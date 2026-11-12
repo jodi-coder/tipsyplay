@@ -169,7 +169,7 @@ function pilePayload(list, prevLen){
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF5C5C",c2=cs.getPropertyValue("--text-2").trim()||"#A8A8B3";
+  var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF3D7F",c2=cs.getPropertyValue("--text-2").trim()||"#F0FAF9";
   for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:n>40?-20:c.height*0.35,vx:(Math.random()-0.5)*(n>40?8:4),vy:n>40?2+Math.random()*5:-3-Math.random()*3,life:1,color:i%2?c1:c2});
   if(!raf) raf=requestAnimationFrame(frame);
 }
