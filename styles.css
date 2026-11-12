@@ -4,20 +4,23 @@
 /* ---------- Theme ----------
    Every colour, font, radius and space used below comes from this block.
    Do not put hex colours in components. Change them here.
-   Contrast (WCAG AA): text on bg 15.9, text on surface 13.7, text-2 on bg 7.4, text-2 on surface 6.4,
-   on-primary on primary 12.3, on-danger on danger 5.7, danger on bg 5.7, danger on surface 5.0. */
+   Contrast (WCAG AA): text on bg 16.2, text on surface 17.3, text-2 on bg 6.2, text-2 on surface 6.6,
+   on-primary on primary 12.3, on-danger on danger 5.7, danger-ink on bg 5.3, danger-ink on surface 5.6. */
 :root{
-  color-scheme:dark;
-  --bg:#1A1A1F;
-  --surface:#26262E;
-  --text:#F5F5F0;
-  --text-2:#A8A8B3;
+  color-scheme:light;
+  --bg:#FAF7F2;           /* warm off-white page */
+  --surface:#FFFFFF;      /* cards and panels */
+  --text:#1A1A1F;
+  --text-2:#5C5C66;
   --primary:#FFD60A;      /* the one main action on a screen */
   --on-primary:#1A1A1F;
-  --danger:#FF5C5C;       /* sip and dare moments only */
+  --danger:#FF5C5C;       /* sip and dare moments: fills, always with dark text */
   --on-danger:#1A1A1F;    /* never put light text on the danger colour (2.8:1) */
-  --outline:var(--text-2);/* borders of controls: 6.4:1 on surface, 7.4:1 on bg */
-  --hairline:#3A3A45;     /* decorative dividers only */
+  --danger-ink:#C42B2B;   /* red as text or a thin line; #FF5C5C is only 3.0:1 on white */
+  --outline:#6B6B76;      /* borders of controls: 4.9:1 on bg, 5.3:1 on surface */
+  --hairline:#E4DFD6;     /* decorative dividers only */
+  --scrim:rgba(250,247,242,.96);
+  --shadow:0 1px 2px rgba(26,26,31,.06),0 6px 20px rgba(26,26,31,.07);
 
   --display:"Fredoka",ui-rounded,"SF Pro Rounded","Arial Rounded MT Bold","Nunito",system-ui,sans-serif;
   --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
@@ -78,11 +81,11 @@ p{margin:.55em 0}
 .btn.alt{background:transparent}
 .btn:active{transform:scale(.98)}
 .btn[disabled]{opacity:.45}
-.btn.host-cta,.btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.btn.host-cta,.btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--on-primary)}
 .host-cta{width:100%;min-height:64px;font-size:1.5rem;margin:var(--s-4) 0 var(--s-3)}
 /* Game tiles in a list: Host is secondary there. */
 .game-card .btn.host-cta{background:var(--surface);color:var(--text);border-color:var(--outline);width:auto;min-height:52px;font-size:1.1rem;margin:var(--s-2) 0 0}
-.card{background:var(--surface);color:var(--text);border-radius:var(--r-lg);padding:var(--s-5);margin:var(--s-4) 0;position:relative}
+.card{background:var(--surface);color:var(--text);border-radius:var(--r-lg);padding:var(--s-5);margin:var(--s-4) 0;position:relative;box-shadow:var(--shadow)}
 .na{background:var(--surface);color:var(--text);border:2px solid var(--outline);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin-top:var(--s-3);font-size:1rem}
 .card .na,.gcard .na{background:var(--bg)}
 .na b{color:var(--text)}
@@ -102,10 +105,9 @@ summary{min-height:var(--tap);padding:10px 0;cursor:pointer;font-weight:600}
 .search-row input{flex:1;min-width:0}
 
 /* Hero photo: cropped to a fixed shape, dimmed, and faded into the page colour. */
-.hero-photo,.shot{margin:var(--s-5) 0 0;border-radius:var(--r-lg);overflow:hidden;background:var(--surface);position:relative}
+.hero-photo,.shot{margin:var(--s-5) 0 0;border-radius:var(--r-lg);overflow:hidden;background:var(--surface);position:relative;box-shadow:var(--shadow)}
 .hero-photo img,.shot img{width:100%;height:auto;display:block}
-.hero-photo img{aspect-ratio:16/10;object-fit:cover;object-position:50% 40%;filter:brightness(.72) saturate(.9)}
-.hero-photo::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--bg) 0%,rgba(26,26,31,.55) 28%,rgba(26,26,31,0) 60%)}
+.hero-photo img{aspect-ratio:16/10;object-fit:cover;object-position:50% 40%}
 .feature-grid,.why-grid,.steps{display:grid;gap:var(--s-4)}
 .feature-grid>.card,.why-grid>.card,.steps>.card{margin:0}
 .game-card h3{margin:.1em 0 .3em}
@@ -135,7 +137,7 @@ html,body{overscroll-behavior:none}
 body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
 body.no-tabs{padding-bottom:env(safe-area-inset-bottom)}
 body.no-tabs .tabbar{display:none}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;background:var(--surface);border-top:1px solid var(--hairline);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;background:var(--surface);border-top:1px solid var(--hairline);box-shadow:0 -4px 16px rgba(26,26,31,.06);padding-bottom:env(safe-area-inset-bottom)}
 .tabbar a{flex:1;min-height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:var(--text-2);font-family:var(--display);font-size:.85rem;font-weight:500}
 .tabbar a span{font-size:1.25rem;line-height:1}
 .tabbar a.on{background:var(--bg);color:var(--text);font-weight:700;box-shadow:inset 0 3px 0 var(--text)}
@@ -156,20 +158,20 @@ button.mute{display:inline-flex;align-items:center;justify-content:center;width:
 .toggle{display:flex;align-items:center;gap:var(--s-3);min-height:var(--tap)}
 .toggle input{width:26px;height:26px;min-height:26px;accent-color:var(--text)}
 .score,.board{display:flex;flex-wrap:wrap;gap:var(--s-2);justify-content:center;margin:var(--s-2) 0}
-.board span{background:var(--surface);border-radius:999px;padding:6px var(--s-3);font-weight:600;font-size:.95rem}
+.board span{background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:6px var(--s-3);font-weight:600;font-size:.95rem}
 .board span.on{background:var(--text);color:var(--bg)}
 .choice{display:flex;gap:var(--s-3);flex-wrap:wrap}
 .choice .btn{flex:1 1 140px;min-height:76px;font-size:1.35rem}
 .ask{font-family:var(--display);font-weight:600;font-size:1.35rem;margin:var(--s-3) 0 0}
 body.party .gcard{min-height:220px}
-.pass{position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:var(--s-5);background:rgba(26,26,31,.96);color:var(--text);text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(2rem,8vw,3.2rem)}
-.gcard.flash-yes{box-shadow:0 0 0 4px var(--danger)}
+.pass{position:fixed;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;padding:var(--s-5);background:var(--scrim);color:var(--text);text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(2rem,8vw,3.2rem)}
+.gcard.flash-yes{box-shadow:0 0 0 4px var(--danger-ink)}
 .gcard.flash-no{box-shadow:0 0 0 4px var(--text-2)}
 canvas.fx{position:fixed;inset:0;width:100%;height:100%;z-index:40;pointer-events:none}
 ol.final{list-style:none;padding:0;margin:var(--s-3) 0}
-ol.final li{display:flex;justify-content:space-between;gap:var(--s-3);background:var(--surface);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin:var(--s-2) 0;font-weight:600}
+ol.final li{display:flex;justify-content:space-between;gap:var(--s-3);background:var(--surface);box-shadow:var(--shadow);border-radius:var(--r-sm);padding:var(--s-3) var(--s-4);margin:var(--s-2) 0;font-weight:600}
 #perr{color:var(--text);font-weight:700;margin:var(--s-2) 0}
-#perr:not(:empty){background:var(--surface);padding:var(--s-2) var(--s-3);border:2px solid var(--danger);border-radius:var(--r-sm)}
+#perr:not(:empty){background:var(--surface);padding:var(--s-2) var(--s-3);border:2px solid var(--danger-ink);border-radius:var(--r-sm)}
 input.bigin{width:100%}
 .codebig{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,10vw,3.6rem);letter-spacing:.18em;text-align:center;margin:var(--s-2) 0}
 .linkbox{word-break:break-all;text-align:center;color:var(--text-2)}
@@ -180,10 +182,10 @@ input.bigin{width:100%}
 button.x{min-width:48px;min-height:48px;border:2px solid var(--outline);border-radius:var(--r-sm);background:var(--bg);color:var(--text);font-family:var(--display);font-size:1.2rem;cursor:pointer}
 .dock{display:flex;flex-direction:column;gap:var(--s-3);margin:var(--s-3) 0}
 .dock .btn{min-height:56px}
-.boardrow{justify-content:space-between;background:var(--surface);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3)}
+.boardrow{justify-content:space-between;background:var(--surface);box-shadow:var(--shadow);border-radius:var(--r-sm);padding:var(--s-2) var(--s-3)}
 .turntag{font-family:var(--display);font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2);margin:var(--s-2) 0}
 /* The drawing pad stays white: it is the paper. Strokes are drawn dark by multi.js. */
-.sketchpad{width:100%;height:240px;background:#fff;border-radius:var(--r);touch-action:none;display:block}
+.sketchpad{width:100%;height:240px;background:#fff;border:2px solid var(--outline);border-radius:var(--r);touch-action:none;display:block}
 .linein{width:100%;margin:0}
 /* Sip moments (danger colour) */
 .kc-lights{display:flex;gap:6px;height:16px;margin:var(--s-2) 0}
@@ -197,7 +199,7 @@ button.x{min-width:48px;min-height:48px;border:2px solid var(--outline);border-r
 .kc-table button{min-height:64px}
 .kc-card{min-height:220px;background:var(--surface);color:var(--text);border-radius:var(--r-lg);padding:var(--s-4);text-align:center;animation:kcflip .45s ease}
 .kc-card .rank{font-family:var(--display);font-weight:700;font-size:clamp(3rem,12vw,5rem);line-height:.95;color:inherit}
-.kc-card.red{color:var(--danger)}
+.kc-card.red{color:var(--danger-ink)}
 .kc-turn{background:var(--text)!important;color:var(--bg)!important}
 @keyframes kcflip{from{transform:rotateY(90deg) scale(.94)}to{transform:none}}
 body.kc-shake{animation:kcshake .55s linear}
@@ -215,7 +217,7 @@ body.kc-flash::before{content:"";position:fixed;inset:0;background:var(--danger)
 @keyframes nhslam{from{transform:scale(1.35) rotate(-2deg);opacity:0}to{transform:none;opacity:1}}
 .nh-pour{width:72px;height:96px;margin:var(--s-3) auto;border:3px solid var(--outline);background:var(--bg);position:relative;clip-path:polygon(22% 0,78% 0,100% 100%,0 100%)}
 .nh-pour span{position:absolute;left:0;right:0;bottom:0;background:var(--danger);height:0;transition:height .35s}
-.nh-hot{background:var(--surface);outline:3px solid var(--danger)}
+.nh-hot{background:var(--surface);outline:3px solid var(--danger-ink)}
 .nh-pop{margin-left:var(--s-2);animation:nhslam .4s ease}
 #answers .btn{min-height:72px;font-size:1.3rem}
 @media (prefers-reduced-motion:reduce){
@@ -228,7 +230,7 @@ body.mlt .tabbar,body.mlt nav.tabbar,body.mlt #mute{display:none !important}
 .mlt-screen.hide{display:none}
 .mlt-pin{font-family:var(--display);font-weight:700;font-size:clamp(2.6rem,12vw,3.4rem);letter-spacing:.2em;text-align:center;margin:0}
 /* A QR code needs dark modules on a light ground to scan, so it stays white. */
-.mlt-qr{width:120px;height:120px;margin:0 auto;display:block;background:#fff;border-radius:var(--r-sm)}
+.mlt-qr{width:120px;height:120px;margin:0 auto;display:block;background:#fff;border-radius:var(--r-sm);box-shadow:var(--shadow)}
 .mlt-packs,.mlt-bar{display:flex;gap:var(--s-2);flex-wrap:wrap}
 .mlt-packs button,.mlt-bar .btn{min-height:48px}
 .mlt-people{display:flex;flex-direction:column;gap:2px}
@@ -264,10 +266,9 @@ body.mlt .host-cta{min-height:64px;font-size:1.5rem;margin:0}
 .spot-card p{margin:.2em 0;color:var(--text-2)}
 .rank{margin:0;font-family:var(--display);font-weight:600;color:var(--text-2);font-size:1.2rem}
 .spot-thumb{margin:0;min-height:84px;border-radius:var(--r-sm);overflow:hidden;background:var(--bg);position:relative}
-.spot-thumb img{width:100%;height:84px;object-fit:cover;display:block;filter:brightness(.85)}
+.spot-thumb img{width:100%;height:84px;object-fit:cover;display:block}
 .spot-hero{margin:var(--s-3) 0 var(--s-4);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);position:relative;aspect-ratio:16/9}
-.spot-hero img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.78) saturate(.9)}
-.spot-hero::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,var(--bg) 0%,rgba(26,26,31,0) 55%)}
+.spot-hero img{width:100%;height:100%;object-fit:cover;display:block}
 .spot-thumb.is-missing picture,.spot-hero.is-missing picture{display:none}
 .spot-hero.is-missing{display:flex;align-items:flex-end;min-height:220px;aspect-ratio:auto;background:var(--surface)}
 .spot-hero.is-missing::after,.spot-thumb.is-missing::after{content:attr(data-label);position:static;background:none;font-family:var(--display);font-weight:600;padding:var(--s-3);color:var(--text)}
