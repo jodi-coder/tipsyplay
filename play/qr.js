@@ -2306,7 +2306,7 @@ var qrcode = function() {
     var px=cells*scale;
     canvas.width=px; canvas.height=px;
     var ctx=canvas.getContext("2d");
-    ctx.fillStyle="#ffe14a";
+    ctx.fillStyle="#ffffff";
     ctx.fillRect(0,0,px,px);
     ctx.fillStyle="#111";
     var r,c;
