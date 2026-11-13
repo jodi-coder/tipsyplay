@@ -50,14 +50,14 @@ var bar=mk("div","rm-bar"); bar.id="rmbar";
 var chip=mk("span","rm-chip"); chip.id="rmchip";
 var menuBtn=mk("button","rm-menubtn"); menuBtn.type="button"; menuBtn.id="rmmenubtn";
 menuBtn.setAttribute("aria-haspopup","dialog"); menuBtn.setAttribute("aria-controls","rmsheet"); menuBtn.setAttribute("aria-expanded","false");
-menuBtn.innerHTML="<span aria-hidden=\"true\">⋯</span> <span>Menu</span>";
+menuBtn.innerHTML="<span aria-hidden=\"true\">⋯</span> <span>Room</span>";
 bar.appendChild(chip); bar.appendChild(menuBtn);
 app.insertBefore(bar,app.firstChild);
 
 var scrim=mk("div","rm-scrim"); scrim.hidden=true;
 var sheet=mk("div","rm-sheet"); sheet.id="rmsheet"; sheet.hidden=true;
 sheet.setAttribute("role","dialog"); sheet.setAttribute("aria-modal","true"); sheet.setAttribute("aria-label","Room menu");
-var sheetHead=mk("div","rm-sheet-head"); sheetHead.appendChild(mk("h3",null,"Menu"));
+var sheetHead=mk("div","rm-sheet-head"); sheetHead.appendChild(mk("h3",null,"Room menu"));
 var sheetClose=mk("button","rm-x","Close"); sheetClose.type="button"; sheetClose.setAttribute("aria-label","Close menu"); sheetHead.appendChild(sheetClose);
 var items=mk("div","rm-items");
 var extra=mk("div","rm-extra"); extra.id="rmextra";
