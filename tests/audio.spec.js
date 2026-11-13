@@ -32,7 +32,9 @@ const PAGES = [
   "/play/card-lottery.html",
   "/games/never-have-i-ever.html",
   "/games/kings-cup.html",
-  "/games/split-decision.html"
+  "/games/split-decision.html",
+  "/games/slow-drip.html",
+  "/play/slow-drip.html"
 ];
 
 test("mute toggle is on every page, 44px, and remembers the choice between visits", async ({ browser }) => {
@@ -113,7 +115,7 @@ test("nothing plays before the first tap, and only after it", async ({ browser }
   await countAudio(context);
   const page = await context.newPage();
   await page.route(/googletagmanager|google-analytics|analytics\.google/, (r) => r.abort());
-  for (const url of ["/games/kings-cup.html", "/games/never-have-i-ever.html", "/play/card-lottery.html", "/games/vault-traitor.html", "/games/split-decision.html"]) {
+  for (const url of ["/games/kings-cup.html", "/games/never-have-i-ever.html", "/play/card-lottery.html", "/games/vault-traitor.html", "/games/split-decision.html", "/play/slow-drip.html"]) {
     await page.goto(url, { waitUntil: "domcontentloaded" });
     await page.locator("#mute").waitFor({ state: "visible" });
     await page.waitForTimeout(500);
@@ -160,7 +162,7 @@ test("no background music, no spoken announcer, nothing scheduled while idle", a
   expect(idle.spk, "no speech").toBe(0);
   expect(e).toContain("cue");
   // the Mixer, whose only jobs were music and voice, is gone from the game pages
-  for (const url of ["/games/kings-cup.html", "/games/never-have-i-ever.html", "/games/vault-traitor.html"]) {
+  for (const url of ["/games/kings-cup.html", "/games/never-have-i-ever.html", "/games/vault-traitor.html", "/play/slow-drip.html"]) {
     await page.goto(url, { waitUntil: "domcontentloaded" });
     await expect(page.locator("#mixbtn, #mixer, #mutemusic, #mutevoice"), url + " has no mixer").toHaveCount(0);
   }

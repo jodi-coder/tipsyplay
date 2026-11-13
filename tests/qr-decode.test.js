@@ -48,7 +48,7 @@ test("local encoder QR decodes to the exact join url", () => {
 });
 
 test("the other game urls decode too", () => {
-  ["split|/games/split-decision.html|split", "vt|/games/vault-traitor.html|vt"].forEach((row) => {
+  ["split|/games/split-decision.html|split", "vt|/games/vault-traitor.html|vt", "sd|/play/slow-drip.html|sd"].forEach((row) => {
     const [code, path, game] = row.split("|");
     const url = join.inviteUrl("https://tipsyplay.com", path, code.toUpperCase(), game);
     const canvas = fakeCanvas();
