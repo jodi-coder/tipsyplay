@@ -2,7 +2,7 @@
 "use strict";
 /* Multiplayer Never Have I Ever.
    Pack lines play themselves. Custom typing is optional for the next round.
-   The countdown is only for answering. Sips are never timed.
+   The countdown is only for answering. Drinks are never timed.
    rooms/$code/nhie */
 var FAST = /[?&]emulator=1(?:&|$)/.test(location.search) && /[?&]fast=1(?:&|$)/.test(location.search);
 var ANSWER_MS = FAST ? 1600 : 12000;
@@ -224,7 +224,7 @@ function flash(){document.body.classList.remove("nh-flash"); void document.body.
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  var cs=getComputedStyle(document.documentElement),color=cs.getPropertyValue(document.body.dataset.mode==="spicy"?"--danger":"--text").trim()||"#FFFFFF",alt=cs.getPropertyValue("--text-2").trim()||"#F0FAF9";
+  var cs=getComputedStyle(document.documentElement),color=cs.getPropertyValue(document.body.dataset.mode==="spicy"?"--danger":"--primary").trim()||"#FFD60A",alt=cs.getPropertyValue("--surface").trim()||"#FFFFFF";
   for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:-20,vx:(Math.random()-0.5)*8,vy:2+Math.random()*5,life:1,color:i%2?color:alt});
   if(!raf) raf=requestAnimationFrame(frame);
 }
@@ -334,7 +334,7 @@ function answered(id){
   if(id===uid && pendingCast && pendingCast.seq===roundSeq()) return pendingCast.v;
   return "";
 }
-/* Who the sip, water or pose lands on: everyone who said I HAVE, or in Most likely the player (or tied players) with the most votes. */
+/* Who the drink or pose lands on: everyone who said I HAVE, or in Most likely the player (or tied players) with the most votes. */
 function voteCounts(){
   var counts={}, total=0;
   order().forEach(function(p){
@@ -556,7 +556,7 @@ function paintHaves(){
       count.appendChild(b); count.appendChild(document.createTextNode(" of "+everyone+" said I HAVE"));
     }
   }
-  if(head){head.textContent=ids.length?"Sip, water, or pose":(vc?"Nobody got a vote":"Nobody this round"); head.classList.toggle("none", !ids.length)}
+  if(head){head.textContent=ids.length?"Take a drink or pass":(vc?"Nobody got a vote":"Nobody this round"); head.classList.toggle("none", !ids.length)}
   box.classList.toggle("hide", !ids.length);
   box.textContent="";
   paintStory(ids);
@@ -871,7 +871,7 @@ async function begin(){
   if(!isHost()||!meta||sending) return;
   var list=order();
   if(list.length<2||list.length>12){fail("Need 2 to 12 players."); return}
-  if(!$("optin").checked){fail("Tick the opt-in first. Sips stay optional."); return}
+  if(!$("optin").checked){fail("Tick the opt-in first. Drinks stay optional."); return}
   fail("");
   sending=true;
   var mode=currentMode();

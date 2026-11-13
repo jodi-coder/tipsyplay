@@ -482,7 +482,7 @@ function paintReveal(){
   var show=table&&(table.step==="results"||table.step==="over");
   var wrap=$("revealbox"); if(wrap) wrap.classList.toggle("hide", !show);
   if(!show){if(head) head.textContent=""; if(toast) toast.textContent=""; return}
-  if(toast) toast.textContent="Optional: a small sip, or skip it. Whoever picked the minority side takes a bow instead.";
+  if(toast) toast.textContent="Optional: a small drink, or skip it. Whoever picked the minority side takes a bow instead.";
   var bag=shownSecrets();
   if(GAME==="split") paintSplitReveal(box, head, bag);
   else if(GAME==="vibe") paintVibeReveal(box, head, bag);

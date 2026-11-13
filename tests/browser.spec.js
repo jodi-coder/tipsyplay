@@ -272,12 +272,12 @@ test("nhie clock, names, join errors, and a delayed confession", async ({ browse
   await bea.page.evaluate(() => { window.__tpNhie.delayCast = 2000; });
   await ada.page.locator("#never").click();
   await bea.page.locator("#ihave").click();
-  await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+  await expect(ada.page.locator("#drinkhead")).toHaveText("Take a drink or pass", { timeout: 15000 });
   await expect(ada.page.locator("#havelist")).toContainText("Sam");
   await expect.poll(async () => bea.page.evaluate(() => window.__tpNhie.confessions()), { timeout: 10000 }).toBe(1);
   const live = await ada.page.locator("#clock").getAttribute("aria-live");
   expect(live).toBeNull();
-  await shot(ada.page, "nhie-sip-heading");
+  await shot(ada.page, "nhie-drink-heading");
   await ada.context.close();
   await bea.context.close();
   await stranger.context.close();
@@ -302,7 +302,7 @@ test("nhie round feel: who has answered, the reveal count, one shared storytelle
   await expect(ada.page.locator("#ihave")).toHaveAttribute("aria-pressed", "true");
   await expect(ada.page.locator("#locked")).toContainText("Locked in");
   await bea.page.locator("#ihave").click();
-  await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+  await expect(ada.page.locator("#drinkhead")).toHaveText("Take a drink or pass", { timeout: 15000 });
   await expect(ada.page.locator("#havecount")).toContainText("2 of 2 said I HAVE");
   // both phones name the same storyteller, and Skip hides it on that phone only
   await expect.poll(async () => {
@@ -364,7 +364,7 @@ test("nhie most likely mode: pick it, vote for a person, results, story, awards"
     await ada.page.locator("#voteopts button", { hasText: "Bea" }).click();
     await cal.page.locator("#voteopts button", { hasText: "Bea" }).click();
     await bea.page.locator("#voteopts button", { hasText: "Cal" }).click();
-    await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+    await expect(ada.page.locator("#drinkhead")).toHaveText("Take a drink or pass", { timeout: 15000 });
     await expect(ada.page.locator("#havecount")).toContainText("2 of 3 votes");
     await expect(ada.page.locator("#havelist")).toContainText("Bea · 2 votes");
     await expect(ada.page.locator("#havelist")).not.toContainText("Cal");

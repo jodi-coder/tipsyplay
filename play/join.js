@@ -10,7 +10,7 @@ var initializeApp,getAuth,signInAnonymously,getDatabase,ref,onValue,update,set,r
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
 function listNames(arr){if(arr.length<=1)return arr[0]||"";if(arr.length===2)return arr[0]+" and "+arr[1];return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
 function motionOk(){return !(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}
-function instr(){return meta&&meta.na?"Points only. Passing is always fine.":"Sip, water, or pose, or skip. Passing is always fine."}
+function instr(){return meta&&meta.na?"Points only. Passing is always fine.":"Take a drink, or skip. Passing is always fine."}
 function roomUrl(c){return "https://tipsyplay.com/play/join.html?code="+c}
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
@@ -208,7 +208,7 @@ function startFx(){
  h=c.height=Math.floor(window.innerHeight*dpr);
  if(w<10||h<10){c.classList.add("hide");return}
  g=c.getContext("2d");if(!g)return;
- colors=["--text","--text-2","--primary","--danger"].map(function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#FFFFFF"});
+ colors=["--surface","--primary","--danger","--tile-green"].map(function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#FFFFFF"});
  bits=[];sparks=[];rockets=[];launches=0;t0=performance.now();
  for(i=0;i<70;i++)bits.push({x:Math.random()*w,y:-Math.random()*h*0.5,w:(4+Math.random()*5)*dpr,h:(7+Math.random()*8)*dpr,vy:(1.5+Math.random()*2.2)*dpr,vx:(Math.random()-0.5)*1.3*dpr,rot:Math.random()*6,vr:(Math.random()-0.5)*0.2,c:colors[i%colors.length]});
  function burst(x,y,col){var k,a,sp;for(k=0;k<32;k++){a=Math.random()*Math.PI*2;sp=(0.5+Math.random()*2.6)*dpr;sparks.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c:col})}}

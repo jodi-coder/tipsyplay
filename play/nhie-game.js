@@ -3,7 +3,7 @@ var D=window.NHIE,S=localStorage,lvl=S.getItem("tp_spice")||"mild",na=S.getItem(
 var deck=[],shown=0,pts=0,hear=false,$=function(i){return document.getElementById(i)},names={mild:"Mild",spicy:"Spicy",extra:"Extra Spicy"};
 function cue(kind){if(!hear||!window.TPSound)return;if(kind==="card")TPSound.card();else if(kind==="done")TPSound.chime();else if(kind==="rem")TPSound.reminder()}
 function shuffle(){deck=D[lvl].slice();for(var i=deck.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=deck[i];deck[i]=deck[j];deck[j]=t}}
-function instr(){return na?"<b>If you have:</b> fold a finger or score a point.":"<b>If you have:</b> take one small sip <i>or</i> fold a finger / score a point. Passing is always fine."}
+function instr(){return na?"<b>If you have:</b> fold a finger or score a point.":"<b>If you have:</b> take one small drink <i>or</i> fold a finger / score a point. Passing is always fine."}
 function next(){var c=$("card");
  if(rem&&shown>0&&shown%8===0&&!c.dataset.rem){c.dataset.rem=1;c.classList.add("rem");$("lvl").textContent="Gentle reminder";$("prompt").textContent=D.reminders[(shown/8-1)%D.reminders.length];$("instr").innerHTML="Take your time. Tap next when ready.";cue("rem");return}
  delete c.dataset.rem;c.classList.remove("rem");

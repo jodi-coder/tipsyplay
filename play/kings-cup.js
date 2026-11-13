@@ -11,23 +11,23 @@ var SOUNDS = {
 };
 /* ============================================================
    RULES
-   Original lines. Every drink line is one small sip OR a
+   Original lines. Every drink line is one small drink OR a
    visible alternative. Nothing stacks. The cup is a counter.
    ============================================================ */
 var RULES = {
-  A: { title: "One Beat", body: "Everyone joins for one beat, then the table stops together. It does not keep going and it does not pass down the line.", line: "One small sip or hold a silly pose, together, then stop. No continuous drinking.", say: "One Beat!" },
-  "2": { title: "You", body: "The drawer points at one other player. That person has the card. One turn, then it is over.", line: "One small sip or take a five-second bow.", say: "You!" },
-  "3": { title: "Me", body: "This card lands on the person who drew it.", line: "One small sip or take a dramatic bow.", say: "Me!" },
-  "4": { title: "Floor", body: "Everyone touches the floor once. The drawer names who was last. That is the whole contest.", line: "One small sip or do one squat.", say: "Floor!" },
-  "5": { title: "Guys", body: "Players who chose Guys, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small sip or hold a flex pose.", say: "Guys!" },
-  "6": { title: "Girls", body: "Players who chose Girls, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small sip or do a hair-flip pose.", say: "Girls!" },
-  "7": { title: "Heaven", body: "Everyone points at the ceiling. The drawer names who was last.", line: "One small sip or hold a star pose for three seconds.", say: "Heaven!" },
-  "8": { title: "Mate", body: "Pick a partner. When one of you takes a sip or the alternative, the other does the same once. It does not bounce back.", line: "One small sip or a handshake. Your mate does the same, once.", say: "Pick a mate!" },
-  "9": { title: "Rhyme", body: "Say the seed word. Go around with rhymes. The first person who stalls ends it.", line: "One small sip or make an animal noise.", say: "Rhyme time!" },
-  "10": { title: "Categories", body: "Name things in the category. The first stall ends the round. These are not drink names.", line: "One small sip or freeze in a thumbs-up.", say: "Category!" },
-  J: { title: "House rule", body: "Invent one silly table rule. It stays on the list until the host clears it. Breaking it later is still only one moment. Rules do not stack.", line: "One small sip or write the rule and score the point you already have.", say: "Make a rule!" },
-  Q: { title: "Question", body: "Ask the question out loud to the player you pick. They answer once.", line: "One small sip or score a point for answering.", say: "Question!" },
-  K: { title: "King", body: "The cup is a counter, not a drink. This king adds one mark. The fourth king ends the round with a dare. Nobody drinks from it.", line: "One small sip or add a dare to the cup's list.", say: "King!" }
+  A: { title: "One Beat", body: "Everyone joins for one beat, then the table stops together. It does not keep going and it does not pass down the line.", line: "One small drink or hold a silly pose, together, then stop. No continuous drinking.", say: "One Beat!" },
+  "2": { title: "You", body: "The drawer points at one other player. That person has the card. One turn, then it is over.", line: "One small drink or take a five-second bow.", say: "You!" },
+  "3": { title: "Me", body: "This card lands on the person who drew it.", line: "One small drink or take a dramatic bow.", say: "Me!" },
+  "4": { title: "Floor", body: "Everyone touches the floor once. The drawer names who was last. That is the whole contest.", line: "One small drink or do one squat.", say: "Floor!" },
+  "5": { title: "Guys", body: "Players who chose Guys, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small drink or hold a flex pose.", say: "Guys!" },
+  "6": { title: "Girls", body: "Players who chose Girls, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small drink or do a hair-flip pose.", say: "Girls!" },
+  "7": { title: "Heaven", body: "Everyone points at the ceiling. The drawer names who was last.", line: "One small drink or hold a star pose for three seconds.", say: "Heaven!" },
+  "8": { title: "Mate", body: "Pick a partner. When one of you takes a drink or the alternative, the other does the same once. It does not bounce back.", line: "One small drink or a handshake. Your mate does the same, once.", say: "Pick a mate!" },
+  "9": { title: "Rhyme", body: "Say the seed word. Go around with rhymes. The first person who stalls ends it.", line: "One small drink or make an animal noise.", say: "Rhyme time!" },
+  "10": { title: "Categories", body: "Name things in the category. The first stall ends the round. These are not drink names.", line: "One small drink or freeze in a thumbs-up.", say: "Category!" },
+  J: { title: "House rule", body: "Invent one silly table rule. It stays on the list until the host clears it. Breaking it later is still only one moment. Rules do not stack.", line: "One small drink or write the rule and score the point you already have.", say: "Make a rule!" },
+  Q: { title: "Question", body: "Ask the question out loud to the player you pick. They answer once.", line: "One small drink or score a point for answering.", say: "Question!" },
+  K: { title: "King", body: "The cup is a counter, not a drink. This king adds one mark. The fourth king ends the round with a dare. Nobody drinks from it.", line: "One small drink or add a dare to the cup's list.", say: "King!" }
 };
 /* ============================================================
    TRIGGERS
@@ -169,7 +169,7 @@ function pilePayload(list, prevLen){
 function burst(n){
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
-  var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF3D7F",c2=cs.getPropertyValue("--text-2").trim()||"#F0FAF9";
+  var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF3D7F",c2=cs.getPropertyValue("--primary").trim()||"#FFD60A";
   for(var i=0;i<n;i++) parts.push({x:Math.random()*c.width,y:n>40?-20:c.height*0.35,vx:(Math.random()-0.5)*(n>40?8:4),vy:n>40?2+Math.random()*5:-3-Math.random()*3,life:1,color:i%2?c1:c2});
   if(!raf) raf=requestAnimationFrame(frame);
 }
@@ -332,7 +332,7 @@ function paintRules(){
   SEED_DARES.forEach(function(dare){var p=document.createElement("p"); p.textContent=dare; d.appendChild(p)});
 }
 function lineFor(card){
-  if(card.r==="K"&&kingCount()>=4) return "One small sip or do a dare from the cup. No downing a cup.";
+  if(card.r==="K"&&kingCount()>=4) return "One small drink or do a dare from the cup. No downing a cup.";
   return RULES[card.r].line;
 }
 function actorUid(){
@@ -433,7 +433,7 @@ function render(){
   var fin=table&&table.step==="finale";
   $("finale").classList.toggle("hide", !fin);
   if(fin){
-    $("finalcopy").textContent="One small sip or do a dare from the cup. No downing a cup. Kings in the counter: "+kingCount()+".";
+    $("finalcopy").textContent="One small drink or do a dare from the cup. No downing a cup. Kings in the counter: "+kingCount()+".";
     var line=$("recapline"); if(line) line.textContent=recapText();
     $("draw").classList.add("hide");
     $("wait").classList.add("hide");
@@ -617,7 +617,7 @@ function playAgain(){
 }
 async function deal(){
   if(!isHost()||!meta) return;
-  if(!$("optin")||!$("optin").checked){fail("Tick the opt-in first. Sipping is optional and water counts."); return}
+  if(!$("optin")||!$("optin").checked){fail("Tick the opt-in first. Drinking is optional."); return}
   var list=order(); if(list.length<2){fail("Need 2 players on their phones."); return}
   fail("");
   var deck=buildDeck();

@@ -108,7 +108,7 @@ var EVENT_LINES={
   undetected:"Someone's lie got through. Codebreakers drink.",
   fast:"Cracked fast. Traitors drink."
 };
-function amountLabel(setting){return setting==="shots"?"one shot":"one sip"}
+function amountLabel(setting){return setting==="shots"?"one shot":"one drink"}
 function resolveDrinks(events, setting){
   var seen={}, affected=[], lines=[];
   (events||[]).forEach(function(e){

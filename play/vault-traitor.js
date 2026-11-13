@@ -90,7 +90,7 @@ function paintLobby(){
     b.setAttribute("aria-pressed", b.dataset.drink===setting?"true":"false");
     b.disabled=!isHost();
   });
-  $("drinknote").textContent=setting==="none"?"No drinking: every drink becomes a no-drink alternative.":setting==="shots"?"Shots: each drink is one shot. Pace yourself.":"Sips: each drink is one sip.";
+  $("drinknote").textContent=setting==="none"?"No drinking: every drink becomes a no-drink alternative.":setting==="shots"?"Shots: each drink is one shot. Pace yourself.":"Drinks: each one is a single drink.";
   var n=list.length, dup=dupName(list);
   var start=$("start"); start.disabled=!isHost()||n<L.MIN_PLAYERS||n>L.MAX_PLAYERS||!!dup;
   start.textContent="Start game · "+n+" player"+(n===1?"":"s");

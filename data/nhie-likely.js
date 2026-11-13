@@ -1,7 +1,7 @@
 /* Never Have I Ever "Most likely" mode: question packs (moved here from the retired Who's Most Likely game).
    Edit these arrays. Every line is original, short enough for huge type, and under 90 characters.
    Spicy is cheeky, never explicit, never degrading. Couples stays playful, not graphic.
-   The game adds the sip-or-challenge line itself. Do not put drinking instructions here. */
+   The game adds the drink-or-challenge line itself. Do not put drinking instructions here. */
 window.NHIE_LIKELY = {
   classic: [
     "Who's most likely to narrate their own entrance",
@@ -39,7 +39,7 @@ window.NHIE_LIKELY = {
     "Who's most likely to own a cape and mean it",
     "Who's most likely to host and sit down last",
     "Who's most likely to photograph the food and forget it",
-    "Who's most likely to survive on charm and water",
+    "Who's most likely to survive on charm and snacks",
     "Who's most likely to petition the thermostat",
     "Who's most likely to bow after a tiny win",
     "Who's most likely to get emotional at a commercial",
@@ -63,7 +63,7 @@ window.NHIE_LIKELY = {
     "Who's most likely to start a band with strangers",
     "Who's most likely to be right without being asked",
     "Who's most likely to hide from a photo and photo-bomb it",
-    "Who's most likely to toast with a water glass",
+    "Who's most likely to toast with the wrong glass",
     "Who's most likely to be recognized by a barista",
     "Who's most likely to keep the night kind"
   ],

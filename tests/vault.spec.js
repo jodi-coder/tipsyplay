@@ -51,8 +51,8 @@ test("vault traitor: a full game on three phones, with one Traitor caught by a s
     await expect(p.page.locator("#lobby")).toBeVisible();
   }
   await expect(host.page.locator("#start")).toBeEnabled();
-  await expect(host.page.locator("#drinknote")).toContainText("Sips");
-  await expect(host.page.locator(".na")).toContainText("pace yourself, drink water");
+  await expect(host.page.locator("#drinknote")).toContainText("Drinks");
+  await expect(host.page.locator(".na")).toContainText("pace yourself");
   await host.page.locator("#start").click();
   // each phone sees only its own role; exactly one Traitor among three
   for (const p of P) await expect(p.page.locator("#rolebox")).toBeVisible();
@@ -98,7 +98,7 @@ test("vault traitor: a full game on three phones, with one Traitor caught by a s
   await expect(traitor.page.locator("#choicebox")).toBeVisible({ timeout: 10000 });
   await expect(caller.page.locator("#choicebox")).toBeHidden(); // a Codebreaker's phone shows no choice
   await traitor.page.locator("#choicelist button", { hasText: "Drink" }).click();
-  await expect(host.page.locator("#banner")).toContainText(traitorName + ": one sip", { timeout: 10000 });
+  await expect(host.page.locator("#banner")).toContainText(traitorName + ": one drink", { timeout: 10000 });
   // round end: code, roles, lies, votes and the summary
   await expect.poll(() => phase(host), { timeout: 15000 }).toBe("end");
   const reveal = host.page.locator("#reveal");
