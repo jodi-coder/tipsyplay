@@ -47,8 +47,8 @@ test("local encoder QR decodes to the exact join url", () => {
   assert.match(join.credit, /DENSO WAVE/);
 });
 
-test("the other three game urls decode too", () => {
-  ["split|/games/split-decision.html|split", "vibe|/games/vibe-checkpoint.html|vibe", "crew|/games/chaos-crew.html|crew"].forEach((row) => {
+test("the other game urls decode too", () => {
+  ["split|/games/split-decision.html|split", "vt|/games/vault-traitor.html|vt"].forEach((row) => {
     const [code, path, game] = row.split("|");
     const url = join.inviteUrl("https://tipsyplay.com", path, code.toUpperCase(), game);
     const canvas = fakeCanvas();

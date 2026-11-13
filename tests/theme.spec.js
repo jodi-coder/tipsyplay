@@ -102,7 +102,7 @@ test("the homepage is readable when the hero preview is missing and when scripts
   await expect(page.locator(".hero .cta")).toBeVisible();
   await expect(page.locator(".hero .safe-pill")).toBeVisible();
   await expect(page.locator("header.top nav a", { hasText: "Play responsibly" })).toBeVisible();
-  await expect(page.locator(".gcard3 .host")).toHaveCount(3);
+  await expect(page.locator(".gcard3 .host")).toHaveCount(4);
   await ctx.close();
   // and with the preview removed in a normal page
   const c2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -117,7 +117,7 @@ test("the homepage is readable when the hero preview is missing and when scripts
 test("game cards are whole-card links to the host screens, with tap targets of 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".gcard3 .host", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["play/card-lottery.html", "games/never-have-i-ever.html", "play/story-chain.html"]);
+  expect(hrefs).toEqual(["games/vault-traitor.html", "play/two-truths.html", "games/never-have-i-ever.html", "play/story-chain.html"]);
   const sizes = await page.$$eval(".gcard3 .host, .chips3 a, .hero .cta, .row-all .btn", (a) => a.map((x) => x.getBoundingClientRect().height));
   for (const h of sizes) expect(h).toBeGreaterThanOrEqual(43.5);
   const chips = await page.$$eval(".chips3 a", (a) => a.map((x) => x.getAttribute("href")));

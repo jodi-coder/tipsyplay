@@ -43,6 +43,7 @@
 <h2>Your phone.<br>Your card.</h2>
 <p class="lede">One person hosts. Everyone else joins with the code on their own phone. Every card is one small sip or a clearly named alternative. Nothing stacks.</p>
 <div class="na"><b>Opt in:</b> Sipping is optional. Water counts. You may decline a sip or the alternative.</div>
+<div class="na" id="cuprule"><b>How the cup works:</b> The cup is a counter, not a drink. Each king you draw adds one mark. When the fourth king is drawn, the round ends with a dare from the cup's list. Nobody drinks from it or finishes it.</div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <label class="sr" for="pname">Your name</label>
 <input class="bigin" id="pname" maxlength="20" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
@@ -75,7 +76,7 @@
 <div class="kc-lights" id="lights" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <p id="away" class="na hide">The host disconnected. The deck waits here until they reconnect.</p>
 <div class="kc-cup" id="cup" aria-label="King counter"><span id="cupfill"></span><b id="cuplabel">0/4</b></div>
-<p class="tag" id="cupnote">The cup counts kings. It is not a drink.</p>
+<p class="tag" id="cupnote">Counter, not a drink: the 4th king ends the round.</p>
 <p class="turntag" id="turn"></p>
 <p class="tag" id="left"></p>
 <p id="audioline" class="tag"></p>
@@ -195,6 +196,6 @@
 <script src="../sounds.js?v=18"></script>
 <script src="../app.js?v=21"></script>
 <script src="../play/party-audio.js?v=18"></script>
-<script src="../play/kings-cup.js?v=28"></script><script src="../play/room-ui.js?v=1"></script>
+<script src="../play/kings-cup.js?v=29"></script><script src="../play/room-ui.js?v=1"></script>
 </body>
 </html>

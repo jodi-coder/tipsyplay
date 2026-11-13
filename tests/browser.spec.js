@@ -97,12 +97,12 @@ test("age gate keeps the invite, QR decodes, layout holds", async ({ browser }) 
   const narrow = await browser.newContext({ viewport: { width: 320, height: 700 }, serviceWorkers: "block" });
   const narrowPage = await narrow.newPage();
   await narrowPage.addInitScript(() => { localStorage.setItem("tp_age_ok","yes"); localStorage.setItem("tp_sound","off"); });
-  await narrowPage.goto(BASE + "/games/vibe-checkpoint.html?emulator=1");
+  await narrowPage.goto(BASE + "/games/split-decision.html?emulator=1");
   await narrowPage.locator("#app").waitFor({ state: "visible" });
   expect((await overflow(narrowPage)).over).toBe(false);
-  const wide = await boot(browser, "/games/chaos-crew.html", "Ada", { width: 1280, height: 800 });
+  const wide = await boot(browser, "/games/split-decision.html", "Ada", { width: 1280, height: 800 });
   expect((await overflow(wide.page)).over).toBe(false);
-  await shot(wide.page, "crew-home-desktop");
+  await shot(wide.page, "split-home-desktop");
   const tiny = await wide.page.evaluate(() => {
     return Array.from(document.querySelectorAll("button, a.btn, input")).filter((el) => {
       const r = el.getBoundingClientRect();
@@ -202,93 +202,6 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
   await ada.context.close();
   await bea.context.close();
   await cal.context.close();
-});
-
-test("vibe cycle and chaos crew round with pass and retry", async ({ browser }) => {
-  const ada = await boot(browser, "/games/vibe-checkpoint.html", "Ada");
-  const bea = await boot(browser, "/games/vibe-checkpoint.html", "Bea");
-  const code = await hostRoom(ada.page, "Ada");
-  await joinRoom(bea.page, "Bea", code);
-  await ada.page.locator("#optin").check();
-  await ada.page.locator("#start").click();
-  await expect(ada.page.locator("#table")).toBeVisible();
-  await ada.page.locator("#passbtn").click();
-  async function vibePick(page, n){
-    await page.locator(".poster-choice", { hasText: new RegExp("^" + n + " ·") }).click();
-  }
-  await expect(bea.page.locator("#kicker")).toContainText("Your vibe", { timeout: 15000 });
-  await vibePick(bea.page, 4);
-  await vibePick(ada.page, 4);
-  await expect(ada.page.locator("#revealbox")).toBeVisible();
-  await ada.page.locator("#nextround").click();
-  await expect(ada.page.locator("#finale")).toBeVisible();
-  await shot(bea.page, "vibe-finale-mobile");
-  await ada.context.close();
-  await bea.context.close();
-
-  const host = await boot(browser, "/games/chaos-crew.html", "Ada");
-  const p2 = await boot(browser, "/games/chaos-crew.html", "Bea");
-  const p3 = await boot(browser, "/games/chaos-crew.html", "Cal");
-  const pin = await hostRoom(host.page, "Ada");
-  await joinRoom(p2.page, "Bea", pin);
-  await joinRoom(p3.page, "Cal", pin);
-  await host.page.locator("#optin").check();
-  await host.page.locator("#start").click();
-  async function readyAll(){
-    for (const p of [host.page, p2.page, p3.page]){
-      const ready = p.locator(".poster-choice", { hasText: "I'm ready" });
-      if (await ready.count()) await ready.click();
-    }
-    await expect(host.page.locator(".poster-choice").first()).toContainText("needs", { timeout: 20000 });
-  }
-  async function fillPerfect(){
-    const labels = await host.page.locator(".poster-choice").allInnerTexts();
-    const plan = [];
-    labels.forEach((label) => {
-      const match = label.match(/needs (\d+)/);
-      const n = match ? +match[1] : 0;
-      for (let i = 0; i < n; i++) plan.push(label);
-    });
-    const pages = [host.page, p2.page, p3.page];
-    for (let i = 0; i < plan.length; i++){
-      await pages[i].locator(".poster-choice", { hasText: plan[i] }).click();
-    }
-    await expect(host.page.locator("#revealbox")).toBeVisible();
-  }
-  await readyAll();
-  await host.page.locator(".poster-choice").first().click();
-  await p2.page.locator(".poster-choice").first().click();
-  await p3.page.locator(".poster-choice").first().click();
-  await expect(host.page.locator("#revealbox")).toBeVisible();
-  await expect(host.page.locator("#revealhead")).toContainText("no star");
-  await host.page.locator("#retrybtn").click();
-  await expect(host.page.locator(".poster-choice").first()).toContainText("needs");
-  await fillPerfect();
-  await expect(host.page.locator("#revealhead")).toHaveText(/staffed · star$/);
-  await shot(host.page, "crew-reveal-mobile");
-  for (let mission = 1; mission < 8; mission++){
-    await host.page.locator("#nextround").click();
-    await readyAll();
-    if (mission === 2){
-      await p3.page.locator("#passbtn").click();
-      await p3.page.locator("#passbtn").click();
-      await expect(host.page.locator(".poster-choice").first()).toContainText("needs");
-      const labels = await host.page.locator(".poster-choice").allInnerTexts();
-      await host.page.locator(".poster-choice", { hasText: labels[0] }).click();
-      await p2.page.locator(".poster-choice", { hasText: labels[1] }).click();
-      await expect(host.page.locator("#revealbox")).toBeVisible();
-    }else{
-      await fillPerfect();
-    }
-    if (mission < 7) continue;
-  }
-  await host.page.locator("#nextround").click();
-  await expect(host.page.locator("#finale")).toBeVisible();
-  await expect(host.page.locator("#awards")).toContainText("/ 8");
-  await shot(host.page, "crew-finale-mobile");
-  await host.context.close();
-  await p2.context.close();
-  await p3.context.close();
 });
 
 test("never have i ever still plays and shows a local QR", async ({ browser }) => {
@@ -413,6 +326,58 @@ test("nhie round feel: who has answered, the reveal count, one shared storytelle
   await expect(ada.page.locator("#awards .nh-award-emo").first()).not.toBeEmpty();
   await ada.context.close();
   await bea.context.close();
+});
+
+test("nhie most likely mode: pick it, vote for a person, results, story, awards", async ({ browser }) => {
+  const ada = await boot(browser, "/games/never-have-i-ever.html", "Ada");
+  const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
+  const cal = await boot(browser, "/games/never-have-i-ever.html", "Cal");
+  for (const p of [ada, bea, cal]) {
+    await p.page.goto(BASE + "/games/never-have-i-ever.html?emulator=1&fast=1");
+    await p.page.locator("#app").waitFor({ state: "visible" });
+  }
+  const code = await hostRoom(ada.page, "Ada");
+  await joinRoom(bea.page, "Bea", code);
+  await joinRoom(cal.page, "Cal", code);
+  // only the host picks the mode and its question pack
+  await ada.page.locator("[data-mode='likely']").click();
+  await expect(ada.page.locator("#likelypacks")).toBeVisible();
+  await expect(bea.page.locator("#likelypacks")).toBeHidden();
+  await ada.page.locator("[data-len='5']").click();
+  await ada.page.locator("#optin").check();
+  await expect(ada.page.locator("#lobbynote")).toContainText("Most likely");
+  await ada.page.locator("#start").click();
+  await expect(ada.page.locator("#voteopts button").first()).toBeVisible();
+  // the deck is the moved Who's Most Likely prompts, and the kicker says so
+  const deck = await ada.page.evaluate(() => window.__tpNhie.deck());
+  deck.forEach((line) => expect(line).toMatch(/^Who's most likely to /));
+  await expect(ada.page.locator("#kicker")).toHaveText("Who's most likely to");
+  await expect(ada.page.locator("#badge")).toHaveText("Most likely");
+  for (const p of [ada, bea, cal]) {
+    await expect(p.page.locator("#ihave")).toBeHidden();
+    await expect(p.page.locator("#voteopts button")).toHaveCount(2); // everyone but yourself
+    const names = await p.page.locator("#voteopts button").allInnerTexts();
+    expect(names).not.toContain(p.name);
+  }
+  for (let r = 1; r <= 5; r++) {
+    if (r > 1) { await ada.page.locator("#nextround").click(); await expect(ada.page.locator("#voteopts button").first()).toBeVisible(); }
+    await ada.page.locator("#voteopts button", { hasText: "Bea" }).click();
+    await cal.page.locator("#voteopts button", { hasText: "Bea" }).click();
+    await bea.page.locator("#voteopts button", { hasText: "Cal" }).click();
+    await expect(ada.page.locator("#drinkhead")).toHaveText("Sip, water, or pose", { timeout: 15000 });
+    await expect(ada.page.locator("#havecount")).toContainText("2 of 3 votes");
+    await expect(ada.page.locator("#havelist")).toContainText("Bea · 2 votes");
+    await expect(ada.page.locator("#havelist")).not.toContainText("Cal");
+    if (r === 1) {
+      await expect(bea.page.locator("#storyline")).toContainText("You're up: explain that vote");
+      await expect(ada.page.locator("#storyline")).toContainText("Bea, explain that vote");
+    }
+  }
+  await ada.page.locator("#nextround").click();
+  await expect(ada.page.locator("#awards .nh-award").first()).toContainText("Most mentioned", { timeout: 15000 });
+  await expect(ada.page.locator("#awards")).toContainText("Bea");
+  await expect(ada.page.locator("#finalelede")).toContainText("Votes are stories");
+  for (const p of [ada, bea, cal]) await p.context.close();
 });
 
 test("lobby removal works and baseline rules still reject a host claim", async ({ browser }) => {

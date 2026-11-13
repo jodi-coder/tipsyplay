@@ -27,7 +27,7 @@ var RULES = {
   "10": { title: "Categories", body: "Name things in the category. The first stall ends the round. These are not drink names.", line: "One small sip or freeze in a thumbs-up.", say: "Category!" },
   J: { title: "House rule", body: "Invent one silly table rule. It stays on the list until the host clears it. Breaking it later is still only one moment. Rules do not stack.", line: "One small sip or write the rule and score the point you already have.", say: "Make a rule!" },
   Q: { title: "Question", body: "Ask the question out loud to the player you pick. They answer once.", line: "One small sip or score a point for answering.", say: "Question!" },
-  K: { title: "King", body: "The cup fills one mark. It counts kings. It is not a drink and nobody finishes it.", line: "One small sip or add a dare to the cup's list.", say: "King!" }
+  K: { title: "King", body: "The cup is a counter, not a drink. This king adds one mark. The fourth king ends the round with a dare. Nobody drinks from it.", line: "One small sip or add a dare to the cup's list.", say: "King!" }
 };
 /* ============================================================
    TRIGGERS

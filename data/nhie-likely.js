@@ -1,8 +1,8 @@
-/* Most Likely To question packs.
+/* Never Have I Ever "Most likely" mode: question packs (moved here from the retired Who's Most Likely game).
    Edit these arrays. Every line is original, short enough for huge type, and under 90 characters.
    Spicy is cheeky, never explicit, never degrading. Couples stays playful, not graphic.
    The game adds the sip-or-challenge line itself. Do not put drinking instructions here. */
-window.MLT_PACKS = {
+window.NHIE_LIKELY = {
   classic: [
     "Who's most likely to narrate their own entrance",
     "Who's most likely to befriend the group chat and mute it",
@@ -31,7 +31,7 @@ window.MLT_PACKS = {
     "Who's most likely to become a regular after one visit",
     "Who's most likely to hype a stranger",
     "Who's most likely to nap at their own party",
-    "Who's most likely to dance to a hold song",
+    "Who's most likely to dance to hold music",
     "Who's most likely to name the chat something unsearchable",
     "Who's most likely to pack three outfits for two hours",
     "Who's most likely to make friends in an elevator",

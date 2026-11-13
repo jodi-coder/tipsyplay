@@ -180,7 +180,6 @@ function roundLive(){
  document.body.appendChild(n);
  return n;
 }
-function teamName(id){var list=playerList(),i;for(i=0;i<list.length;i++)if(list[i].uid===id)return i%2===0?"Yellow":"Pink";return "Yellow"}
 function roomUrl(c){
  var base=/localhost|127\.0\.0\.1/.test(location.host)?location.origin+location.pathname:"https://tipsyplay.com/play/"+GAME.id+".html";
  return base+"?code="+c;
@@ -391,7 +390,7 @@ function paintBoard(){
 }
 function paintStage(){
  var a=actor();
- $("turn").textContent=a?(GAME.kind==="draw"?teamName(a.uid)+" draws · "+pname(a.uid):pname(a.uid)+"'s turn"):"";
+ $("turn").textContent=a?(GAME.kind==="draw"?pname(a.uid)+" draws":pname(a.uid)+"'s turn"):"";
  if(GAME.kind!=="draw"&&GAME.kind!=="toss"&&GAME.kind!=="category"&&GAME.kind!=="court"&&GAME.kind!=="truths")$("turn").textContent="Round "+(rnd()+1)+" of "+meta.rounds;
  if(GAME.kind==="court")$("turn").textContent=a?pname(a.uid)+" is on the stand":"";
  if(GAME.kind==="truths")$("turn").textContent=a?pname(a.uid)+" is telling":"";

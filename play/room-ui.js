@@ -1,4 +1,4 @@
-/* Shared room chrome for every hosted game (all 14 room pages load this).
+/* Shared room chrome for every hosted game (every hosted game page loads this).
    - One Menu holds the secondary actions: invite, reveal, reactions, own line, players, rules, sound, restart, close or leave.
    - One Invite sheet with a QR code, Share, Copy link and Copy code. The QR library loads only when it is opened.
    - One slim line that is always visible: sips are optional, water counts, pass any time, Play responsibly.
