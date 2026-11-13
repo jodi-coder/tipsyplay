@@ -1,7 +1,7 @@
 /* Shared room chrome for every hosted game (every hosted game page loads this).
    - One Menu holds the secondary actions: invite, reveal, reactions, own line, players, rules, sound, restart, close or leave.
    - One Invite sheet with a QR code, Share, Copy link and Copy code. The QR library loads only when it is opened.
-   - One slim line that is always visible: sips are optional, water counts, pass any time, Play responsibly.
+   - One slim line that is always visible: drinking is optional, pass any time, Play responsibly.
    - One main action pinned at the bottom for the host (Start, Reveal when everyone is in, Next, Play again).
    The games' own buttons are not replaced. They are hidden visually and the Menu forwards taps to them,
    so every game keeps its own handlers and state. Nothing here touches Firebase. */
@@ -77,7 +77,7 @@ invite.innerHTML=
   "<p class=\"sr\" id=\"rmcredit\"></p>";
 
 var strip=mk("div","rm-strip"); strip.setAttribute("role","note");
-strip.appendChild(d.createTextNode("Sips are optional. Water counts. Pass any time. "));
+strip.appendChild(d.createTextNode("Drinking is optional. Pass any time. "));
 var sa=mk("a",null,"Play responsibly"); sa.href=ROOT+"responsible.html"; strip.appendChild(sa);
 
 body.appendChild(scrim); body.appendChild(sheet); body.appendChild(invite); body.appendChild(strip);

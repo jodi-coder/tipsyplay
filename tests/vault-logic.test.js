@@ -163,7 +163,7 @@ test("names: unique ignoring case, not empty, at most 12 characters", () => {
 test("drink resolution: several triggers on one guess make one banner listing every drinker once", () => {
   const b = L.resolveDrinks([{ type: "pass", uids: ["A"] }, { type: "wrong", uids: ["B"] }, { type: "correct", uids: ["C"] }, { type: "wrong", uids: ["A"] }], "sips");
   assert.deepEqual(b.drinkers, ["A", "B", "C"]);
-  assert.equal(b.amount, "one sip");
+  assert.equal(b.amount, "one drink");
   assert.equal(b.lines.length, 3);
   assert.equal(L.resolveDrinks([{ type: "pass", uids: ["A"] }], "shots").amount, "one shot");
   assert.equal(L.resolveDrinks([], "sips"), null);
@@ -232,7 +232,7 @@ test("walkthrough 1: a Traitor lie that gets through", () => {
   guess(g, "4712", { uid: "Cat", key: "b-1" }); L.nextTurn(g);          // truth 2/2, shown 1/2
   guess(g, "4217"); L.nextTurn(g);                                        // 2/2
   guess(g, "4271");                                                       // cracked on guess 5
-  const w = wrapUp(g, "Walkthrough 1: Traitor lie (Sips)");
+  const w = wrapUp(g, "Walkthrough 1: Traitor lie (Drinks)");
   assert.equal(w.f.winner, "codebreakers");
   assert.equal(w.f.summary.liesTold, 2);
   assert.deepEqual(w.f.banner.affected, ["Ana", "Ben", "Dev"], "undetected lies make every remaining Codebreaker drink once");
@@ -265,7 +265,7 @@ test("walkthrough 3: correct accusations with two Traitors", () => {
   const v2 = L.vote(g, "Cat", { Ana: "Dev", Ben: "Dev", Cat: "Dev", Eli: "Ana" });
   assert.equal(v2.result, "correct");
   drinks(g, { Dev: "skipvote" });
-  const w = wrapUp(g, "Walkthrough 3: correct accusations (Sips)");
+  const w = wrapUp(g, "Walkthrough 3: correct accusations (Drinks)");
   assert.equal(w.f.winner, "codebreakers");
   assert.equal(w.f.reason, "caught every Traitor");
   assert.equal(w.f.lies[0].status, "exposed");
@@ -280,10 +280,10 @@ test("walkthrough 4: a pass token, then a fast crack", () => {
   L.nextTurn(g);
   guess(g, "1350"); L.nextTurn(g);                                        // Cat 3/0 (Traitor tells the truth)
   guess(g, "1357");                                                       // Ana cracks on guess 3
-  const w = wrapUp(g, "Walkthrough 4: pass token and fast crack (Sips)");
+  const w = wrapUp(g, "Walkthrough 4: pass token and fast crack (Drinks)");
   assert.equal(w.f.summary.guessesUsed, 3);
   assert.deepEqual(w.f.banner.affected, ["Cat"], "cracked in 4 or fewer: every Traitor drinks");
-  assert.ok(w.log.some((l) => l.startsWith("BANNER: Pass token used.") && l.includes("Ben: one sip")));
+  assert.ok(w.log.some((l) => l.startsWith("BANNER: Pass token used.") && l.includes("Ben: one drink")));
   WALKS.push(w);
 });
 test("walkthrough 5: No drinking", () => {

@@ -73,8 +73,7 @@ test("lobby: one Invite, one pinned Start, the rest in the Menu, responsible-pla
   // the responsible-play line is visible, links to the house code, and its link is a full-size tap target
   const strip = p.locator(".rm-strip");
   await expect(strip).toBeVisible();
-  await expect(strip).toContainText("Sips are optional");
-  await expect(strip).toContainText("Water counts");
+  await expect(strip).toContainText("Drinking is optional");
   const link = strip.locator("a");
   await expect(link).toHaveText("Play responsibly");
   await expect(link).toHaveAttribute("href", /responsible\.html$/);

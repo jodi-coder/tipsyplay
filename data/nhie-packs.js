@@ -1,7 +1,7 @@
 /* Never Have I Ever prompt packs.
    Original lines for TipsyPlay. Nothing here is copied from a published card game.
    Spicy is cheeky and adult. It is never explicit, never degrading, and never a pile-on.
-   These lines are not drinking instructions. The game adds the sip-or-pose choice itself. */
+   These lines are not drinking instructions. The game adds the drink-or-pose choice itself. */
 window.NHIE_PACKS = {
   mild: [
     "Never have I ever pretended to know the words by mouthing along",

@@ -6,7 +6,7 @@ function motionOk(){return !(window.matchMedia&&window.matchMedia("(prefers-redu
 function later(fn,ms){clearTimeout(tid);tid=setTimeout(fn,ms)}
 function el(tag,cls,text){var n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
 function listNames(arr){if(arr.length<=1)return arr[0]||"";if(arr.length===2)return arr[0]+" and "+arr[1];return arr.slice(0,-1).join(", ")+" and "+arr[arr.length-1]}
-function instr(){return na?"Points only. Passing is always fine.":"Take a small sip or skip; passing is always fine."}
+function instr(){return na?"Points only. Passing is always fine.":"Take a small drink or skip; passing is always fine."}
 function paintChips(sel,attr,val){document.querySelectorAll(sel).forEach(function(b){b.setAttribute("aria-pressed",String(b.getAttribute(attr))===String(val))})}
 function syncAdd(){var n=$("plist").children.length;$("padd").disabled=n>=12;$("pcount").textContent=n+" of 12 players"}
 function saveNames(){var names=[],inputs=$("plist").querySelectorAll("input"),i;for(i=0;i<inputs.length;i++){var n=inputs[i].value.trim();if(n)names.push(n)}try{S.setItem(KEY,JSON.stringify(names))}catch(e){}}
@@ -89,7 +89,7 @@ function showReminder(){
  mode="remind";locked=false;
  $("card").classList.add("rem");$("card").classList.remove("flash-yes","flash-no");
  $("lvl").textContent="Gentle reminder";
- $("prompt").textContent=list.length?list[((idx%list.length)+list.length)%list.length]:"Take a breath. Water is always welcome.";
+ $("prompt").textContent=list.length?list[((idx%list.length)+list.length)%list.length]:"Take a breath. Passing is always welcome.";
  $("instr").textContent="Take your time. Tap continue when ready.";
  $("ask").textContent="";
  showChoices(false);showAdvance(true);$("advance").textContent="Continue";paintBoard(-1);
@@ -151,7 +151,7 @@ function startFx(){
  h=c.height=Math.floor(window.innerHeight*dpr);
  if(w<10||h<10){c.classList.add("hide");return}
  g=c.getContext("2d");if(!g)return;
- colors=["--text","--text-2","--primary","--danger"].map(function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#FFFFFF"});
+ colors=["--surface","--primary","--danger","--tile-green"].map(function(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#FFFFFF"});
  bits=[];sparks=[];rockets=[];launches=0;t0=performance.now();
  for(var i=0;i<70;i++)bits.push({x:Math.random()*w,y:-Math.random()*h*0.5,w:(4+Math.random()*5)*dpr,h:(7+Math.random()*8)*dpr,vy:(1.5+Math.random()*2.2)*dpr,vx:(Math.random()-0.5)*1.3*dpr,rot:Math.random()*6,vr:(Math.random()-0.5)*0.2,c:colors[i%colors.length]});
  function burst(x,y,col){for(var k=0;k<32;k++){var a=Math.random()*Math.PI*2,sp=(0.5+Math.random()*2.6)*dpr;sparks.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c:col})}}
