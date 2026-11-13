@@ -36,7 +36,7 @@ html,body{overflow-x:clip}
 .sec h2{margin:.1em 0 .45em}
 #featured{scroll-margin-top:88px}
 .games3{display:grid;gap:14px}
-@media(min-width:760px){.games3{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:760px){.games3{grid-template-columns:repeat(2,1fr)}}
 .gcard3{position:relative;display:grid;grid-template-columns:64px 1fr;gap:6px 14px;align-items:center;padding:18px;border-radius:var(--r-lg);margin:0}
 .gcard3 svg{grid-row:1 / span 2;width:64px;height:64px}
 .gcard3 h3{margin:0;font-size:1.35rem}
