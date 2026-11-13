@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E7C7B">
+<meta name="description" content="Vault Traitor: crack a four-digit code together while one or two Traitors bend the clues. Social deduction party game for adults, each player on their own phone. Sips optional.">
+<title>Vault Traitor: Code-Breaking Party Game – TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/vault-traitor.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Vault Traitor – TipsyPlay"><meta property="og:description" content="Crack the vault code before the Traitors talk you out of it."><meta property="og:url" content="https://tipsyplay.com/games/vault-traitor.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a teal background with a yellow goblet and the words Free Drinking and Party Games">
+<link rel="stylesheet" href="../styles.css?v=24">
+<style>
+/* Vault Traitor. Colours come from the theme tokens in styles.css. Pink appears only at sip and dare moments. */
+.vt-boot{padding:28px 0}
+.vt-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
+.vt-left{margin:0;display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;border:2px solid var(--outline);font-family:var(--display);font-size:1.1rem}
+.vt-left b{font-size:1.4em}
+.vt-left.urgent{background:var(--surface);color:var(--ink);border-color:var(--ink);box-shadow:0 0 0 0 var(--surface);animation:vtpulse 1.1s ease-in-out infinite}
+@keyframes vtpulse{50%{box-shadow:0 0 0 8px rgba(255,255,255,.35)}}
+.vt-turn{margin:0;font-family:var(--display);font-size:1.05rem;text-align:right}
+.vt-notice{margin:8px 0;padding:10px 12px;border-radius:12px;background:var(--surface);color:var(--ink);font-weight:700}
+.vt-notice:empty{display:none}
+.vt-panel,.vt-board li{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface)}
+.vt-panel{background:var(--surface);color:var(--ink);border-radius:20px;padding:16px;margin:10px 0}
+.vt-panel h2{margin:0 0 6px;font-size:clamp(1.4rem,6vw,1.9rem)}
+.vt-panel p{margin:.3em 0}
+.vt-panel .btn{width:100%;margin-top:10px}
+.vt-role{font-family:var(--display);font-size:clamp(2rem,10vw,2.8rem);line-height:1;margin:.1em 0 .2em}
+.vt-opts{display:grid;gap:8px;margin-top:8px}
+.vt-opts button,.vt-vote button,.vt-alts button{min-height:var(--tap);border-radius:14px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);font:700 1.05rem var(--display);padding:10px 12px;text-align:left;cursor:pointer}
+.vt-opts button[aria-pressed="true"],.vt-vote button[aria-pressed="true"],.vt-alts button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.vt-opts small{display:block;font:600 .85rem var(--font);color:var(--ink-2)}
+.vt-vote,.vt-alts{display:grid;gap:8px;margin-top:8px}
+.vt-timer{font:700 .95rem var(--font);color:var(--ink-2)}
+.vt-board{list-style:none;padding:0;margin:10px 0;display:flex;flex-direction:column;gap:8px}
+.vt-board li{background:var(--surface);color:var(--ink);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center}
+.vt-board .who{grid-column:1 / -1;font:600 .85rem var(--font);color:var(--ink-2)}
+.vt-digits{display:flex;gap:6px}
+.vt-digits span{width:34px;height:42px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:8px;font:700 1.4rem var(--display)}
+.vt-pegs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end}
+.vt-peg{display:inline-flex;align-items:center;gap:4px;font:700 .8rem var(--font)}
+.vt-peg i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink);display:inline-block;animation:vtpop .35s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i,0) * 90ms)}
+.vt-peg.exact i{background:var(--ink)}
+.vt-peg.miss i{background:var(--surface)}
+.vt-fbtext{grid-column:1 / -1;font:600 .95rem var(--font)}
+.vt-empty{color:var(--text-2);margin:.4em 0}
+@keyframes vtpop{from{transform:scale(0);opacity:0}to{transform:none;opacity:1}}
+.vt-entry{display:flex;justify-content:center;gap:10px;margin:10px 0}
+.vt-entry span{width:56px;height:68px;display:grid;place-items:center;background:var(--surface);color:var(--ink);border:3px solid var(--ink);border-radius:12px;font:700 2.2rem var(--display)}
+.vt-entry span.on{outline:3px solid var(--primary);outline-offset:2px}
+.vt-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:0 auto}
+.vt-keys button{min-height:58px;border-radius:14px;border:2px solid var(--ink);background:var(--surface);color:var(--ink);font:700 1.6rem var(--display);cursor:pointer;touch-action:manipulation}
+.vt-keys button:active,.vt-keys button.down{background:var(--primary);transform:scale(.96)}
+.vt-keys button:disabled{opacity:.45}
+.vt-keys .back{font-size:1.1rem}
+.vt-submit{display:flex;width:100%;max-width:420px;margin:10px auto 0;min-height:56px}
+.vt-pass{display:flex;width:100%;max-width:420px;margin:8px auto 0}
+.vt-debate{text-align:center;margin:10px 0}
+.vt-count{display:inline-grid;place-items:center;min-width:120px;padding:6px 18px;border-radius:999px;border:3px solid var(--outline);font:700 clamp(2.6rem,14vw,4rem)/1 var(--display)}
+.vt-count.hot{background:var(--surface);color:var(--ink);border-color:var(--ink);animation:vtshake .5s linear infinite}
+@keyframes vtshake{25%{transform:translateX(-2px)}75%{transform:translateX(2px)}}
+.vt-debate small{display:block;margin-top:6px;font:700 .85rem var(--font);letter-spacing:.12em;text-transform:uppercase}
+.vt-callvote{display:flex;width:100%;max-width:420px;margin:12px auto 0;min-height:56px}
+.vt-banner{margin:12px 0;padding:16px;border-radius:18px;background:var(--danger);color:var(--on-danger);outline:2px solid var(--ink);text-align:center;animation:vtpop .4s cubic-bezier(.2,1.4,.4,1)}
+.vt-banner h2{margin:0 0 6px;font-size:clamp(1.5rem,7vw,2.1rem);color:var(--on-danger)}
+.vt-banner ul{list-style:none;padding:0;margin:6px 0 0;font-weight:700}
+.vt-banner p{margin:.3em 0;color:var(--on-danger)}
+.vt-tally{text-align:center}
+.vt-tally .big{font:700 clamp(1.6rem,7vw,2.2rem)/1.05 var(--display);margin:.2em 0}
+.vt-reveal h3{margin:14px 0 6px}
+.vt-reveal ul{padding-left:1.1em;margin:.2em 0}
+.vt-code{font:700 clamp(2.2rem,12vw,3.2rem) var(--display);letter-spacing:.18em;margin:.1em 0}
+.vt-sum{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.vt-sum div{border:2px solid var(--ink);border-radius:12px;padding:8px;text-align:center}
+.vt-sum b{display:block;font:700 1.6rem var(--display)}
+.vt-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--hairline);font-weight:700;align-items:center}
+.vt-person.off{opacity:.6}
+.vt-person .x{min-height:var(--tap)}
+.vt-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vt-share .btn{width:100%;min-height:52px}
+.vt-share .wide{grid-column:1 / -1}
+.vt-qr{margin:10px auto;text-align:center;max-width:100%}
+.vt-qr canvas{width:168px;max-width:70vw;height:auto;aspect-ratio:1;background:#fff;border-radius:12px}
+.vt-host{margin:8px 0}
+.vt-host .btn{width:100%;margin-top:6px}
+#nextround{width:100%}
+@media (prefers-reduced-motion:reduce){
+  .vt-left.urgent,.vt-count.hot,.vt-peg i,.vt-banner{animation:none}
+  .vt-keys button:active,.vt-keys button.down{transform:none}
+}
+</style>
+</head>
+<body class="vt" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play responsibly</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="vt-boot">
+<p id="bootmsg">Opening the vault…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
+<div id="app" class="hide">
+<section id="home" class="entry">
+<p class="eyebrow">Party game · 3 to 8 players</p>
+<h1>Vault Traitor</h1>
+<p class="lede">Crack a four-digit code together. One or two of you are Traitors, quietly bending the clues.</p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
+</section>
+
+<section id="lobby" class="hide">
+<p class="eyebrow">Lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="vt-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt wide" id="copycode">Copy code</button>
+</div>
+<figure class="vt-qr hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
+<p class="tag">Drinks</p>
+<div class="chips" id="drinks" role="group" aria-label="Drink setting">
+<button type="button" class="chip" data-drink="sips">Sips</button>
+<button type="button" class="chip" data-drink="shots">Shots</button>
+<button type="button" class="chip" data-drink="none">No drinking</button>
+</div>
+<p id="drinknote" class="lede"></p>
+<div class="na"><b>Play responsibly:</b> pace yourself, drink water, and it's fine to sit a round out. Every drink has a no-drink alternative.</div>
+<div class="vt-players" aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="table" class="hide">
+<div class="vt-top">
+<p id="left" class="vt-left" aria-live="polite"><b>10</b> guesses left</p>
+<p id="turnline" class="vt-turn"></p>
+</div>
+<p id="notice" class="vt-notice" aria-live="polite"></p>
+
+<!-- private panels: each shows only on the phone it belongs to -->
+<div id="rolebox" class="vt-panel hide">
+<p class="tag">Your role · only on your phone</p>
+<p id="rolename" class="vt-role"></p>
+<p id="rolegoal"></p>
+<p id="rolepartner"></p>
+<button type="button" class="btn" id="readybtn">Got it</button>
+</div>
+<div id="sealbox" class="vt-panel hide" aria-live="polite">
+<h2 id="sealhead">Sealing the feedback…</h2>
+<p id="sealtruth"></p>
+<div id="sealopts" class="vt-opts"></div>
+<p id="sealtimer" class="vt-timer"></p>
+</div>
+<div id="ballotbox" class="vt-panel hide" aria-live="polite">
+<h2>Secret ballot</h2>
+<p id="ballotnote">Who is a Traitor? Only you see your vote.</p>
+<div id="ballotlist" class="vt-vote"></div>
+<p id="ballottimer" class="vt-timer"></p>
+</div>
+<div id="choicebox" class="vt-panel hide" aria-live="polite">
+<h2>Your call</h2>
+<p id="choicenote"></p>
+<div id="choicelist" class="vt-alts"></div>
+<p id="choicetimer" class="vt-timer"></p>
+</div>
+
+<!-- shared views -->
+<div id="keypad" class="hide">
+<p class="vt-turn" style="text-align:center">Your turn: enter four digits</p>
+<div class="vt-entry" id="entry" aria-label="Your guess" aria-live="polite"><span></span><span></span><span></span><span></span></div>
+<div class="vt-keys" id="keys">
+<button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+<button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+<button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+<button type="button" class="back" data-k="back" aria-label="Delete last digit">⌫</button><button type="button" data-k="0">0</button><button type="button" class="back" data-k="clear" aria-label="Clear guess">Clear</button>
+</div>
+<button type="button" class="btn host-cta vt-submit" id="submitguess" disabled>Submit guess</button>
+<button type="button" class="btn alt vt-pass" id="passtoken">Use pass token</button>
+</div>
+<div id="waitbox" class="vt-panel hide"><p id="waittext"></p></div>
+<div id="debate" class="vt-debate hide">
+<p id="count" class="vt-count" aria-hidden="true">30</p>
+<small>Debate</small>
+<p id="countlive" class="sr" aria-live="polite"></p>
+<button type="button" class="btn host-cta vt-callvote" id="callvote">Call a vote</button>
+</div>
+<div id="tallybox" class="vt-panel vt-tally hide" aria-live="polite"></div>
+<div id="banner" class="vt-banner hide" role="status"></div>
+
+<h2 class="sr">Guesses so far</h2>
+<ol id="board" class="vt-board"></ol>
+<p id="boardempty" class="vt-empty">No guesses yet.</p>
+
+<div id="hosttools" class="vt-host hide"></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="nextround">Continue</button></div>
+
+<section id="finale" class="hide">
+<div class="vt-panel vt-reveal" id="reveal"></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="again">Play again</button></div>
+</section>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave game</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This room is closed to new players.</p>
+<a class="btn" href="./">Back to games</a>
+</section>
+<p id="perr" role="alert"></p>
+</div>
+
+<section class="band-ink" style="margin-top:28px">
+<h2>How Vault Traitor works</h2>
+<div class="card">
+<p>The host opens a room and friends join on their own phones. The game draws a secret four-digit code and quietly picks one Traitor (two with 6 or more players). Everyone else is a Codebreaker.</p>
+<p>Take turns guessing. After each guess everyone sees how many digits are exact and how many are right but misplaced. Traitors can secretly bend that feedback twice per game. You have 10 guesses.</p>
+<p>After each clue there's a 30-second debate. Anyone can call a secret vote. A majority catches a Traitor, but a wrong call costs two guesses and a tie costs one.</p>
+<h3>Play responsibly</h3>
+<p>Legal drinking age only. Every drink has a no-drink alternative, and "No drinking" turns every drink into one. Pace yourself and drink water.</p>
+</div>
+</section>
+</main>
+<script src="../sounds.js?v=18"></script>
+<script src="../app.js?v=21"></script>
+<script src="../play/qr.js?v=18"></script>
+<script src="../play/join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","vt");</script>
+<script src="../play/vault-logic.js?v=1"></script>
+<script src="../play/vault-traitor.js?v=2"></script><script src="../play/room-ui.js?v=1"></script>
+</body>
+</html>

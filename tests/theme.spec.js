@@ -143,7 +143,7 @@ test("on a phone the header folds into a Menu and the Pick a game bar appears on
 
 /* A white surface only reads correctly if it is in the white-surface scope in styles.css, which turns the text ink.
    Any rule that paints var(--surface) must be in that list, sit inside something that is, or set its own ink text. */
-const NO_TEXT_OF_THEIR_OWN = [".hero-photo", ".shot", ".kc-lights i", ".spot-hero", ".pscreens"]; // images, light bars, the phone-preview screen (its text sets ink)
+const NO_TEXT_OF_THEIR_OWN = [".hero-photo", ".shot", ".kc-lights i", ".spot-hero", ".pscreens", ".vt-peg.miss i"]; // images, light bars, the phone-preview screen (its text sets ink), Vault Traitor peg dots
 test("every rule that paints a white surface is in the white-surface scope", () => {
   const strip = (t) => t.replace(/\/\*[\s\S]*?\*\//g, "");
   const css = strip(read("styles.css"));
