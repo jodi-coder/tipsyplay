@@ -21,10 +21,11 @@ var lastSeq=-1, lastPhase="", lastCountSaid=-1;
 /* ---------- small helpers ---------- */
 function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
 function rpath(p){return "rooms/"+code+"/"+p}
-function fail(msg){var p=$("perr"); if(p) p.textContent=msg||""}
+var lobbyErr="";
+function fail(msg){var p=$("perr"); if(p) p.textContent=msg||""; lobbyErr=msg||""; var l=$("lobby"); if(l&&!l.classList.contains("hide")&&meta) paintLobby()}
 function friendly(e){
   var c=String((e&&(e.code||e.message))||"");
-  if(/permission|denied/i.test(c)) return "That didn't go through. Try again.";
+  if(/permission|denied/i.test(c)) return "The server did not accept the game. The site owner needs to publish the latest firebase-rules.json, then try again.";
   if(/offline|network|fetch/i.test(c)) return "You're offline. Check the connection and try again.";
   return "Something went wrong. Try again.";
 }
@@ -95,7 +96,9 @@ function paintLobby(){
   var start=$("start"); start.disabled=!isHost()||n<L.MIN_PLAYERS||n>L.MAX_PLAYERS||!!dup;
   start.textContent="Start game · "+n+" player"+(n===1?"":"s");
   var note=$("lobbynote");
-  if(n<L.MIN_PLAYERS) note.textContent="Need "+(L.MIN_PLAYERS-n)+" more player"+(L.MIN_PLAYERS-n===1?"":"s")+".";
+  note.classList.toggle("err", !!lobbyErr);
+  if(lobbyErr) note.textContent=lobbyErr;
+  else if(n<L.MIN_PLAYERS) note.textContent="Need "+(L.MIN_PLAYERS-n)+" more player"+(L.MIN_PLAYERS-n===1?"":"s")+".";
   else if(n>L.MAX_PLAYERS) note.textContent="8 players max.";
   else if(dup) note.textContent="Two players are called "+dup+". One of you, rejoin with another name.";
   else note.textContent=isHost()?"Everyone in? Start when ready. "+(L.traitorCount(n)===2?"Two Traitors":"One Traitor")+" will be dealt.":"You're in. The host starts when the table's ready.";
@@ -422,16 +425,16 @@ function publicData(extra){
 }
 function saveSecret(){return set(ref(db, rpath("vt/secret")), JSON.stringify({G:G, sealPick:sealPick, afterBanner:afterBanner}))}
 /* One atomic write per phase change: the public state, the host-only secret, and any private role notes. */
-function publish(phase, extra, privateNotes, clear){
+function publish(phase, extra, privateNotes, clear, more){
   var seq=(pub?pub.seq:0)+1;
-  var payload={};
+  var payload=Object.assign({}, more||{});
   var turn=G.winner?"":(L.currentTurn(G)||"");
   payload[rpath("vt/pub")]={phase:phase, seq:seq, opened:serverNow(), turn:turn, data:JSON.stringify(publicData(extra))};
   payload[rpath("vt/secret")]=JSON.stringify({G:G, sealPick:sealPick, afterBanner:afterBanner});
   (clear||[]).forEach(function(p){payload[rpath(p)]=null});
   Object.keys(privateNotes||{}).forEach(function(u){payload[rpath("vt/role/"+u)]=privateNotes[u]});
   hostLock=true;
-  return update(ref(db), payload).then(function(){hostLock=false}).catch(function(e){hostLock=false; fail(friendly(e))});
+  return update(ref(db), payload).then(function(){hostLock=false; return true}).catch(function(e){hostLock=false; fail(friendly(e)); return false});
 }
 function roleNote(u, d){return {r:G.roles[u], d:JSON.stringify(d||baseNote(u))}}
 function baseNote(u){
@@ -452,9 +455,10 @@ function begin(){
   sealPick=null; afterBanner=null; acts={}; lies={}; ballots={}; choices={}; D=null;
   var notes={}; G.order.forEach(function(u){notes[u]=roleNote(u)});
   var clear=[].concat(nodePaths("act"), nodePaths("lie"), nodePaths("ballot"), nodePaths("choice"), nodePaths("ready"), nodePaths("left"), ["vt/call"]);
-  var payload={};
-  payload[rpath("meta")]=metaObj({status:"play", phase:"answer", deck:["Vault Traitor"]});
-  update(ref(db), payload).then(function(){return publish("deal", {}, notes, clear)}).catch(function(e){fail(friendly(e))}).then(function(){sending=false});
+  var more={};
+  more[rpath("meta")]=metaObj({status:"play", phase:"answer", deck:["Vault Traitor"]});
+  /* one atomic write: if the server refuses any part, the room stays a normal lobby and the host sees why */
+  publish("deal", {}, notes, clear, more).then(function(ok){if(!ok){G=null; D=null}}).then(function(){sending=false; if(!isHost()||!meta) return; paintLobby()});
 }
 function metaObj(patch){
   var m=Object.assign({}, meta||{}, patch||{});
