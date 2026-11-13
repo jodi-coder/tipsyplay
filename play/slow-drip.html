@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7CC8FF">
+<meta name="description" content="Host Slow Drip on TipsyPlay. A hidden phrase appears one letter at a time. Buzz in to solve it while everyone else bets on you. For adults, each on their own phone. Drinks optional.">
+<title>Play Slow Drip – Phrase Guessing Party Game | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/play/slow-drip.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Play Slow Drip – TipsyPlay"><meta property="og:description" content="A hidden phrase, one letter at a time. Buzz in, and everyone else bets on you."><meta property="og:url" content="https://tipsyplay.com/play/slow-drip.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<link rel="stylesheet" href="../styles.css?v=25">
+<style>
+/* Slow Drip. Every colour comes from the theme tokens in styles.css. Pink appears at drink moments and as a timer runs out. */
+.sd-boot{padding:28px 0}
+.sd-panel,.sd-tile,.sd-bets button,.sd-scores li{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface)}
+.sd-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:8px 0 4px}
+.sd-head p{margin:0;font:700 .9rem var(--font);letter-spacing:.08em;text-transform:uppercase}
+.sd-scores{list-style:none;display:flex;flex-wrap:wrap;gap:6px;padding:0;margin:6px 0}
+.sd-scores li{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:999px;padding:4px 12px;font:700 .9rem var(--font)}
+.sd-scores li.me{box-shadow:var(--shadow-sm)}
+.sd-scores li.boxed{text-decoration:line-through}
+.sd-scores li b{margin-left:6px}
+.sd-board{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 18px;margin:14px 0;padding:0}
+.sd-word{display:flex;gap:4px;flex-wrap:nowrap}
+.sd-tile{width:clamp(22px,7.2vw,38px);height:clamp(32px,10vw,50px);display:grid;place-items:center;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:8px;font:800 clamp(1.05rem,5vw,1.7rem)/1 var(--display);text-transform:uppercase}
+.sd-tile.blank{background:var(--surface);color:transparent}
+.sd-tile.mark{background:none;border-color:transparent;color:var(--text);width:auto;min-width:10px}
+.sd-tile.new{animation:sdpop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes sdpop{from{transform:scale(.3);background:var(--primary)}to{transform:none}}
+.sd-panel{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:16px;margin:12px 0;text-align:center}
+.sd-panel h2{margin:0 0 6px;font-size:clamp(1.4rem,6vw,1.9rem)}
+.sd-panel p{margin:.35em 0}
+.sd-panel .btn{width:100%;margin-top:10px}
+/* Timers: a number you can read, a bar that shrinks, and a fill that moves from yellow to pink. --p runs 0 to 1. */
+.sd-timer{display:flex;align-items:center;gap:12px;margin:10px 0}
+.sd-timer .num{min-width:2.2ch;font:800 clamp(2rem,10vw,2.8rem)/1 var(--display);text-align:center}
+.sd-timer .lab{font:700 .8rem var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:left}
+.sd-timer .track{flex:1;height:18px;border:var(--bw) solid var(--ink);border-radius:999px;background:var(--surface);overflow:hidden}
+.sd-timer .fill{display:block;height:100%;width:calc((1 - var(--p,0)) * 100%);background:var(--primary);background:color-mix(in srgb,var(--danger) calc(var(--p,0) * 100%),var(--primary));transition:width .25s linear}
+.sd-timer.hot .fill{background:var(--danger)}
+.sd-timer.hot .num{animation:sdbeat .5s ease-in-out infinite}
+.sd-timer.frozen .fill{opacity:.5}
+@keyframes sdbeat{50%{transform:scale(1.15)}}
+.sd-solve{display:flex;width:100%;min-height:76px;font-size:1.6rem;margin:12px 0 4px}
+.sd-note{margin:.4em 0;font-weight:700;text-align:center}
+.sd-bets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.sd-bets button{min-height:84px;border-radius:16px;border:var(--bw) solid var(--ink);background:var(--surface);color:var(--ink);box-shadow:var(--shadow-btn);font:800 1.35rem var(--display);padding:8px;cursor:pointer;touch-action:manipulation}
+.sd-bets button small{display:block;font:600 .85rem var(--font);color:var(--ink-2)}
+.sd-bets button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.sd-bets button:disabled{opacity:.55;box-shadow:none}
+.sd-passrow{margin-top:10px}
+.sd-passrow button{min-height:var(--tap);background:none;border:0;color:var(--ink);font:700 1rem var(--font);text-decoration:underline;cursor:pointer;padding:0 12px}
+.sd-guess{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.sd-guess input{width:100%;min-height:56px;font-size:1.2rem;text-align:center}
+.sd-result{font:800 clamp(1.6rem,8vw,2.3rem)/1.05 var(--display);margin:.15em 0}
+.sd-said{font-style:italic;overflow-wrap:anywhere}
+.sd-betlist{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.sd-betlist li{border:var(--bw) solid var(--ink);border-radius:999px;padding:4px 10px;font:700 .9rem var(--font)}
+.sd-banner{margin:12px 0 4px;padding:14px;border-radius:16px;background:var(--danger);color:var(--on-danger);border:var(--bw) solid var(--ink);text-align:center;animation:sdpop2 .4s cubic-bezier(.2,1.4,.4,1)}
+.sd-banner h3{margin:0 0 4px;font-size:clamp(1.3rem,6vw,1.7rem);color:var(--on-danger)}
+.sd-banner ul{list-style:none;padding:0;margin:4px 0;font-weight:800}
+.sd-banner p{margin:.3em 0;color:var(--on-danger)}
+@keyframes sdpop2{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+.sd-safe{font-weight:700}
+.sd-phrase{font:800 clamp(1.5rem,7vw,2.2rem)/1.1 var(--display);margin:.2em 0;overflow-wrap:anywhere}
+.sd-rank{list-style:none;padding:0;margin:8px 0;text-align:left}
+.sd-rank li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--hairline);font-weight:700}
+.sd-rank li.gone{opacity:.6}
+.sd-person{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--hairline);font-weight:700;align-items:center}
+.sd-person.off{opacity:.6}
+.sd-person .x{min-height:var(--tap)}
+#lobbynote.err{background:var(--danger);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:12px;padding:10px 12px;font-weight:800}
+.sd-share{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sd-share .btn{width:100%;min-height:52px}
+.sd-share .wide{grid-column:1 / -1}
+.sd-qr{margin:10px auto;text-align:center;max-width:100%}
+.sd-qr canvas{width:168px;max-width:70vw;height:auto;aspect-ratio:1;background:var(--surface);border-radius:12px}
+.sd-practice-btn{width:100%;margin-top:14px}
+.sd-hostrow{display:grid;gap:8px;margin:10px 0}
+.sd-hostrow .btn{width:100%}
+#nextround,#again{width:100%}
+body.sd-practice .rm-bar{display:none}
+@media (prefers-reduced-motion:reduce){
+  .sd-tile.new,.sd-banner,.sd-timer.hot .num{animation:none}
+  .sd-timer .fill{transition:none}
+}
+</style>
+</head>
+<body class="sd" data-root="../" data-game="slow-drip">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="../games/">Games</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play responsibly</a><a href="../games/slow-drip.html">Rules</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="sd-boot">
+<p id="bootmsg">Filling the dropper…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+<button type="button" class="btn alt hide" id="bootpractice">Practice with 3 bots (works offline)</button>
+</div>
+<div id="app" class="hide">
+<section id="home" class="entry">
+<p class="eyebrow">Party game · 3 to 10 players</p>
+<h1>Slow Drip</h1>
+<p class="lede">A hidden phrase appears one letter at a time. Buzz in to solve it, and everyone else bets on whether you will.</p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
+<button type="button" class="btn alt sd-practice-btn" id="practicebtn">Practice with 3 bots</button>
+<p class="tag">Practice runs on this phone only. No room, no connection needed.</p>
+</section>
+
+<section id="lobby" class="hide">
+<p class="eyebrow">Lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="sd-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt wide" id="copycode">Copy code</button>
+</div>
+<figure class="sd-qr hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
+<label class="toggle"><input type="checkbox" id="ona"> No-alcohol mode</label>
+<p id="drinknote" class="lede"></p>
+<div class="na"><b>Play responsibly:</b> one drink per round at most, every drink has a no-drink alternative, and passing is always fine.</div>
+<div aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="table" class="hide">
+<div class="sd-head"><p id="roundline"></p><p id="catline"></p></div>
+<ul id="scores" class="sd-scores" aria-label="Rounds solved"></ul>
+<p id="notice" class="sd-note" aria-live="polite"></p>
+
+<div id="board" class="sd-board" role="img" aria-label="The phrase"></div>
+<p id="boardtext" class="sr" aria-live="polite"></p>
+
+<!-- 1. Drip: countdown to the next letter and the one main action -->
+<div id="dripbox" class="hide">
+<div class="sd-timer" id="driptimer"><span class="num" id="dripnum">10</span><span class="track" aria-hidden="true"><span class="fill"></span></span><span class="lab">next<br>letter</span></div>
+<button type="button" class="btn host-cta sd-solve" id="solve">SOLVE</button>
+<p id="solvenote" class="sd-note"></p>
+</div>
+
+<!-- 2 and 3. Someone buzzed: betting window for the others -->
+<div id="betbox" class="sd-panel hide" aria-live="polite">
+<h2 id="bethead"></h2>
+<div class="sd-timer" id="bettimer"><span class="num" id="betnum">3</span><span class="track" aria-hidden="true"><span class="fill"></span></span><span class="lab">to bet</span></div>
+<p id="betnote"></p>
+<div class="sd-bets" id="bets">
+<button type="button" id="betsolve" data-bet="s" aria-pressed="false">SOLVE<small>they'll get it</small></button>
+<button type="button" id="betfail" data-bet="f" aria-pressed="false">FAIL<small>they'll miss</small></button>
+</div>
+<div class="sd-passrow"><button type="button" id="betpass" data-bet="p">Pass</button></div>
+</div>
+
+<!-- 4. Hot seat -->
+<div id="seatbox" class="sd-panel hide" aria-live="polite">
+<h2 id="seathead"></h2>
+<div class="sd-timer" id="seattimer"><span class="num" id="seatnum">10</span><span class="track" aria-hidden="true"><span class="fill"></span></span><span class="lab">to answer</span></div>
+<p id="seatnote"></p>
+<form class="sd-guess hide" id="guessform">
+<label class="sr" for="guess">Your answer</label>
+<input class="bigin" id="guess" maxlength="60" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" placeholder="Type the phrase">
+<button type="submit" class="btn host-cta" id="sendguess">Lock it in</button>
+</form>
+</div>
+
+<!-- 5. Payout: the result and every bet together -->
+<div id="payoutbox" class="sd-panel hide" aria-live="polite"></div>
+
+<!-- 7. Round end -->
+<div id="endbox" class="sd-panel hide" aria-live="polite"></div>
+
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="skipwait">Continue</button></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="nextround">Next round</button></div>
+<div class="sd-hostrow"><button type="button" class="btn alt hostonly" id="endgame">End game</button></div>
+
+<section id="finale" class="hide">
+<div class="sd-panel" id="finalbox"></div>
+<div class="ctrl"><button type="button" class="btn hostonly" id="again">Play again</button></div>
+</section>
+<div class="ctrl"><button type="button" class="btn alt hide" id="exitpractice">Exit practice</button></div>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave game</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This room is closed to new players.</p>
+<a class="btn" href="../games/">Back to games</a>
+</section>
+<p id="perr" role="alert"></p>
+</div>
+
+<section class="band-ink" style="margin-top:28px">
+<h2>How Slow Drip works</h2>
+<div class="card">
+<p>The host opens a room and friends join on their own phones. A phrase shows as blanks, with a few letters already in. Every 10 seconds one more letter drops.</p>
+<p>Tap SOLVE when you think you know it. The first buzz wins. Everyone else then has 3 seconds to bet, in secret, on SOLVE or FAIL. No bet in time counts as FAIL. Then the solver has 10 seconds to type the phrase.</p>
+<p>Right answer: the solver and the SOLVE bets are safe, and the FAIL bets take a drink. Wrong answer or out of time: the solver and the SOLVE bets take a drink, and the solver sits out until 2 more letters drop.</p>
+<h3>Play responsibly</h3>
+<p>Legal drinking age only. One drink per player per round at most, every drink has a no-drink alternative, and passing is always fine. <a href="../games/slow-drip.html">Full rules</a>.</p>
+</div>
+</section>
+</main>
+<script src="../sounds.js?v=18"></script>
+<script src="../app.js?v=21"></script>
+<script src="qr.js?v=18"></script>
+<script src="join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","sd");</script>
+<script src="../data/slow-drip.js?v=1"></script>
+<script src="drip-logic.js?v=1"></script>
+<script src="slow-drip.js?v=1"></script><script src="room-ui.js?v=3"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
   "name": "tipsyplay-tests",
   "private": true,
   "scripts": {
-    "logic": "node --test poster-logic.test.js qr-decode.test.js vault-logic.test.js",
+    "logic": "node --test poster-logic.test.js qr-decode.test.js vault-logic.test.js drip-logic.test.js",
     "browser": "playwright test --config playwright.config.js"
   },
   "devDependencies": {

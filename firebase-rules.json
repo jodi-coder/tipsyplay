@@ -286,6 +286,61 @@
               ".validate": "!newData.exists() || newData.isBoolean()"
             }
           }
+        },
+        "sd": {
+          "host": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == auth.uid && root.child('rooms').child($code).child('meta').child('status').val() == 'play' && ((data.exists() && root.child('rooms').child($code).child('players').child(data.val()).child('connected').val() != true) || (!data.exists() && root.child('rooms').child($code).child('players').child(root.child('rooms').child($code).child('meta').child('hostUid').val()).child('connected').val() != true)))",
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 128)"
+          },
+          "pub": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.hasChildren(['phase','seq','deadline','data']) && newData.child('phase').isString() && newData.child('phase').val().matches(/^(drip|bet|seat|payout|end|over)$/) && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 1000000 && newData.child('deadline').isNumber() && newData.child('data').isString() && newData.child('data').val().length <= 20000"
+          },
+          "secret": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.isString() && newData.val().length <= 20000"
+          },
+          "buzz": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('sd').child('pub').child('phase').val() == 'drip' && !data.exists() && newData.exists() && newData.child('u').val() == auth.uid && !root.child('rooms').child($code).child('sd').child('box').child(auth.uid).exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+            ".validate": "!newData.exists() || (newData.hasChildren(['u','at']) && newData.child('u').isString() && newData.child('u').val().length <= 128 && newData.child('at').isNumber() && newData.child('at').val() == now)",
+            "$other": {
+              ".validate": "$other == 'u' || $other == 'at'"
+            }
+          },
+          "box": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+              ".validate": "!newData.exists() || newData.val() == true"
+            }
+          },
+          "bet": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            "$uid": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))",
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('sd').child('pub').child('phase').val() == 'bet' && root.child('rooms').child($code).child('sd').child('buzz').child('u').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^[sfp]$/))"
+            }
+          },
+          "guess": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            "$uid": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))",
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('sd').child('pub').child('phase').val() == 'seat' && root.child('rooms').child($code).child('sd').child('buzz').child('u').val() == auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 60)"
+            }
+          },
+          "left": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == true) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('sd').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('sd').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || newData.isBoolean()"
+            }
+          }
         }
       }
     },
