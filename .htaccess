@@ -6,6 +6,11 @@
   # Internal notes and rules files are not public pages.
   RewriteRule ^docs/ - [F,L]
   RewriteRule ^(firebase-rules|database\.rules)\.json$ - [F,L]
+  # Retired games. Old links and search results keep working.
+  # Who's Most Likely is now the "Most likely" mode in Never Have I Ever; the rest go to the games list.
+  RewriteRule ^(games|play)/whos-most-likely\.html$ /games/never-have-i-ever.html [R=301,L,QSD]
+  RewriteRule ^games/(vibe-checkpoint|chaos-crew|cup-toss)\.html$ /games/ [R=301,L,QSD]
+  RewriteRule ^play/cup-toss\.html$ /games/ [R=301,L,QSD]
   # Exact category query only. Any extra parameter stays on /games/.
   RewriteCond %{QUERY_STRING} ^category=card$
   RewriteRule ^games/?$ /games/card/ [R=301,L,QSD]

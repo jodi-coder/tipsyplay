@@ -117,7 +117,7 @@ test("the homepage is readable when the hero preview is missing and when scripts
 test("game cards are whole-card links to the host screens, with tap targets of 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".gcard3 .host", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["games/vault-traitor.html", "play/card-lottery.html", "games/never-have-i-ever.html", "play/story-chain.html"]);
+  expect(hrefs).toEqual(["games/vault-traitor.html", "play/two-truths.html", "games/never-have-i-ever.html", "play/story-chain.html"]);
   const sizes = await page.$$eval(".gcard3 .host, .chips3 a, .hero .cta, .row-all .btn", (a) => a.map((x) => x.getBoundingClientRect().height));
   for (const h of sizes) expect(h).toBeGreaterThanOrEqual(43.5);
   const chips = await page.$$eval(".chips3 a", (a) => a.map((x) => x.getAttribute("href")));

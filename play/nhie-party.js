@@ -113,8 +113,13 @@ function paintQr(){
   var credit=$("qrcredit");
   if(credit && !credit.textContent) credit.textContent=TipsyJoinQR.credit;
 }
-function spiceFor(mode){return mode==="spicy"?"spicy":mode==="classic"?"extra":"mild"}
+function spiceFor(mode){return mode==="spicy"?"spicy":mode==="classic"?"extra":"mild"} // "likely" shares "mild" on the room record
 function modeForSpice(spice){return spice==="spicy"?"spicy":spice==="extra"?"classic":"mild"}
+/* "likely" is the Most likely mode: everyone votes for a person. The room record has no value for it, so it is
+   kept on each round (nhie/play.mode, which the rules already allow) and read from there once the game starts. */
+var MODE_RE=/^(mild|classic|spicy|likely)$/;
+var likelyPack="classic";
+function isLikely(){return currentMode()==="likely"}
 function rounds(){
   if((!meta||meta.status==="lobby")&&isHost()&&LENGTHS.indexOf(gameLength)>=0) return gameLength;
   var n=meta&&+meta.rounds;
@@ -122,11 +127,11 @@ function rounds(){
   return LENGTHS.indexOf(gameLength)>=0?gameLength:15;
 }
 function currentMode(){
-  if(table&&table.mode&&/^(mild|classic|spicy)$/.test(table.mode)) return table.mode;
+  if(table&&table.mode&&MODE_RE.test(table.mode)) return table.mode;
   if(meta&&meta.status==="lobby") return isHost()?lobbyMode:modeForSpice(meta.spice);
-  return /^(mild|classic|spicy)$/.test(lobbyMode)?lobbyMode:"classic";
+  return MODE_RE.test(lobbyMode)?lobbyMode:"classic";
 }
-function modeLabel(mode){return mode==="mild"?"Mild":mode==="spicy"?"Spicy":"Classic"}
+function modeLabel(mode){return mode==="mild"?"Mild":mode==="spicy"?"Spicy":mode==="likely"?"Most likely":"Classic"}
 function myEmoji(){return sessionStorage.getItem("tp_nhie_emoji")||""}
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function savedName(){
@@ -253,9 +258,10 @@ function xorshift(seed){
 function packs(){return window.NHIE_PACKS||{classic:[],mild:[],spicy:[]}}
 function currentDeck(){
   var mode=currentMode();
-  var key=(code||"room")+"|"+(meta&&meta.gameId||1)+"|"+mode;
+  var key=(code||"room")+"|"+(meta&&meta.gameId||1)+"|"+mode+(mode==="likely"?"|"+likelyPack:"");
   if(key===deckKey&&deck.length) return deck;
-  var pool=(packs()[mode]||packs().classic||[]).slice();
+  var likely=window.NHIE_LIKELY||{};
+  var pool=(mode==="likely"?(likely[likelyPack]||likely.classic||[]):(packs()[mode]||packs().classic||[])).slice();
   var rnd=xorshift(hashStr(key)), i, j, t;
   for(i=pool.length-1;i>0;i--){j=Math.floor(rnd()*(i+1)); t=pool[i]; pool[i]=pool[j]; pool[j]=t}
   deckKey=key; deck=pool; return deck;
@@ -269,25 +275,31 @@ function promptsMissing(){fail("The prompts didn't load. Reload the page to try 
 function cleanText(raw){
   var t=String(raw||"").replace(/<[^>]*>/g,"").replace(/[<>]/g,"").replace(/\s+/g," ").trim().slice(0,140);
   if(!t) return "";
+  if(isLikely()){
+    if(!/^who['\u2019]?s most likely\b/i.test(t)) t=("Who's most likely to "+t).slice(0,140);
+    return t;
+  }
   if(!/^never have i ever\b/i.test(t)) t=("Never have I ever "+t).slice(0,140);
   return t;
 }
 function splitPrompt(text){
   var t=String(text||"");
+  var lk=t.match(/^who['\u2019]?s most likely to\s+/i);
+  if(lk) return {kicker:"Who's most likely to", rest:t.slice(lk[0].length)};
   var m=t.match(/^never have i ever\s+/i);
   if(!m) return {kicker:"Never have I ever", rest:t||"The next secret is on the way."};
   return {kicker:"Never have I ever", rest:t.slice(m[0].length)};
 }
 function playObj(patch){
   var b=Object.assign({turn:uid||"", step:"answer", text:"", seq:0, mode:currentMode(), kind:"have", round:0, opened:0, order:order().map(function(p){return p.uid}).join(",")||uid||"table"}, table||{}, patch||{});
-  var mode=/^(mild|classic|spicy)$/.test(b.mode)?b.mode:"classic";
+  var mode=MODE_RE.test(b.mode)?b.mode:"classic";
   return {
     turn:String(b.turn||uid||"host").slice(0,128),
     step:b.step,
     text:String(b.text||"").slice(0,140),
     seq:Math.max(0, Math.min(40, +b.seq||0)),
     mode:mode,
-    kind:"have",
+    kind:mode==="likely"?"vote":"have",
     round:Math.max(0, Math.min(20, +b.round||0)),
     opened:Math.max(0, +b.opened||0),
     order:String(b.order||uid||"table").slice(0,1500)
@@ -304,7 +316,7 @@ function fullMeta(patch){
 }
 function parsedCast(raw){
   var s=String(raw||"");
-  var m=s.match(/^(have|never|pass):(\d+)$/);
+  var m=s.match(/^(have|never|pass|v[A-Za-z0-9_-]{6,60}):(\d+)$/);
   if(m) return {v:m[1], seq:+m[2]};
   if(s==="have"||s==="never"||s==="pass") return {v:s, seq:null};
   return null;
@@ -322,13 +334,31 @@ function answered(id){
   if(id===uid && pendingCast && pendingCast.seq===roundSeq()) return pendingCast.v;
   return "";
 }
+/* Who the sip, water or pose lands on: everyone who said I HAVE, or in Most likely the player (or tied players) with the most votes. */
+function voteCounts(){
+  var counts={}, total=0;
+  order().forEach(function(p){
+    var v=answered(p.uid);
+    if(v&&v.charAt(0)==="v"&&v.length>1){
+      var t=v.slice(1);
+      if(t!==p.uid&&players[t]){counts[t]=(counts[t]||0)+1; total++}
+    }
+  });
+  return {counts:counts, total:total};
+}
 function haveIds(){
+  if(isLikely()){
+    var vc=voteCounts(), max=0;
+    Object.keys(vc.counts).forEach(function(id){if(vc.counts[id]>max) max=vc.counts[id]});
+    if(!max) return [];
+    return order().filter(function(p){return vc.counts[p.uid]===max}).map(function(p){return p.uid});
+  }
   return order().filter(function(p){return answered(p.uid)==="have"}).map(function(p){return p.uid});
 }
 function allIn(){
   var list=order().filter(function(p){return p.connected});
   if(!list.length) return false;
-  return list.every(function(p){var v=castValue(p.uid); return v==="have"||v==="never"||v==="pass"});
+  return list.every(function(p){return !!castValue(p.uid)});
 }
 function secondsLeft(){
   if(!table||table.step!=="answer") return null;
@@ -369,6 +399,11 @@ function paintEmoji(){
 function paintModes(){
   var mode=currentMode();
   document.querySelectorAll("[data-mode]").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.mode===mode?"true":"false")});
+  var row=$("likelypacks");
+  if(row){
+    row.classList.toggle("hide", !(mode==="likely"&&isHost()));
+    document.querySelectorAll("[data-likelypack]").forEach(function(b){b.setAttribute("aria-pressed", b.dataset.likelypack===likelyPack?"true":"false")});
+  }
 }
 function paintLengths(){
   var n=rounds();
@@ -450,7 +485,7 @@ function paintLobby(){
     if(n<2) note.textContent="Need one more player.";
     else if(n>12) note.textContent="12 players max.";
     else if(isHost()&&!$("optin").checked) note.textContent="Tick the opt-in, then start.";
-    else note.textContent=isHost()?"Pack's loaded. You're the host.":"You're in. The host starts when the table's ready.";
+    else note.textContent=isHost()?(currentMode()==="likely"?"Most likely: everyone votes for a person on their own phone. You're the host.":"Pack's loaded. You're the host."):"You're in. The host starts when the table's ready.";
   }
 }
 function myCast(){return answered(uid)}
@@ -466,10 +501,30 @@ function paintIn(answering, mine){
   note.appendChild(document.createTextNode(mine?("Locked in. "+done+" of "+list.length+" answered"):(done+" of "+list.length+" answered")));
   note.appendChild(dots);
 }
+function paintVoteOptions(answering, mine){
+  var box=$("voteopts"); if(!box) return;
+  var likely=isLikely();
+  box.classList.toggle("hide", !(answering&&likely));
+  var ask=$("voteask"); if(ask) ask.classList.toggle("hide", !(answering&&likely));
+  if(!(answering&&likely)){box.dataset.key=""; return}
+  var others=order().filter(function(p){return p.uid!==uid});
+  var key=[roundSeq(), mine, others.map(function(p){return p.uid+":"+shown(p.uid)}).join(",")].join("|");
+  if(box.dataset.key===key) return; // rebuild only when something changed, so a tap never lands on a replaced button
+  box.dataset.key=key; box.textContent="";
+  others.forEach(function(p){
+    var b=document.createElement("button"); b.type="button"; b.dataset.vote=p.uid;
+    b.textContent=(p.emoji?p.emoji+" ":"")+shown(p.uid);
+    b.setAttribute("aria-pressed", mine==="v"+p.uid?"true":"false");
+    b.disabled=!!mine;
+    b.addEventListener("click", function(){sendCast("v"+p.uid)});
+    box.appendChild(b);
+  });
+}
 function paintAnswers(){
   var answering=!!(table&&table.step==="answer");
-  var box=$("answers"); if(box) box.classList.toggle("hide", !answering);
+  var box=$("answers"); if(box) box.classList.toggle("hide", !answering||isLikely());
   var mine=myCast();
+  paintVoteOptions(answering, mine);
   var have=$("ihave"), never=$("never");
   if(have){have.disabled=!answering||!!mine; have.setAttribute("aria-pressed", mine==="have"?"true":"false")}
   if(never){never.disabled=!answering||!!mine; never.setAttribute("aria-pressed", mine==="never"?"true":"false")}
@@ -489,21 +544,26 @@ function paintHaves(){
   }
   var ids=haveIds();
   var count=$("havecount"), everyone=order().length;
+  var vc=isLikely()?voteCounts():null;
   if(count){
     count.textContent="";
-    if(ids.length){
+    if(ids.length&&vc){
+      var top=vc.counts[ids[0]], bv=document.createElement("b"); bv.textContent=String(top);
+      count.appendChild(bv);
+      count.appendChild(document.createTextNode(ids.length>1?(top===1?" vote each, a tie":" votes each, a tie"):" of "+vc.total+" votes"));
+    }else if(ids.length){
       var b=document.createElement("b"); b.textContent=String(ids.length);
       count.appendChild(b); count.appendChild(document.createTextNode(" of "+everyone+" said I HAVE"));
     }
   }
-  if(head){head.textContent=ids.length?"Sip, water, or pose":"Nobody this round"; head.classList.toggle("none", !ids.length)}
+  if(head){head.textContent=ids.length?"Sip, water, or pose":(vc?"Nobody got a vote":"Nobody this round"); head.classList.toggle("none", !ids.length)}
   box.classList.toggle("hide", !ids.length);
   box.textContent="";
   paintStory(ids);
   ids.forEach(function(id, i){
     var li=document.createElement("li"); li.style.setProperty("--i", String(i));
     var emo=document.createElement("span"); emo.className="nh-emo"; emo.setAttribute("aria-hidden", "true"); emo.textContent=(who[id]&&who[id].emoji)||"•";
-    var nm=document.createElement("span"); nm.textContent=shown(id);
+    var nm=document.createElement("span"); nm.textContent=shown(id)+(vc?" · "+(vc.counts[id]||0)+" vote"+((vc.counts[id]||0)===1?"":"s"):"");
     li.appendChild(emo); li.appendChild(nm); box.appendChild(li);
   });
 }
@@ -521,7 +581,8 @@ function paintStory(ids){
   var hide=!pick||storySkipped===roundSeq();
   box.classList.toggle("hide", hide);
   if(hide) return;
-  line.textContent=pick===uid?"You're up: tell the story. Totally optional.":shown(pick)+", tell the story. Totally optional.";
+  var verb=isLikely()?"explain that vote":"tell the story";
+  line.textContent=pick===uid?"You're up: "+verb+". Totally optional.":shown(pick)+", "+verb+". Totally optional.";
 }
 function awardRows(){
   var list=order();
@@ -531,6 +592,14 @@ function awardRows(){
   function names(group){return group.map(function(p){return (p.emoji?p.emoji+" ":"")+shown(p.uid)}).join(", ")}
   var low=list.filter(function(p){return p.confessions===min});
   var high=list.filter(function(p){return p.confessions===max});
+  if(isLikely()){
+    if(max===0) return [{title:"Quiet table", emoji:"\ud83e\udd2b", names:names(list), line:"Nobody got singled out. Suspiciously polite."}];
+    if(max===min) return [{title:"Even mentions", emoji:"\ud83e\udd1d", names:names(list), line:"Same number of mentions. Not a drink score."}];
+    return [
+      {title:"Most mentioned", emoji:"\ud83c\udfaf", names:names(high), line:"Got the most votes ("+max+"). Not a prize for drinking."},
+      {title:"Quiet one", emoji:"\ud83e\udd2b", names:names(low), line:min===0?"No mentions. Nothing extra is owed.":"Fewest mentions ("+min+"). Practically invisible."}
+    ];
+  }
   if(max===0) return [{title:"The Saint", emoji:"\ud83d\ude07", names:names(list), line:"A whole table of nevers. The halos stay on."}];
   if(max===min) return [{title:"Even Stevens", emoji:"\ud83e\udd1d", names:names(list), line:"Same number of yeses. Suspiciously fair. Not a drink score."}];
   return [
@@ -599,7 +668,7 @@ function paintTable(){
   paintHaves();
   paintQueue();
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
-  if(over){paintAwards(); var line=$("recapline"); if(line) line.textContent="Never Have I Ever, "+total+" rounds"}
+  if(over){paintAwards(); var line=$("recapline"); if(line) line.textContent=(isLikely()?"Never Have I Ever, Most likely, ":"Never Have I Ever, ")+total+" rounds"; var fl=$("finalelede"); if(fl) fl.textContent=isLikely()?"Votes are stories. This is not a drink score.":"Yeses are stories. This is not a drink score."}
   var custom=$("custombox");
   if(custom){
     if(custom.classList.contains("hostonly")&&!isHost()) custom.classList.add("hide");
@@ -650,6 +719,17 @@ function maybeScore(){
   if(!me||!table||!uid) return;
   var seq=+table.seq||0;
   if(!seq||seq<=(+me.seen||0)||scoring===seq) return;
+  if(isLikely()){
+    if(table.step!=="results"&&table.step!=="over") return;
+    if(!parsedCast(cast[uid])) return;
+    scoring=seq;
+    var hit=haveIds().indexOf(uid)>=0?1:0;
+    writeWho(me.emoji||myEmoji(), (+me.confessions||0)+hit, seq).catch(function(e){
+      if(scoring===seq) scoring=0;
+      fail(friendly(e));
+    });
+    return;
+  }
   var info=parsedCast(cast[uid]);
   if(!info) return;
   if(info.seq!==null && info.seq!==seq) return;
@@ -719,12 +799,13 @@ function sendCast(value){
   var seq=+table.seq||0;
   if(castValue(uid)) return;
   if(pendingCast&&pendingCast.seq===seq) return;
-  if(value!=="have"&&value!=="never"&&value!=="pass") return;
+  if(!/^(have|never|pass|v[A-Za-z0-9_-]{6,60})$/.test(value)) return;
+  if(value.charAt(0)==="v"&&(value==="v"+uid||!players[value.slice(1)])) return; // no voting for yourself
   pendingCast={v:value, seq:seq};
   sending=true;
   paintAnswers();
-  tapSound(value==="have"?"crack":"whoosh");
-  var btn=$(value==="have"?"ihave":value==="never"?"never":"passbtn");
+  tapSound(value==="have"||value.charAt(0)==="v"?"crack":"whoosh");
+  var btn=value.charAt(0)==="v"&&value.length>1?document.querySelector('#voteopts [data-vote="'+value.slice(1)+'"]'):$(value==="have"?"ihave":value==="never"?"never":"passbtn");
   if(btn){btn.classList.remove("nh-hit"); void btn.offsetWidth; btn.classList.add("nh-hit")}
   var wait=window.__tpNhie&&+window.__tpNhie.delayCast||0;
   var write=function(){
@@ -756,8 +837,15 @@ function queueCustom(){
     else fail(friendly(e));
   });
 }
+function setLikelyPack(p){
+  if(!/^(classic|spicy|couples)$/.test(p)) return;
+  if(meta&&!isHost()) return;
+  likelyPack=p; deckKey="";
+  try{sessionStorage.setItem("tp_nhie_likely", p)}catch(e){}
+  paintModes();
+}
 function setMode(mode){
-  if(!/^(mild|classic|spicy)$/.test(mode)) return;
+  if(!MODE_RE.test(mode)) return;
   if(meta&&!isHost()) return;
   lobbyMode=mode;
   try{sessionStorage.setItem("tp_nhie_mode", mode)}catch(e){}
@@ -920,7 +1008,8 @@ function wire(){
   var saved=""; try{saved=localStorage.getItem("tp_name")||""}catch(e){}
   if(saved&&$("pname")&&!$("pname").value) $("pname").value=saved;
   try{
-    var mode=sessionStorage.getItem("tp_nhie_mode"); if(mode&&/^(mild|classic|spicy)$/.test(mode)) lobbyMode=mode;
+    var mode=sessionStorage.getItem("tp_nhie_mode"); if(mode&&MODE_RE.test(mode)) lobbyMode=mode;
+    var lp=sessionStorage.getItem("tp_nhie_likely"); if(lp&&/^(classic|spicy|couples)$/.test(lp)) likelyPack=lp;
     var len=+sessionStorage.getItem("tp_nhie_len"); if(LENGTHS.indexOf(len)>=0) gameLength=len;
   }catch(e){}
   paintEmoji(); paintModes(); paintLengths();
@@ -986,6 +1075,7 @@ function wire(){
   $("queue").addEventListener("click", queueCustom);
   $("custom").addEventListener("keydown", function(e){if(e.key==="Enter"){e.preventDefault(); queueCustom()}});
   document.querySelectorAll("[data-mode]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setMode(b.dataset.mode)})});
+  document.querySelectorAll("[data-likelypack]").forEach(function(b){b.addEventListener("click", function(){setLikelyPack(b.dataset.likelypack)})});
   document.querySelectorAll("[data-len]").forEach(function(b){b.addEventListener("click", function(){if(!meta||isHost()) setLength(b.dataset.len)})});
   document.querySelectorAll("[data-emo]").forEach(function(b){
     b.addEventListener("click", function(){unlock(); if(code) sendReact(b.dataset.emo); else cue(EMO_CUE[b.dataset.emo]||"clink")});
@@ -1062,6 +1152,8 @@ async function boot(){
       confessions:function(){return who[uid]&&who[uid].confessions},
       cast:function(){return cast[uid]||""},
       step:function(){return table&&table.step},
+      mode:function(){return currentMode()},
+      deck:function(){return currentDeck().slice(0,3)},
       clean:function(s){return cleanText(s)}
     };
   }
