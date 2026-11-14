@@ -478,13 +478,12 @@ function paintLobby(){
   var start=$("start");
   if(start){
     start.textContent="Start · "+rounds()+" rounds";
-    start.disabled=!isHost()||!$("optin").checked||n<2||n>12;
+    start.disabled=!isHost()||n<2||n>12;
   }
   var note=$("lobbynote");
   if(note){
     if(n<2) note.textContent="Need one more player.";
     else if(n>12) note.textContent="12 players max.";
-    else if(isHost()&&!$("optin").checked) note.textContent="Tick the opt-in, then start.";
     else note.textContent=isHost()?(currentMode()==="likely"?"Most likely: everyone votes for a person on their own phone. You're the host.":"Pack's loaded. You're the host."):"You're in. The host starts when the table's ready.";
   }
 }
@@ -871,7 +870,6 @@ async function begin(){
   if(!isHost()||!meta||sending) return;
   var list=order();
   if(list.length<2||list.length>12){fail("Need 2 to 12 players."); return}
-  if(!$("optin").checked){fail("Tick the opt-in first. Drinks stay optional."); return}
   fail("");
   sending=true;
   var mode=currentMode();
@@ -1046,7 +1044,6 @@ function wire(){
       else fail(friendly(e));
     }).then(function(){sending=false});
   });
-  if($("optin")) $("optin").addEventListener("change", render);
   $("start").addEventListener("click", function(){unlock(); begin()});
   $("ihave").addEventListener("click", function(){sendCast("have")});
   $("never").addEventListener("click", function(){sendCast("never")});

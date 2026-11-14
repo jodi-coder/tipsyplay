@@ -354,7 +354,7 @@ test("the in-page End session buttons still end the room on two quick taps", asy
   const code = await host(stage.page, "Ada");
   await stage.page.evaluate((room) => window.__tpMock.addPlayer(room, "player-2", "Bea"), code);
   await expect(stage.page.locator("#lobbynote")).toContainText("Tick the opt-in");
-  await stage.page.locator("#optin").check();
+  if (await stage.page.locator("#optin").count()) await stage.page.locator("#optin").check();
   await expect(stage.page.locator("#start")).toBeEnabled();
   await stage.page.locator("#start").click();
   await expect(stage.page.locator("#table")).toBeVisible();

@@ -158,7 +158,7 @@ test("never have i ever: reactions and your own line live in the Menu, not on th
   const bea = await boot(browser, "/games/never-have-i-ever.html", "Bea");
   const code = await host(ada.page, "Ada");
   await join(bea.page, "Bea", code);
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#table")).toBeVisible();
   await expect(ada.page.locator("#ihave")).toBeVisible();
