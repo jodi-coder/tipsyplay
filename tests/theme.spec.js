@@ -156,7 +156,7 @@ test("the homepage is readable when the hero preview is missing and when scripts
   await expect(page.locator(".hero .cta")).toBeVisible();
   await expect(page.locator(".hero .age-line")).toBeVisible();
   await expect(page.locator("header.top nav a", { hasText: "Play responsibly" })).toBeVisible();
-  await expect(page.locator(".pick")).toHaveCount(3);
+  await expect(page.locator(".pick")).toHaveCount(4);
   await ctx.close();
   const c2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p2 = await c2.newPage();
@@ -170,10 +170,10 @@ test("the homepage is readable when the hero preview is missing and when scripts
 test("the picks are whole-card links with colored icon tiles, and every tap target is 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".pick", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["games/never-have-i-ever.html", "games/hot-take-court.html", "games/two-truths.html"]);
+  expect(hrefs).toEqual(["games/never-have-i-ever.html", "games/hot-take-court.html", "games/two-truths.html", "games/slow-drip.html"]);
   const tiles = await page.$$eval(".pick .tile", (a) => a.map((x) => x.className.replace("tile ", "")));
-  expect(tiles).toEqual(["t-yellow", "t-pink", "t-green"]);
-  await expect(page.locator(".pick .chev")).toHaveCount(3);
+  expect(tiles).toEqual(["t-yellow", "t-pink", "t-green", "t-yellow"]);
+  await expect(page.locator(".pick .chev")).toHaveCount(4);
   await expect(page.locator(".more")).toHaveText("See all games →");
   await expect(page.locator(".more")).toHaveAttribute("href", "games/");
   const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more", (a) => a.map((x) => x.getBoundingClientRect().height));

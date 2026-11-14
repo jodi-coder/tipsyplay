@@ -39,7 +39,7 @@ html,body{overflow-x:clip}
 
 /* tonight's picks: three whole-card links */
 .picks{display:grid;gap:16px}
-@media(min-width:760px){.picks{grid-template-columns:repeat(3,1fr);gap:20px}}
+@media(min-width:760px){.picks{grid-template-columns:repeat(2,1fr);gap:20px}}
 .pick{display:flex;align-items:center;gap:14px;min-height:88px;padding:14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font-weight:400}
 .pick:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
 .tile{flex:none;width:58px;height:58px;display:grid;place-items:center;border:var(--bw) solid var(--outline);border-radius:14px}
