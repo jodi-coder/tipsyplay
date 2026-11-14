@@ -32,7 +32,7 @@ Every HTML page must include the Google tag (`G-BHY4BXF3V3`) immediately after t
 </script>
 ```
 
-There is no page generator in this repo. Pages are hand-written HTML, including the spots lists and detail pages. If a template or build script is added later, it has to emit this same tag on every page it creates. The site has no Content-Security-Policy. The service worker does not intercept or cache `googletagmanager.com` requests.
+Most pages are hand-written HTML, including the spots lists and detail pages. The one exception is the drinks section, which `tools/drinks/build.py` writes (see [Drinks section](#drinks-section)); it emits this same tag on every page. Any other template or build script added later has to do the same. The site has no Content-Security-Policy. The service worker does not intercept or cache `googletagmanager.com` requests.
 
 ## Hosting
 
@@ -57,3 +57,15 @@ Online games sign each browser in with Firebase Anonymous Authentication. A room
 ## Game inventory
 
 Eleven games are on the games list: Vault Traitor, Never Have I Ever (with a Most likely mode where everyone votes for a person), Story Chain, Hot Take Court, Card Lottery, Category Countdown, Two Truths & a Twist, Sketchy Guess, Rule Maker, King's Cup, and Split Decision. Who's Most Likely, Vibe Checkpoint, Chaos Crew, and Cup Toss Challenge were retired; their old URLs redirect with a 301 (see `.htaccess`). The solo card page at `play/never-have-i-ever.html` and the pass-the-phone page at `play/party.html` are separate from those hosted rooms.
+
+## Drinks section
+
+`/drinks/` holds 100 drink recipes: a hub page, one page per type (shots, cocktails, party punches, frozen, hot) and one page per drink. The recipes live in `tools/drinks/data_*.py`. To change a recipe or add one, edit the data file and run this from the repository root:
+
+```bash
+python3 tools/drinks/build.py
+```
+
+It rewrites the pages under `drinks/`, the drinks entries in `sitemap.xml`, and `docs/drinks-photo-prompts.md`. Commit the result. `drinks/drinks.css` and `drinks/drinks.js` are hand-written.
+
+Photos: a drink shows a drawn glass until it has a photo. Save a 4:3 photo as `images/drinks/<slug>.webp` (or `.jpg`) and run the script again. `docs/drinks-photo-prompts.md` lists the file name and an image prompt for every drink.

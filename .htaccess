@@ -5,6 +5,7 @@
   RewriteEngine On
   # Internal notes and rules files are not public pages.
   RewriteRule ^docs/ - [F,L]
+  RewriteRule ^tools/ - [F,L]
   RewriteRule ^(firebase-rules|database\.rules)\.json$ - [F,L]
   # Retired games. Old links and search results keep working.
   # Who's Most Likely is now the "Most likely" mode in Never Have I Ever; the rest go to the games list.

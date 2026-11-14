@@ -50,7 +50,7 @@ html,body{overflow-x:clip}
 .pick-body b{font:800 1.3rem/1.1 var(--display);letter-spacing:-.3px}
 .pick-body span{color:var(--ink-2);font-weight:500;line-height:1.3;margin-top:3px}
 .chev{flex:none;width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
-.more{display:inline-flex;align-items:center;min-height:var(--tap);margin-top:14px;font-weight:800}
+.more,.more-drinks{display:inline-flex;align-items:center;min-height:var(--tap);margin-top:14px;font-weight:800}
 @media(prefers-reduced-motion:reduce){.pick:active{transform:none}}
 
 /* find your vibe */

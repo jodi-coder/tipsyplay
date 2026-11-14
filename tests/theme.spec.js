@@ -127,7 +127,7 @@ test("the homepage has the spec's sections in order, including the FAQ", async (
   await seen(page);
   await page.goto("/index.html");
   const ids = await page.$$eval("main > section", (s) => s.map((x) => x.id));
-  expect(ids).toEqual(["top", "featured", "vibe", "how", "faq", "responsible"]);
+  expect(ids).toEqual(["top", "featured", "vibe", "drinks", "how", "faq", "responsible"]);
   await expect(page.locator("main h1")).toHaveText("Free drinking games and party games on everyone's phone.");
   await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck.");
   await expect(page.locator("#featured h2")).toHaveText("Tonight's picks");
@@ -182,8 +182,11 @@ test("the picks are whole-card links with colored icon tiles, and every tap targ
   await expect(page.locator(".more")).toHaveAttribute("href", "games/");
   const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more", (a) => a.map((x) => x.getBoundingClientRect().height));
   for (const h of sizes) expect(h).toBeGreaterThanOrEqual(43.5);
-  const chips = await page.$$eval(".vibes a", (a) => [a.map((x) => x.textContent.trim()), a.map((x) => x.getAttribute("href"))]);
+  const chips = await page.$$eval("#vibe .vibes a", (a) => [a.map((x) => x.textContent.trim()), a.map((x) => x.getAttribute("href"))]);
   expect(chips).toEqual([["Quick", "For 2", "Big groups", "No props", "Cards"], ["games/quick/", "games/for-two/", "games/big-groups/", "games/no-props/", "games/card/"]]);
+  const drinks = await page.$$eval("#drinks .vibes a", (a) => [a.map((x) => x.textContent.trim()), a.map((x) => x.getAttribute("href"))]);
+  expect(drinks).toEqual([["Shots", "Cocktails", "Party punches", "Frozen", "Hot"], ["drinks/shots/", "drinks/cocktails/", "drinks/party-punches/", "drinks/frozen/", "drinks/hot/"]]);
+  await expect(page.locator(".more-drinks")).toHaveAttribute("href", "drinks/");
 });
 
 test("on a phone the header folds into a Menu and the Pick a game bar appears only after the hero and the picks scroll away", async ({ page }) => {
@@ -209,7 +212,7 @@ test("on desktop the nav links sit inline and there is no Menu button", async ({
   await page.addInitScript(() => { try { localStorage.setItem("tp_age_ok", "yes"); } catch (e) {} });
   await page.goto("/index.html");
   await expect(page.locator(".menu-btn")).toBeHidden();
-  await expect(page.locator("header.top nav a")).toHaveText(["Games", "Blog", "Party spots", "Play responsibly"]);
+  await expect(page.locator("header.top nav a")).toHaveText(["Games", "Drinks", "Blog", "Party spots", "Play responsibly"]);
   await ctx.close();
 });
 
