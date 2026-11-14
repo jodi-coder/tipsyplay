@@ -182,6 +182,25 @@
               ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && $id.matches(/^[A-Za-z0-9]{6,24}$/) && !data.exists() && newData.child('u').val() == auth.uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
               ".validate": "newData.child('e').isString() && newData.child('e').val().matches(/^(clap|gasp|laugh|boo|party)$/) && newData.child('u').isString() && newData.child('u').val().length > 0 && newData.child('u').val().length <= 128 && newData.hasChildren(['e','u'])"
             }
+          },
+          "tap": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+              ".validate": "!newData.exists() || (newData.child('s').isNumber() && newData.child('s').val() >= 0 && newData.child('s').val() <= 60 && newData.child('t').isNumber() && newData.hasChildren(['s','t']))"
+            }
+          },
+          "call": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists()",
+              ".validate": "!newData.exists() || (newData.child('s').isNumber() && newData.child('s').val() >= 0 && newData.child('s').val() <= 60 && newData.child('t').isNumber() && newData.hasChildren(['s','t']))"
+            }
+          },
+          "timer": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (!data.exists() || data.child('holder').val() == auth.uid || root.child('rooms').child($code).child('kc').child('play').child('turn').val() == auth.uid)",
+            ".validate": "!newData.exists() || (newData.child('holder').isString() && newData.child('holder').val().length > 0 && newData.child('holder').val().length <= 128 && newData.child('at').isNumber() && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 60 && newData.child('n').isNumber() && newData.child('n').val() >= 0 && newData.child('n').val() <= 200 && newData.hasChildren(['holder','at','seq','n']))"
           }
         },
         "nhie": {

@@ -18,16 +18,16 @@ var RULES = {
   A: { title: "One Beat", body: "Everyone joins for one beat, then the table stops together. It does not keep going and it does not pass down the line.", line: "One small drink or hold a silly pose, together, then stop. No continuous drinking.", say: "One Beat!" },
   "2": { title: "You", body: "The drawer points at one other player. That person has the card. One turn, then it is over.", line: "One small drink or take a five-second bow.", say: "You!" },
   "3": { title: "Me", body: "This card lands on the person who drew it.", line: "One small drink or take a dramatic bow.", say: "Me!" },
-  "4": { title: "Floor", body: "Everyone touches the floor once. The drawer names who was last. That is the whole contest.", line: "One small drink or do one squat.", say: "Floor!" },
+  "4": { title: "Floor", body: "Everyone taps TAP as fast as they can. The last phone to tap is named on every screen.", line: "One small drink or do one squat.", say: "Floor!" },
   "5": { title: "Guys", body: "Players who chose Guys, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small drink or hold a flex pose.", say: "Guys!" },
   "6": { title: "Girls", body: "Players who chose Girls, plus anyone who chose Everyone. If nobody fits, the whole table waves instead.", line: "One small drink or do a hair-flip pose.", say: "Girls!" },
-  "7": { title: "Heaven", body: "Everyone points at the ceiling. The drawer names who was last.", line: "One small drink or hold a star pose for three seconds.", say: "Heaven!" },
+  "7": { title: "Heaven", body: "Everyone points at the ceiling and taps TAP. The last phone to tap is named on every screen.", line: "One small drink or hold a star pose for three seconds.", say: "Heaven!" },
   "8": { title: "Mate", body: "Pick a partner. When one of you takes a drink or the alternative, the other does the same once. It does not bounce back.", line: "One small drink or a handshake. Your mate does the same, once.", say: "Pick a mate!" },
-  "9": { title: "Rhyme", body: "Say the seed word. Go around with rhymes. The first person who stalls ends it.", line: "One small drink or make an animal noise.", say: "Rhyme time!" },
-  "10": { title: "Categories", body: "Name things in the category. The first stall ends the round. These are not drink names.", line: "One small drink or freeze in a thumbs-up.", say: "Category!" },
-  J: { title: "House rule", body: "Invent one silly table rule. It stays on the list until the host clears it. Breaking it later is still only one moment. Rules do not stack.", line: "One small drink or write the rule and score the point you already have.", say: "Make a rule!" },
-  Q: { title: "Question", body: "Ask the question out loud to the player you pick. They answer once.", line: "One small drink or score a point for answering.", say: "Question!" },
-  K: { title: "King", body: "The cup is a counter, not a drink. This king adds one mark. The fourth king ends the round with a dare. Nobody drinks from it.", line: "One small drink or add a dare to the cup's list.", say: "King!" }
+  "9": { title: "Rhyme", body: "Say a rhyme for the seed word, then pass the phone clock on. You have 5 seconds. Whoever the clock runs out on is out.", line: "One small drink or make an animal noise.", say: "Rhyme time!" },
+  "10": { title: "Categories", body: "Name a thing in the category, then pass the 5-second clock on. Whoever it runs out on is out. These are not drink names.", line: "One small drink or freeze in a thumbs-up.", say: "Category!" },
+  J: { title: "Never have I ever", body: "Read the prompt out loud. Anyone who has done it can take one small drink or do the alternative. Anyone who has not does nothing.", line: "One small drink if you have, or the alternative. Nothing if you have not.", say: "Never have I ever!" },
+  Q: { title: "Question", body: "Ask the question out loud to the player you pick. They answer once. Anyone can tap Call out if someone laughs or takes too long.", line: "One small drink or score a point for answering.", say: "Question!" },
+  K: { title: "King", body: "The cup is a counter, not a drink. This king adds one mark and lets the drawer write a house rule. The fourth king ends the round with a dare. Nobody drinks from it.", line: "One small drink or write the house rule.", say: "King!" }
 };
 /* ============================================================
    TRIGGERS
@@ -189,7 +189,7 @@ function floatIcon(emoji, x){
   document.body.appendChild(n); setTimeout(function(){n.remove()},1000);
 }
 
-function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
+function screen(id){document.body.classList.toggle("kc-playing", id==="lobby"||id==="table"); ["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function savedName(){
   var el=$("pname")||$("playername");
   var name=el?normName(el.value):"";
@@ -212,10 +212,7 @@ function openHostFlow(){
   if($("hostbtn")) $("hostbtn").click();
 }
 var dropping=false;
-function clearOptIns(){
-  var box=$("optin"); if(box) box.checked=false;
-  var na=$("ona"); if(na) na.checked=false;
-}
+function clearOptIns(){}
 function showRoomEnded(){
   stopAll();
   code=null; meta=null; players={}; table=null;
@@ -230,7 +227,6 @@ function restartSame(){
   if(!name){openHostFlow(); return}
   var old=code;
   if(!old){clearOptIns(); screen("home"); hostRoom(name, gender).catch(function(e){fail(friendly(e))}); return}
-  var optinWas=$("optin")&&$("optin").checked, onaWas=$("ona")&&$("ona").checked;
   clearOptIns();
   dropping=old;
   hostRoom(name, gender).then(function(){
@@ -243,8 +239,6 @@ function restartSame(){
     var still=code===old;
     if(dropping===old) dropping=false;
     if(still){
-      if($("optin")) $("optin").checked=!!optinWas;
-      if($("ona")) $("ona").checked=!!onaWas;
       try{render()}catch(err){}
       fail("Couldn't start a new room. Your current room is still open.");
       return;
@@ -294,7 +288,7 @@ function paintLobby(){
     box.appendChild(row);
   });
   var start=$("start");
-  if(start) start.disabled=!(isHost()&&$("optin").checked&&order().length>=2);
+  if(start) start.disabled=!(isHost()&&order().length>=2);
 }
 function paintScores(){
   var box=$("scores"); box.textContent="";
@@ -331,6 +325,131 @@ function paintRules(){
   d.appendChild(dp);
   SEED_DARES.forEach(function(dare){var p=document.createElement("p"); p.textContent=dare; d.appendChild(p)});
 }
+
+var taps = {}, calls = {}, timer = null, seenAt = {}, ticker = 0;
+function nhiePrompt(seq){
+  var list=(window.NHIE&&window.NHIE.mild)||[];
+  if(!list.length) return "Never have I ever sung in the shower.";
+  var base=((meta&&meta.gameId)||1)*7;
+  return list[(base+seq*13)%list.length];
+}
+function firstSeen(){
+  if(!table) return 0;
+  var k=String(table.seq);
+  if(!seenAt[k]) seenAt[k]=serverNow();
+  return seenAt[k];
+}
+function freshSince(){return firstSeen()-20000}
+function liveCard(){
+  if(!table||table.step!=="shown"||!table.card) return "";
+  return table.card.slice(0,-1);
+}
+var tapDone = {};
+function paintTap(){
+  var zone=$("tapzone"), r=liveCard();
+  var on=r==="4"||r==="7";
+  if(!zone) return;
+  zone.classList.toggle("hide", !on);
+  if(!on) return;
+  var seq=table.seq, mineTap=taps[uid]&&taps[uid].s===seq&&taps[uid].t>=freshSince();
+  var list=order().filter(function(p){return p.connected!==false});
+  var tapped=list.filter(function(p){var t=taps[p.uid]; return t&&t.s===seq&&t.t>=freshSince()});
+  var btn=$("tapbtn");
+  btn.disabled=!!mineTap;
+  btn.textContent=mineTap?"Tapped":"TAP";
+  var line=$("tapresult"), key=String(seq);
+  var waited=serverNow()-firstSeen();
+  if(tapDone[key]){line.textContent=tapDone[key]; return}
+  if(tapped.length&&(tapped.length>=list.length||waited>8000)){
+    var missing=list.filter(function(p){return tapped.indexOf(p)<0});
+    var msg;
+    if(missing.length) msg=missing.map(function(p){return p.name}).join(", ")+(missing.length>1?" were":" was")+" last. No tap.";
+    else{
+      var last=tapped.slice().sort(function(a,b){return taps[b.uid].t-taps[a.uid].t})[0];
+      msg=last.name+" was last.";
+    }
+    tapDone[key]=msg; line.textContent=msg; fire("floor"); return;
+  }
+  line.textContent=tapped.length?tapped.length+" of "+list.length+" tapped":"Everyone taps now.";
+}
+function sendTap(){
+  if(liveCard()!=="4"&&liveCard()!=="7") return;
+  var seq=table.seq;
+  if(taps[uid]&&taps[uid].s===seq) return;
+  var rec={s:seq,t:serverNow()};
+  taps[uid]=rec; paintTap();
+  set(ref(db, rpath("kc/tap/"+uid)), rec).catch(function(e){fail(friendly(e))});
+}
+var TIMER_MS=5000;
+function timerMine(){
+  return timer&&table&&timer.seq===table.seq&&timer.at>=freshSince()?timer:null;
+}
+function paintTimer(){
+  var zone=$("timerzone"), r=liveCard();
+  var on=r==="9"||r==="10";
+  if(!zone) return;
+  zone.classList.toggle("hide", !on);
+  if(!on) return;
+  var t=timerMine(), clock=$("clock"), line=$("timerline");
+  var start=$("timerstart"), pass=$("timerpass");
+  var drawer=actorUid()===uid;
+  start.classList.toggle("hide", !!t||!drawer);
+  if(!t){
+    clock.textContent="5"; clock.classList.remove("out");
+    pass.classList.add("hide");
+    line.textContent=drawer?"Read the "+(r==="9"?"seed word":"category")+" out loud, then start the clock.":"Waiting for "+nameOf(actorUid())+" to start the clock.";
+    return;
+  }
+  var left=TIMER_MS-(serverNow()-t.at), out=left<=0;
+  clock.textContent=out?"0":String(Math.ceil(left/1000));
+  clock.classList.toggle("out", out);
+  var mineNow=t.holder===uid;
+  pass.classList.toggle("hide", out||!mineNow);
+  if(out){
+    line.textContent=nameOf(t.holder)+" ran out of time after "+t.n+(t.n===1?" pass.":" passes.");
+    if(paintTimer.done!==table.seq){paintTimer.done=table.seq; fire("boo"); flash()}
+  }else line.textContent=mineNow?"You have the clock. Answer, then pass it on.":nameOf(t.holder)+" has the clock.";
+}
+function sendTimer(first){
+  var t=timerMine();
+  var nxt, n;
+  if(first){ if(t||actorUid()!==uid) return; nxt=uid; n=0 }
+  else{
+    if(!t||t.holder!==uid||serverNow()-t.at>=TIMER_MS) return;
+    nxt=nextUid(uid); n=(+t.n||0)+1;
+  }
+  var rec={holder:nxt, at:serverNow(), seq:table.seq, n:n};
+  timer=rec; paintTimer();
+  set(ref(db, rpath("kc/timer")), rec).catch(function(e){fail(friendly(e))});
+}
+function paintCall(){
+  var btn=$("callbtn"), line=$("callline"), r=liveCard();
+  if(!btn) return;
+  var on=r==="Q";
+  btn.classList.toggle("hide", !on);
+  if(!on){line.textContent=""; return}
+  var seq=table.seq;
+  var names=order().filter(function(p){var c=calls[p.uid]; return c&&c.s===seq&&c.t>=freshSince()}).map(function(p){return p.name});
+  var mineCall=calls[uid]&&calls[uid].s===seq&&calls[uid].t>=freshSince();
+  btn.disabled=!!mineCall;
+  line.textContent=names.length?names.join(", ")+" called out "+nameOf(actorUid())+". One small drink or the alternative.":"";
+}
+function sendCall(){
+  if(liveCard()!=="Q") return;
+  var seq=table.seq;
+  if(calls[uid]&&calls[uid].s===seq) return;
+  var rec={s:seq,t:serverNow()};
+  calls[uid]=rec; paintCall(); fire("boo");
+  set(ref(db, rpath("kc/call/"+uid)), rec).catch(function(e){fail(friendly(e))});
+}
+function paintLive(){paintTap(); paintTimer(); paintCall()}
+function tick(){
+  if(!table||table.step!=="shown"){return}
+  var r=liveCard();
+  if(r==="4"||r==="7") paintTap();
+  else if(r==="9"||r==="10") paintTimer();
+}
+function startTicker(){if(!ticker) ticker=setInterval(tick, 250)}
 function lineFor(card){
   if(card.r==="K"&&kingCount()>=4) return "One small drink or do a dare from the cup. No downing a cup.";
   return RULES[card.r].line;
@@ -361,12 +480,12 @@ function showCard(){
   $("sipline").textContent=lineFor(card);
   var extra=$("extra");
   var mineTurn=actorUid()===uid;
-  var choice=mineTurn&&table.step==="shown"&&(card.r==="2"||card.r==="8"||card.r==="J"||card.r==="Q");
+  var choice=mineTurn&&table.step==="shown"&&(card.r==="2"||card.r==="8"||card.r==="Q"||(card.r==="K"&&kingCount()<4));
   var sig=[table.step,table.seq,table.card,actorUid(),table.target||"",table.echo||"",order().map(function(p){return p.uid}).join(",")].join("|");
   if(showCard.sig!==sig){
     showCard.sig=sig;
     extra.textContent="";
-    if(choice&&card.r!=="J"){
+    if(choice&&card.r!=="K"){
       order().forEach(function(p){
         if(p.uid===uid) return;
         var b=document.createElement("button"); b.type="button"; b.className="btn alt"; b.setAttribute("data-uid", p.uid);
@@ -375,11 +494,13 @@ function showCard(){
         extra.appendChild(b);
       });
     }
-    if(choice&&card.r==="J"){
-      var input=document.createElement("input"); input.id="jackrule"; input.className="bigin"; input.maxLength=80; input.placeholder="A silly rule for the table"; input.setAttribute("aria-label","House rule");
+    if(choice&&card.r==="K"){
+      var input=document.createElement("input"); input.id="jackrule"; input.className="bigin"; input.maxLength=80; input.placeholder="A silly rule for the table (or pass)"; input.setAttribute("aria-label","House rule");
       var save=document.createElement("button"); save.type="button"; save.id="jacksave"; save.className="btn"; save.textContent="Save the rule";
       extra.appendChild(input); extra.appendChild(save);
     }
+    if(choice){var pb=document.createElement("button"); pb.type="button"; pb.className="btn alt"; pb.id="choicepass"; pb.textContent="Pass"; extra.appendChild(pb)}
+    if(card.r==="J"){var nh=document.createElement("p"); nh.className="kc-prompt"; nh.id="nhieline"; nh.textContent=nhiePrompt(table.seq||0); extra.appendChild(nh)}
     if(!choice&&card.r==="9"){var p=document.createElement("p"); p.textContent="Seed word: "+RHYMES[(table.seq||0)%RHYMES.length]; extra.appendChild(p)}
     if(!choice&&card.r==="10"){var p2=document.createElement("p"); p2.textContent="Category: "+CATS[(table.seq||0)%CATS.length]; extra.appendChild(p2)}
     if(card.r==="Q"){var q=document.createElement("p"); q.textContent=QUESTIONS[(table.seq||0)%QUESTIONS.length]; extra.appendChild(q)}
@@ -423,8 +544,9 @@ function render(){
   $("draw").disabled=!!ask;
   $("draw").textContent=ask?"Telling the host…":"Tap to draw";
   var show=table&&(table.step==="shown"||table.step==="echo"||table.step==="finale")&&table.card;
-  if(show) showCard();
+  if(show){showCard(); paintLive()}
   else{
+    paintLive();
     showCard.sig=""; showCard.seq=-1;
     $("shown").classList.add("hide");
     $("wait").classList.toggle("hide", !!myDraw);
@@ -617,7 +739,6 @@ function playAgain(){
 }
 async function deal(){
   if(!isHost()||!meta) return;
-  if(!$("optin")||!$("optin").checked){fail("Tick the opt-in first. Drinking is optional."); return}
   var list=order(); if(list.length<2){fail("Need 2 players on their phones."); return}
   fail("");
   var deck=buildDeck();
@@ -635,7 +756,7 @@ async function deal(){
 }
 function stopAll(){stops.forEach(function(fn){fn()}); stops=[]; if(connStop){connStop(); connStop=null}}
 function listen(){
-  stopAll(); heard=-1; seenReact=null;
+  stopAll(); taps={}; calls={}; timer=null; seenAt={}; tapDone={}; startTicker(); heard=-1; seenReact=null;
   var watched=code;
   stops.push(onValue(ref(db, rpath("meta")), function(s){
     if(!s.exists()){if(dropping===watched||watched!==code) return; showRoomEnded(); return}
@@ -651,6 +772,9 @@ function listen(){
   stops.push(onValue(ref(db, rpath("kc/house")), function(s){
     var v=s.val()||{}; house=Object.keys(v).sort(function(a,b){return (+a)-(+b)}).map(function(k){return v[k]}); render();
   }, function(){}));
+  stops.push(onValue(ref(db, rpath("kc/tap")), function(s){taps=s.val()||{}; if(table) paintTap()}, function(){}));
+  stops.push(onValue(ref(db, rpath("kc/call")), function(s){calls=s.val()||{}; if(table) paintCall()}, function(){}));
+  stops.push(onValue(ref(db, rpath("kc/timer")), function(s){timer=s.val()||null; if(table) paintTimer()}, function(){}));
   stops.push(onValue(ref(db, rpath("kc/mates")), function(s){mates=s.val()||{}; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("kc/react")), function(s){
     var v=s.val()||{}, first=seenReact===null; if(first) seenReact={};
@@ -730,7 +854,7 @@ function leaveRoom(){
 function wire(){
   var saved=localStorage.getItem("tp_name"); if(saved&&!$("pname").value) $("pname").value=saved;
   var g=sessionStorage.getItem("tp_kc_group"); if(g) $("pgender").value=g;
-  var q=normCode(location.search); if(q) $("roomcode").value=q;
+  var q=normCode(location.search); if(q){$("roomcode").value=q; if(validCode(q)){document.body.classList.add("kc-invite"); var inv=$("invited"); if(inv) inv.hidden=false; $("joinbtn").textContent="Join room"}}
   if($("hostnew")) $("hostnew").addEventListener("click", function(){
     if($("hostnew").dataset.role==="host") restartSame();
     else openHostFlow();
@@ -755,9 +879,12 @@ function wire(){
       else fail(friendly(e));
     });
   });
-  $("optin").addEventListener("change", render);
   $("start").addEventListener("click", function(){unlock(); deal()});
   $("draw").addEventListener("click", sendAsk);
+  $("tapbtn").addEventListener("click", sendTap);
+  $("timerstart").addEventListener("click", function(){sendTimer(true)});
+  $("timerpass").addEventListener("click", function(){sendTimer(false)});
+  $("callbtn").addEventListener("click", sendCall);
   $("next").addEventListener("click", function(){sendPick("ack","sip")});
   $("altdone").addEventListener("click", function(){sendPick("ack","alt")});
   if($("passbtn")) $("passbtn").addEventListener("click", function(){sendPick("ack","pass")});
@@ -781,6 +908,7 @@ function wire(){
     var choice=t.closest("[data-uid]");
     if(choice&&choice.dataset.kind){sendPick(choice.dataset.kind, choice.dataset.uid); return}
     if(t.closest("#jacksave")){var input=$("jackrule"); if(input&&input.value.trim()) sendPick("rule", input.value.trim()); return}
+    if(t.closest("#choicepass")){sendPick("ack","pass"); return}
     var emo=t.closest("[data-emo]");
     if(emo){sendReact(emo.dataset.emo); return}
     var drop=t.closest("[data-drop]");
