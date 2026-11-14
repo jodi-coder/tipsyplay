@@ -123,12 +123,12 @@ test("the age line sits directly under the hero button, on the first screen", as
   expect(order.noteBottom).toBeLessThan(order.feat);
 });
 
-test("the homepage has the spec's sections in order, with no FAQ and no FAQ data", async ({ page }) => {
+test("the homepage has the spec's sections in order, including the FAQ", async ({ page }) => {
   await seen(page);
   await page.goto("/index.html");
   const ids = await page.$$eval("main > section", (s) => s.map((x) => x.id));
-  expect(ids).toEqual(["top", "featured", "vibe", "how", "responsible"]);
-  await expect(page.locator("main h1")).toHaveText("Free drinking games and party games on everyone's phone");
+  expect(ids).toEqual(["top", "featured", "vibe", "how", "faq", "responsible"]);
+  await expect(page.locator("main h1")).toHaveText("Free drinking games and party games on everyone's phone.");
   await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck.");
   await expect(page.locator("#featured h2")).toHaveText("Tonight's picks");
   await expect(page.locator("#vibe h2")).toHaveText("Find your vibe");
@@ -139,11 +139,16 @@ test("the homepage has the spec's sections in order, with no FAQ and no FAQ data
   await expect(page.locator("footer nav a")).toHaveText(["About", "Contact", "Privacy", "Terms"]);
   await expect(page.locator("footer")).toContainText("© TipsyPlay");
   const html = read("index.html");
-  expect(html).not.toMatch(/FAQPage|class="faq"|id="faq"/);
   const ld = JSON.parse(html.match(/application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const list = ld["@graph"].find((x) => x["@type"] === "ItemList");
   expect(list.itemListElement.map((i) => i.url)).toEqual(["https://tipsyplay.com/games/never-have-i-ever.html", "https://tipsyplay.com/games/hot-take-court.html", "https://tipsyplay.com/games/two-truths.html"]);
-  expect(ld["@graph"].some((x) => x["@type"] === "FAQPage")).toBe(false);
+  const faq = ld["@graph"].find((x) => x["@type"] === "FAQPage");
+  const visible = await page.$$eval("#faq details", (ds) => ds.map((d) => [d.querySelector("summary").textContent.trim(), d.querySelector("p").textContent.trim()]));
+  expect(faq.mainEntity.map((q) => [q.name, q.acceptedAnswer.text])).toEqual(visible);
+  expect(visible.map((pair) => pair[0])).toEqual(["Do we need an app or a deck of cards?", "How many people can play?", "Can I play without drinking?", "Who can play?"]);
+  expect(visible[3][1]).toBe("Adults only. You must be of legal drinking age in your location.");
+  const sums = await page.$$eval("#faq summary", (els) => els.map((el) => el.getBoundingClientRect().height));
+  for (const h of sums) expect(h).toBeGreaterThanOrEqual(44);
 });
 
 test("the homepage is readable when the hero preview is missing and when scripts are off", async ({ browser }) => {
