@@ -10,102 +10,102 @@ AI photos should show only the drink. Check each one for garbled text, extra gar
 
 ## Shots
 
-### Lemon Drop Shot
+### Lemon Drop Shot (photo added)
 File name: `lemon-drop-shot.webp`
 
 > Photorealistic drink photograph of a Lemon Drop Shot: a pale cloudy yellow shot in a sugar-rimmed shot glass with a small lemon wedge on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Kamikaze Shot
+### Kamikaze Shot (photo added)
 File name: `kamikaze-shot.webp`
 
 > Photorealistic drink photograph of a Kamikaze Shot: a pale green-white cloudy shot in a plain shot glass with a thin lime wheel beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### B-52 Shot
+### B-52 Shot (photo added)
 File name: `b-52-shot.webp`
 
 > Photorealistic drink photograph of a B-52 Shot: a three-layer shot in a clear shot glass: dark brown at the bottom, creamy beige in the middle, amber on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Baby Guinness Shot
+### Baby Guinness Shot (photo added)
 File name: `baby-guinness-shot.webp`
 
 > Photorealistic drink photograph of a Baby Guinness Shot: a shot glass of near-black liqueur with a clean white creamy layer on top, like a miniature pint of stout. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Buttery Nipple Shot
+### Buttery Nipple Shot (photo added)
 File name: `buttery-nipple-shot.webp`
 
 > Photorealistic drink photograph of a Buttery Nipple Shot: a two-layer shot in a clear shot glass: golden butterscotch below, cream-coloured layer on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Green Tea Shot
+### Green Tea Shot (photo added)
 File name: `green-tea-shot.webp`
 
 > Photorealistic drink photograph of a Green Tea Shot: two shot glasses of pale yellow-green liquid with a few small bubbles on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Washington Apple Shot
+### Washington Apple Shot (photo added)
 File name: `washington-apple-shot.webp`
 
 > Photorealistic drink photograph of a Washington Apple Shot: a clear rosy-red shot in a shot glass with a thin green apple slice beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Pickleback
+### Pickleback (photo added)
 File name: `pickleback-shot.webp`
 
 > Photorealistic drink photograph of a Pickleback: two shot glasses side by side, one of amber whiskey and one of pale green pickle brine, with a small dill pickle spear. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Mini Beer Shot
+### Mini Beer Shot (photo added)
 File name: `mini-beer-shot.webp`
 
 > Photorealistic drink photograph of a Mini Beer Shot: a small glass of clear golden liqueur with a thin white foam-like cream layer, looking like a tiny glass of beer. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Cinnamon Toast Shot
+### Cinnamon Toast Shot (photo added)
 File name: `cinnamon-toast-shot.webp`
 
 > Photorealistic drink photograph of a Cinnamon Toast Shot: a creamy off-white shot in a shot glass with a cinnamon-sugar rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Chocolate Cake Shot
+### Chocolate Cake Shot (photo added)
 File name: `chocolate-cake-shot.webp`
 
 > Photorealistic drink photograph of a Chocolate Cake Shot: a clear pale gold shot in a shot glass with a sugar-coated lemon wedge resting on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Melon Ball Shot
+### Melon Ball Shot (photo added)
 File name: `melon-ball-shot.webp`
 
 > Photorealistic drink photograph of a Melon Ball Shot: a bright green shot in a clear shot glass with a small melon ball on a pick. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Red Snapper Shot
+### Red Snapper Shot (photo added)
 File name: `red-snapper-shot.webp`
 
 > Photorealistic drink photograph of a Red Snapper Shot: a deep red clear shot in a shot glass on a bar top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Alabama Slammer Shot
+### Alabama Slammer Shot (photo added)
 File name: `alabama-slammer-shot.webp`
 
 > Photorealistic drink photograph of a Alabama Slammer Shot: two shot glasses of orange-red liquid with a small orange slice between them. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Mexican Candy Shot
+### Mexican Candy Shot (photo added)
 File name: `mexican-candy-shot.webp`
 
 > Photorealistic drink photograph of a Mexican Candy Shot: a pink-red shot in a shot glass with a red chili-lime seasoning rim and a lime wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### PB&J Shot
+### PB&J Shot (photo added)
 File name: `pbj-shot.webp`
 
 > Photorealistic drink photograph of a PB&J Shot: a dark berry-purple shot in a shot glass with a single raspberry on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Jam Doughnut Shot
+### Jam Doughnut Shot (photo added)
 File name: `jam-doughnut-shot.webp`
 
 > Photorealistic drink photograph of a Jam Doughnut Shot: a two-layer shot in a sugar-rimmed shot glass: deep raspberry red below, a cream-coloured layer on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Woo Woo Shot
+### Woo Woo Shot (photo added)
 File name: `woo-woo-shot.webp`
 
 > Photorealistic drink photograph of a Woo Woo Shot: a clear pink-red shot in a shot glass with a lime wedge on the side. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Oatmeal Cookie Shot
+### Oatmeal Cookie Shot (photo added)
 File name: `oatmeal-cookie-shot.webp`
 
 > Photorealistic drink photograph of a Oatmeal Cookie Shot: a creamy light brown shot in a shot glass with a dusting of cinnamon on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Pineapple Upside-Down Cake Shot
+### Pineapple Upside-Down Cake Shot (photo added)
 File name: `pineapple-upside-down-cake-shot.webp`
 
 > Photorealistic drink photograph of a Pineapple Upside-Down Cake Shot: a golden yellow shot in a shot glass with a red layer of grenadine at the bottom and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
