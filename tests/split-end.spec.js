@@ -119,6 +119,7 @@ export function onDisconnect(){
 }
 window.__tpMock = {
   removes,
+  set(path, value){ setNode(path, clone(value)); },
   addPlayer(code, id, name){
     setNode("rooms/" + code + "/players/" + id, { name: name, connected: true, joinedAt: Date.now() });
     setNode("rooms/" + code + "/nhie/who/" + id, { emoji: "", confessions: 0, seen: 0 });
@@ -201,13 +202,13 @@ function shot(page, name){
 const endItem = (page) => page.locator("#rmsheet button.rm-item").filter({ hasText: /^End session$/ });
 const confirmItem = (page) => page.locator("#rmsheet button.rm-item").filter({ hasText: /^Tap again to end$/ });
 
-test("age line and GA tag stay on all 101 pages", () => {
+test("age line and GA tag stay on every page", () => {
   const files = htmlFiles(ROOT);
   const ga = files.filter((f) => fs.readFileSync(f, "utf8").includes("G-BHY4BXF3V3"));
   const age = files.filter((f) => fs.readFileSync(f, "utf8").includes("You must be of legal drinking age in your location."));
-  expect(files.length).toBe(101);
-  expect(ga.length).toBe(101);
-  expect(age.length).toBe(101);
+  expect(files.length).toBeGreaterThan(100);
+  expect(ga.length).toBe(files.length);
+  expect(age.length).toBe(files.length);
 });
 
 test("the shared Room menu still closes before it runs the action", () => {

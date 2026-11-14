@@ -1,0 +1,16 @@
+/* King's Cup screens: the big tap button, the 5-second clock, the call-out line, the invite and joined states.
+   Uses the shared theme tokens from styles.css. No new white surfaces: buttons reuse .btn. */
+body.kc-playing #below{display:none}
+body.kc-invite #hostbtn{display:none}
+body.kc-invite .kc-invited{display:block;margin:var(--s-3) 0;font-weight:700}
+.kc-invited{font-weight:700}
+.kc-live{margin:var(--s-4) 0;text-align:center}
+.kc-tap{display:block;width:min(78vw,260px);height:min(78vw,260px);margin:var(--s-3) auto;border-radius:50%;border:var(--bw) solid var(--outline);background:var(--primary);color:var(--on-primary);font-family:var(--display);font-weight:800;font-size:3.2rem;letter-spacing:.04em;box-shadow:var(--shadow);cursor:pointer;touch-action:manipulation}
+.kc-tap:active{transform:translate(2px,2px);box-shadow:none}
+.kc-tap[disabled]{opacity:.55;cursor:default}
+.kc-clock{width:132px;height:132px;margin:var(--s-3) auto;border-radius:50%;border:var(--bw) solid var(--outline);background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:3.6rem;box-shadow:var(--shadow)}
+.kc-clock.out{background:var(--danger)}
+.kc-result{min-height:1.4em;margin:var(--s-2) 0;font-weight:700}
+body.kc-invite #hostnew[data-role="join"]{display:none}
+.kc-prompt{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:var(--s-3) 0}
+#audioline,#cupnote,#darelist{display:none}
