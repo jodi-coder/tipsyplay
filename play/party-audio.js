@@ -2,7 +2,7 @@
    One bus of short one-shot cues. There is no background music, no ambience and no spoken announcer.
    Sound follows the single site-wide switch (TPSound / localStorage "tp_sound") and never starts before the player's
    first tap, key press or touch (browsers block it, and a context made earlier would release queued sounds all at once).
-   Who's Most Likely uses the mlt* cues; King's Cup and Never Have I Ever use the shared ones. */
+   King's Cup and Never Have I Ever use these cues. */
 (function(global){
 "use strict";
 var tapped=false;
@@ -100,18 +100,6 @@ function create(opts){
     else if(name==="chant"){tone(196,"square",t,0.1,0.14,0,bus); tone(196,"square",t+0.17,0.1,0.14,0,bus); tone(262,"square",t+0.34,0.13,0.13,0,bus)}
     else if(name==="crickets"){var c; for(c=0;c<3;c++) tone(3200+Math.random()*400,"sine",t+c*0.15,0.045,0.05,3600,bus)}
     else if(name==="payoff"){tone(523,"triangle",t,0.13,0.22,0,bus); tone(659,"triangle",t+0.1,0.15,0.2,0,bus); tone(784,"sine",t+0.2,0.2,0.22,0,bus); tone(1046,"sine",t+0.32,0.3,0.18,0,bus)}
-    else if(name==="mltJoin"||name==="mltVote"||name==="mltRound"||name==="mltSuspense"||name==="mltWin"||name==="mltTie"||name==="mltNone"||name==="mltTwist"||name==="mltFinale"){
-      var mb=dest(0);
-      if(name==="mltJoin"){noise(t,0.04,0.26,180,900,"lowpass",mb); tone(523,"triangle",t+0.03,0.07,0.16,0,mb); tone(659,"triangle",t+0.1,0.08,0.15,0,mb); tone(784,"sine",t+0.17,0.11,0.14,0,mb)}
-      else if(name==="mltVote"){noise(t,0.022,0.24,1600,3600,"highpass",mb); tone(740,"square",t,0.035,0.11,0,mb); tone(988,"sine",t+0.04,0.06,0.09,0,mb)}
-      else if(name==="mltRound"){noise(t,0.06,0.14,400,1600,null,mb); tone(392,"triangle",t,0.07,0.16,0,mb); tone(523,"triangle",t+0.07,0.08,0.17,0,mb); tone(659,"sine",t+0.14,0.12,0.15,0,mb)}
-      else if(name==="mltSuspense"){tone(196,"sine",t,0.5,0.14,880,mb); tone(247,"triangle",t,0.5,0.08,1046,mb); tone(587,"square",t+0.3,0.07,0.1,0,mb); tone(740,"triangle",t+0.38,0.08,0.13,0,mb); tone(880,"sine",t+0.46,0.1,0.14,0,mb)}
-      else if(name==="mltWin"){noise(t,0.05,0.24,700,2800,null,mb); tone(523,"triangle",t,0.08,0.2,0,mb); tone(659,"triangle",t+0.08,0.08,0.18,0,mb); tone(784,"triangle",t+0.16,0.1,0.19,0,mb); tone(1046,"sine",t+0.26,0.18,0.2,0,mb)}
-      else if(name==="mltTie"){tone(440,"triangle",t,0.13,0.17,0,mb); tone(554,"triangle",t,0.13,0.13,0,mb); tone(659,"sine",t+0.11,0.16,0.15,0,mb)}
-      else if(name==="mltNone"){tone(494,"sine",t,0.1,0.11,392,mb); tone(349,"triangle",t+0.08,0.14,0.08,0,mb)}
-      else if(name==="mltTwist"){tone(880,"triangle",t,0.14,0.1,220,mb); tone(660,"triangle",t+0.06,0.11,0.08,0,mb); noise(t,0.09,0.13,900,2200,null,mb)}
-      else if(name==="mltFinale"){noise(t,0.09,0.2,500,2400,null,mb); tone(523,"triangle",t,0.09,0.17,0,mb); tone(659,"triangle",t+0.09,0.09,0.17,0,mb); tone(784,"triangle",t+0.18,0.11,0.18,0,mb); tone(1046,"sine",t+0.28,0.2,0.19,0,mb); tone(1318,"sine",t+0.4,0.24,0.12,0,mb)}
-    }
   }
   /* Kept so the games' existing calls still work. There is no music and no spoken line any more. */
   function say(){}

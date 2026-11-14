@@ -1,4 +1,4 @@
-/* Shared room shell for Split Decision, Vibe Checkpoint, and Chaos Crew.
+/* Shared room shell for Split Decision.
    Uses the published rooms/$code schema only: meta, players, nhie/play,
    nhie/who, tally, sealed, revealed. Secrets go in sealed, which other
    players cannot read until the host sets revealed for that round.
@@ -8,8 +8,8 @@
 "use strict";
 var L=window.PosterLogic;
 var GAME=document.body.dataset.game||"split";
-var PATHS={split:"/games/split-decision.html",vibe:"/games/vibe-checkpoint.html",crew:"/games/chaos-crew.html"};
-var TITLES={split:"Split Decision",vibe:"Vibe Checkpoint",crew:"Chaos Crew"};
+var PATHS={split:"/games/split-decision.html"};
+var TITLES={split:"Split Decision"};
 var ALPHABET="ABCDEFGHJKMNPQRSTUVWXYZ";
 var EMOJIS=["","😎","🦊","🌟","🎧","🍀","🔥","🌙","🎭","🍓","🎲","🦋"];
 var TTL=8*60*60*1000;
@@ -21,7 +21,7 @@ var snapKey="", snapSecrets=null, applied="", resetFor=0, passArm=0, closeArm=0,
 var serverOffset=0, offsetReady=false, offsetStop=null;
 var ref, onValue, update, set, get, remove, onDisconnect, serverTimestamp, goOnline;
 
-function pack(){return GAME==="split"?(window.SPLIT_DECK||[]):GAME==="vibe"?(window.VIBE_DECK||[]):(window.CREW_DECK||[])}
+function pack(){return window.SPLIT_DECK||[]}
 function cardById(id){var list=pack(), i; for(i=0;i<list.length;i++) if(list[i].id===id) return list[i]; return null}
 function asDeck(d){if(!d)return []; if(Array.isArray(d))return d; return Object.keys(d).sort(function(a,b){return (+a)-(+b)}).map(function(k){return d[k]})}
 function rpath(p){return "rooms/"+code+"/"+p}
@@ -51,14 +51,6 @@ function queryRoom(){
 }
 function roomStore(){return "tp_"+GAME+"_room"}
 function myEmoji(){try{return sessionStorage.getItem("tp_"+GAME+"_emoji")||""}catch(e){return ""}}
-function cyclesWanted(){
-  if(GAME!=="vibe") return 1;
-  var n=1;
-  try{n=+sessionStorage.getItem("tp_vibe_cycles")||1}catch(e){n=1}
-  var pressed=document.querySelector("[data-cycles][aria-pressed='true']");
-  if(pressed) n=+pressed.dataset.cycles;
-  return n===2?2:1;
-}
 function unlock(){
   try{if(window.TPSound) TPSound.unlock()}catch(e){}
   try{
@@ -237,76 +229,9 @@ function writeWho(emoji, points, seen){
 }
 function csv(list){return (list||[]).filter(Boolean).join(",")}
 function parseCsv(s){return String(s||"").split(",").map(function(x){return x.trim()}).filter(Boolean)}
-function encLive(live, out){return "L="+csv(live)+";O="+csv(out)}
-function parseLive(order){
-  var live=[], out=[];
-  String(order||"").split(";").forEach(function(part){
-    var i=part.indexOf("="); if(i<0) return;
-    var k=part.slice(0,i), v=part.slice(i+1);
-    if(k==="L") live=parseCsv(v);
-    if(k==="O") out=parseCsv(v);
-  });
-  return {live:live, out:out};
-}
-function encVibe(roster, guessers, passes, index){
-  var p=Object.keys(passes||{}).map(function(id){return id+":"+(passes[id]||0)}).join(",");
-  return "R="+csv(roster)+";G="+csv(guessers)+";P="+p+";I="+String(index||0);
-}
-function parseVibe(order){
-  var roster=[], guessers=[], passes={}, index=0;
-  String(order||"").split(";").forEach(function(part){
-    var i=part.indexOf("="); if(i<0) return;
-    var k=part.slice(0,i), v=part.slice(i+1);
-    if(k==="R") roster=parseCsv(v);
-    if(k==="G") guessers=parseCsv(v);
-    if(k==="I") index=+v||0;
-    if(k==="P" && v){
-      v.split(",").forEach(function(pair){
-        var bits=pair.split(":");
-        if(bits[0]) passes[bits[0]]=+bits[1]||0;
-      });
-    }
-  });
-  return {roster:roster, guessers:guessers, passes:passes, index:index};
-}
-function parseTag(text){
-  var o={};
-  String(text||"").split("|").forEach(function(part){
-    var i=part.indexOf(":");
-    if(i<0){o[part]=true; return}
-    o[part.slice(0,i)]=part.slice(i+1);
-  });
-  return o;
-}
-function crewState(){
-  var t=parseTag(table&&table.text);
-  var lists=parseLive(table&&table.order);
-  return {
-    pause:!!t.ready || (table&&table.step==="prompt"),
-    mission:+t.m||0,
-    try:+t.t||0,
-    gen:+t.g||1,
-    roles:t.i?t.i.split(",").map(function(n){return +n}):[],
-    quotas:t.q?t.q.split(",").map(function(n){return +n}):[],
-    stars:+t.s||0,
-    resets:+t.z||0,
-    knownStar:t.k==="1",
-    live:lists.live,
-    out:lists.out
-  };
-}
-function encCrew(st){
-  if(st.pause) return "c|ready|m:"+st.mission+"|t:"+(st.try||0)+"|g:"+st.gen+"|s:"+(st.stars||0)+"|k:"+(st.knownStar?1:0);
-  return "c|m:"+st.mission+"|t:"+(st.try||0)+"|g:"+st.gen+"|i:"+(st.roles||[]).join(",")+"|q:"+(st.quotas||[]).join(",")+"|s:"+(st.stars||0)+"|z:"+(st.resets||0)+"|k:"+(st.knownStar?1:0);
-}
-function vibeMeta(){
-  var t=parseTag(table&&table.text);
-  return {cycle:+t.c||1, max:+t.x||1};
-}
 function currentCard(){
   if(!meta||!table) return null;
   var deck=asDeck(meta.deck), idx=+table.round||0;
-  if(GAME==="crew") idx=crewState().mission;
   return cardById(deck[idx]);
 }
 function copyText(text){
@@ -355,7 +280,7 @@ function paintLobby(){
   var start=$("start");
   if(start){
     start.disabled=!isHost()||!$("optin").checked||n<L.MIN_PLAYERS||n>L.MAX_PLAYERS;
-    start.textContent=GAME==="crew"?"Open the ready check":"Start";
+    start.textContent="Start";
   }
   var note=$("lobbynote");
   if(note){
@@ -375,9 +300,6 @@ function choiceLocked(kind){
   var v=mineTally();
   if(GAME==="split" && kind==="pref") return v===1||v===2;
   if(GAME==="split" && kind==="pred") return v===3||v===4;
-  if(GAME==="vibe") return v===1||v===2;
-  if(GAME==="crew" && kind==="ready") return v===7;
-  if(GAME==="crew") return L.crewMarked(v, crewState().gen);
   return false;
 }
 function el(tag, cls, text){var n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=text; return n}
@@ -411,12 +333,6 @@ function paintChoices(){
     return;
   }
   var card=currentCard();
-  if(GAME==="crew" && table.step==="prompt"){
-    if(pass) pass.classList.add("hide");
-    addChoice(box, choiceLocked("ready")?"Ready":"I'm ready", "ready", choiceLocked("ready"), false);
-    if(status) status.textContent=choiceLocked("ready")?"You're ready. Waiting for the host to deal.":"Tap ready. The roster freezes when the host deals.";
-    return;
-  }
   if(GAME==="split" && table.step==="answer"){
     if(note) note.textContent="Passing sits you out of this whole round.";
     if(card){addChoice(box, "A · "+card.a, "A", secrets[uid]==="A", false); addChoice(box, "B · "+card.b, "B", secrets[uid]==="B", false)}
@@ -439,40 +355,6 @@ function paintChoices(){
     if(status) status.textContent=choiceLocked("pred")?"Forecast locked.":"How many of the other "+denom+" picked A?";
     return;
   }
-  if(GAME==="vibe"){
-    var vb=parseVibe(table.order);
-    var spot=table.turn;
-    var amSpot=uid===spot;
-    if(note) note.textContent=amSpot?"Passing skips your turn without a score. Someone else steps up.":"Passing scores 0. The spotlight does not see guesses yet.";
-    if(!amSpot && vb.guessers.indexOf(uid)<0){
-      if(pass) pass.classList.add("hide");
-      if(status) status.textContent="You're sitting this spotlight out.";
-      return;
-    }
-    var scale=card&&card.scale?card.scale:["1","2","3","4","5"];
-    var i;
-    for(i=0;i<5;i++){
-      var label=(i+1)+" · "+scale[i];
-      addChoice(box, label, String(i+1), secrets[uid]===String(i+1), false);
-    }
-    if(status) status.textContent=choiceLocked()? (secrets[uid]==="pass"?"You passed.":"Locked in. Hidden until reveal.") : (amSpot?"How do you actually feel? 1 is least, 5 is most.":"What number will "+pname(spot)+" pick?");
-    return;
-  }
-  if(GAME==="crew" && table.step==="answer"){
-    var st=crewState();
-    if(st.live.indexOf(uid)<0){
-      if(pass) pass.classList.add("hide");
-      if(status) status.textContent="You're out of this attempt. Ready up when the next one opens.";
-      return;
-    }
-    if(note) note.textContent="Passing removes you and restarts this attempt. Everyone picks again. One restart, then we go back to ready.";
-    st.roles.forEach(function(role, idx){
-      var name=card&&card.roles?card.roles[role]:("Role "+(role+1));
-      addChoice(box, name+" · needs "+st.quotas[idx], String(role), secrets[uid]===String(role), false);
-    });
-    var picked=L.crewMark(mineTally(), st.gen) && secrets[uid] && secrets[uid]!=="pass";
-    if(status) status.textContent=picked?"Locked in. Hidden until reveal.":"Pick one role. The quotas are the whole puzzle.";
-  }
 }
 function paintReveal(){
   var box=$("reveallist"); if(!box) return;
@@ -485,8 +367,6 @@ function paintReveal(){
   if(toast) toast.textContent="Optional: a small drink, or skip it. Whoever picked the minority side takes a bow instead.";
   var bag=shownSecrets();
   if(GAME==="split") paintSplitReveal(box, head, bag);
-  else if(GAME==="vibe") paintVibeReveal(box, head, bag);
-  else paintCrewReveal(box, head, bag);
 }
 function row(parent, left, right){
   var line=el("div","reveal-row");
@@ -514,60 +394,14 @@ function paintSplitReveal(box, head, bag){
     row(box, pname(r.uid)+" · "+pref, "Said "+forecast+" / "+r.denom+" · "+reasonWord(r.reason, r.points));
   });
 }
-function paintVibeReveal(box, head, bag){
-  var spot=table.turn;
-  var vb=parseVibe(table.order);
-  var seal=bag[spot];
-  var result=L.scoreVibeRound(spot, seal, vb.guessers, bag);
-  if(result.skipped){
-    if(head) head.textContent=pname(spot)+" passed";
-    box.appendChild(el("p","","No score this turn. The spotlight moves on."));
-    return;
-  }
-  var card=currentCard();
-  var word=card&&card.scale?card.scale[result.actual-1]:"";
-  if(head) head.textContent=pname(spot)+" picked "+result.actual+(word?" · "+word:"");
-  result.rows.forEach(function(r){
-    row(box, pname(r.uid), "Guess "+r.guess+" · "+reasonWord(r.reason, r.points));
-  });
-  if(!result.rows.length) box.appendChild(el("p","","No guesses."));
-}
-function paintCrewReveal(box, head, bag){
-  var st=crewState();
-  var picks=L.activePicks(bag, tally, st.gen, st.live);
-  var values=st.live.map(function(id){return picks[id]}).filter(Boolean);
-  var result=L.staffed(values, st.roles, st.quotas);
-  if(head) head.textContent=result.filled+"/"+result.total+" staffed"+(result.perfect?" · star":" · no star");
-  var card=currentCard();
-  st.roles.forEach(function(role, idx){
-    var name=card&&card.roles?card.roles[role]:("Role "+role);
-    var got=result.counts[role]||0;
-    row(box, name, got+" / "+st.quotas[idx]);
-  });
-  st.live.forEach(function(id){
-    var role=picks[id];
-    var label=role&&card&&card.roles?card.roles[+role]:"Pass or empty";
-    row(box, pname(id), label);
-  });
-}
 function paintAwards(){
   var box=$("awards"); if(!box) return;
   box.textContent="";
   var over=table&&table.step==="over";
   var finale=$("finale"); if(finale) finale.classList.toggle("hide", !over);
   if(!over) return;
-  var n=meta&&meta.deck?(Array.isArray(meta.deck)?meta.deck.length:Object.keys(meta.deck).length):(GAME==="vibe"?20:8);
+  var n=meta&&meta.deck?(Array.isArray(meta.deck)?meta.deck.length:Object.keys(meta.deck).length):8;
   var line=$("recapline"); if(line) line.textContent=(TITLES[GAME]||"This game")+", "+n+" rounds";
-  if(GAME==="crew"){
-    var stars=0;
-    orderPlayers().forEach(function(p){if(p.points>stars) stars=p.points});
-    var card=el("article","poster-award");
-    card.appendChild(el("p","", "Team stars"));
-    card.appendChild(el("h2","", stars+" / 8"));
-    card.appendChild(el("p","","No individual loser. Partial fills were only feedback."));
-    box.appendChild(card);
-    return;
-  }
   var list=orderPlayers();
   if(!list.length){box.appendChild(el("p","","No players left.")); return}
   var max=0, i;
@@ -580,36 +414,24 @@ function paintAwards(){
   card2.appendChild(el("p","", max+" points."));
   box.appendChild(card2);
   list.forEach(function(p){
-    var extra=GAME==="vibe"?(" · "+p.seen+" guesses"):"";
-    row(box, (p.emoji?p.emoji+" ":"")+shownName(p.uid), p.points+" points"+extra);
+    row(box, (p.emoji?p.emoji+" ":"")+shownName(p.uid), p.points+" points");
   });
 }
 function paintTable(){
   var card=currentCard();
-  var total=GAME==="vibe"?"":("Round "+((GAME==="crew"?crewState().mission:table.round)+1)+" of 8");
-  if(GAME==="vibe"){
-    var vm=vibeMeta();
-    total="Cycle "+vm.cycle+" of "+vm.max;
-  }
+  var total="Round "+(table.round+1)+" of 8";
   if($("roundlabel")) $("roundlabel").textContent=table.step==="over"?"That's the game":total;
   if($("badge")) $("badge").textContent=TITLES[GAME];
   if($("kicker")){
     var kick="Hidden until reveal";
     if(table.step==="results") kick="Revealed";
     else if(table.step==="over") kick="Final";
-    else if(GAME==="vibe"&&table.turn===uid) kick="Your vibe";
-    else if(GAME==="vibe") kick="Guess the vibe";
-    else if(GAME==="crew"&&table.step==="prompt") kick="Ready check";
     else if((+table.round||0)===0) kick="Round 1 · hidden until reveal";
     $("kicker").textContent=kick;
   }
   if($("statement")){
     var line="The next card is on the way.";
-    if(card){
-      if(GAME==="crew") line=card.mission;
-      else line=card.q;
-    }
-    if(GAME==="crew" && table.step==="prompt") line=(card?card.mission+" — ":"")+"Tap ready. Quotas appear after the roster locks.";
+    if(card) line=card.q;
     $("statement").textContent=line;
   }
   var hostP=meta&&players[meta.hostUid];
@@ -620,9 +442,6 @@ function paintTable(){
   var ids=[], pred=function(){return false};
   if(GAME==="split" && table.step==="answer"){ids=parseCsv(table.order); pred=function(id){return tally[id]===1||tally[id]===2}}
   if(GAME==="split" && table.step==="vote"){ids=parseCsv(table.order); pred=function(id){return tally[id]===3||tally[id]===4}}
-  if(GAME==="vibe" && table.step==="answer"){var vb=parseVibe(table.order); ids=[table.turn].concat(vb.guessers); pred=function(id){return tally[id]===1||tally[id]===2}}
-  if(GAME==="crew" && table.step==="prompt"){ids=connectedIds(); pred=function(id){return tally[id]===7}}
-  if(GAME==="crew" && table.step==="answer"){ids=crewState().live; pred=function(id){return L.crewMarked(tally[id], crewState().gen)}}
   var prog=countProgress(ids, pred);
   document.body.setAttribute("data-rm-allin", prog.total&&prog.done>=prog.total?"1":"0");
   if($("progress")) $("progress").textContent=table.step==="results"||table.step==="over"?"":(prog.total?prog.done+" of "+prog.total+" in":"");
@@ -632,16 +451,12 @@ function paintTable(){
     next.classList.toggle("hide", !isHost()||table.step!=="results");
     next.textContent=moreAfter()?"Next":"See the result";
   }
-  if(retry) retry.classList.toggle("hide", !(GAME==="crew"&&isHost()&&table.step==="results"&&crewState().try<1));
-  if(deal) deal.classList.toggle("hide", !(GAME==="crew"&&isHost()&&table.step==="prompt"));
+  if(retry) retry.classList.add("hide");
+  if(deal) deal.classList.add("hide");
 }
 function moreAfter(){
-  if(GAME==="crew") return crewState().mission<7;
   if(GAME==="split") return (+table.round||0)<7;
-  var vm=vibeMeta();
-  var vb=parseVibe(table.order);
-  var done=vb.roster.filter(function(id){return (vb.passes[id]||0)<2}).length;
-  return vb.index+1<vb.roster.length || vm.cycle<vm.max || done>vb.index+1;
+  return false;
 }
 function render(){
   paintRole();
@@ -683,32 +498,19 @@ function maybeScore(){
   var me=who[uid]||{confessions:0, seen:0, emoji:myEmoji()};
   if((+me.seen||0)>=(+table.round||0)+1){applied=token; return}
   var bag=shownSecrets();
-  var add=0, absolute=null;
+  var add=0;
   if(GAME==="split"){
     var eligible=parseCsv(table.order);
     var scored=L.scoreSplitRound(eligible, bag);
     scored.rows.forEach(function(r){if(r.uid===uid) add=r.points});
-  }else if(GAME==="vibe"){
-    var vb=parseVibe(table.order);
-    var result=L.scoreVibeRound(table.turn, bag[table.turn], vb.guessers, bag);
-    if(result.skipped){applied=token; return}
-    if(uid===table.turn){applied=token; return}
-    result.rows.forEach(function(r){if(r.uid===uid) add=r.points});
-    if(vb.guessers.indexOf(uid)<0){applied=token; return}
-  }else{
-    absolute=crewState().stars;
   }
   applied=token;
-  var points=absolute==null?Math.min(40,(+me.confessions||0)+add):Math.min(40, absolute);
+  var points=Math.min(40,(+me.confessions||0)+add);
   writeWho(me.emoji||myEmoji(), points, (+table.round||0)+1).catch(function(e){if(applied===token) applied=""; fail(friendly(e))});
 }
 function submitValue(value, passed){
   if(!table||!meta||sending) return;
   if(table.step!=="answer"&&table.step!=="vote"&&table.step!=="prompt") return;
-  if(GAME==="crew"&&passed&&table.step==="answer"){
-    var now=Date.now();
-    if(now-passArm>4000){passArm=now; if($("passnote")) $("passnote").textContent="Tap Pass again to leave this attempt. Everyone's picks clear, quotas change, and this can happen once before ready check."; fail(""); return}
-  }
   var round=+table.round||0;
   var gid=meta.gameId;
   var seal="pass", mark=2;
@@ -718,16 +520,6 @@ function submitValue(value, passed){
     var prev=L.parseSplitSeal(secrets[uid]);
     seal=L.encodeSplitSeal(prev.pref, passed?"pass":+value);
     mark=passed?4:3;
-  }else if(GAME==="vibe"){
-    seal=passed?"pass":String(value); mark=passed?2:1;
-  }else if(GAME==="crew"&&table.step==="prompt"){
-    sending=true; blip("yes");
-    update(ref(db), {[rpath("tally/"+gid+"/"+round+"/"+uid)]:7}).then(function(){sending=false}).catch(function(e){sending=false; fail(friendly(e))});
-    return;
-  }else if(GAME==="crew"){
-    var gen=crewState().gen;
-    seal=passed?"pass":String(value);
-    mark=L.crewMark(gen, !!passed);
   }
   if(!passed && (value==null || value==="")) return;
   sending=true;
@@ -757,8 +549,6 @@ function hostThink(){
   if(table.step!=="answer"&&table.step!=="vote"&&table.step!=="prompt") return;
   var action=null;
   if(GAME==="split") action=splitAuto();
-  else if(GAME==="vibe") action=vibeAuto();
-  else action=crewAuto();
   if(!action) return;
   if(hostSig===action.sig) return;
   hostSig=action.sig;
@@ -783,99 +573,12 @@ function splitAuto(){
   }
   return null;
 }
-function vibeAuto(){
-  var vb=parseVibe(table.order);
-  var spot=table.turn;
-  if(players[spot]&&players[spot].connected===false && tally[spot]!==1 && tally[spot]!==2){
-    return {sig:"vibe-miss-"+table.round+"-"+spot, run:function(){return skipSpotlight(vb, "missing")}};
-  }
-  if(tally[spot]===2) return {sig:"vibe-pass-"+table.round+"-"+spot, run:function(){return skipSpotlight(vb, "pass")}};
-  var need=[spot].concat(vb.guessers);
-  if(!allDone(need, function(id){return tally[id]===1||tally[id]===2})) return null;
-  if(tally[spot]!==1) return null;
-  return {sig:"vibe-go-"+table.round, run:function(){return revealWith(playObj({step:"results", text:table.text}))}};
-}
-function skipSpotlight(vb, why){
-  var passes=L.noteSpotlightPass(vb.passes, table.turn);
-  var next=L.nextSpotlight(vb.roster, (vb.index||0)+1, function(id){return players[id]&&players[id].connected!==false}, passes);
-  if(!next) return finishGame();
-  var vm=vibeMeta();
-  var guessers=L.guessersFor(vb.roster, next.uid).filter(function(id){return players[id]&&players[id].connected!==false});
-  var round=Math.min(19,(+table.round||0)+1);
-  return writePlay({
-    step:"answer", kind:"have", round:round, turn:next.uid, opened:serverNow(),
-    seq:Math.min(40,(+table.seq||1)+1),
-    text:"v|c:"+vm.cycle+"|x:"+vm.max,
-    order:encVibe(vb.roster, guessers, passes, next.index)
-  }, "answer");
-}
-function crewAuto(){
-  var st=crewState();
-  if(table.step==="prompt"){
-    var live=connectedIds();
-    if(live.length<2) return null;
-    if(!allDone(live, function(id){return tally[id]===7})) return null;
-    return {sig:"crew-ready-"+st.mission+"-"+st.gen+"-"+live.join("."), run:function(){return dealCrew(live, st)}};
-  }
-  if(table.step==="answer"){
-    var passers=st.live.filter(function(id){return tally[id]===L.crewMark(st.gen, true)});
-    if(passers.length){
-      return {sig:"crew-pass-"+st.gen+"-"+passers.join("."), run:function(){
-        var next=L.crewDrop(st, passers, code+"|"+meta.gameId+"|"+st.mission+"|"+st.gen);
-        return writeCrew(next);
-      }};
-    }
-    if(!st.live.length) return null;
-    if(!allDone(st.live, function(id){return tally[id]===L.crewMark(st.gen, false)})) return null;
-    return {sig:"crew-go-"+st.mission+"-"+st.gen, run:function(){return revealCrew(st)}};
-  }
-  return null;
-}
-function writeCrew(st){
-  var round=L.roundKeyForCrew(st.mission, st.try);
-  return writePlay({
-    step:st.pause?"prompt":"answer",
-    kind:"have",
-    round:round,
-    turn:uid,
-    opened:serverNow(),
-    seq:Math.min(40,(+table.seq||1)+1),
-    text:encCrew(st),
-    order:encLive(st.live, st.out)
-  }, "answer");
-}
-function dealCrew(live, st){
-  var dealt=L.assignQuotas(live.length, code+"|"+meta.gameId+"|"+st.mission+"|"+st.gen+"|deal");
-  if(!dealt) return Promise.resolve();
-  var next={
-    pause:false, live:live.slice(), out:st.out||[], roles:dealt.roles, quotas:dealt.quotas,
-    gen:(st.gen||0)+1, resets:0, mission:st.mission, try:st.try||0, stars:st.stars||0, knownStar:!!st.knownStar
-  };
-  return writeCrew(next);
-}
 function revealWith(nextPlay){
   var gid=meta.gameId, round=+table.round||0;
   return update(ref(db), {
     [rpath("revealed/"+gid+"/"+round)]:true,
     [rpath("nhie/play")]:nextPlay,
     [rpath("meta")]:fullMeta({status:"play", phase:"reveal", deck:asDeck(meta.deck)})
-  });
-}
-function revealCrew(st){
-  var gid=meta.gameId, round=L.roundKeyForCrew(st.mission, st.try);
-  return update(ref(db), {[rpath("revealed/"+gid+"/"+round)]:true}).then(function(){
-    return get(ref(db, rpath("sealed/"+gid+"/"+round)));
-  }).then(function(snap){
-    var bag=snap.val()||{};
-    var picks=L.activePicks(bag, tally, st.gen, st.live);
-    var values=Object.keys(picks).map(function(id){return picks[id]});
-    var result=L.staffed(values, st.roles, st.quotas);
-    var award=L.awardStar(st.knownStar, result.perfect);
-    var next=Object.assign({}, st, {stars:(st.stars||0)+award.added, knownStar:award.starred, pause:false});
-    return update(ref(db), {
-      [rpath("nhie/play")]:playObj({step:"results", text:encCrew(next), order:encLive(next.live, next.out), round:round, kind:"have"}),
-      [rpath("meta")]:fullMeta({status:"play", phase:"reveal", deck:asDeck(meta.deck)})
-    });
   });
 }
 function finishGame(){
@@ -889,12 +592,10 @@ function forceReveal(){
   unlock();
   hostLock=true;
   var run;
-  if(GAME==="crew"&&table.step==="answer") run=revealCrew(crewState());
-  else if(GAME==="split"&&table.step==="answer"){
+  if(GAME==="split"&&table.step==="answer"){
     var eligible=L.eligibleFromPref(parseCsv(table.order), tally);
     run=revealWith(playObj({step:"results", order:csv(eligible), text:"s|out", kind:"have"}));
-  }else if(GAME==="vibe"&&tally[table.turn]===2) run=skipSpotlight(parseVibe(table.order), "pass");
-  else run=revealWith(playObj({step:"results", text:table.text, kind:"have"}));
+  }else run=revealWith(playObj({step:"results", text:table.text, kind:"have"}));
   Promise.resolve(run).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
 }
 function goNext(){
@@ -906,61 +607,8 @@ function goNext(){
     var n=(+table.round||0)+1;
     if(n>=8) job=finishGame();
     else job=writePlay({step:"answer", kind:"have", round:n, opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"s|pref", order:csv(connectedIds()), turn:uid}, "answer");
-  }else if(GAME==="vibe") job=nextVibe();
-  else job=nextCrew();
+  }
   Promise.resolve(job).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
-}
-function nextVibe(){
-  var vb=parseVibe(table.order);
-  var vm=vibeMeta();
-  var nextIndex=(vb.index||0)+1;
-  if(nextIndex>=vb.roster.length){
-    if(vm.cycle>=vm.max) return finishGame();
-    var roster=connectedIds();
-    if(roster.length<2) return finishGame();
-    var guessers=L.guessersFor(roster, roster[0]);
-    var round=Math.min(19,(+table.round||0)+1);
-    return writePlay({step:"answer", round:round, turn:roster[0], opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, guessers, {}, 0), kind:"have"}, "answer");
-  }
-  var spot=vb.roster[nextIndex];
-  var here=function(id){return players[id]&&players[id].connected!==false};
-  var found=L.nextSpotlight(vb.roster, nextIndex, here, vb.passes);
-  if(!found){
-    if(vm.cycle>=vm.max) return finishGame();
-    return nextVibeCycle(vm);
-  }
-  var guessers2=L.guessersFor(vb.roster, found.uid).filter(here);
-  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:found.uid, opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+vm.cycle+"|x:"+vm.max, order:encVibe(vb.roster, guessers2, vb.passes, found.index), kind:"have"}, "answer");
-}
-function nextVibeCycle(vm){
-  var roster=connectedIds();
-  if(roster.length<2 || vm.cycle>=vm.max) return finishGame();
-  return writePlay({step:"answer", round:Math.min(19,(+table.round||0)+1), turn:roster[0], opened:serverNow(), seq:Math.min(40,(+table.seq||1)+1), text:"v|c:"+(vm.cycle+1)+"|x:"+vm.max, order:encVibe(roster, L.guessersFor(roster, roster[0]), {}, 0), kind:"have"}, "answer");
-}
-function nextCrew(){
-  var st=crewState();
-  var mission=st.mission+1;
-  if(mission>=8) return finishGame();
-  var next={pause:true, mission:mission, try:0, gen:st.gen+1, roles:[], quotas:[], stars:st.stars, resets:0, knownStar:false, live:connectedIds(), out:[]};
-  return writeCrew(next);
-}
-function retryCrew(){
-  if(!isHost()) return;
-  var st=crewState();
-  var again=L.crewRetry(Object.assign({}, st, {live:st.live.length?st.live:connectedIds()}), code+"|retry|"+meta.gameId+"|"+st.mission);
-  if(!again){fail("This mission was already retried."); return}
-  unlock();
-  hostLock=true;
-  writeCrew(again).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
-}
-function dealNow(){
-  if(!isHost()||GAME!=="crew"||!table||table.step!=="prompt") return;
-  var st=crewState();
-  var ready=connectedIds().filter(function(id){return tally[id]===7});
-  if(ready.length<2){fail("Need 2 ready players."); return}
-  unlock();
-  hostLock=true;
-  dealCrew(ready, st).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
 }
 async function begin(){
   if(!isHost()||!meta||sending) return;
@@ -972,15 +620,10 @@ async function begin(){
   var ids=pack().map(function(c){return c.id});
   var used=[];
   try{used=JSON.parse(sessionStorage.getItem("tp_"+GAME+"_used_"+code)||"[]")}catch(e){used=[]}
-  var count=GAME==="vibe"?20:8;
+  var count=8;
   var dealt=L.dealIds(ids, code+"|"+meta.gameId, used, count);
   try{sessionStorage.setItem("tp_"+GAME+"_used_"+code, JSON.stringify(dealt.used))}catch(e){}
-  var patch;
-  if(GAME==="split") patch={step:"answer", text:"s|pref", kind:"have", round:0, order:csv(list), turn:list[0], seq:1, opened:serverNow()};
-  else if(GAME==="vibe"){
-    var max=cyclesWanted();
-    patch={step:"answer", text:"v|c:1|x:"+max, kind:"have", round:0, turn:list[0], seq:1, opened:serverNow(), order:encVibe(list, L.guessersFor(list, list[0]), {}, 0)};
-  }else patch={step:"prompt", text:encCrew({pause:true, mission:0, try:0, gen:1, stars:0, knownStar:false}), kind:"have", round:0, turn:list[0], seq:1, opened:serverNow(), order:encLive(list, [])};
+  var patch={step:"answer", text:"s|pref", kind:"have", round:0, order:csv(list), turn:list[0], seq:1, opened:serverNow()};
   try{
     await update(ref(db), {
       [rpath("meta")]:fullMeta({status:"play", phase:"answer", deck:dealt.dealt}),
@@ -1117,7 +760,7 @@ function leaveRoom(){
   stopAll(); meta=null; table=null; code=null; screen("home");
 }
 function rememberGame(){
-  var slug=GAME==="split"?"split-decision":GAME==="vibe"?"vibe-checkpoint":GAME==="crew"?"chaos-crew":GAME;
+  var slug=GAME==="split"?"split-decision":GAME;
   try{localStorage.setItem("tp_last_game", slug)}catch(e){}
 }
 function shareRecap(){
@@ -1150,13 +793,10 @@ function paintEmoji(){
     box.appendChild(b);
   });
 }
-function paintCycles(){
-  document.querySelectorAll("[data-cycles]").forEach(function(b){b.setAttribute("aria-pressed", +b.dataset.cycles===cyclesWanted()?"true":"false")});
-}
 function wire(){
   var saved=""; try{saved=localStorage.getItem("tp_name")||""}catch(e){}
   if(saved&&$("pname")&&!$("pname").value) $("pname").value=saved;
-  paintEmoji(); paintCycles();
+  paintEmoji();
   if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode", GAME);
   var linked=queryRoom()||($("roomcode")&&normCode($("roomcode").value));
   if(linked&&$("roomcode")) $("roomcode").value=linked;
@@ -1195,8 +835,6 @@ function wire(){
   if($("passbtn")) $("passbtn").addEventListener("click", function(){submitValue("pass", true)});
   if($("revealbtn")) $("revealbtn").addEventListener("click", forceReveal);
   if($("nextround")) $("nextround").addEventListener("click", goNext);
-  if($("retrybtn")) $("retrybtn").addEventListener("click", retryCrew);
-  if($("dealbtn")) $("dealbtn").addEventListener("click", dealNow);
   if($("again")) $("again").addEventListener("click", function(){rematch().catch(function(e){fail(friendly(e))})});
   if($("recap")) $("recap").addEventListener("click", function(){shareRecap()});
   if($("close")) $("close").addEventListener("click", askClose);
@@ -1217,12 +855,6 @@ function wire(){
     canvas.classList.toggle("hide", !hidden);
     $("qrhide").textContent=hidden?"Hide QR":"Show QR";
     if(hidden) paintQr();
-  });
-  document.querySelectorAll("[data-cycles]").forEach(function(b){
-    b.addEventListener("click", function(){
-      try{sessionStorage.setItem("tp_vibe_cycles", b.dataset.cycles)}catch(e){}
-      paintCycles();
-    });
   });
   var mute=$("mute"); if(window.TPSound&&mute) TPSound.bindMute(mute);
   window.addEventListener("offline", function(){fail("You're offline. We'll keep trying when you're back.")});
