@@ -1,0 +1,72 @@
+/* Drinks section. Every colour, shadow and radius comes from the tokens in styles.css.
+   The only literal colours on these pages are the liquid fills inside the drawn glasses, set inline per drink. */
+html,body{overflow-x:clip}
+.dk-sec{padding:var(--s-5) 0 var(--s-2)}
+.dk-sec h2,.dk-more h2{margin:.1em 0 .45em}
+.dk-types{margin-top:var(--s-4)}
+#baselabel{margin:var(--s-4) 0 var(--s-2)}
+
+/* type tiles on the hub: the same whole-card link as the homepage picks */
+.picks{display:grid;gap:16px}
+@media(min-width:760px){.picks{grid-template-columns:repeat(2,1fr);gap:20px}}
+.pick{display:flex;align-items:center;gap:14px;min-height:88px;padding:14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font-weight:400}
+.pick:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.tile{flex:none;width:58px;height:58px;display:grid;place-items:center;border:var(--bw) solid var(--ink);border-radius:14px}
+.t-yellow{background:var(--tile-yellow)}.t-pink{background:var(--tile-pink)}.t-green{background:var(--tile-green)}
+.pick-body{display:flex;flex-direction:column;flex:1;min-width:0}
+.pick-body b{font:800 1.3rem/1.1 var(--display);letter-spacing:-.3px}
+.pick-body span{color:var(--ink-2);font-weight:500;line-height:1.3;margin-top:3px}
+.chev{flex:none;width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.more{display:inline-flex;align-items:center;min-height:var(--tap);margin-top:14px;font-weight:800}
+
+/* drawn glass */
+.dk-glass{width:44px;height:44px;display:block}
+.dk-glass .g{fill:var(--surface)}
+.dk-glass .l{fill:none;stroke:var(--ink);stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
+.dk-glass.big{width:min(46%,220px);height:auto}
+.dk-glass.big .l{stroke-width:4}
+
+/* drink cards */
+.dk-grid{display:grid;gap:16px}
+@media(min-width:620px){.dk-grid{grid-template-columns:repeat(2,1fr);gap:20px}}
+.dk-card{display:flex;align-items:center;gap:14px;padding:12px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font-weight:400}
+.dk-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.dk-card[hidden]{display:none}
+.dk-thumb{flex:none;width:92px;height:92px;display:grid;place-items:center;overflow:hidden;border:var(--bw) solid var(--ink);border-radius:14px}
+.dk-thumb img{width:100%;height:100%;object-fit:cover}
+.dk-thumb .dk-glass{width:64px;height:64px}
+.dk-body{display:flex;flex-direction:column;min-width:0}
+.dk-body b{font:800 1.2rem/1.12 var(--display);letter-spacing:-.3px}
+.dk-body span{color:var(--ink-2);font-size:.98rem;line-height:1.3;margin-top:3px}
+.dk-body .dk-meta{font-family:var(--display);font-weight:600;font-size:.88rem;color:var(--ink)}
+.dk-count{margin:0 0 var(--s-3);font-family:var(--display);font-weight:600;color:var(--text-2)}
+.dk-list{padding:var(--s-3) 0 var(--s-2)}
+
+/* recipe page */
+.dk-hero{margin:var(--s-4) 0 0;border:var(--bw) solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;aspect-ratio:4/3;max-width:640px}
+.dk-hero img{width:100%;height:100%;object-fit:cover}
+.dk-drawn{display:grid;place-items:center;aspect-ratio:16/10}
+.dk-recipe{display:grid;gap:var(--s-4);padding:var(--s-5) 0 var(--s-2)}
+@media(min-width:760px){.dk-recipe{grid-template-columns:1fr 1fr;gap:20px}}
+.dk-recipe .card{margin:0}
+.dk-recipe h2{margin:0 0 .45em;font-size:1.6rem}
+.dk-ings,.dk-steps{margin:0;padding-left:1.25em}
+.dk-ings li,.dk-steps li{margin:.4em 0;line-height:1.4}
+.dk-steps li::marker{font-family:var(--display);font-weight:800}
+.dk-more{padding:var(--s-5) 0 var(--s-2)}
+
+/* hub: search and the A to Z list */
+.dk-search{font-family:var(--display);font-weight:700;margin:0 0 var(--s-2)}
+#dksearch{width:100%;max-width:520px}
+#dkcount{margin-top:var(--s-3)}
+.dk-az{list-style:none;margin:0;padding:0;display:grid;gap:0 var(--s-5)}
+@media(min-width:620px){.dk-az{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:960px){.dk-az{grid-template-columns:repeat(3,1fr)}}
+.dk-az li{display:flex;align-items:center;justify-content:space-between;gap:var(--s-3);min-height:var(--tap);border-bottom:1px solid var(--hairline)}
+.dk-az li[hidden]{display:none}
+.dk-az a{display:inline-flex;align-items:center;min-height:var(--tap);font-weight:700;text-decoration:none}
+.dk-az span{flex:none;color:var(--text-2);font-size:.9rem}
+
+.dk-resp{padding:var(--s-5) 0 0}
+.dk-resp .na{margin:0}
+@media(prefers-reduced-motion:reduce){.pick:active,.dk-card:active{transform:none}}

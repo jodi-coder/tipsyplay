@@ -423,7 +423,7 @@ test("lobby removal works and baseline rules still reject a host claim", async (
 });
 
 test("narrow pages do not scroll sideways", async ({ browser }) => {
-  const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html"];
+  const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html", "/drinks/", "/drinks/cocktails/", "/drinks/classic-canadian-caesar.html", "/drinks/pineapple-upside-down-cake-shot.html"];
   for (const width of [320, 375, 390]) {
     const context = await browser.newContext({
       serviceWorkers: "block",
