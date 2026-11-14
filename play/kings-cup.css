@@ -14,3 +14,5 @@ body.kc-invite .kc-invited{display:block;margin:var(--s-3) 0;font-weight:700}
 body.kc-invite #hostnew[data-role="join"]{display:none}
 .kc-prompt{font-family:var(--display);font-weight:700;font-size:1.25rem;margin:var(--s-3) 0}
 #audioline,#cupnote,#darelist{display:none}
+/* Once a game starts the screen is just the game: no cup picture, no empty rules card, no site footer. */
+body.kc-playing #cup,body.kc-playing .site-foot{display:none}

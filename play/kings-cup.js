@@ -320,6 +320,7 @@ function paintRules(){
     if(isHost()){var x=document.createElement("button"); x.type="button"; x.className="x"; x.textContent="×"; x.setAttribute("data-drop", String(i)); x.setAttribute("aria-label","Clear rule"); row.appendChild(x)}
     houseBox.appendChild(row);
   });
+  $("activerules").classList.toggle("hide", !(pairs.length||house.length));
   var d=$("darelist"); d.textContent="";
   var dp=document.createElement("p"); dp.textContent="Dare list (the cup does not hold a drink):";
   d.appendChild(dp);
@@ -534,7 +535,7 @@ function render(){
   var list=order();
   var turnName=table?nameOf(table.turn):"";
   $("turn").textContent=table&&table.step==="echo"?nameOf(table.echo)+" matches once":turnName+(table&&table.step==="draw"?" draws":" has the card");
-  $("left").textContent=(table?table.left:0)+" cards left in the deck";
+  $("left").textContent=(table?table.left:0)+" cards left · Kings "+Math.min(kingCount(),4)+"/4";
   $("audioline").textContent="Short sounds only. Use the speaker button at the top to mute them.";
   var span=$("cupfill"); if(span) span.style.height=(Math.min(kingCount(),4)*25)+"%";
   $("cuplabel").textContent=Math.min(kingCount(),4)+"/4";
