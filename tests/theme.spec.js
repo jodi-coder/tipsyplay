@@ -1,5 +1,5 @@
 /* Theme and homepage checks. No Firebase needed.
-   The page colours, font and shadows must come from the theme variables in styles.css, and the 18+ line must sit right under the hero. */
+   The page colours, font and shadows must come from the theme variables in styles.css, and the age line must sit right under the hero. */
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
@@ -64,7 +64,7 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   await page.goto("/index.html");
   const c = await page.evaluate(() => {
     const css = (sel) => { const s = getComputedStyle(document.querySelector(sel)); return { bg: s.backgroundColor, fg: s.color, border: s.borderTopColor + " " + s.borderTopWidth, shadow: s.boxShadow, radius: s.borderTopLeftRadius, h: s.height }; };
-    return { body: css("body"), pick: css(".pick"), cta: css(".hero .cta"), tile: css(".t-yellow"), badge: css(".badge18"), phone: css(".phone") };
+    return { body: css("body"), pick: css(".pick"), cta: css(".hero .cta"), tile: css(".t-yellow"), phone: css(".phone") };
   });
   expect(c.body.bg).toBe(rgb(SKY));
   expect(c.pick.bg).toBe(rgb(WHITE));
@@ -78,7 +78,6 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   expect(c.cta.radius).toBe("18px");
   expect(c.cta.h).toBe("60px");
   expect(c.tile.bg).toBe(rgb(YELLOW));
-  expect(c.badge.bg).toBe(rgb(INK));
   expect(c.phone.shadow).toBe(rgb(YELLOW) + " 8px 8px 0px 0px");
   // changing a variable changes the page: nothing is hard-coded
   await page.addStyleTag({ content: ":root{--bg:#123456;--primary:#654321}" });
@@ -105,12 +104,12 @@ test("the type scale and logo: H1 46px, weight 800, tight; logo is a lowercase w
   expect(parseFloat(t.body)).toBeLessThanOrEqual(18);
 });
 
-test("the 18+ line sits directly under the hero button, on the first screen", async ({ page }) => {
+test("the age line sits directly under the hero button, on the first screen", async ({ page }) => {
   await seen(page);
   await page.goto("/index.html");
   const note = page.locator(".hero .age-line");
   await expect(note).toBeVisible();
-  await expect(note.locator(".badge18")).toHaveText("18+");
+  await expect(note.locator(".badge18")).toHaveCount(0);
   await expect(note).toContainText("Legal drinking age only");
   await expect(note).toContainText("Drinking is optional");
   await expect(note).toContainText("Passing is always fine");
@@ -129,7 +128,7 @@ test("the homepage has the spec's sections in order, with no FAQ and no FAQ data
   await page.goto("/index.html");
   const ids = await page.$$eval("main > section", (s) => s.map((x) => x.id));
   expect(ids).toEqual(["top", "featured", "vibe", "how", "responsible"]);
-  await expect(page.locator("main h1")).toHaveText("Party games on everyone's phone.");
+  await expect(page.locator("main h1")).toHaveText("Free drinking games and party games on everyone's phone");
   await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck.");
   await expect(page.locator("#featured h2")).toHaveText("Tonight's picks");
   await expect(page.locator("#vibe h2")).toHaveText("Find your vibe");
