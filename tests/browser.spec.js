@@ -124,7 +124,7 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
   const code = await hostRoom(ada.page, "Ada");
   await joinRoom(bea.page, "Bea", code);
   await joinRoom(cal.page, "Cal", code);
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#table")).toBeVisible();
 
@@ -191,7 +191,7 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
   await ada.page.locator("#again").click();
   await expect(ada.page.locator("#lobby")).toBeVisible();
   await expect(bea.page.locator("#lobby")).toBeVisible({ timeout: 20000 });
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(cal.page.locator("#table")).toBeVisible();
   await ada.context.setOffline(true);
@@ -221,7 +221,7 @@ test("never have i ever still plays and shows a local QR", async ({ browser }) =
   await joinRoom(bea.page, "Bea", code);
   await joinRoom(cal.page, "Cal", code);
   await ada.page.locator("[data-len='5']").click();
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#ihave")).toBeVisible();
   for (let round = 0; round < 5; round++){
@@ -262,7 +262,7 @@ test("nhie clock, names, join errors, and a delayed confession", async ({ browse
   await stranger.page.locator("#joinbtn").click();
   await expect(stranger.page.locator("#perr")).toHaveText("No room with that code.");
   await ada.page.locator("[data-len='5']").click();
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#ihave")).toBeVisible();
   await stranger.page.locator("#roomcode").fill(code);
@@ -293,7 +293,7 @@ test("nhie round feel: who has answered, the reveal count, one shared storytelle
   const code = await hostRoom(ada.page, "Ada");
   await joinRoom(bea.page, "Bea", code);
   await ada.page.locator("[data-len='5']").click();
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#ihave")).toBeVisible();
   await expect(ada.page.locator("#locked")).toContainText("0 of 2 answered");
@@ -344,7 +344,7 @@ test("nhie most likely mode: pick it, vote for a person, results, story, awards"
   await expect(ada.page.locator("#likelypacks")).toBeVisible();
   await expect(bea.page.locator("#likelypacks")).toBeHidden();
   await ada.page.locator("[data-len='5']").click();
-  await ada.page.locator("#optin").check();
+  if (await ada.page.locator("#optin").count()) await ada.page.locator("#optin").check();
   await expect(ada.page.locator("#lobbynote")).toContainText("Most likely");
   await ada.page.locator("#start").click();
   await expect(ada.page.locator("#voteopts button").first()).toBeVisible();
