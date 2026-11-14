@@ -16,3 +16,6 @@ body.kc-invite #hostnew[data-role="join"]{display:none}
 #audioline,#cupnote,#darelist{display:none}
 /* Once a game starts the screen is just the game: no cup picture, no empty rules card, no site footer. */
 body.kc-playing #cup,body.kc-playing .site-foot{display:none}
+/* No "Drinking is optional" strip on this game, and no space kept for it under the pinned button. */
+body.rm-room .rm-strip{display:none}
+body.rm-on{--rm-strip-h:0px}
