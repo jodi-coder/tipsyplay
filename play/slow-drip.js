@@ -704,7 +704,7 @@ function wire(){
       else fail(friendly(e));
     }).then(function(){sending=false});
   });
-  $("practicebtn").addEventListener("click", startPractice);
+  if($("practicebtn")) $("practicebtn").addEventListener("click", startPractice);
   $("exitpractice").addEventListener("click", exitPractice);
   $("ona").addEventListener("change", function(){setNa($("ona").checked)});
   $("start").addEventListener("click", begin);
