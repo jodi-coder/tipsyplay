@@ -745,14 +745,83 @@ function armPresence(){
     update(p, {connected:true}).catch(function(){});
   });
 }
-function askClose(){
+/* The Room sheet closes itself before a click reaches the hidden End session button,
+   so the old 2.5s second tap could never land. Split Decision keeps that sheet open
+   and turns the same row into "Tap again to end". Eight seconds covers a normal pause.
+   The in-page buttons stay put, so they keep the 2.5s second tap. */
+var SHEET_ARM_MS=8000, sheetToken=0, sheetTimer=0, endWatchOn=false;
+function endSession(){
   if(!isHost()||!code) return;
-  var now=Date.now();
-  if(now-closeArm>2500){closeArm=now; fail("Tap end again to close the room for everyone."); return}
+  closeArm=0; sheetToken=0;
+  if(sheetTimer){clearTimeout(sheetTimer); sheetTimer=0}
+  hideRoomSheet();
   fail("");
   remove(ref(db, "rooms/"+code)).catch(function(e){fail(friendly(e))});
   try{sessionStorage.removeItem(roomStore())}catch(e){}
 }
+function askClose(){
+  if(!isHost()||!code) return;
+  var now=Date.now();
+  if(now-closeArm>2500){closeArm=now; fail("Tap end again to close the room for everyone."); return}
+  endSession();
+}
+function hideRoomSheet(){
+  var sheet=$("rmsheet"), scrim=document.querySelector(".rm-scrim"), menuBtn=$("rmmenubtn"), invite=$("rminvite");
+  if(sheet) sheet.hidden=true;
+  if(scrim && (!invite || invite.hidden)) scrim.hidden=true;
+  if(menuBtn) menuBtn.setAttribute("aria-expanded","false");
+}
+function watchEndSheet(){
+  if(endWatchOn) return;
+  var sheet=$("rmsheet");
+  if(!sheet) return;
+  endWatchOn=true;
+  try{
+    new MutationObserver(function(){
+      if(!sheet.hidden) return;
+      sheetToken=0;
+      if(sheetTimer){clearTimeout(sheetTimer); sheetTimer=0}
+    }).observe(sheet,{attributes:true,attributeFilter:["hidden"]});
+  }catch(e){}
+}
+function armEndItem(b){
+  var token=Date.now();
+  if(token===sheetToken) token+=1;
+  sheetToken=token;
+  b.textContent="Tap again to end";
+  b.classList.add("danger");
+  b.style.backgroundColor="var(--surface)";
+  b.setAttribute("aria-pressed","true");
+  if(sheetTimer) clearTimeout(sheetTimer);
+  sheetTimer=setTimeout(function(){
+    if(sheetToken!==token) return;
+    sheetToken=0; sheetTimer=0;
+    if((b.textContent||"").trim()==="Tap again to end"){
+      b.textContent="End session";
+      b.style.backgroundColor="";
+      b.removeAttribute("aria-pressed");
+    }
+  }, SHEET_ARM_MS);
+}
+document.addEventListener("click", function(e){
+  if(GAME!=="split") return;
+  watchEndSheet();
+  var sheet=$("rmsheet");
+  if(!sheet || sheet.hidden) return;
+  var t=e.target;
+  if(!t) return;
+  if(t.nodeType!==1) t=t.parentElement;
+  if(!t || !t.closest) return;
+  var b=t.closest("#rmsheet button.rm-item");
+  if(!b) return;
+  var label=(b.textContent||"").replace(/\s+/g," ").trim();
+  if(label!=="End session" && label!=="Tap again to end") return;
+  if(!isHost()||!code) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if(label==="Tap again to end" && sheetToken && Date.now()-sheetToken<=SHEET_ARM_MS){endSession(); return}
+  armEndItem(b);
+}, true);
 function leaveRoom(){
   if(!code||!uid||isHost()) return askClose();
   remove(ref(db, rpath("players/"+uid))).catch(function(e){fail(friendly(e))});
@@ -875,6 +944,7 @@ function wire(){
   else if(same&&nm) joinRoom(back, nm).catch(function(e){
     if(String((e&&e.message)||"")==="missing"){try{sessionStorage.removeItem(roomStore())}catch(err){} fail("This room has closed.")}
   });
+  watchEndSheet();
 }
 function showReady(){
   if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
