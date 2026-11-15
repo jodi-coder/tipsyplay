@@ -389,6 +389,11 @@
               ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == true) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists())",
               ".validate": "!newData.exists() || newData.isBoolean()"
             }
+          },
+          "secret": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid",
+            ".validate": "newData.isString() && newData.val().length <= 60000"
           }
         },
         "ml": {
