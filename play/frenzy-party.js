@@ -289,11 +289,12 @@ function metaObj(patch){
   return out;
 }
 function publishFromG(clear){
-  if(!G) return Promise.resolve(false);
-  var prep=(G.phase==="end"&&!G.word)?wordApi("reveal").then(function(res){ if(res&&res.word) G.word=res.word; }):Promise.resolve();
-  return prep.then(function(){ return writePub(clear); });
+  if(!G||!code) return Promise.resolve(false);
+  var prep=(G.phase==="end"&&!G.word)?wordApi("reveal").then(function(res){ if(res&&res.word&&G) G.word=res.word; }):Promise.resolve();
+  return prep.then(function(){ if(!G||!code) return false; return writePub(clear); });
 }
 function writePub(clear){
+  if(!G||!code) return Promise.resolve(false);
   var seq=(pub?pub.seq:0)+1;
   var pubObj={phase:G.phase, seq:seq, opened:serverNow(), paused:!!G.paused, data:JSON.stringify(L.publicView(G))};
   if(G.turn) pubObj.turn=G.turn;
@@ -552,6 +553,7 @@ var closeArmed=0;
 function askClose(){
   if(!isHost()||!code) return;
   if(Date.now()-closeArmed>2500){closeArmed=Date.now(); fail("Tap close again to end the room for everyone."); return}
+  closeArmed=0;
   fail(""); remove(ref(db, "rooms/"+code)).catch(function(e){fail(friendly(e))});
   try{sessionStorage.removeItem("tp_fl_room")}catch(e){}
 }

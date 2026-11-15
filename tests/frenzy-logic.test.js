@@ -193,4 +193,16 @@ test("the shipped lists keep boozy, drop the blocked examples, and answers are a
   ["party", "house", "crane", "olive", "tipsy", "fizzy", "limey", "tangy", "foamy", "vodka"].forEach((w) => {
     assert.equal(W.answers.includes(w), true, w);
   });
+  L.useWords(W);
+  assert.equal(L.guessError("pious", []), "");
+  assert.equal(L.guessError("raper", []), "That word is not on the list.");
+  for (const w of ["jihad", "fatwa", "bombs", "meths", "slain"]) {
+    assert.equal(W.guesses.includes(w), false, w);
+    assert.equal(W.answers.includes(w), false, w);
+    assert.equal(L.guessError(w, []), "That word is not on the list.", w);
+  }
+  const crypto = require("crypto");
+  const answerHash = crypto.createHash("sha256").update(W.answers.join("\n") + "\n").digest("hex");
+  assert.equal(W.answers.length, 1346);
+  assert.equal(answerHash, "62b56f5b5a6e6ba6aab28899934ef8b623d4f6fd033af8d456cef033a07d2215");
 });

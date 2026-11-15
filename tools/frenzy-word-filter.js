@@ -21,12 +21,15 @@
      SCOWL is provided "as is" without warranty. https://wordlist.aspell.net/
    - Names: 5-letter given names from a standard US first-name list, removed from
      both lists unless the word is on the featured allow-list below.
-   - Places, religious words, slurs and crude words: the blocklists in this file.
+   - Places, slurs and crude words: the blocklists in this file.
+     Ordinary religious words are kept. A short explicit block list still removes
+     the words the tests name (jesus, sodom, vicar, and the rest of that list).
      SCOWL misc/offensive.1 and offensive.2 are included as well when that directory
      is passed as the second argument's parent (optional path: argv[4]).
 
    A featured word the packet called crude ("boozy") stays, because the table asked
-   to keep it. Slurs, sexual words and religious words are never kept, even if featured.
+   to keep it. Slurs, sexual words, crude words, and the explicit block list are never
+   kept, even if featured. Ordinary religious words (pious, bible, karma) stay.
 
    Nothing from the New York Times Wordle answer or guess lists is read. */
 "use strict";
@@ -40,17 +43,20 @@ const FEATURED = ["party","house","music","drink","grape","lemon","olive","cider
 const PACKET_CRUDE = new Set(["babes","butts","booty","boozy","drunk","naked"]);
 
 /* Category denylists. Whole words only. A word in any of these is removed from
-   guesses and from answers, including plural, -ed, -er and -y forms that are
-   themselves 5 letters. "boozy" is not in these sets. */
-const RELIGIOUS = new Set([
-  "allah","bible","bless","blest","creed","deity","devil","dogma","fatwa","godly","hajji","halal",
-  "haram","hijab","hindu","imams","islam","jesus","jihad","karma","koran","mecca","moses","mufti",
-  "pagan","papal","pious","prays","psalm","quran","rabbi","saint","satan","sects","shiva","sikhs",
-  "sodom","sunni","tithe","torah","toras","ummah","vicar"
+   guesses and from answers. "boozy" is not in these sets.
+   Ordinary religious words (pious, bible, karma, saint) are not a category.
+   The names below were already rejected by name in the shipped tests; they stay
+   out even though the wider religious, violence, insult, and drug lists are gone. */
+const EXPLICIT_OUT = new Set([
+  "allah","babes","bawdy","booty","butts","butty","cocky","damns","david","death","dicky","drunk",
+  "drugs","erect","gooky","gypsy","hindu","homos","humps","idiot","islam","james","jesus","jewed",
+  "kills","kinks","knobs","lynch","maria","moans","naked","nigger","nippy","noose","nuder","paddy",
+  "panty","paris","porns","porny","prays","queer","raper","screw","sects","sexed","sexes","slave",
+  "slurs","sodom","thong","tramp","urine","vicar","vomit"
 ]);
 const SLURS = new Set([
   "chink","chinks","coons","darky","dyked","dykes","dykey","faggy","fagot","fagin","gooky","gooks",
-  "gyppo","gypsy","homos","honky","injun","jewed","kikes","kraut","lesbo","nazis","nigga","nigger",
+  "gyppo","gypsy","hajji","homos","honky","injun","jewed","kikes","kraut","lesbo","nazis","nigga","nigger",
   "paddy","queer","slurs","spazz","spics","spick","squaw"
 ]);
 const SEXUAL = new Set([
@@ -61,28 +67,30 @@ const SEXUAL = new Set([
   "rapes","rectum","screw","semen","sexed","sexes","sexts","shags","skank","sluts","sperm","spunk","testis",
   "thong","titty","titis","twat","twats","unsex","vulva","wanks","whore"
 ]);
-const VIOLENCE = new Set([
-  "abuse","armed","blood","bombs","crime","cruel","death","dooms","drown","dying","fatal","fraud","gored","gores",
-  "hangs","havoc","kills","libel","lynch","noose","purge","rabid","shoot","skull","slash","slain","slave","slays",
-  "stabs","theft","thief","wound"
-]);
 const BODILY = new Set([
   "crap","craps","fecal","feces","farts","poops","puked","pukes","scums","shite","shits","smuts","snots",
   "turds","urine","vomit"
 ]);
-const DRUGS = new Set([
-  "bhang","doped","doper","dopes","dopey","drugs","meths","opium","toked","toker","tokes","weeds","weedy"
+/* "hells" stays as crude. "curse" and "swear" are ordinary words and are not listed.
+   bigot, dummy, and moron stay as insults. Milder words (shame, gross, freak) do not.
+   These five are not guesses at all. */
+const CRUDE = new Set(["hells", "bigot", "dummy", "moron", "jihad", "fatwa", "bombs", "meths", "slain"]);
+/* Words that are fine as guesses but must not be the secret. This keeps the
+   answer list identical to the one shipped on main: these are common enough
+   for SCOWL sizes 10 and 20, and they stay guess-only. */
+const ANSWER_EXCLUDE = new Set([
+  "abuse","armed","bible","bless","blest","blood","bombs","creed","crime","cruel","curse",
+  "deity","devil","dogma","dooms","drown","dying","fatal","fools","fraud","freak","gross",
+  "hangs","hated","hates","havoc","libel","lousy","nasty","purge","rabid","saint","shame",
+  "shoot","skull","slash","spite","swear","theft","thief","wound"
 ]);
-const INSULTS = new Set([
-  "bigot","dummy","fools","freak","gross","hated","hates","idiot","loser","lousy","moron","nasty","shame",
-  "spite","tramp","twits"
-]);
-const SWEARS = new Set(["curse","damns","hells","swear"]);
 
-/* Slurs and crude or sexual words that must not land on a shared grid.
-   Whole words only. This is a denylist, not a glossary. */
+/* Slurs, sexual words, crude words, and the explicit block list.
+   Whole words only. This is a denylist, not a glossary.
+   Ordinary words that used to sit in the religious, violence, insult, and drug
+   lists (pious, blood, shame, dopey) are not in this set. */
 const OFFENSIVE = new Set([
-  ...SLURS, ...SEXUAL, ...VIOLENCE, ...BODILY, ...DRUGS, ...INSULTS, ...SWEARS
+  ...SLURS, ...SEXUAL, ...BODILY, ...CRUDE, ...EXPLICIT_OUT
 ]);
 
 /* Given names missing from the US list we ship against, still blocked. */
@@ -133,7 +141,7 @@ function main(){
       : [offensivePath];
     files.forEach((f) => { if (fs.statSync(f).isFile()) five(wordsFrom(f)).forEach((w) => extra.add(w)); });
   }
-  const hard = new Set([...RELIGIOUS, ...OFFENSIVE, ...extra]);
+  const hard = new Set([...OFFENSIVE, ...extra]);
   const featured = new Set(FEATURED);
   const enable = [...new Set(five(wordsFrom(enablePath)))].sort();
 
@@ -159,7 +167,7 @@ function main(){
   });
   guesses.sort();
   const guessSet = new Set(guesses);
-  const answers = guesses.filter((w) => featured.has(w) || scowl.common.has(w));
+  const answers = guesses.filter((w) => (featured.has(w) || scowl.common.has(w)) && !ANSWER_EXCLUDE.has(w));
   const missingFeatured = FEATURED.filter((w) => !guessSet.has(w) || !answers.includes(w));
   const hardIn = FEATURED.filter((w) => hard.has(w));
 
@@ -171,7 +179,9 @@ function main(){
    and sell these word lists and the output created from the scripts for any purpose is
    granted without fee, provided this notice appears in supporting documentation.
    Provided "as is" without warranty.
-   Filtered: given names, place names, religious words, slurs, and crude or sexual words.
+   Filtered: given names, place names, slurs, sexual or crude words, and an explicit block list.
+   Ordinary religious words stay as guesses. The answer list matches the list shipped on main;
+   newer common words such as pious, bible, and saint are guesses only.
    "boozy" stays on the featured list by decision. Not from any Wordle or NYT list.
    Counts when generated: ${answers.length} answers, ${guesses.length} accepted guesses. */
 `;

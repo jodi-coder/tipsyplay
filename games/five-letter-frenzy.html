@@ -67,6 +67,15 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 @media (prefers-reduced-motion: reduce){
   .fl-tile,.fl-hand,.btn{transition:none;animation:none}
 }
+/* The shared room chrome clips #closestage into the menu. On the recap that
+   button has to be a real control the host can tap. */
+body.fl.rm-on #finale:not(.hide) #closestage{
+  position:static!important;width:100%!important;height:auto!important;
+  min-width:44px!important;min-height:52px!important;max-width:none!important;max-height:none!important;
+  margin:8px 0!important;padding:0 18px!important;overflow:visible!important;
+  clip:auto!important;clip-path:none!important;white-space:normal!important;
+  border:var(--bw) solid var(--outline)!important;
+}
 </style>
 </head>
 <body class="fl" data-root="../">
@@ -188,8 +197,8 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 <script src="../play/qr.js?v=18"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
-<script src="../data/frenzy-words.js?v=1"></script>
+<script src="../data/frenzy-words.js?v=3"></script>
 <script src="../play/frenzy-logic.js?v=1"></script>
-<script src="../play/frenzy-party.js?v=1"></script><script src="../play/room-ui.js?v=3"></script>
+<script src="../play/frenzy-party.js?v=2"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>

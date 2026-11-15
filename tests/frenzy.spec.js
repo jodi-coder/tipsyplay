@@ -19,7 +19,7 @@ async function phone(browser, name, viewport) {
   await context.route(/googletagmanager|google-analytics/, (r) => r.abort());
   const page = await context.newPage();
   const errors = [];
-  page.on("pageerror", (e) => errors.push(String(e)));
+  page.on("pageerror", (e) => errors.push((e && e.stack) || String(e)));
   await page.addInitScript((n) => {
     localStorage.setItem("tp_age_ok", "yes");
     localStorage.setItem("tp_sound", "off");
@@ -265,6 +265,111 @@ test("the lobby and the prompt do not overflow at 320, 375, or 390", async ({ br
     const box = await overflow(jo.page);
     expect(box.over, "prompt " + width).toBe(false);
   }
+  for (const p of P) await p.context.close();
+});
+
+const CONFIRM = "Tap close again to end the room for everyone.";
+const CLOSED = "This room has closed.";
+async function menuTap(page, label) {
+  await page.locator("#rmmenubtn").click();
+  await expect(page.locator("#rmsheet")).toBeVisible();
+  const item = page.locator("#rmsheet button.rm-item").filter({ hasText: new RegExp("^" + label + "$") });
+  await expect(item).toBeVisible();
+  expect((await item.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  await item.click();
+  await expect(page.locator("#rmsheet")).toBeHidden();
+}
+async function regroup(P) {
+  const host = P[0].page;
+  await host.locator("#hostbtn").click();
+  await expect(host.locator("#lobby")).toBeVisible();
+  const code = (await host.locator("#codebig").innerText()).trim();
+  expect(code).toMatch(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/);
+  for (const p of P.slice(1)) {
+    await p.page.locator("#roomcode").fill(code);
+    await p.page.locator("#joinbtn").click();
+    await expect(p.page.locator("#lobby")).toBeVisible();
+  }
+  await expect(host.locator("#start")).toBeEnabled();
+  return code;
+}
+async function expectEnded(P) {
+  for (const p of P) {
+    await expect(p.page.locator("#perr")).toHaveText(CLOSED);
+    await expect(p.page.locator("#home")).toBeVisible();
+    await expect(p.page.locator("#lobby")).toBeHidden();
+    await expect(p.page.locator("#table")).toBeHidden();
+    await expect(p.page.locator("#finale")).toBeHidden();
+  }
+}
+
+test("the host ends the room from the lobby, mid-round, and the recap, and guests leave", async ({ browser }) => {
+  const { P } = await room(browser);
+  const prod = [];
+  for (const p of P) {
+    p.page.on("request", (r) => {
+      if (/firebaseio\.com|firebasedatabase\.app/.test(r.url())) prod.push(r.url());
+    });
+  }
+  const host = P[0].page;
+  const guest = P[1].page;
+
+  await menuTap(host, "Close room");
+  await expect(host.locator("#perr")).toHaveText(CONFIRM);
+  await expect(host.locator("#lobby")).toBeVisible();
+  await expect(guest.locator("#lobby")).toBeVisible();
+  await host.waitForTimeout(3200);
+  await menuTap(host, "Close room");
+  await expectEnded(P);
+
+  await regroup(P);
+  await host.locator("#start").click();
+  await expect.poll(() => phase(P[0])).toBe("guess");
+  await expect(guest.locator("#table")).toBeVisible();
+  await menuTap(host, "Leave game");
+  await expect(host.locator("#perr")).toHaveText(CONFIRM);
+  await expect(guest.locator("#table")).toBeVisible();
+  await host.waitForTimeout(3200);
+  await menuTap(host, "Leave game");
+  await expectEnded(P);
+
+  await regroup(P);
+  await host.locator("#start").click();
+  await expect.poll(() => phase(P[0])).toBe("guess");
+  let seat = P[0];
+  for (const p of P) if ((await hook(p, "turn")) === (await hook(p, "uid"))) seat = p;
+  await guess(seat, "crane");
+  await expect.poll(() => phase(P[0])).toBe("handoff");
+  await seat.page.locator("#skiphand").click();
+  await expect.poll(() => phase(P[0])).toBe("end");
+  await expect(host.locator("#finale")).toBeVisible();
+  await expect(guest.locator("#finale")).toBeVisible();
+  await expect(guest.locator("#closestage")).toBeHidden();
+  const closeBtn = host.locator("#closestage");
+  await expect(closeBtn).toBeVisible();
+  await closeBtn.scrollIntoViewIfNeeded();
+  const box = await closeBtn.boundingBox();
+  expect(box.height).toBeGreaterThanOrEqual(44);
+  expect(box.width).toBeGreaterThanOrEqual(44);
+  expect(await closeBtn.evaluate((e) => {
+    const r = e.getBoundingClientRect();
+    const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return t === e || e.contains(t);
+  })).toBe(true);
+  await host.locator("#rmmenubtn").click();
+  await expect(host.locator("#rmsheet")).toBeVisible();
+  const labels = (await host.locator("#rmsheet .rm-item").allInnerTexts()).join("|");
+  expect(labels).toMatch(/Close room/);
+  expect(labels).not.toMatch(/Leave game/);
+  await host.keyboard.press("Escape");
+  await expect(host.locator("#rmsheet")).toBeHidden();
+  await closeBtn.click();
+  await expect(host.locator("#perr")).toHaveText(CONFIRM);
+  await expect(guest.locator("#finale")).toBeVisible();
+  await closeBtn.click();
+  await expectEnded(P);
+  expect(prod, "production Firebase was contacted").toEqual([]);
+  for (const p of P) expect(p.errors).toEqual([]);
   for (const p of P) await p.context.close();
 });
 
