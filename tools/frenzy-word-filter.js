@@ -51,10 +51,10 @@ const RELIGIOUS = new Set([
 const SLURS = new Set([
   "chink","chinks","coons","darky","dyked","dykes","dykey","faggy","fagot","fagin","gooky","gooks",
   "gyppo","gypsy","homos","honky","injun","jewed","kikes","kraut","lesbo","nazis","nigga","nigger",
-  "slurs","spazz","spics","spick","squaw"
+  "paddy","queer","slurs","spazz","spics","spick","squaw"
 ]);
 const SEXUAL = new Set([
-  "anal","anus","arses","asses","babes","balls","bawdy","bitch","boobs","booby","boner","booty","busty",
+  "anal","anus","arses","asses","babes","balls","bawdy","bitch","boobs","booby","boner","booty","busty","butty",
   "cocky","cocks","cunts","desex","dicky","dicks","dildo","erect","fucks","homos","horny","humps","humpy",
   "hussy","jizz","kinks","kinky","knobs","labia","lusts","lusty","milfs","moans","naked","nippy","nuder",
   "nudes","panty","penis","pimps","porno","porns","porny","prick","pubes","pubic","pussy","raped","raper",

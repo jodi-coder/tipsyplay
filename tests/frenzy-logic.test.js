@@ -181,7 +181,7 @@ test("the shipped lists keep boozy, drop the blocked examples, and answers are a
   assert.equal(W.answers.includes("boozy"), true);
   assert.ok(W.answers.length >= 1000, W.answers.length);
   assert.ok(W.guesses.length > W.answers.length);
-  for (const w of ["jesus", "allah", "islam", "hindu", "nigger", "naked", "drunk", "babes", "butts", "booty", "paris", "james", "david", "maria", "raper", "jewed", "homos", "lynch", "gooky", "sodom", "porns", "porny", "sexed", "nuder", "knobs", "erect", "humps", "cocky", "dicky", "kinks", "panty", "thong", "noose", "tramp", "urine", "gypsy", "slurs", "bawdy", "nippy", "sexes", "moans", "slave", "vicar", "sects", "prays", "idiot", "screw", "damns", "kills", "death", "drugs", "vomit"]) {
+  for (const w of ["jesus", "allah", "islam", "hindu", "nigger", "naked", "drunk", "babes", "butts", "booty", "paris", "james", "david", "maria", "raper", "jewed", "homos", "lynch", "gooky", "sodom", "porns", "porny", "sexed", "nuder", "knobs", "erect", "humps", "cocky", "dicky", "kinks", "panty", "thong", "noose", "tramp", "urine", "gypsy", "slurs", "bawdy", "nippy", "sexes", "moans", "slave", "vicar", "sects", "prays", "idiot", "screw", "damns", "kills", "death", "drugs", "vomit", "paddy", "queer", "butty"]) {
     assert.equal(W.guesses.includes(w), false, w);
     assert.equal(W.answers.includes(w), false, w);
   }

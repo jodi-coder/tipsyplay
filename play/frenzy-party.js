@@ -401,9 +401,10 @@ function claimHost(){
     listenHost();
     claiming=false;
     var lobby=metaObj({status:"lobby", phase:"lobby", hostUid:uid});
+    lobby.note="The host changed. This round was cleared. The word was not shown.";
     return update(ref(db), {[rpath("meta")]:lobby, [rpath("fl/pub")]:null}).then(function(){
       G=null; D=null; pub=null; saveToken("");
-      fail("The host changed. This round was cleared. The word was not shown.");
+      fail(lobby.note);
     });
   }).catch(function(){claiming=false});
 }
@@ -464,6 +465,7 @@ function listen(){
     if(!s.exists()){if(watched!==code) return; roomEnded(); return}
     var was=isHost(); meta=s.val()||null;
     if(meta) pointsOnly=!!meta.na;
+    if(meta&&meta.note&&meta.status==="lobby") fail(meta.note);
     if(isHost()&&!was){listenHost(); if(meta.status!=="lobby"&&!G) resumeHost()}
     if(!isHost()&&was){stopHost(); G=null}
     render();

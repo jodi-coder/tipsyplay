@@ -1,20 +1,31 @@
 <?php
 /* Five Letter Frenzy word keeper. PHP 7.4+ , no Composer, no database, no Firebase.
-   The word is chosen here and stored under private/frenzy-rooms/, which the web
-   server must refuse to serve (.htaccess). Phones send a room code and a guess.
-   This script returns colored marks only. The word itself is returned only after
-   the round is solved, six guesses are used, or the host ends the round.
+   The word is chosen here and stored OUTSIDE the web root, in a frenzy-rooms
+   folder next to public_html (or FRENZY_STORAGE, if that is set). Phones send a
+   room code and a guess. This script returns colored marks only. The word itself
+   is returned only after the round is solved, six guesses are used, or the host
+   ends the round.
+
+   On Hostinger the site lives in public_html, so the default folder is
+   /home/<user>/domains/tipsyplay.com/frenzy-rooms. private/ is only a backup
+   deny rule. This script never writes the word under the web root, and it never
+   uses the system temp directory.
 
    Needs Jeff to check in hPanel if anything below is missing:
    - PHP 7.4 or newer, with the json extension (standard).
+   - The account can create a folder next to public_html. If the first Start says
+     "Word storage is not available.", create that folder by hand (outside
+     public_html) and make it writable by PHP, or set FRENZY_STORAGE to another
+     path that is also outside public_html.
    - The openssl extension, so results can be signed. Without it the script still
      runs, but phones cannot check that the marks were really produced here.
-   - Apache AllowOverride so private/.htaccess is honored. php -S ignores .htaccess.
-   - Do not set the environment variable FRENZY_TEST on the live site. It exists
-     only so local tests can ask for a known word.
+   - Apache AllowOverride and mod_rewrite, so the root .htaccess can forbid /private/.
+   - Do not set FRENZY_TEST on the live site. It exists only so local tests can
+     ask for a known word.
 
-   The signing key is created on first use inside the private directory. Do not
+   The signing key is created on first use inside the storage folder. Do not
    commit that file and do not put a Firebase service account on this server. */
+ini_set("display_errors", "0");
 header("Content-Type: application/json; charset=utf-8");
 header("Cache-Control: no-store");
 header("X-Content-Type-Options: nosniff");
@@ -103,8 +114,22 @@ function client_ip() {
     return "0";
 }
 function storage_dir() {
-    $dir = dirname(__DIR__) . "/private/frenzy-rooms";
-    if (!is_dir($dir)) mkdir($dir, 0700, true);
+    static $dir = null;
+    if ($dir !== null) return $dir;
+    $env = getenv("FRENZY_STORAGE");
+    if (is_string($env) && $env !== "") $chosen = $env;
+    else $chosen = dirname(__DIR__, 2) . "/frenzy-rooms";
+    if (!is_dir($chosen)) {
+        if (!@mkdir($chosen, 0700, true) && !is_dir($chosen)) {
+            error_log("frenzy-word: cannot create storage at " . $chosen);
+            fail(500, "Word storage is not available.");
+        }
+    }
+    if (!is_writable($chosen)) {
+        error_log("frenzy-word: storage is not writable at " . $chosen);
+        fail(500, "Word storage is not available.");
+    }
+    $dir = $chosen;
     return $dir;
 }
 function rate_max() {
@@ -116,7 +141,10 @@ function rate_ok($key) {
     $path = storage_dir() . "/rl-" . preg_replace('/[^a-z0-9-]/', "", $key) . ".json";
     $now = time();
     $fh = fopen($path, "c+");
-    if (!$fh) return true;
+    if (!$fh) {
+        error_log("frenzy-word: rate limit file is not writable at " . $path);
+        fail(500, "Word storage is not available.");
+    }
     flock($fh, LOCK_EX);
     $raw = stream_get_contents($fh);
     $hits = json_decode($raw, true);
@@ -240,16 +268,30 @@ function round_open_for_reveal($state) {
 function signing_key() {
     $path = storage_dir() . "/sign.pem";
     if (!function_exists("openssl_pkey_new")) return null;
-    if (!is_file($path)) {
+    $fh = fopen($path, "c+");
+    if (!$fh) {
+        error_log("frenzy-word: cannot open signing key at " . $path);
+        return null;
+    }
+    flock($fh, LOCK_EX);
+    $pem = stream_get_contents($fh);
+    if (!is_string($pem) || strpos($pem, "PRIVATE KEY") === false) {
         $res = openssl_pkey_new(array("private_key_bits" => 2048, "private_key_type" => OPENSSL_KEYTYPE_RSA));
-        if (!$res) return null;
         $pem = "";
-        openssl_pkey_export($res, $pem);
-        if ($pem === "") return null;
-        file_put_contents($path, $pem);
+        if ($res) openssl_pkey_export($res, $pem);
+        if ($pem === "") {
+            flock($fh, LOCK_UN);
+            fclose($fh);
+            return null;
+        }
+        ftruncate($fh, 0);
+        rewind($fh);
+        fwrite($fh, $pem);
+        fflush($fh);
         @chmod($path, 0600);
     }
-    $pem = file_get_contents($path);
+    flock($fh, LOCK_UN);
+    fclose($fh);
     $key = openssl_pkey_get_private($pem);
     return $key ? $key : null;
 }
@@ -288,11 +330,13 @@ function start_round($room, $token, $testWord) {
     return with_state($room, function ($state) use ($room, $token, $testWord) {
         $now = time();
         $idle = 120;
-        $canReplace = $state === null
-            || empty($state["guesses"])
+        $open = is_array($state) && isset($state["token"]) && is_string($state["token"]) && $state["token"] !== "";
+        /* No token: only a missing round, a finished round, or 2 minutes of silence. */
+        $noTokenOk = !$open
             || round_open_for_reveal($state)
             || ($now - (int) $state["seen"] >= $idle);
-        if (!$canReplace) {
+        $tokenOk = $open && $token !== "" && strlen($token) === strlen($state["token"]) && hash_equals($state["token"], $token);
+        if (!$noTokenOk && !$tokenOk) {
             http_response_code(409);
             return array("out" => array("ok" => false, "error" => "round in play"));
         }

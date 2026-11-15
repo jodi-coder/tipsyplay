@@ -211,6 +211,8 @@ test("rules hide the secret, guests cannot write host state, and a long-idle hos
   expect((await (await samReq.get(url("meta", samTok2))).json()).hostUid).toBe(samUid);
   await expect(sam.page.locator("#lobby")).toBeVisible();
   await expect(sam.page.locator("body")).toContainText("The word was not shown");
+  await expect(priya.page.locator("#lobby")).toBeVisible();
+  await expect(priya.page.locator("body")).toContainText("The word was not shown");
 
   await sam.context.close();
   await priya.context.close();
@@ -276,21 +278,31 @@ test("the word keeper refuses direct abuse", async ({ browser }) => {
   expect(started.token).toMatch(/^[a-f0-9]{32}$/);
   expect(started.word).toBeUndefined();
   const token = started.token;
-  expect((await post({ op: "reveal", room: room, token: token })).status()).toBe(403);
+  // A stranger who knows the room code cannot replace a round that has not been guessed yet.
+  expect((await post({ op: "start", room: room })).status()).toBe(409);
+  expect((await post({ op: "start", room: room, token: "not-the-token" })).status()).toBe(409);
+  const restarted = await (await post({ op: "start", room: room, token: token, testWord: "crane" })).json();
+  expect(restarted.ok).toBe(true);
+  expect(restarted.token).toMatch(/^[a-f0-9]{32}$/);
+  expect(restarted.token).not.toBe(token);
+  expect(restarted.word).toBeUndefined();
+  const live = restarted.token;
+  expect((await post({ op: "guess", room: room, token: token, guess: "house", n: 0 })).status()).toBe(403);
+  expect((await post({ op: "reveal", room: room, token: live })).status()).toBe(403);
   expect((await post({ op: "guess", room: room, token: "nope", guess: "house", n: 0 })).status()).toBe(403);
-  expect((await post({ op: "guess", room: room, token: token, guess: "zzzzz", n: 0 })).status()).toBe(400);
-  expect((await post({ op: "guess", room: room, token: token, guess: "house", n: 2 })).status()).toBe(409);
-  const first = await (await post({ op: "guess", room: room, token: token, guess: "house", n: 0 })).json();
+  expect((await post({ op: "guess", room: room, token: live, guess: "zzzzz", n: 0 })).status()).toBe(400);
+  expect((await post({ op: "guess", room: room, token: live, guess: "house", n: 2 })).status()).toBe(409);
+  const first = await (await post({ op: "guess", room: room, token: live, guess: "house", n: 0 })).json();
   expect(first.ok).toBe(true);
   expect(first.marks).toEqual(["absent", "absent", "absent", "absent", "locked"]);
   expect(first.word).toBeUndefined();
   const words = ["stone", "music", "crate", "trace", "books"];
   for (let i = 0; i < words.length; i++) {
-    const res = await (await post({ op: "guess", room: room, token: token, guess: words[i], n: i + 1 })).json();
+    const res = await (await post({ op: "guess", room: room, token: live, guess: words[i], n: i + 1 })).json();
     expect(res.ok, words[i]).toBe(true);
   }
-  expect((await post({ op: "guess", room: room, token: token, guess: "party", n: 6 })).status()).toBe(409);
-  const revealed = await (await post({ op: "reveal", room: room, token: token })).json();
+  expect((await post({ op: "guess", room: room, token: live, guess: "party", n: 6 })).status()).toBe(409);
+  const revealed = await (await post({ op: "reveal", room: room, token: live })).json();
   expect(revealed.word).toBe("crane");
   let limited = 0;
   for (let i = 0; i < 80 && !limited; i++) {
