@@ -72,8 +72,18 @@ const BODILY = new Set([
   "turds","urine","vomit"
 ]);
 /* "hells" stays as crude. "curse" and "swear" are ordinary words and are not listed.
-   bigot, dummy, and moron stay as insults. Milder words (shame, gross, freak) do not. */
-const CRUDE = new Set(["hells", "bigot", "dummy", "moron"]);
+   bigot, dummy, and moron stay as insults. Milder words (shame, gross, freak) do not.
+   These five are not guesses at all. */
+const CRUDE = new Set(["hells", "bigot", "dummy", "moron", "jihad", "fatwa", "bombs", "meths", "slain"]);
+/* Words that are fine as guesses but must not be the secret. This keeps the
+   answer list identical to the one shipped on main: these are common enough
+   for SCOWL sizes 10 and 20, and they stay guess-only. */
+const ANSWER_EXCLUDE = new Set([
+  "abuse","armed","bible","bless","blest","blood","bombs","creed","crime","cruel","curse",
+  "deity","devil","dogma","dooms","drown","dying","fatal","fools","fraud","freak","gross",
+  "hangs","hated","hates","havoc","libel","lousy","nasty","purge","rabid","saint","shame",
+  "shoot","skull","slash","spite","swear","theft","thief","wound"
+]);
 
 /* Slurs, sexual words, crude words, and the explicit block list.
    Whole words only. This is a denylist, not a glossary.
@@ -157,7 +167,7 @@ function main(){
   });
   guesses.sort();
   const guessSet = new Set(guesses);
-  const answers = guesses.filter((w) => featured.has(w) || scowl.common.has(w));
+  const answers = guesses.filter((w) => (featured.has(w) || scowl.common.has(w)) && !ANSWER_EXCLUDE.has(w));
   const missingFeatured = FEATURED.filter((w) => !guessSet.has(w) || !answers.includes(w));
   const hardIn = FEATURED.filter((w) => hard.has(w));
 
@@ -170,7 +180,8 @@ function main(){
    granted without fee, provided this notice appears in supporting documentation.
    Provided "as is" without warranty.
    Filtered: given names, place names, slurs, sexual or crude words, and an explicit block list.
-   Ordinary religious words stay. "pious" is a guess.
+   Ordinary religious words stay as guesses. The answer list matches the list shipped on main;
+   newer common words such as pious, bible, and saint are guesses only.
    "boozy" stays on the featured list by decision. Not from any Wordle or NYT list.
    Counts when generated: ${answers.length} answers, ${guesses.length} accepted guesses. */
 `;
