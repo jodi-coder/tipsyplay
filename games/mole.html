@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7CC8FF">
+<meta name="description" content="Mole: everyone shares a secret word except one player, who sees only the category. Give clues, vote out the mole, and catch the bluffer. Social deduction party game for 4 to 10 adults. Drinks optional.">
+<title>Mole: Secret-Word Social Deduction Game | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/mole.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Mole: Secret-Word Social Deduction Game | TipsyPlay"><meta property="og:description" content="One player only knows the category. Clue, vote, and catch the mole."><meta property="og:url" content="https://tipsyplay.com/games/mole.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Mole", "item": "https://tipsyplay.com/games/mole.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css?v=25">
+<style>
+/* Mole. Colours come from the theme tokens in styles.css. Pink appears only at a drink moment. */
+.ml-boot{padding:28px 0}
+.ml-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
+.ml-round{margin:0;font-family:var(--display);font-size:1.1rem}
+.ml-strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.ml-chip{display:inline-block;padding:4px 10px;border-radius:999px;border:var(--bw) solid var(--outline);font:700 .85rem var(--font)}
+.ml-panel{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface);background:var(--surface);color:var(--ink);border-radius:20px;padding:16px;margin:10px 0}
+.ml-panel h2{margin:0 0 6px;font-size:clamp(1.3rem,6vw,1.8rem)}
+.ml-word{font-family:var(--display);font-size:clamp(2rem,10vw,2.8rem);line-height:1;margin:.1em 0}
+.ml-role{font-family:var(--display);font-size:clamp(1.8rem,9vw,2.6rem);line-height:1;margin:.1em 0;color:var(--danger)}
+.ml-cat{font-weight:700;margin:.3em 0}
+.ml-hint{color:var(--ink-2);margin:.3em 0}
+.ml-panel .btn{width:100%;margin-top:10px}
+.ml-state{font:600 .95rem var(--font);color:var(--ink-2);margin:.4em 0 0}
+.ml-turnrow{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline)}
+.ml-turnrow.now{background:var(--primary);color:var(--on-primary);border-radius:10px}
+.ml-turnrow.gone{opacity:.6}
+.ml-tick{font-weight:800}
+.ml-choice{display:block;width:100%;min-height:var(--tap);border:var(--bw) solid var(--ink);border-radius:14px;background:var(--surface);color:var(--ink);font:700 1.05rem var(--display);padding:12px;margin-top:8px;text-align:left;cursor:pointer}
+.ml-choice[aria-pressed="true"]{background:var(--primary);color:var(--on-primary)}
+.ml-list{margin-top:8px}
+.ml-rword{font-family:var(--display);font-size:1.3rem;margin:0 0 4px}
+.ml-rmole{font-weight:700;margin:.2em 0}
+.ml-verdict{margin:.3em 0}
+.ml-banner{margin:.6em 0 0;padding:10px 12px;border-radius:12px;background:var(--danger);color:var(--on-danger,#fff);font-weight:700}
+.ml-person{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline)}
+.ml-person.off{opacity:.55}
+.ml-person .x{border:var(--bw) solid var(--outline);background:var(--surface);border-radius:10px;font:600 .8rem var(--font);padding:4px 8px;cursor:pointer}
+.ml-title{font-family:var(--display);font-size:clamp(1.6rem,8vw,2.4rem);margin:.1em 0 .4em}
+.ml-stand{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.ml-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
+.ml-sname{font-weight:700}
+.ml-qr{text-align:center;margin:10px 0}
+.ml-share{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.ml-share .wide{flex:1 1 100%}
+.ml-players h2{font-size:1.4rem;margin:.4em 0}
+</style>
+</head>
+<body class="ml" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a><a href="../drinks/">Drinks</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play responsibly</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="ml-boot">
+<p id="bootmsg">Opening the game…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
+<div id="app" class="hide">
+<section id="home" class="entry">
+<p class="eyebrow">Party game · 4 to 10 players</p>
+<h1>Mole</h1>
+<p class="lede">Everyone shares a secret word except the mole, who sees only the category. Give a clue, then vote out the bluffer.</p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
+</section>
+
+<section id="lobby" class="hide">
+<p class="eyebrow">Lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="ml-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt wide" id="copycode">Copy code</button>
+</div>
+<figure class="ml-qr hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
+<p class="tag">Rounds</p>
+<div class="chips" id="roundchips" role="group" aria-label="Number of rounds">
+<button type="button" class="chip" data-rounds="5">5</button>
+<button type="button" class="chip" data-rounds="8">8</button>
+<button type="button" class="chip" data-rounds="12">12</button>
+</div>
+<p class="tag">Drinks</p>
+<div class="chips" id="drinks" role="group" aria-label="Drink setting">
+<button type="button" class="chip" data-drink="sips">Drinks</button>
+<button type="button" class="chip" data-drink="shots">Shots</button>
+<button type="button" class="chip" data-drink="none">No drinking</button>
+</div>
+<p id="drinknote" class="lede"></p>
+<div class="na"><b>Play responsibly:</b> pace yourself, and it's fine to sit a round out. Every drink has a no-drink alternative.</div>
+<div class="ml-players" aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="table" class="hide">
+<div class="ml-top">
+<p id="mlround" class="ml-round">Round 1</p>
+<div id="mlscore" class="ml-strip" aria-label="Scores"></div>
+</div>
+<p id="perr" class="sr" aria-live="assertive"></p>
+
+<div id="dealbox" class="ml-panel hide">
+<div id="dealcard"></div>
+<button type="button" class="btn host-cta" id="dealready">Got it</button>
+</div>
+
+<div id="cluebox" class="ml-panel hide" aria-live="polite">
+<h2 id="clueturn">Clues</h2>
+<div id="clueorder" class="ml-list"></div>
+<button type="button" class="btn host-cta hide" id="cluedone">Done, next player</button>
+<p id="cluestate" class="ml-state"></p>
+</div>
+
+<div id="votebox" class="ml-panel hide" aria-live="polite">
+<h2 id="votehead">Who's the mole?</h2>
+<div id="votelist" class="ml-list"></div>
+<p id="votestate" class="ml-state"></p>
+</div>
+
+<div id="stealbox" class="ml-panel hide" aria-live="polite">
+<h2 id="stealhead">Guess the word</h2>
+<div id="steallist" class="ml-list"></div>
+<p id="stealstate" class="ml-state"></p>
+</div>
+
+<div id="waitbox" class="ml-panel hide"><p id="waittext"></p></div>
+
+<div id="revealbox" class="ml-panel hide" aria-live="polite"></div>
+
+<div id="hosttools" class="hide">
+<div class="ctrl"><button type="button" class="btn hostonly hide" id="nextround">Next round</button></div>
+</div>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave game</button></div>
+</section>
+
+<section id="finale" class="hide">
+<div class="ml-panel" id="reveal"></div>
+<div class="ctrl"><button type="button" class="btn host-cta hostonly" id="again">Play again</button></div>
+<div class="ctrl"><button type="button" class="btn alt" id="closestage">Close room</button></div>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This room is closed to new players.</p>
+<a class="btn" href="mole.html">Back to the start</a>
+</section>
+</div>
+</main>
+<footer class="site-foot" data-keep>
+<nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
+<p class="foot-c">© TipsyPlay</p>
+</footer>
+<script src="../sounds.js?v=18"></script>
+<script src="../app.js?v=21"></script>
+<script src="../play/qr.js?v=18"></script>
+<script src="../play/join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","ml");</script>
+<script src="../data/mole.js?v=1"></script>
+<script src="../play/mole-logic.js?v=1"></script>
+<script src="../play/mole-party.js?v=1"></script><script src="../play/room-ui.js?v=3"></script>
+</body>
+</html>
