@@ -141,7 +141,7 @@ test("the homepage has the spec's sections in order, including the FAQ", async (
   const html = read("index.html");
   const ld = JSON.parse(html.match(/application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
   const list = ld["@graph"].find((x) => x["@type"] === "ItemList");
-  expect(list.itemListElement.map((i) => i.url)).toEqual(["https://tipsyplay.com/games/never-have-i-ever.html", "https://tipsyplay.com/games/hot-take-court.html", "https://tipsyplay.com/games/two-truths.html"]);
+  expect(list.itemListElement.map((i) => i.url)).toEqual(["https://tipsyplay.com/games/never-have-i-ever.html", "https://tipsyplay.com/games/hot-take-court.html", "https://tipsyplay.com/games/two-truths.html", "https://tipsyplay.com/games/five-letter-frenzy.html"]);
   const faq = ld["@graph"].find((x) => x["@type"] === "FAQPage");
   const visible = await page.$$eval("#faq details", (ds) => ds.map((d) => [d.querySelector("summary").textContent.trim(), d.querySelector("p").textContent.trim()]));
   expect(faq.mainEntity.map((q) => [q.name, q.acceptedAnswer.text])).toEqual(visible);
@@ -160,7 +160,7 @@ test("the homepage is readable when the hero preview is missing and when scripts
   await expect(page.locator(".hero .cta")).toBeVisible();
   await expect(page.locator(".hero .age-line")).toBeVisible();
   await expect(page.locator("header.top nav a", { hasText: "Play responsibly" })).toBeVisible();
-  await expect(page.locator(".pick")).toHaveCount(7);
+  await expect(page.locator(".pick")).toHaveCount(8);
   await ctx.close();
   const c2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const p2 = await c2.newPage();
@@ -174,10 +174,10 @@ test("the homepage is readable when the hero preview is missing and when scripts
 test("the picks are whole-card links with colored icon tiles, and every tap target is 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".pick", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["games/never-have-i-ever.html", "games/hot-take-court.html", "games/two-truths.html", "games/slow-drip.html", "games/vault-traitor.html", "games/punchline-duel.html", "games/odd-word-out.html"]);
+  expect(hrefs).toEqual(["games/never-have-i-ever.html", "games/hot-take-court.html", "games/two-truths.html", "games/slow-drip.html", "games/vault-traitor.html", "games/punchline-duel.html", "games/odd-word-out.html", "games/five-letter-frenzy.html"]);
   const tiles = await page.$$eval(".pick .tile", (a) => a.map((x) => x.className.replace("tile ", "")));
-  expect(tiles).toEqual(["t-yellow", "t-pink", "t-green", "t-yellow", "t-pink", "t-green", "t-pink"]);
-  await expect(page.locator(".pick .chev")).toHaveCount(7);
+  expect(tiles).toEqual(["t-yellow", "t-pink", "t-green", "t-yellow", "t-pink", "t-green", "t-pink", "t-green"]);
+  await expect(page.locator(".pick .chev")).toHaveCount(8);
   await expect(page.locator(".more")).toHaveText("See all games →");
   await expect(page.locator(".more")).toHaveAttribute("href", "games/");
   const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more", (a) => a.map((x) => x.getBoundingClientRect().height));

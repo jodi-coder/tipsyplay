@@ -1,0 +1,11 @@
+# Backup only. The word files are not stored here. They live outside the web root.
+# Refuse every request under private/. Apache 2.4 and 2.2.
+# php -S does not read this file. Hostinger's Apache does when AllowOverride allows it.
+# The root .htaccess also forbids /private/ with a rewrite rule.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>
+Options -Indexes
