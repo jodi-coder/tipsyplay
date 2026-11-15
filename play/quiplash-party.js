@@ -1,6 +1,6 @@
 (function(){
 "use strict";
-/* Quiplash, one phone per player. rooms/$code/ql
+/* Punchline Duel, one phone per player. rooms/$code/ql
    The host's phone runs the game with QuiplashLogic and publishes only what everyone may see (ql/pub).
    Each round one prompt goes to two players, who write in private on ql/ans/$uid (only they and the host read it).
    Everyone else votes on ql/vote/$uid. The host reads both, reveals the two answers as A and B with no names,
@@ -41,8 +41,8 @@ function makeRoomCode(){var s="", i; for(i=0;i<4;i++) s+=ALPHABET[L.randomInt(AL
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
 function queryRoom(){var m=String(location.search||"").match(/[?&](?:room|code)=([A-Za-z]{4})/i); var c=m?normCode(m[1]):""; return validCode(c)?c:""}
 function roomUrl(c){
-  if(window.TipsyJoinQR) return TipsyJoinQR.pageInvite("/games/quiplash.html", c, "ql");
-  return "https://tipsyplay.com/games/quiplash.html?room="+c+"&game=ql";
+  if(window.TipsyJoinQR) return TipsyJoinQR.pageInvite("/games/punchline-duel.html", c, "ql");
+  return "https://tipsyplay.com/games/punchline-duel.html?room="+c+"&game=ql";
 }
 function order(){
   return Object.keys(players).map(function(id){var p=players[id]; return {uid:id, name:p.name||"Player", connected:p.connected!==false, joinedAt:p.joinedAt||0}})
@@ -268,8 +268,8 @@ function publish(phase, extra, clear, more){
 }
 function metaObj(patch){
   var m=Object.assign({}, meta||{}, patch||{});
-  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:"mild", rounds:+m.qlRounds||roundPick, na:false, round:0, gameId:+m.gameId||1, kind:"ql", qlDrink:m.qlDrink||"sips", qlRounds:+m.qlRounds||roundPick};
-  if(m.status!=="lobby") out.deck=["Quiplash"];
+  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:"mild", rounds:10, na:false, round:0, gameId:+m.gameId||1, kind:"ql", qlDrink:m.qlDrink||"sips", qlRounds:+m.qlRounds||roundPick};
+  if(m.status!=="lobby") out.deck=["Punchline Duel"];
   if(m.status==="over") out.endedAt=m.endedAt||serverNow();
   return out;
 }
@@ -440,7 +440,7 @@ async function hostRoom(name){
     var snap=await get(ref(db, "rooms/"+c+"/meta"));
     if(snap.exists()) continue;
     try{
-      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:roundPick, na:false, round:0, gameId:1, kind:"ql", qlDrink:drinkPick, qlRounds:roundPick}});
+      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:10, na:false, round:0, gameId:1, kind:"ql", qlDrink:drinkPick, qlRounds:roundPick}});
       claimed=c; break;
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
@@ -544,7 +544,7 @@ function wire(){
   $("copycode").addEventListener("click", function(){if(code) copyText(code).then(function(){fail("Code copied.")}).catch(function(){fail(code)})});
   $("sharebtn").addEventListener("click", function(){
     if(!code) return;
-    if(navigator.share) navigator.share({title:"Quiplash", text:"Join my Quiplash room "+code, url:roomUrl(code)}).catch(function(){});
+    if(navigator.share) navigator.share({title:"Punchline Duel", text:"Join my Punchline Duel room "+code, url:roomUrl(code)}).catch(function(){});
     else copyText(roomUrl(code)).then(function(){fail("Link copied.")}).catch(function(){fail(roomUrl(code))});
   });
   if($("qrhide")) $("qrhide").addEventListener("click", function(){

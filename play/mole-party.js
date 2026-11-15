@@ -41,8 +41,8 @@ function makeRoomCode(){var s="", i; for(i=0;i<4;i++) s+=ALPHABET[L.randomInt(AL
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
 function queryRoom(){var m=String(location.search||"").match(/[?&](?:room|code)=([A-Za-z]{4})/i); var c=m?normCode(m[1]):""; return validCode(c)?c:""}
 function roomUrl(c){
-  if(window.TipsyJoinQR) return TipsyJoinQR.pageInvite("/games/mole.html", c, "ml");
-  return "https://tipsyplay.com/games/mole.html?room="+c+"&game=ml";
+  if(window.TipsyJoinQR) return TipsyJoinQR.pageInvite("/games/odd-word-out.html", c, "ml");
+  return "https://tipsyplay.com/games/odd-word-out.html?room="+c+"&game=ml";
 }
 function order(){
   return Object.keys(players).map(function(id){var p=players[id]; return {uid:id, name:p.name||"Player", connected:p.connected!==false, joinedAt:p.joinedAt||0}})
@@ -295,8 +295,8 @@ function publish(phase, extra, turn, clear, notes, more){
 }
 function metaObj(patch){
   var m=Object.assign({}, meta||{}, patch||{});
-  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:"mild", rounds:+m.mlRounds||roundPick, na:false, round:0, gameId:+m.gameId||1, kind:"ml", mlDrink:m.mlDrink||"sips", mlRounds:+m.mlRounds||roundPick};
-  if(m.status!=="lobby") out.deck=["Mole"];
+  var out={hostUid:m.hostUid, createdAt:m.createdAt, status:m.status, phase:m.phase, spice:"mild", rounds:10, na:false, round:0, gameId:+m.gameId||1, kind:"ml", mlDrink:m.mlDrink||"sips", mlRounds:+m.mlRounds||roundPick};
+  if(m.status!=="lobby") out.deck=["Odd Word Out"];
   if(m.status==="over") out.endedAt=m.endedAt||serverNow();
   return out;
 }
@@ -493,7 +493,7 @@ async function hostRoom(name){
     var snap=await get(ref(db, "rooms/"+c+"/meta"));
     if(snap.exists()) continue;
     try{
-      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:roundPick, na:false, round:0, gameId:1, kind:"ml", mlDrink:drinkPick, mlRounds:roundPick}});
+      await update(ref(db), {["rooms/"+c+"/meta"]:{hostUid:uid, createdAt:serverTimestamp(), status:"lobby", phase:"lobby", spice:"mild", rounds:10, na:false, round:0, gameId:1, kind:"ml", mlDrink:drinkPick, mlRounds:roundPick}});
       claimed=c; break;
     }catch(e){if(!/permission/i.test(String(e.code||e.message||""))) throw e}
   }
@@ -596,7 +596,7 @@ function wire(){
   $("copycode").addEventListener("click", function(){if(code) copyText(code).then(function(){fail("Code copied.")}).catch(function(){fail(code)})});
   $("sharebtn").addEventListener("click", function(){
     if(!code) return;
-    if(navigator.share) navigator.share({title:"Mole", text:"Join my Mole room "+code, url:roomUrl(code)}).catch(function(){});
+    if(navigator.share) navigator.share({title:"Odd Word Out", text:"Join my Odd Word Out room "+code, url:roomUrl(code)}).catch(function(){});
     else copyText(roomUrl(code)).then(function(){fail("Link copied.")}).catch(function(){fail(roomUrl(code))});
   });
   if($("qrhide")) $("qrhide").addEventListener("click", function(){

@@ -1,4 +1,4 @@
-/* Quiplash host flow with a stubbed Firebase (same stub as split-end.spec.js).
+/* Punchline Duel host flow with a stubbed Firebase (same stub as split-end.spec.js).
    The test page is the host; bot players and their answers/votes are injected through window.__tpMock.
    Nothing talks to production. */
 const { test, expect } = require("@playwright/test");
@@ -42,8 +42,8 @@ async function hostWithBots(page, bots){
 }
 
 test("the home screen loads with no opt-in box and a clear intro", async ({ browser }) => {
-  const { context, page, errors } = await open(browser, "/games/quiplash.html", "Ada");
-  await expect(page.locator("#home h1")).toHaveText("Quiplash");
+  const { context, page, errors } = await open(browser, "/games/punchline-duel.html", "Ada");
+  await expect(page.locator("#home h1")).toHaveText("Punchline Duel");
   await expect(page.locator("#optin")).toHaveCount(0);
   await expect(page.locator("#hostbtn")).toBeVisible();
   expect(errors).toEqual([]);
@@ -51,7 +51,7 @@ test("the home screen loads with no opt-in box and a clear intro", async ({ brow
 });
 
 test("host a room: lobby shows the rounds and drinks chips and Start enables at three players", async ({ browser }) => {
-  const { context, page, errors } = await open(browser, "/games/quiplash.html", "Ada");
+  const { context, page, errors } = await open(browser, "/games/punchline-duel.html", "Ada");
   const code = await hostWithBots(page, [{ id: "p2", name: "Bo" }]);
   await expect(page.locator("#start")).toBeDisabled();         // 2 players
   await page.evaluate((c) => window.__tpMock.addPlayer(c, "p3", "Cy"), code);
@@ -63,7 +63,7 @@ test("host a room: lobby shows the rounds and drinks chips and Start enables at 
 });
 
 test("a full round: answers come in, the table votes, the reveal names a winner", async ({ browser }) => {
-  const { context, page, errors } = await open(browser, "/games/quiplash.html", "Ada");
+  const { context, page, errors } = await open(browser, "/games/punchline-duel.html", "Ada");
   const code = await hostWithBots(page, [{ id: "p2", name: "Bo" }, { id: "p3", name: "Cy" }, { id: "p4", name: "Di" }]);
   await page.locator('[data-rounds="5"]').click();
   await page.locator("#start").click();

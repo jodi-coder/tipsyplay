@@ -13,20 +13,20 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#7CC8FF">
-<meta name="description" content="Quiplash: two phones answer the same funny prompt, everyone else votes for the better answer. Party game for 3 to 12 adults, each on their own phone. Drinks optional.">
-<title>Quiplash: Answer-and-Vote Party Game | TipsyPlay</title>
-<link rel="canonical" href="https://tipsyplay.com/games/quiplash.html">
+<meta name="description" content="Punchline Duel: two phones answer the same funny prompt, everyone else votes for the better answer. Party game for 3 to 12 adults, each on their own phone. Drinks optional.">
+<title>Punchline Duel: Answer-and-Vote Party Game | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/punchline-duel.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Quiplash: Answer-and-Vote Party Game | TipsyPlay"><meta property="og:description" content="Two answers, one funnier. Everyone votes on their phone."><meta property="og:url" content="https://tipsyplay.com/games/quiplash.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Quiplash", "item": "https://tipsyplay.com/games/quiplash.html"}]}]}</script>
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Punchline Duel: Answer-and-Vote Party Game | TipsyPlay"><meta property="og:description" content="Two answers, one funnier. Everyone votes on their phone."><meta property="og:url" content="https://tipsyplay.com/games/punchline-duel.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Punchline Duel", "item": "https://tipsyplay.com/games/punchline-duel.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css?v=25">
 <style>
-/* Quiplash. Colours come from the theme tokens in styles.css. Pink appears only at a drink moment. */
+/* Punchline Duel. Colours come from the theme tokens in styles.css. Pink appears only at a drink moment. */
 .ql-boot{padding:28px 0}
 .ql-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
 .ql-round{margin:0;font-family:var(--display);font-size:1.1rem}
@@ -54,7 +54,7 @@
 .ql-banner{margin:.6em 0 0;padding:10px 12px;border-radius:12px;background:var(--danger);color:var(--on-danger,#fff);font-weight:700}
 .ql-person{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline)}
 .ql-person.off{opacity:.55}
-.ql-person .x{border:var(--bw) solid var(--outline);background:var(--surface);border-radius:10px;font:600 .8rem var(--font);padding:4px 8px;cursor:pointer}
+.ql-person .x{border:var(--bw) solid var(--outline);background:var(--surface);color:var(--ink);border-radius:10px;font:600 .8rem var(--font);padding:4px 8px;cursor:pointer}
 .ql-title{font-family:var(--display);font-size:clamp(1.6rem,8vw,2.4rem);margin:.1em 0 .4em}
 .ql-stand{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
 .ql-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
@@ -63,6 +63,7 @@
 .ql-share{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .ql-share .wide{flex:1 1 100%}
 .ql-players h2{font-size:1.4rem;margin:.4em 0}
+main:has(#home.hide) #below{display:none}
 </style>
 </head>
 <body class="ql" data-root="../">
@@ -83,11 +84,11 @@
 <div id="app" class="hide">
 <section id="home" class="entry">
 <p class="eyebrow">Party game · 3 to 12 players</p>
-<h1>Quiplash</h1>
+<h1>Punchline Duel</h1>
 <p class="lede">Two phones answer the same funny prompt. Everyone else votes for the better answer.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <label class="sr" for="pname">Your name</label>
-<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
 <button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
 <form class="join-row" id="joinform">
 <input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
@@ -139,7 +140,6 @@
 <p id="qlround" class="ql-round">Round 1</p>
 <div id="qlscore" class="ql-strip" aria-label="Scores"></div>
 </div>
-<p id="perr" class="sr" aria-live="assertive"></p>
 
 <div id="answerbox" class="ql-panel hide">
 <h2>Your prompt</h2>
@@ -176,9 +176,16 @@
 <section id="closed" class="card hide">
 <h2>Room closed</h2>
 <p id="closedmsg">This room is closed to new players.</p>
-<a class="btn" href="quiplash.html">Back to the start</a>
+<a class="btn" href="punchline-duel.html">Back to the start</a>
 </section>
+<p id="perr" role="alert"></p>
 </div>
+<section class="band-ink" id="below">
+<div class="card"><h2 style="margin-top:0">What is Punchline Duel?</h2>
+<p>Punchline Duel is TipsyPlay's answer-and-vote party game. Two players get the same funny prompt and each write an answer on their own phone. Everyone else votes for the funnier one, and the writer of the losing answer takes a drink or sits the sip out. It is an easy party game for adults that works for 3–12 players with no props.</p>
+<p>Every phone shows the prompt and both answers at the same time, so remote joiners and couch hangouts stay in sync. Host a room, pass the code or QR, pick how many rounds, and let the duels rotate around the table.</p>
+</div>
+</section>
 </main>
 <footer class="site-foot" data-keep>
 <nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
@@ -191,6 +198,6 @@
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","ql");</script>
 <script src="../data/quiplash.js?v=1"></script>
 <script src="../play/quiplash-logic.js?v=1"></script>
-<script src="../play/quiplash-party.js?v=1"></script><script src="../play/room-ui.js?v=3"></script>
+<script src="../play/quiplash-party.js?v=2"></script><script src="../play/room-ui.js?v=3"></script>
 </body>
 </html>
