@@ -193,4 +193,7 @@ test("the shipped lists keep boozy, drop the blocked examples, and answers are a
   ["party", "house", "crane", "olive", "tipsy", "fizzy", "limey", "tangy", "foamy", "vodka"].forEach((w) => {
     assert.equal(W.answers.includes(w), true, w);
   });
+  L.useWords(W);
+  assert.equal(L.guessError("pious", []), "");
+  assert.equal(L.guessError("raper", []), "That word is not on the list.");
 });

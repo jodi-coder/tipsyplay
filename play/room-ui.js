@@ -31,6 +31,15 @@ var PRIMARY={
 function q(s,r){return (r||d).querySelector(s)}
 function qa(s,r){return Array.prototype.slice.call((r||d).querySelectorAll(s))}
 function shown(el){return !!el&&!el.classList.contains("hide")&&!el.closest(".hide")}
+function clipped(el){
+  try{
+    var s=getComputedStyle(el);
+    if(s.display==="none"||s.visibility==="hidden") return true;
+    if(s.clipPath&&s.clipPath!=="none") return true;
+    var r=el.getBoundingClientRect();
+    return r.width<8||r.height<8;
+  }catch(e){return true}
+}
 function setCls(el,c,on){if(el&&el.classList.contains(c)!==!!on) el.classList.toggle(c,!!on)}
 function setAttr(el,k,v){if(el&&el.getAttribute(k)!==v) el.setAttribute(k,v)}
 function mk(tag,cls,text){var n=d.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n}
@@ -132,6 +141,9 @@ function refresh(){
   /* hide the moved controls from keyboard and screen readers too */
   qa(HIDE_SEL.join(",")).forEach(function(n){
     if(n.classList.contains("rm-primary")){n.removeAttribute("tabindex");n.removeAttribute("aria-hidden");return}
+    /* #closestage on the recap is a real button again when the page un-clips it.
+       A 1px clipped control stays out of the tab order. */
+    if(n.id==="closestage"&&st==="over"&&shown(n)&&!clipped(n)){n.removeAttribute("tabindex");n.removeAttribute("aria-hidden");return}
     setAttr(n,"tabindex","-1"); setAttr(n,"aria-hidden","true");
   });
   qa("[data-restart]").forEach(function(n){
@@ -167,7 +179,40 @@ function item(label,fn,cls){
   items.appendChild(b); return b;
 }
 function proxy(el){return function(){try{el.click()}catch(e){}}}
+/* The sheet closes before the game button runs, and that button's own confirm is only 2.5s.
+   Reopening the menu takes longer, so a second tap while the "tap again" line is still
+   showing delivers the confirming click immediately. The first tap, and a game that
+   closes on one tap, still clicks once. */
+function confirmPending(){var p=q("#perr");return !!(p&&/tap\s+\S+\s+again/i.test(p.textContent||""))}
+function proxyClose(el){
+  return function(){
+    var again=confirmPending();
+    try{el.click()}catch(e){}
+    if(again){try{el.click()}catch(e){}}
+  };
+}
 function firstAvail(sel){var l=qa(sel),i;for(i=0;i<l.length;i++){if(shown(l[i])) return l[i]}return null}
+/* On a recap the play screen often stays open, so its Leave button is also "shown"
+   and used to win because it sits earlier in the page. The close control in the
+   finale (or the one on the visible screen) is the one the menu should press. */
+function roomControl(){
+  var closes=qa("#close,#closestage,[data-act=\"close\"]").filter(shown);
+  var leaves=qa("#leave,#leavestage,[data-act=\"leave\"]").filter(shown);
+  var st=state(), pick=null, fin, lob, mid;
+  if(st==="over"){
+    fin=closes.filter(function(el){return el.closest("#finale,#over")});
+    pick=fin[0]||closes[0]||null;
+  }else if(st==="lobby"){
+    lob=closes.filter(function(el){return el.closest("#lobby")});
+    pick=lob[0]||closes[0]||null;
+  }else if(closes.length){
+    mid=closes.filter(function(el){return !el.closest("#finale,#over")});
+    pick=(mid.length?mid:closes)[0];
+  }
+  if(!pick&&leaves.length) pick=leaves[0];
+  if(!pick&&closes.length) pick=closes[0];
+  return pick;
+}
 function soundOn(){return !window.TPSound||window.TPSound.enabled()}
 function soundLabel(){return (soundOn()?"🔊":"🔇")+" Sound: "+(soundOn()?"on":"off")}
 function buildMenu(){
@@ -209,11 +254,11 @@ function buildMenu(){
   });
   items.appendChild(sb);
   var rs=null; qa("[data-restart] button").some(function(b){if(shown(b.parentNode)){rs=b;return true}return false});
-  var close=firstAvail(CLOSE_SEL);
+  var close=roomControl();
   if(rs||close){
     section("Room");
     if(rs) item(rs.textContent.trim(),proxy(rs));
-    if(close) item(close.textContent.trim()||"Close room",proxy(close),/leave/i.test(close.textContent)?"":"danger");
+    if(close) item(close.textContent.trim()||"Close room",proxyClose(close),/leave/i.test(close.textContent)?"":"danger");
   }
   extra.hidden=!(extra.querySelector("#custombox:not(.hide)")||extra.querySelector("details"));
 }
