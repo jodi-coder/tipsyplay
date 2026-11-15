@@ -1,0 +1,9 @@
+# Refuse every request under private/. Apache 2.4 and 2.2.
+# php -S does not read this file. Hostinger's Apache does when AllowOverride allows it.
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+  Deny from all
+</IfModule>
+Options -Indexes

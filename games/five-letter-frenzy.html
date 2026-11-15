@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7CC8FF">
+<meta name="description" content="Five Letter Frenzy: one shared five-letter word for 3 to 8 players. Take turns on the same grid. A miss is one small drink, a 5-second pose, or Pass. Nothing stacks.">
+<title>Five Letter Frenzy: Shared Word Party Game | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/five-letter-frenzy.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="One secret word, one shared grid. Six guesses for the table."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css?v=25">
+<style>
+/* Five Letter Frenzy. Colours come from the theme tokens in styles.css.
+   Three hint colours from the TipsyPlay palette, each with a symbol: yellow ●, pink stripes ↗, ink ×. */
+.fl-boot{padding:28px 0}
+.fl-panel,.fl-tile,.fl-person,.fl-stand li,.fl-key{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface)}
+.fl-turn{margin:8px 0;font-family:var(--display);font-size:clamp(1.4rem,6vw,2rem);font-weight:800}
+.fl-grid{display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px;margin:8px auto}
+.fl-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.fl-tile{height:48px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:var(--bw) solid var(--ink);border-radius:10px;background:var(--surface);color:var(--ink);font:800 clamp(.95rem,5vw,1.35rem)/1 var(--display);overflow:hidden}
+body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
+.fl-tile.empty{background:var(--surface);color:var(--ink)}
+.fl-tile.lock{background:var(--tile-yellow);color:var(--ink)}
+.fl-tile.move{background-color:var(--tile-pink);color:var(--ink);background-image:repeating-linear-gradient(135deg, transparent 0 4px, var(--ink) 4px 5px)}
+.fl-tile.miss{background:var(--ink);color:var(--surface)}
+.fl-mark{font-size:.75rem;font-weight:800;line-height:1}
+.fl-letter{line-height:1}
+.fl-legend{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:8px 0}
+.fl-key{display:flex;align-items:center;gap:6px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:999px;padding:4px 10px;font-weight:700}
+.fl-swatch{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;border:var(--bw) solid var(--ink);font-weight:800}
+.fl-swatch.lock{background:var(--tile-yellow);color:var(--ink)}
+.fl-swatch.move{background-color:var(--tile-pink);color:var(--ink);background-image:repeating-linear-gradient(135deg, transparent 0 3px, var(--ink) 3px 4px)}
+.fl-swatch.miss{background:var(--ink);color:var(--surface)}
+.fl-panel{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:20px;padding:16px;margin:10px 0}
+.fl-panel h2{margin:0 0 6px;font-size:clamp(1.2rem,5vw,1.6rem)}
+.fl-prompt{font-weight:800;margin:0 0 10px}
+.fl-actions{display:flex;flex-direction:column;gap:8px}
+.fl-actions .btn{width:100%;min-height:var(--tap)}
+.fl-hand{width:100%;min-height:var(--tap);margin-top:8px}
+.fl-person{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline);background:var(--surface);color:var(--ink)}
+.fl-person.off{opacity:.55}
+.fl-person .x{border:var(--bw) solid var(--outline);background:var(--surface);color:var(--ink);border-radius:10px;font:600 .8rem var(--font);min-height:var(--tap);padding:4px 8px;cursor:pointer}
+.fl-tools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.fl-tools .btn{flex:1 1 30%;min-height:var(--tap);min-width:0}
+.fl-word{font-family:var(--display);font-size:clamp(2rem,10vw,2.8rem);letter-spacing:.12em;margin:.1em 0}
+.fl-award{font-weight:700;margin:.3em 0}
+.fl-stand{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.fl-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
+#guess{font-size:1.4rem;letter-spacing:.2em;text-align:center;text-transform:uppercase}
+.fl-act{font-weight:700;min-height:1.2em}
+@media (prefers-reduced-motion: reduce){
+  .fl-tile,.fl-hand,.btn{transition:none;animation:none}
+}
+</style>
+</head>
+<body class="fl" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a><a href="../drinks/">Drinks</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play responsibly</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="fl-boot">
+<p id="bootmsg">Opening the game…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
+<div id="app" class="hide">
+<p id="perr" role="alert"></p>
+<section id="home" class="entry">
+<p class="eyebrow">Party game · 3 to 8 players</p>
+<h1>Five Letter Frenzy</h1>
+<p class="lede">One secret word on one shared grid. The table gets six guesses. A miss is one small drink, a 5-second pose, or Pass.</p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<label class="toggle" for="dryme"><input type="checkbox" id="dryme"> Points only for me</label>
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
+</section>
+
+<section id="lobby" class="hide">
+<p class="eyebrow">Lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="fl-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt" id="copycode">Copy code</button>
+</div>
+<figure class="hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
+<p class="tag">Table</p>
+<button type="button" class="chip" id="pointsonly" aria-pressed="false">Points only</button>
+<p id="pointsnote" class="lede"></p>
+<label class="toggle" for="dryme2"><input type="checkbox" id="dryme2"> Points only for me</label>
+<div class="na"><b>Play responsibly:</b> passing is always fine. Nothing stacks, and there is no timer on a drink.</div>
+<div aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="table" class="hide">
+<p id="turnlabel" class="fl-turn" aria-live="polite"></p>
+<div id="grid" class="fl-grid" aria-label="Shared grid"></div>
+<ul id="legend" class="fl-legend" aria-label="How to read a tile"></ul>
+<form id="guessform" class="hide">
+<label class="sr" for="guess">Your guess</label>
+<input class="bigin" id="guess" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="5 letters" aria-label="Your guess">
+<button type="submit" class="btn host-cta" id="sendguess">Guess</button>
+</form>
+<div id="promptbox" class="fl-panel hide" aria-live="polite">
+<p id="prompttext" class="fl-prompt"></p>
+<div class="fl-actions">
+<button type="button" class="btn" id="drinkbtn">One small drink</button>
+<button type="button" class="btn" id="posebtn">5-second pose</button>
+<button type="button" class="btn alt" id="passbtn">Pass</button>
+</div>
+</div>
+<div id="handbox" class="fl-panel hide" aria-live="polite">
+<h2>You skip this one.</h2>
+<p>You can hand one small drink or a 5-second pose to someone else. They can still Pass.</p>
+<div id="handlist"></div>
+<button type="button" class="btn alt" id="skiphand">Pass</button>
+</div>
+<p id="actline" class="fl-act" aria-live="polite"></p>
+<div id="hosttools" class="fl-tools hide">
+<button type="button" class="btn alt hostonly" id="pausebtn">Pause</button>
+<button type="button" class="btn alt hostonly" id="skipbtn">Skip turn</button>
+<button type="button" class="btn alt hostonly" id="endbtn">End game</button>
+</div>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave game</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="finale" class="hide">
+<div class="fl-panel" id="awards"></div>
+<div class="ctrl"><button type="button" class="btn host-cta hostonly" id="again">Play again</button></div>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This round has already started. Join the next one from the lobby.</p>
+<a class="btn" href="five-letter-frenzy.html">Back to the start</a>
+</section>
+</div>
+</main>
+<footer class="site-foot" data-keep>
+<nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
+<p class="foot-c">© TipsyPlay</p>
+</footer>
+<script src="../sounds.js?v=18"></script>
+<script src="../app.js?v=21"></script>
+<script src="../play/party-audio.js?v=19"></script>
+<script src="../play/qr.js?v=18"></script>
+<script src="../play/join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
+<script src="../data/frenzy-words.js?v=1"></script>
+<script src="../play/frenzy-logic.js?v=1"></script>
+<script src="../play/frenzy-party.js?v=1"></script><script src="../play/room-ui.js?v=3"></script>
+</body>
+</html>
