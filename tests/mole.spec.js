@@ -43,9 +43,9 @@ async function hostWithBots(page, bots){
   return code;
 }
 
-test("the home screen loads with the Mole intro and no opt-in box", async ({ browser }) => {
-  const { context, page, errors } = await open(browser, "/games/mole.html", "Ada");
-  await expect(page.locator("#home h1")).toHaveText("Mole");
+test("the home screen loads with the Odd Word Out intro and no opt-in box", async ({ browser }) => {
+  const { context, page, errors } = await open(browser, "/games/odd-word-out.html", "Ada");
+  await expect(page.locator("#home h1")).toHaveText("Odd Word Out");
   await expect(page.locator("#optin")).toHaveCount(0);
   await expect(page.locator("#hostbtn")).toBeVisible();
   expect(errors).toEqual([]);
@@ -53,7 +53,7 @@ test("the home screen loads with the Mole intro and no opt-in box", async ({ bro
 });
 
 test("Start enables only at four players", async ({ browser }) => {
-  const { context, page } = await open(browser, "/games/mole.html", "Ada");
+  const { context, page } = await open(browser, "/games/odd-word-out.html", "Ada");
   const code = await hostWithBots(page, [{ id: "p2", name: "Bo" }, { id: "p3", name: "Cy" }]);
   await expect(page.locator("#start")).toBeDisabled();           // 3 players
   await page.evaluate((c) => window.__tpMock.addPlayer(c, "p4", "Di"), code);
@@ -62,7 +62,7 @@ test("Start enables only at four players", async ({ browser }) => {
 });
 
 test("a full round: deal, clues, a vote that catches the mole, a failed steal, then the reveal", async ({ browser }) => {
-  const { context, page, errors } = await open(browser, "/games/mole.html", "Ada");
+  const { context, page, errors } = await open(browser, "/games/odd-word-out.html", "Ada");
   const bots = [{ id: "p2", name: "Bo" }, { id: "p3", name: "Cy" }, { id: "p4", name: "Di" }];
   const code = await hostWithBots(page, bots);
   await page.locator('[data-rounds="5"]').click();

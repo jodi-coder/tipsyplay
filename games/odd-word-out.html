@@ -13,20 +13,20 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#7CC8FF">
-<meta name="description" content="Mole: everyone shares a secret word except one player, who sees only the category. Give clues, vote out the mole, and catch the bluffer. Social deduction party game for 4 to 10 adults. Drinks optional.">
-<title>Mole: Secret-Word Social Deduction Game | TipsyPlay</title>
-<link rel="canonical" href="https://tipsyplay.com/games/mole.html">
+<meta name="description" content="Odd Word Out: everyone shares a secret word except one player, who sees only the category. Give clues, vote out the mole, and catch the bluffer. Social deduction party game for 4 to 10 adults. Drinks optional.">
+<title>Odd Word Out: Secret-Word Social Deduction Game | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/odd-word-out.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Mole: Secret-Word Social Deduction Game | TipsyPlay"><meta property="og:description" content="One player only knows the category. Clue, vote, and catch the mole."><meta property="og:url" content="https://tipsyplay.com/games/mole.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Mole", "item": "https://tipsyplay.com/games/mole.html"}]}]}</script>
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Odd Word Out: Secret-Word Social Deduction Game | TipsyPlay"><meta property="og:description" content="One player only knows the category. Clue, vote, and catch the mole."><meta property="og:url" content="https://tipsyplay.com/games/odd-word-out.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Odd Word Out", "item": "https://tipsyplay.com/games/odd-word-out.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css?v=25">
 <style>
-/* Mole. Colours come from the theme tokens in styles.css. Pink appears only at a drink moment. */
+/* Odd Word Out. Colours come from the theme tokens in styles.css. Pink appears only at a drink moment. */
 .ml-boot{padding:28px 0}
 .ml-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
 .ml-round{margin:0;font-family:var(--display);font-size:1.1rem}
@@ -53,7 +53,7 @@
 .ml-banner{margin:.6em 0 0;padding:10px 12px;border-radius:12px;background:var(--danger);color:var(--on-danger,#fff);font-weight:700}
 .ml-person{display:flex;justify-content:space-between;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline)}
 .ml-person.off{opacity:.55}
-.ml-person .x{border:var(--bw) solid var(--outline);background:var(--surface);border-radius:10px;font:600 .8rem var(--font);padding:4px 8px;cursor:pointer}
+.ml-person .x{border:var(--bw) solid var(--outline);background:var(--surface);color:var(--ink);border-radius:10px;font:600 .8rem var(--font);padding:4px 8px;cursor:pointer}
 .ml-title{font-family:var(--display);font-size:clamp(1.6rem,8vw,2.4rem);margin:.1em 0 .4em}
 .ml-stand{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
 .ml-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
@@ -62,6 +62,7 @@
 .ml-share{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .ml-share .wide{flex:1 1 100%}
 .ml-players h2{font-size:1.4rem;margin:.4em 0}
+main:has(#home.hide) #below{display:none}
 </style>
 </head>
 <body class="ml" data-root="../">
@@ -82,11 +83,11 @@
 <div id="app" class="hide">
 <section id="home" class="entry">
 <p class="eyebrow">Party game · 4 to 10 players</p>
-<h1>Mole</h1>
+<h1>Odd Word Out</h1>
 <p class="lede">Everyone shares a secret word except the mole, who sees only the category. Give a clue, then vote out the bluffer.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <label class="sr" for="pname">Your name</label>
-<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name" aria-label="Your name">
 <button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
 <form class="join-row" id="joinform">
 <input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
@@ -138,7 +139,6 @@
 <p id="mlround" class="ml-round">Round 1</p>
 <div id="mlscore" class="ml-strip" aria-label="Scores"></div>
 </div>
-<p id="perr" class="sr" aria-live="assertive"></p>
 
 <div id="dealbox" class="ml-panel hide">
 <div id="dealcard"></div>
@@ -183,9 +183,16 @@
 <section id="closed" class="card hide">
 <h2>Room closed</h2>
 <p id="closedmsg">This room is closed to new players.</p>
-<a class="btn" href="mole.html">Back to the start</a>
+<a class="btn" href="odd-word-out.html">Back to the start</a>
 </section>
+<p id="perr" role="alert"></p>
 </div>
+<section class="band-ink" id="below">
+<div class="card"><h2 style="margin-top:0">What is Odd Word Out?</h2>
+<p>Odd Word Out is TipsyPlay's secret-word bluffing game. Everyone sees the same word except one player, the mole, who only sees the category. Each player says a one-word clue out loud, then the group votes for who they think is bluffing. Catch the mole and the group scores. Slip away and the mole scores. It works for 4–10 players with no props.</p>
+<p>Every phone gets a private card, so nobody can peek. Host a room, pass the code or QR, and play a few rounds. Drinks are optional, and a no-drink setting is always one tap away.</p>
+</div>
+</section>
 </main>
 <footer class="site-foot" data-keep>
 <nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
@@ -198,6 +205,6 @@
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","ml");</script>
 <script src="../data/mole.js?v=1"></script>
 <script src="../play/mole-logic.js?v=1"></script>
-<script src="../play/mole-party.js?v=1"></script><script src="../play/room-ui.js?v=3"></script>
+<script src="../play/mole-party.js?v=2"></script><script src="../play/room-ui.js?v=3"></script>
 </body>
 </html>
