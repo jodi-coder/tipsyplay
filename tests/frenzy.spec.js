@@ -395,7 +395,7 @@ test("the word keeper refuses direct abuse", async ({ browser }) => {
   expect((await post({ op: "guess", room: room, token: token, guess: "house", n: 0 })).status()).toBe(403);
   expect((await post({ op: "reveal", room: room, token: live })).status()).toBe(403);
   expect((await post({ op: "guess", room: room, token: "nope", guess: "house", n: 0 })).status()).toBe(403);
-  expect((await post({ op: "guess", room: room, token: live, guess: "zzzzz", n: 0 })).status()).toBe(400);
+  expect((await post({ op: "guess", room: room, token: live, guess: "whore", n: 0 })).status()).toBe(400);
   expect((await post({ op: "guess", room: room, token: live, guess: "house", n: 2 })).status()).toBe(409);
   const first = await (await post({ op: "guess", room: room, token: live, guess: "house", n: 0 })).json();
   expect(first.ok).toBe(true);

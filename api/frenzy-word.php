@@ -225,13 +225,15 @@ function load_lists() {
     $end = strpos($src, "};", $start === false ? 0 : $start);
     if ($start === false || $end === false) fail(500, "word list");
     $json = substr($src, $start + 9, $end - ($start + 9) + 1);
-    $json = str_replace(array("{answers:", ",guesses:"), array('{"answers":', ',"guesses":'), $json);
+    $json = str_replace(array("{answers:", ",guesses:", ",blocked:"), array('{"answers":', ',"guesses":', ',"blocked":'), $json);
     $data = json_decode($json, true);
     if (!is_array($data) || empty($data["answers"]) || empty($data["guesses"])) fail(500, "word list");
     $guesses = array();
     foreach ($data["guesses"] as $w) $guesses[$w] = 1;
     foreach ($data["answers"] as $w) $guesses[$w] = 1;
-    $lists = array("answers" => array_values($data["answers"]), "guesses" => $guesses);
+    $blocked = array();
+    if (!empty($data["blocked"])) foreach ($data["blocked"] as $w) $blocked[$w] = 1;
+    $lists = array("answers" => array_values($data["answers"]), "guesses" => $guesses, "blocked" => $blocked);
     return $lists;
 }
 function pick_word($testWord) {
@@ -357,9 +359,10 @@ function start_round($room, $token, $testWord) {
 }
 function take_guess($state, $guess, $n) {
     $guess = strtolower(preg_replace('/[^a-z]/', "", $guess));
-    if (strlen($guess) !== 5) fail(400, "Use 5 letters.");
+    if (strlen($guess) !== 5) fail(400, "Use exactly 5 letters.");
     $lists = load_lists();
-    if (!isset($lists["guesses"][$guess])) fail(400, "That word is not on the list.");
+    /* Any five letters are a fair guess. Only blocked words (slurs, crude words) are refused. */
+    if (isset($lists["blocked"][$guess])) fail(400, "Not a word we accept. Try another one.");
     if ($n !== count($state["guesses"])) fail(409, "out of turn");
     if (count($state["guesses"]) >= 6 || !empty($state["exhausted"]) || !empty($state["ended"])) fail(409, "round over");
     foreach ($state["guesses"] as $prev) {

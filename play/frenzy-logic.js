@@ -10,7 +10,7 @@
 
 var MIN_PLAYERS=3, MAX_PLAYERS=8, NAME_MAX=12, MAX_GUESSES=6, WORD_LEN=5;
 var IDLE_MS=120000, FAST_IDLE_MS=2000;
-var answers=[], guessSet=null;
+var answers=[], guessSet=null, blockedSet={};
 
 function cryptoObj(){
   if(typeof globalThis!=="undefined"&&globalThis.crypto&&globalThis.crypto.getRandomValues) return globalThis.crypto;
@@ -40,7 +40,12 @@ function useWords(data){
   guessSet={};
   (data&&data.guesses?data.guesses:[]).forEach(function(w){guessSet[w]=1});
   answers.forEach(function(w){guessSet[w]=1});
+  blockedSet={};
+  (data&&data.blocked?data.blocked:[]).forEach(function(w){blockedSet[w]=1});
 }
+/* Any five letters are a fair guess, names and made-up words included. Only the answer has to be a real word.
+   A short list of slurs and crude words stays blocked, because guesses show on everyone's screen. */
+function isBlocked(w){return !!blockedSet[normalize(w)]}
 function hasGuess(w){return !!(guessSet&&guessSet[normalize(w)])}
 function isAnswer(w){return answers.indexOf(normalize(w))>=0}
 function answerCount(){return answers.length}
@@ -72,8 +77,8 @@ function pointsFor(marks, solved){return lockedCount(marks)+(solved?3:0)}
 
 function guessError(word, prior){
   var w=normalize(word);
-  if(w.length!==WORD_LEN) return "Use 5 letters.";
-  if(!hasGuess(w)) return "That word is not on the list.";
+  if(w.length!==WORD_LEN) return "Use exactly 5 letters.";
+  if(isBlocked(w)) return "Not a word we accept. Try another one.";
   if((prior||[]).some(function(g){return g===w||(g&&g.word===w)})) return "Already guessed.";
   return "";
 }
@@ -292,7 +297,7 @@ var api={
   MIN_PLAYERS:MIN_PLAYERS, MAX_PLAYERS:MAX_PLAYERS, NAME_MAX:NAME_MAX, MAX_GUESSES:MAX_GUESSES, WORD_LEN:WORD_LEN,
   IDLE_MS:IDLE_MS, FAST_IDLE_MS:FAST_IDLE_MS,
   randomInt:randomInt, cleanName:cleanName, nameError:nameError, normalize:normalize,
-  useWords:useWords, hasGuess:hasGuess, isAnswer:isAnswer, answerCount:answerCount, pickWord:pickWord,
+  useWords:useWords, hasGuess:hasGuess, isBlocked:isBlocked, isAnswer:isAnswer, answerCount:answerCount, pickWord:pickWord,
   markGuess:markGuess, lockedCount:lockedCount, pointsFor:pointsFor, guessError:guessError,
   nextSeat:nextSeat, openingTurn:openingTurn, newRound:newRound, nameOf:nameOf,
   submitGuess:submitGuess, applyMarkedGuess:applyMarkedGuess, choose:choose, hand:hand, answerHand:answerHand,

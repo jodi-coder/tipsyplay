@@ -28,10 +28,12 @@ test("marks count locked letters before moved ones, and spare copies only", () =
   assert.equal(L.pointsFor(L.markGuess("crane", "crane"), true), 8);
 });
 
-test("a guess must be five letters, on the list, and not a repeat", () => {
+test("a guess is any five letters that are not blocked and not a repeat", () => {
   L.useWords(W);
-  assert.equal(L.guessError("cat", []), "Use 5 letters.");
-  assert.equal(L.guessError("zzzzz", []), "That word is not on the list.");
+  assert.equal(L.guessError("cat", []), "Use exactly 5 letters.");
+  assert.equal(L.guessError("zzzzz", []), "");
+  assert.equal(L.guessError("donna", []), "");
+  assert.equal(L.guessError("whore", []), "Not a word we accept. Try another one.");
   assert.equal(L.guessError("crane", ["crane"]), "Already guessed.");
   assert.equal(L.guessError("CRANE", []), "");
 });
@@ -195,11 +197,11 @@ test("the shipped lists keep boozy, drop the blocked examples, and answers are a
   });
   L.useWords(W);
   assert.equal(L.guessError("pious", []), "");
-  assert.equal(L.guessError("raper", []), "That word is not on the list.");
+  assert.equal(L.guessError("raper", []), "Not a word we accept. Try another one.");
   for (const w of ["jihad", "fatwa", "bombs", "meths", "slain"]) {
     assert.equal(W.guesses.includes(w), false, w);
     assert.equal(W.answers.includes(w), false, w);
-    assert.equal(L.guessError(w, []), "That word is not on the list.", w);
+    assert.equal(L.guessError(w, []), "Not a word we accept. Try another one.", w);
   }
   const crypto = require("crypto");
   const answerHash = crypto.createHash("sha256").update(W.answers.join("\n") + "\n").digest("hex");
