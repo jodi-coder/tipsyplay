@@ -64,6 +64,10 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 .fl-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
 #guess{font-size:1.4rem;letter-spacing:.2em;text-align:center;text-transform:uppercase}
 .fl-act{font-weight:700;min-height:1.2em}
+.fl-how{margin:8px 0;padding:10px 14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:14px}
+.fl-how summary{font-weight:800;cursor:pointer;min-height:var(--tap);display:flex;align-items:center}
+.fl-howlist{margin:6px 0 2px;padding-left:1.2em;font-size:.95rem;line-height:1.45}
+.fl-howlist li{margin:4px 0}
 @media (prefers-reduced-motion: reduce){
   .fl-tile,.fl-hand,.btn{transition:none;animation:none}
 }
@@ -129,6 +133,15 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <button type="button" class="chip" id="pointsonly" aria-pressed="false">Points only</button>
 <p id="pointsnote" class="lede"></p>
 <label class="toggle" for="dryme2"><input type="checkbox" id="dryme2"> Points only for me</label>
+<details class="fl-how"><summary>How to play</summary>
+<ol class="fl-howlist">
+<li>The host picks one secret five-letter word. Everyone shares one grid.</li>
+<li>On your turn, type any five letters and tap Guess. They don't have to be a real word, but the secret word always is.</li>
+<li>Each tile tells you about the secret word: <b>●</b> right letter, right place. <b>↗</b> right letter, wrong place. <b>×</b> not in the word.</li>
+<li>Guess the whole word to win. The table gets six guesses in total.</li>
+<li>A miss is one small drink, a 5-second pose, or Pass. Passing is always fine, and nothing stacks.</li>
+</ol>
+</details>
 <div class="na"><b>Play responsibly:</b> passing is always fine. Nothing stacks, and there is no timer on a drink.</div>
 <div aria-live="polite">
 <h2>Players</h2>
@@ -197,8 +210,8 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <script src="../play/qr.js?v=18"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
-<script src="../data/frenzy-words.js?v=3"></script>
-<script src="../play/frenzy-logic.js?v=1"></script>
+<script src="../data/frenzy-words.js?v=4"></script>
+<script src="../play/frenzy-logic.js?v=2"></script>
 <script src="../play/frenzy-party.js?v=2"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>
