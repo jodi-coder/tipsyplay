@@ -68,8 +68,37 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 .fl-how summary{font-weight:800;cursor:pointer;min-height:var(--tap);display:flex;align-items:center}
 .fl-howlist{margin:6px 0 2px;padding-left:1.2em;font-size:.95rem;line-height:1.45}
 .fl-howlist li{margin:4px 0}
+/* ---------- motion ----------
+   Every animation is decoration only and is switched off under prefers-reduced-motion (see the end of this block). */
+.fl-tile.fl-pend{background:var(--surface);color:var(--ink)}
+.fl-grid{perspective:600px}
+.fl-tile.fl-flip{animation:fl-flip 320ms ease-in-out both}
+@keyframes fl-flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.fl-tile.fl-pop{animation:fl-pop 150ms ease-out both}
+@keyframes fl-pop{0%{transform:scale(.86)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+.fl-row.fl-shake{animation:fl-shake 360ms ease-in-out both}
+@keyframes fl-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.fl-tile.fl-hop{animation:fl-hop 420ms cubic-bezier(.3,1.6,.5,1) both}
+@keyframes fl-hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}70%{transform:translateY(2px)}}
+.fl-turn.fl-in{animation:fl-in 320ms cubic-bezier(.2,1.2,.4,1) both}
+@keyframes fl-in{from{transform:translateX(-28px);opacity:0}to{transform:none;opacity:1}}
+.fl-who{display:inline-block;background:var(--primary);color:var(--on-primary);border:var(--bw) solid var(--ink);border-radius:999px;padding:0 10px;box-shadow:var(--shadow-sm)}
+.fl-word{display:flex;justify-content:center;gap:6px;letter-spacing:0}
+.fl-wtile{display:grid;place-items:center;width:clamp(38px,12vw,52px);height:clamp(42px,12vw,54px);background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:10px;box-shadow:var(--shadow-sm);font:800 clamp(1.4rem,7vw,2rem)/1 var(--display)}
+.fl-wtile.fl-wflip{animation:fl-wflip 420ms ease-out both}
+@keyframes fl-wflip{from{transform:rotateX(90deg);opacity:0}to{transform:none;opacity:1}}
+/* the drink moment: a pink banner with ink text, holding the drink, the no-drink option and Pass together */
+.fl-panel.fl-drink{background:var(--danger);color:var(--on-danger);border-color:var(--ink);box-shadow:var(--shadow)}
+.fl-drink{--text:var(--on-danger);--text-2:var(--on-danger)}
+.fl-drinktag{margin:0 0 4px;font:800 .8rem var(--font);letter-spacing:.08em;text-transform:uppercase}
+#promptbox:not(.hide){animation:fl-banner 340ms cubic-bezier(.2,1.2,.4,1) both}
+@keyframes fl-banner{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.fl-confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:80}
+#sharecard{width:100%;min-height:var(--tap)}
 @media (prefers-reduced-motion: reduce){
   .fl-tile,.fl-hand,.btn{transition:none;animation:none}
+  .fl-tile.fl-flip,.fl-tile.fl-pop,.fl-tile.fl-hop,.fl-row.fl-shake,.fl-turn.fl-in,.fl-wtile.fl-wflip,#promptbox:not(.hide){animation:none}
+  .fl-confetti{display:none}
 }
 /* The shared room chrome clips #closestage into the menu. On the recap that
    button has to be a real control the host can tap. */
@@ -162,7 +191,8 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <input class="bigin" id="guess" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="5 letters" aria-label="Your guess">
 <button type="submit" class="btn host-cta" id="sendguess">Guess</button>
 </form>
-<div id="promptbox" class="fl-panel hide" aria-live="polite">
+<div id="promptbox" class="fl-panel fl-drink hide" aria-live="polite">
+<p class="fl-drinktag">Drink moment</p>
 <p id="prompttext" class="fl-prompt"></p>
 <div class="fl-actions">
 <button type="button" class="btn" id="drinkbtn">One small drink</button>
@@ -190,6 +220,7 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <div class="fl-panel" id="awards"></div>
 <div class="ctrl"><button type="button" class="btn host-cta hostonly" id="again">Play again</button></div>
 <div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+<div class="ctrl"><button type="button" class="btn alt hide" id="sharecard">Share result</button></div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
 
@@ -204,14 +235,14 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
 <p class="foot-c">© TipsyPlay</p>
 </footer>
-<script src="../sounds.js?v=18"></script>
+<script src="../sounds.js?v=19"></script>
 <script src="../app.js?v=21"></script>
-<script src="../play/party-audio.js?v=19"></script>
 <script src="../play/qr.js?v=18"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
 <script src="../data/frenzy-words.js?v=4"></script>
 <script src="../play/frenzy-logic.js?v=2"></script>
-<script src="../play/frenzy-party.js?v=2"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/frenzy-fx.js?v=1"></script>
+<script src="../play/frenzy-party.js?v=3"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>
