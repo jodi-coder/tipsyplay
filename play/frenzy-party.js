@@ -22,7 +22,13 @@ var pointsOnly=false, dryMe=false, sending=false, serverOffset=0, offsetReady=fa
 var db, stops=[], hostStops=[], connStop=null, bootTimer=0, tickTimer=0, beatTimer=0;
 var ref, onValue, update, set, remove, onDisconnect, get, serverTimestamp, goOnline;
 var G=null, guessMap={}, actMap={}, hostLock=false, beat=0, hostAwaySince=0, claiming=false, seenInput={}, roundToken="";
-var claimLog=[], lastSeq=-1, lastPhase="", audio=null;
+var claimLog=[], lastSeq=-1, lastPhase="";
+/* Sound and motion. Everything below only decorates the screen: it never changes the round or delays input.
+   Animations are worked out from their start time, so a redraw part-way through carries on instead of restarting. */
+var FX=window.FrenzyFX||null;
+var STEP=FX?FX.STEP_MS:120, FLIP=FX?FX.FLIP_MS:320, ROW_MS=4*STEP+FLIP;
+var anim={reveal:null, bounce:null, shake:null, pop:null, word:null};
+var rowsKey="", rowsSeen=0, typedLen=0, turnKey="", promptKey="", live=false, sawLobby=false;
 var PROMPT="One small drink or a 5-second pose — or Pass.";
 
 function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
@@ -83,7 +89,32 @@ function connMap(){var m={}; order().forEach(function(p){m[p.uid]=p.connected!==
 function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
 function show(id, on){var n=$(id); if(n) n.classList.toggle("hide", !on)}
 function el(tag, cls, text){var n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=text; return n}
-function cue(name){if(!audio) return; try{audio.cue(name)}catch(e){}}
+function fx(name, a, b){if(!FX||typeof FX[name]!=="function") return; try{FX[name](a, b)}catch(e){}}
+function still(){return !FX||FX.reduced()}
+function repaintLater(ms){setTimeout(function(){if(pub&&D) paintGrid()}, Math.max(0, ms))}
+/* the animation delay that resumes an animation already "ms" in, or waits "ms" before it starts */
+function delayFor(startAt){return (startAt-Date.now())+"ms"}
+function roundKey(){return (code||"")+"|"+(meta&&meta.gameId)}
+/* A new row arrived: flip it in, with one note per tile; an all-locked row also gets the bounce, confetti and arpeggio. */
+function watchRows(){
+  var rows=(D&&D.guesses)||[], key=roundKey();
+  if(key!==rowsKey){rowsKey=key; rowsSeen=rows.length; return}
+  if(rows.length<=rowsSeen){rowsSeen=rows.length; return}
+  var r=rows.length-1, marks=rows[r].marks||[], now=Date.now();
+  rowsSeen=rows.length;
+  var solved=marks.length===5&&marks.every(function(m){return m==="locked"});
+  fx("reveal", marks);
+  if(solved) fx("solved", ROW_MS);
+  if(still()) return;
+  anim.reveal={row:r, t0:now};
+  marks.forEach(function(m, i){repaintLater(i*STEP+FLIP/2+5)});
+  repaintLater(ROW_MS+20);
+  if(solved){
+    anim.bounce={row:r, t0:now+ROW_MS};
+    repaintLater(ROW_MS+5); repaintLater(ROW_MS+5*80+460);
+    setTimeout(function(){fx("confetti")}, ROW_MS+250);
+  }
+}
 function buzz(ms){
   try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return; if(navigator.vibrate) navigator.vibrate(ms||12)}catch(e){}
 }
@@ -95,6 +126,7 @@ function dupName(list){
 }
 
 function render(){
+  if(pub&&D){watchRows(); watchTurn()}
   document.body.classList.toggle("is-host", isHost());
   document.querySelectorAll(".hostonly").forEach(function(n){n.classList.toggle("hide", !isHost())});
   show("finale", false);
@@ -146,7 +178,11 @@ function paintTable(){
   show("guessform", mine&&!paused&&pub.phase==="guess");
   show("promptbox", showPrompt||handed);
   show("handbox", solving);
-  if(showPrompt||handed){$("prompttext").textContent=PROMPT; bringIntoView($("promptbox"))}
+  if(showPrompt||handed){
+    $("prompttext").textContent=PROMPT; bringIntoView($("promptbox"));
+    var pk=roundKey()+"|"+pub.seq+"|"+pub.phase;
+    if(promptKey!==pk){var first=!promptKey; promptKey=pk; if(live||!first) fx("clink")}
+  }
   if(solving){paintHands(); bringIntoView($("handbox"))}
   paintActLine();
   paintHostTools();
@@ -177,18 +213,26 @@ function paintGrid(){
     row=el("div", "fl-row");
     if(rows[r]){
         word=rows[r].word; marks=rows[r].marks;
+      var rv=anim.reveal&&anim.reveal.row===r?anim.reveal:null, bo=anim.bounce&&anim.bounce.row===r?anim.bounce:null, now=Date.now();
       for(i=0;i<5;i++){
         var kind=marks[i]==="locked"?"lock":marks[i]==="moved"?"move":"miss";
-        cell=el("div", "fl-tile "+kind);
-        cell.appendChild(el("span", "fl-mark", marks[i]==="locked"?"●":marks[i]==="moved"?"↗":"×"));
+        var flipAt=rv?rv.t0+i*STEP:0, turned=!rv||now>=flipAt+FLIP/2;
+        /* before its turn comes, a tile shows its letter on white; the mark and colour land at the half-way point of the flip */
+        cell=el("div", "fl-tile "+(turned?kind:"fl-pend"));
+        if(rv&&now<flipAt+FLIP){cell.classList.add("fl-flip"); cell.style.animationDelay=delayFor(flipAt)}
+        else if(bo&&now<bo.t0+i*80+460){cell.classList.add("fl-hop"); cell.style.animationDelay=delayFor(bo.t0+i*80)}
+        if(turned) cell.appendChild(el("span", "fl-mark", marks[i]==="locked"?"●":marks[i]==="moved"?"↗":"×"));
         cell.appendChild(el("span", "fl-letter", word[i].toUpperCase()));
         cell.setAttribute("aria-label", word[i].toUpperCase()+", "+(marks[i]==="locked"?"right place":marks[i]==="moved"?"wrong place":"not in the word"));
         row.appendChild(cell);
       }
-    }else if(r===rows.length&&typing){
+    }else if(r===rows.length&&(typing||anim.shake)){
+      var sh=anim.shake, pp=anim.pop, t=Date.now();
+      if(sh&&t<sh.t0+380){row.classList.add("fl-shake"); row.style.animationDelay=delayFor(sh.t0)}
       for(i=0;i<5;i++){
         ch=typing[i]||"";
         cell=el("div", "fl-tile"+(ch?"":" empty"));
+        if(ch&&pp&&pp.i===i&&t<pp.t0+160){cell.classList.add("fl-pop"); cell.style.animationDelay=delayFor(pp.t0)}
         cell.appendChild(el("span", "fl-letter", ch.toUpperCase()));
         row.appendChild(cell);
       }
@@ -199,11 +243,29 @@ function paintGrid(){
   }
 }
 function paintTurn(){
-  var label=$("turnlabel"), paused=!!pub.paused;
-  if(paused){label.textContent="Paused"; return}
-  if(pub.phase==="guess"||pub.phase==="prompt"||pub.phase==="handoff"){
-    label.textContent=pub.turn===uid?"Your turn":"Waiting for "+nm(pub.turn);
-  }else label.textContent="";
+  var label=$("turnlabel"), paused=!!pub.paused, text="", who="";
+  if(paused) text="Paused";
+  else if(pub.phase==="guess"||pub.phase==="prompt"||pub.phase==="handoff"){
+    if(pub.turn===uid) text="Your turn"; else{text="Waiting for "; who=nm(pub.turn)}
+  }
+  var key=text+"|"+who;
+  if(label.dataset.key===key) return;
+  label.dataset.key=key; label.textContent=text;
+  /* other phones see whose turn it is with a small highlight on the name */
+  if(who) label.appendChild(el("span", "fl-who", who));
+  label.classList.remove("fl-in");
+  if(text==="Your turn"&&!still()){void label.offsetWidth; label.classList.add("fl-in")}
+}
+/* The turn arrives on this phone: a light chime, once per turn, never on a reload. */
+function watchTurn(){
+  if(!pub||!D) return;
+  var key=roundKey()+"|"+pub.turn+"|"+((D.guesses||[]).length);
+  var mine=pub.turn===uid&&pub.phase==="guess"&&!pub.paused;
+  if(key===turnKey) return;
+  var was=turnKey; turnKey=key;
+  typedLen=0; anim.pop=null; anim.shake=null;
+  /* no chime on a reload: only when this phone saw the turn change, or saw the round start from the lobby */
+  if(mine&&(was||sawLobby)) fx("turn");
 }
 function paintHands(){
   var box=$("handlist"); box.textContent="";
@@ -231,13 +293,23 @@ function paintEnd(){
   show("finale", true);
   show("guessform", false); show("promptbox", false); show("handbox", false); show("hosttools", false);
   var word=(D&&D.word)||"";
-  if($("turnlabel")) $("turnlabel").textContent=word?word.toUpperCase():"";
+  if($("turnlabel")){$("turnlabel").textContent=word?word.toUpperCase():""; $("turnlabel").dataset.key=""; $("turnlabel").classList.remove("fl-in")}
   if($("actline")) $("actline").textContent="";
   paintGrid();
   var box=$("awards"); box.textContent="";
   var awards=D&&D.awards;
   bringIntoView($("finale"));
-  box.appendChild(el("p", "fl-word", word?word.toUpperCase():""));
+  var wp=el("p", "fl-word");
+  if(word){
+    wp.setAttribute("aria-label", word.toUpperCase());
+    word.toUpperCase().split("").forEach(function(c, i){
+      var t=el("span", "fl-wtile", c); t.setAttribute("aria-hidden", "true");
+      if(anim.word&&Date.now()<anim.word+i*160+420){t.classList.add("fl-wflip"); t.style.animationDelay=delayFor(anim.word+i*160)}
+      wp.appendChild(t);
+    });
+  }
+  box.appendChild(wp);
+  show("sharecard", !!(FX&&D&&D.guesses&&D.guesses.length));
   if(!awards) return;
   if(awards.solvedBy) box.appendChild(el("p", "fl-award", "Solved it: "+nm(awards.solvedBy)));
   else box.appendChild(el("p", "fl-award", "The word"));
@@ -258,16 +330,20 @@ function paintEnd(){
 function sendGuess(word){
   if(!pub||pub.phase!=="guess"||pub.turn!==uid||pub.paused) return;
   var err=L.guessError(word, (D&&D.guesses)||[]);
-  if(err){fail(err); return}
+  if(err){
+    fail(err); fx("reject");
+    if(!still()){anim.shake={t0:Date.now()}; paintGrid(); repaintLater(400)}
+    return;
+  }
   fail("");
   if($("guess")) $("guess").value="";
-  buzz(12); cue("clink");
+  typedLen=0; anim.pop=null; anim.shake=null;
+  buzz(12);
   set(ref(db, rpath("fl/guess/"+uid)), L.normalize(word)+":"+pub.seq).catch(function(e){fail(friendly(e))});
 }
 function sendAct(kind){
   if(!pub||pub.turn!==uid||pub.paused) return;
   if(pub.phase!=="prompt"&&pub.phase!=="handoff") return;
-  cue(kind==="pass"?"tick":"sting");
   set(ref(db, rpath("fl/act/"+uid)), kind+":"+pub.seq).catch(function(e){fail(friendly(e))});
 }
 function sendHand(target){
@@ -343,7 +419,6 @@ function applyGuess(who, raw){
     if(res.seal) G.seal={text:res.seal, sig:res.sig||""};
     var r=L.applyMarkedGuess(G, who, t.v, res.marks, connected, !!(players[who]&&players[who].dry));
     if(!r||!r.ok) return;
-    if(r.solved) cue("payoff");
     publishFromG(["fl/guess/"+who]);
   });
 }
@@ -466,6 +541,7 @@ function listen(){
     if(!s.exists()){if(watched!==code) return; roomEnded(); return}
     var was=isHost(); meta=s.val()||null;
     if(meta) pointsOnly=!!meta.na;
+    if(meta&&meta.status==="lobby") sawLobby=true;
     if(meta&&meta.note&&meta.status==="lobby") fail(meta.note);
     if(isHost()&&!was){listenHost(); if(meta.status!=="lobby"&&!G) resumeHost()}
     if(!isHost()&&was){stopHost(); G=null}
@@ -476,14 +552,17 @@ function listen(){
     pub=s.val()||null;
     try{D=pub?JSON.parse(pub.data):null}catch(e){D=null}
     if(pub&&pub.seq!==lastSeq){
-      if(pub.phase!==lastPhase&&lastPhase){
-        if(pub.phase==="end") cue(D&&D.solvedBy?"payoff":"chime");
-        else if(pub.phase==="prompt") cue("sting");
+      if(pub.phase!==lastPhase&&lastPhase&&pub.phase==="end"&&D&&!D.solvedBy){
+        /* not solved: the word turns over one tile at a time, after any row still flipping */
+        var wait=anim.reveal?Math.max(0, anim.reveal.t0+ROW_MS-Date.now()):0;
+        if(!still()) anim.word=Date.now()+wait;
+        if((D.guesses||[]).length>=(D.max||L.MAX_GUESSES)) setTimeout(function(){fx("outOfGuesses")}, wait);
       }
       lastSeq=pub.seq; lastPhase=pub.phase;
     }
     hostLock=false;
     render(); hostTick();
+    live=true;
   }, function(){}));
   stops.push(onValue(ref(db, rpath("fl/beat")), function(s){var v=s.val(); beat=typeof v==="number"?v:0}, function(){}));
   beatTimer=setInterval(function(){
@@ -574,7 +653,6 @@ function wire(){
   var linked=queryRoom(); if(linked) $("roomcode").value=linked;
   try{if(localStorage.getItem("tp_sound")===null&&window.TPSound) TPSound.setEnabled(false)}catch(e){}
   var mute=$("mute"); if(window.TPSound&&mute) TPSound.bindMute(mute);
-  if(window.PartyAudio) audio=PartyAudio.create({});
   $("hostbtn").addEventListener("click", function(){
     var name=L.cleanName($("pname").value), err=L.nameError(name, []);
     if(err){fail(err); $("pname").focus(); return}
@@ -605,7 +683,20 @@ function wire(){
   if($("dryme2")) $("dryme2").addEventListener("change", onDry);
   $("start").addEventListener("click", begin);
   $("guessform").addEventListener("submit", function(e){e.preventDefault(); sendGuess($("guess").value)});
-  $("guess").addEventListener("input", function(){if(pub&&pub.phase==="guess") paintGrid()});
+  $("guess").addEventListener("input", function(){
+    if(!pub||pub.phase!=="guess") return;
+    var n=L.normalize($("guess").value).slice(0,5).length;
+    if(n>typedLen){fx("type"); if(!still()){anim.pop={i:n-1, t0:Date.now()}; repaintLater(170)}}
+    typedLen=n;
+    paintGrid();
+  });
+  if($("sharecard")) $("sharecard").addEventListener("click", function(){
+    if(!FX||!D||!D.guesses) return;
+    /* marks only: the letters and the secret word never reach the image */
+    FX.share(D.guesses.map(function(g){return g.marks}), {solved:!!D.solvedBy, max:D.max||L.MAX_GUESSES}).then(function(how){
+      if(how==="downloaded") fail("Result image saved.");
+    });
+  });
   $("drinkbtn").addEventListener("click", function(){sendAct("drink")});
   $("posebtn").addEventListener("click", function(){sendAct("pose")});
   $("passbtn").addEventListener("click", function(){sendAct("pass")});
@@ -666,7 +757,7 @@ async function boot(){
     uid:function(){return uid}, code:function(){return code}, phase:function(){return pub&&pub.phase},
     seq:function(){return pub&&pub.seq}, turn:function(){return pub&&pub.turn}, data:function(){return D},
     host:function(){return isHost()}, secret:function(){return null}, token:function(){return isHost()?roundToken:""},
-    paused:function(){return !!(pub&&pub.paused)}, claimLog:function(){return claimLog.slice()},
+    paused:function(){return !!(pub&&pub.paused)}, claimLog:function(){return claimLog.slice()}, anim:function(){return JSON.parse(JSON.stringify(anim))},
     beat:function(){return beat}
   };
   showReady();

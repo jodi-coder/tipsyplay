@@ -51,8 +51,11 @@ function celebrate(){play(function(t){noise(t,0.08,0.3,500,2400);[523,659,784].f
 function chime(){play(function(t){tone(523,"sine",t,0.1,0.28);tone(659,"sine",t+0.06,0.1,0.24);tone(784,"triangle",t+0.12,0.14,0.22)})}
 function reminder(){play(function(t){tone(392,"sine",t,0.14,0.22);tone(523,"triangle",t+0.07,0.16,0.16)})}
 function blip(up){play(function(t){if(up){noise(t,0.018,0.26,900,2800);tone(640,"square",t,0.06,0.24,1040)}else tone(466,"sine",t,0.07,0.22,250)})}
+/* A page can add its own sounds and still obey the one mute flag and the first-tap rule:
+   fn(ctx, out, t) builds nodes on ctx, connects them to out, and starts them at t. */
+function custom(fn){play(function(t){fn(ctx,master,t)})}
 function bindMute(btn){
  if(!btn||btn.dataset.tpBound)return;btn.dataset.tpBound="1";mutes.push(btn);paint(btn);
  btn.addEventListener("click",function(){var on=!enabled();setEnabled(on);if(on)click()})}
-window.TPSound={enabled:enabled,setEnabled:setEnabled,unlock:unlock,tapped:function(){return tapped},click:click,card:card,chime:chime,reminder:reminder,blip:blip,yes:yes,no:no,roll:roll,celebrate:celebrate,tick:tick,bindMute:bindMute};
+window.TPSound={enabled:enabled,setEnabled:setEnabled,unlock:unlock,tapped:function(){return tapped},click:click,card:card,chime:chime,reminder:reminder,blip:blip,yes:yes,no:no,roll:roll,celebrate:celebrate,tick:tick,custom:custom,bindMute:bindMute};
 })();
