@@ -8,61 +8,111 @@
 
   gtag('config', 'G-BHY4BXF3V3');
 </script>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#7CC8FF"><meta name="description" content="Host Category Countdown on TipsyPlay. Name items before the timer ends. Animal impression instead of a drink. Free quick party game."><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><link rel="canonical" href="https://tipsyplay.com/play/category-countdown.html">
-<title>Play Category Countdown – Party Game | TipsyPlay</title><link rel="stylesheet" href="../styles.css?v=25"></head><body class="party" data-root="../" data-game="category-countdown"><header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/">Games</a><a href="../drinks/">Drinks</a><a href="../blog/">Blog</a><a href="../responsible.html">Play responsibly</a><a href="../games/category-countdown.html">Rules</a><button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button></nav></header><main class="play-wrap">
-<p id="connecting">Connecting…</p>
-<div id="offline" class="card hide"><p><strong>Online play needs a connection.</strong> Join again when you're back online.</p><p id="offdetail"></p></div>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#7CC8FF"><meta name="description" content="Host Category Countdown on TipsyPlay. Spotlight: name as many as you can before the ring runs out. Hot Potato: one answer each until one player is left. Phones are controllers; a TV can show the board. Free for adults."><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="TipsyPlay"><link rel="manifest" href="../manifest.webmanifest"><link rel="apple-touch-icon" href="../icons/apple-touch-icon.png"><link rel="canonical" href="https://tipsyplay.com/play/category-countdown.html">
+<title>Play Category Countdown – Party Game | TipsyPlay</title>
+<link rel="stylesheet" href="../styles.css?v=25"><link rel="stylesheet" href="party-games.css?v=1"></head>
+<body class="party cc" data-root="../" data-game="category-countdown">
+<header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a><nav><a href="../games/">Games</a><a href="../drinks/">Drinks</a><a href="../blog/">Blog</a><a href="../responsible.html">Play responsibly</a><a href="../games/category-countdown.html">Rules</a><button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button></nav></header>
+<main class="play-wrap">
+<div id="boot" class="pg-boot">
+<p id="bootmsg">Starting the countdown…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
 <div id="app" class="hide">
 <section id="home" class="entry">
 <p class="eyebrow">Party game · 3 to 10 players</p>
 <h1>Category Countdown</h1>
-<p class="lede">A category, a short timer, and one player naming things out loud.</p>
+<p class="lede">Name as many as you can before the ring runs out, or survive Hot Potato around the table. Duplicates don't count, and the table can challenge.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
-<label class="sr" for="playername">Your name</label>
-<input class="bigin" id="playername" maxlength="20" autocomplete="nickname" autocapitalize="words" enterkeyhint="done" placeholder="Your name">
-<button type="button" class="btn host-cta" id="hostbtn" data-act="host">Host Game</button>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" autocapitalize="words" enterkeyhint="done" placeholder="Your name (up to 12)" aria-label="Your name">
+<button type="button" class="btn host-cta" id="hostbtn">Host Game</button>
 <form class="join-row" id="joinform">
-<input class="bigin" id="roomcode" maxlength="12" autocomplete="off" autocapitalize="characters" enterkeyhint="go" placeholder="Join with code" aria-label="Room code">
-<button type="button" class="btn alt" id="joinbtn" data-act="join">Join</button>
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" enterkeyhint="go" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
 </form>
 </section>
+
 <section id="lobby" class="hide">
-<h2>Lobby</h2>
+<p class="eyebrow">Lobby</p>
 <p id="codebig" class="codebig" aria-live="polite"></p>
 <p id="sharelink" class="linkbox"></p>
-<div class="ctrl"><button type="button" class="btn alt" id="copybtn" data-act="copy">Copy link</button><button type="button" class="btn alt" id="sharebtn" data-act="share">Share</button></div>
-<div class="card"><h2 style="margin-top:0">Players</h2><div id="plist" class="plist" aria-live="polite"></div></div>
-<div class="card"><h2 style="margin-top:0">Rounds</h2><div class="chips" id="orounds" role="group" aria-label="Number of rounds"><button type="button" class="chip" data-act="rounds" data-r="5">5</button><button type="button" class="chip" data-act="rounds" data-r="10">10</button><button type="button" class="chip" data-act="rounds" data-r="15">15</button><button type="button" class="chip" data-act="rounds" data-r="20">20</button></div>
-<label class="toggle"><input type="checkbox" id="ona"> Non-alcoholic mode</label>
-<p class="tag">On: points only, no drinking.</p></div>
-<button type="button" class="btn host-cta hostonly" id="startbtn" data-act="start">Start game</button>
-<div class="ctrl"><button type="button" class="btn alt hostonly" data-act="close">Close room</button><button type="button" class="btn alt guestonly" data-act="leave">Leave</button></div>
-</section>
-<section id="stage" class="hide">
-<div id="board" class="plist" aria-label="Scores"></div>
-<p class="turntag" id="turn"></p>
-<div class="gcard" id="card" aria-live="polite"><div class="lvl" id="lvl"></div><div class="prompt" id="prompt"></div><div class="na" id="instr"></div><p class="ask" id="ask"></p><p class="said" id="said"></p></div>
-<div id="dock"></div>
-<div class="ctrl"><button type="button" class="btn hostonly" id="revealbtn" data-act="reveal">Reveal now</button><button type="button" class="btn hostonly" id="nextbtn" data-act="next">Next round</button></div>
-<div class="ctrl"><button type="button" class="btn alt hostonly" data-act="close">Close room</button><button type="button" class="btn alt guestonly" data-act="leave">Leave</button></div>
+<div class="ctrl"><button type="button" class="btn" id="copylink">Copy link</button><button type="button" class="btn alt" id="sharebtn">Share</button><button type="button" class="btn alt" id="copycode">Copy code</button></div>
+<details class="pg-tv" id="tvbox">
+<summary>Show on a TV or laptop</summary>
+<p>Open this link on a TV or laptop browser. It shows the category, the countdown ring and every answer as it lands. Phones stay private.</p>
+<canvas id="tvqr" width="180" height="180" role="img" aria-label="QR code for the display page"></canvas>
+<p id="tvlink" class="linkbox"></p>
+<button type="button" class="btn alt" id="tvopen">Open the display here</button>
+<button type="button" class="btn alt" id="tvcopy">Copy display link</button>
+<p id="tvstate" class="tag"></p>
+</details>
+<p class="tag">Mode</p>
+<div class="chips" role="group" aria-label="Mode">
+<button type="button" class="chip" data-mode="spot" aria-pressed="true">Spotlight</button>
+<button type="button" class="chip" data-mode="potato" aria-pressed="false">Hot Potato</button>
+</div>
+<p id="modenote" class="lede"></p>
+<p class="tag">Content pack</p>
+<div class="chips" role="group" aria-label="Content pack">
+<button type="button" class="chip" data-pack="mild" aria-pressed="true">Mild</button>
+<button type="button" class="chip" data-pack="spicy" aria-pressed="false">Spicy</button>
+<button type="button" class="chip" data-pack="extra" aria-pressed="false">Absurd</button>
+</div>
+<p class="tag">Difficulty</p>
+<div class="chips" role="group" aria-label="Difficulty">
+<button type="button" class="chip" data-diff="mixed" aria-pressed="true">Mixed</button>
+<button type="button" class="chip" data-diff="easy" aria-pressed="false">Easy</button>
+<button type="button" class="chip" data-diff="medium" aria-pressed="false">Medium</button>
+<button type="button" class="chip" data-diff="hard" aria-pressed="false">Hard</button>
+</div>
+<p class="tag">Length</p>
+<div class="chips" role="group" aria-label="Length">
+<button type="button" class="chip" data-laps="1" id="lap1" aria-pressed="true">Everyone once</button>
+<button type="button" class="chip" data-laps="2" id="lap2" aria-pressed="false">Everyone twice</button>
+</div>
+<label class="toggle"><input type="checkbox" id="ona"> Points only (no drinking)</label>
+<div class="na"><b>Play responsibly:</b> one drink per round at most. Every drink has a no-drink option, and passing never costs anything.</div>
+<div aria-live="polite"><h2>Players</h2><div id="plist"></div></div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start game</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 </section>
-<section id="over" class="hide">
-<h2>Game over</h2>
-<div class="card" id="crowns"></div>
-<ol class="final" id="final"></ol>
-<p>Drinking was always optional. Points are just for fun.</p>
-<p id="recapline"></p>
-<div class="ctrl"><button type="button" class="btn hostonly" data-act="again">Play again</button><button type="button" class="btn alt" data-act="recap">Share recap</button><button type="button" class="btn alt hostonly" data-act="close">Close room</button><button type="button" class="btn alt guestonly" data-act="leave">Leave</button><button type="button" class="btn alt" data-act="home">Home</button></div>
-</section>
-</div>
-<p id="perr" role="alert"></p>
 
+<section id="table" class="hide">
+<div id="shared" class="pg-shared hide" aria-live="polite"></div>
+<p id="tvnote" class="tag hide">The board is on the TV.</p>
+<div class="pg-bar hide" id="bar" aria-hidden="true"><i></i></div>
+<p id="bartext" class="pg-status hide" aria-live="off"></p>
+<div id="mine" aria-live="polite"></div>
+<div id="hosttools" class="pg-host hide">
+<button type="button" class="btn alt" id="skipbtn">Skip ahead</button>
+<button type="button" class="btn alt" id="endbtn">End game now</button>
+</div>
+<section id="finale" class="hide">
+<div id="finalbox"></div>
+<div class="ctrl"><button type="button" class="btn host-cta" id="again">Play again</button></div>
+<div class="ctrl"><button type="button" class="btn alt" id="newgame">New game (change settings)</button></div>
+</section>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave game</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<div class="ctrl"><button type="button" class="btn alt" id="closestage">Close room</button></div>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This room is closed to new players.</p>
+<a class="btn" href="../games/">Back to games</a>
+</section>
+<p id="perr" role="alert"></p>
+</div>
 <section id="seo-about" class="band-ink">
 <h2>About this game</h2>
 <div class="card">
 
-<p>Category Countdown is a timed naming game. Stumble? Do your best animal impression instead of drinking. A stumble is repeating an answer, 3 seconds of silence, or an answer the table calls out (settled by a show of hands).</p>
+<p>Category Countdown is a timed naming game with two modes. In Spotlight, one player names as many answers as they can in 30 seconds while everyone else can challenge. In Hot Potato, everyone shares one category and adds an answer each until only one player is left. Repeats are caught automatically, and every drink has a no-drink alternative.</p>
 <p>TipsyPlay runs in the browser — no app download. One person hosts a room, friends join with a short code, and every phone stays in sync. Drinking is always optional. Non-alcoholic alternatives (points, poses, tallies, or challenges) are a full way to play.</p>
 <p>Keep the night beginner-friendly: read the on-screen prompt, take one small optional drink at most when a round calls for it, and never stack penalties. If someone wants to pass, that is always fine. Plan a ride home before anyone drinks.</p>
 <p>Browse more games for adults on the <a href="../games/">games list</a>, including card drinking games like <a href="../games/kings-cup.html">King's Cup</a> and <a href="../games/card-lottery.html">Card Lottery</a>.</p>
@@ -78,4 +128,14 @@
 <nav aria-label="Footer"><a href="../games/">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
 <p>© TipsyPlay</p>
 </footer>
-<script src="../sounds.js?v=18"></script><script src="../app.js?v=21"></script><script src="../data/party-games.js?v=19"></script><script src="multi.js?v=28"></script><script src="room-ui.js?v=4"></script></body></html>
+<script src="../sounds.js?v=19"></script>
+<script src="../app.js?v=21"></script>
+<script src="qr.js?v=18"></script>
+<script src="join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","cc");</script>
+<script src="../data/countdown.js?v=1"></script>
+<script src="countdown-logic.js?v=1"></script>
+<script src="party-fx.js?v=1"></script>
+<script src="countdown-screen.js?v=1"></script>
+<script src="countdown-party.js?v=1"></script><script src="room-ui.js?v=4"></script>
+</body></html>

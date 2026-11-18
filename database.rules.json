@@ -483,6 +483,161 @@
               ".validate": "!newData.exists() || newData.isBoolean()"
             }
           }
+        },
+        "hc": {
+          "host": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == auth.uid && root.child('rooms').child($code).child('meta').child('status').val() == 'play' && ((data.exists() && root.child('rooms').child($code).child('players').child(data.val()).child('connected').val() != true) || (!data.exists() && root.child('rooms').child($code).child('players').child(root.child('rooms').child($code).child('meta').child('hostUid').val()).child('connected').val() != true)))",
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 128)"
+          },
+          "beat": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.isNumber()"
+          },
+          "screen": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() <= now + 60000)"
+          },
+          "pub": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.hasChildren(['phase','seq','deadline','data']) && newData.child('phase').isString() && newData.child('phase').val().matches(/^(case|opening|prosecution|deliberation|verdict|sentencing|scores|end)$/) && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 1000000 && newData.child('deadline').isNumber() && newData.child('data').isString() && newData.child('data').val().length <= 40000 && (!newData.child('a').exists() || (newData.child('a').isString() && newData.child('a').val().length <= 128)) && (!newData.child('b').exists() || (newData.child('b').isString() && newData.child('b').val().length <= 128)) && (!newData.child('c').exists() || (newData.child('c').isString() && newData.child('c').val().length <= 128))"
+          },
+          "secret": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.isString() && newData.val().length <= 60000"
+          },
+          "left": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == true) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || newData.isBoolean()"
+            }
+          },
+          "offer": {
+            "$uid": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))",
+              ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 2000)"
+            }
+          },
+          "pick": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'case' && root.child('rooms').child($code).child('hc').child('pub').child('a').val() == auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isNumber() && newData.val() >= 0 && newData.val() <= 2)",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          },
+          "rest": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && ((root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'opening' && root.child('rooms').child($code).child('hc').child('pub').child('a').val() == auth.uid) || (root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'prosecution' && root.child('rooms').child($code).child('hc').child('pub').child('b').val() == auth.uid)) && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^(opening|prosecution):[0-9]{1,7}$/))",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          },
+          "obj": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'prosecution' && root.child('rooms').child($code).child('hc').child('pub').child('a').val() != auth.uid && root.child('rooms').child($code).child('hc').child('pub').child('b').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isNumber())"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)"
+          },
+          "vote": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'deliberation' && root.child('rooms').child($code).child('hc').child('pub').child('a').val() != auth.uid && root.child('rooms').child($code).child('hc').child('pub').child('b').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^[gn]:[0-9]{1,7}$/))",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          },
+          "sent": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'sentencing' && root.child('rooms').child($code).child('hc').child('pub').child('a').val() != auth.uid && root.child('rooms').child($code).child('hc').child('pub').child('b').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^[0-2]:[0-9]{1,7}$/))",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          },
+          "choice": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('hc').child('pub').child('phase').val() == 'sentencing' && root.child('rooms').child($code).child('hc').child('pub').child('c').val() == auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^(drink|alt|pass):[0-9]{1,7}$/))",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('hc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('hc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          }
+        },
+        "cc": {
+          "host": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == auth.uid && root.child('rooms').child($code).child('meta').child('status').val() == 'play' && ((data.exists() && root.child('rooms').child($code).child('players').child(data.val()).child('connected').val() != true) || (!data.exists() && root.child('rooms').child($code).child('players').child(root.child('rooms').child($code).child('meta').child('hostUid').val()).child('connected').val() != true)))",
+            ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 128)"
+          },
+          "beat": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.isNumber()"
+          },
+          "screen": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() <= now + 60000)"
+          },
+          "pub": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.hasChildren(['phase','seq','deadline','data']) && newData.child('phase').isString() && newData.child('phase').val().matches(/^(intro|answer|cvote|result|turn|window|scores|end)$/) && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 1000000 && newData.child('deadline').isNumber() && newData.child('data').isString() && newData.child('data').val().length <= 40000 && (!newData.child('a').exists() || (newData.child('a').isString() && newData.child('a').val().length <= 128)) && (!newData.child('b').exists() || (newData.child('b').isString() && newData.child('b').val().length <= 128)) && (!newData.child('c').exists() || (newData.child('c').isString() && newData.child('c').val().length <= 128))"
+          },
+          "secret": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))",
+            ".validate": "newData.isString() && newData.val().length <= 60000"
+          },
+          "left": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.val() == true) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || newData.isBoolean()"
+            }
+          },
+          "ans": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (root.child('rooms').child($code).child('cc').child('pub').child('phase').val() == 'answer' || root.child('rooms').child($code).child('cc').child('pub').child('phase').val() == 'turn') && root.child('rooms').child($code).child('cc').child('pub').child('a').val() == auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.hasChildren())",
+              "$n": {
+                ".validate": "$n.matches(/^[0-9]{1,2}$/) && newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+              }
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)"
+          },
+          "chal": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && (root.child('rooms').child($code).child('cc').child('pub').child('phase').val() == 'answer' || root.child('rooms').child($code).child('cc').child('pub').child('phase').val() == 'window') && root.child('rooms').child($code).child('cc').child('pub').child('a').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 600)"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)"
+          },
+          "cvote": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('cc').child('pub').child('phase').val() == 'cvote' && root.child('rooms').child($code).child('cc').child('pub').child('a').val() != auth.uid && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 600)",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          },
+          "choice": {
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && root.child('rooms').child($code).child('meta').child('status').val() == 'play' && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)) && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^(drink|alt|pass):[0-9]{1,7}$/))",
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid)))"
+            },
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
+          }
         }
       }
     },

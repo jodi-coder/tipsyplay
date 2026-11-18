@@ -1,7 +1,7 @@
 const { defineConfig } = require("@playwright/test");
 module.exports = defineConfig({
   testDir: ".",
-  testMatch: ["browser.spec.js", "audio.spec.js", "room-ui.spec.js", "theme.spec.js", "vault.spec.js", "drip.spec.js", "split-end.spec.js", "kings-cup-screens.spec.js", "quiplash.spec.js", "mole.spec.js", "frenzy.spec.js", "frenzy-fx.spec.js"],
+  testMatch: ["browser.spec.js", "audio.spec.js", "room-ui.spec.js", "theme.spec.js", "vault.spec.js", "drip.spec.js", "split-end.spec.js", "kings-cup-screens.spec.js", "quiplash.spec.js", "mole.spec.js", "frenzy.spec.js", "frenzy-fx.spec.js", "court.spec.js", "countdown.spec.js"],
   timeout: 240000,
   expect: { timeout: 20000 },
   workers: 1,
