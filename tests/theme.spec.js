@@ -127,8 +127,8 @@ test("the homepage has the spec's sections in order, including the FAQ", async (
   await seen(page);
   await page.goto("/index.html");
   const ids = await page.$$eval("main > section", (s) => s.map((x) => x.id));
-  expect(ids).toEqual(["top", "featured", "vibe", "drinks", "how", "faq", "responsible"]);
-  await expect(page.locator("main h1")).toHaveText("Free drinking games and party games on everyone's phone.");
+  expect(ids).toEqual(["top", "featured", "vibe", "how", "drinks", "faq", "responsible"]);
+  await expect(page.locator("main h1")).toHaveText("Party games on everyone's phone.");
   await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck.");
   await expect(page.locator("#featured h2")).toHaveText("Tonight's picks");
   await expect(page.locator("#vibe h2")).toHaveText("Find your vibe");
@@ -174,13 +174,16 @@ test("the homepage is readable when the hero preview is missing and when scripts
 test("the picks are whole-card links with colored icon tiles, and every tap target is 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".pick", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["games/never-have-i-ever.html", "games/hot-take-court.html", "games/two-truths.html", "games/slow-drip.html", "games/vault-traitor.html", "games/punchline-duel.html", "games/odd-word-out.html", "games/five-letter-frenzy.html"]);
+  expect(hrefs).toEqual(["games/hot-take-court.html", "games/category-countdown.html", "games/slow-drip.html", "games/vault-traitor.html", "games/never-have-i-ever.html", "games/punchline-duel.html", "games/odd-word-out.html", "games/five-letter-frenzy.html"]);
   const tiles = await page.$$eval(".pick .tile", (a) => a.map((x) => x.className.replace("tile ", "")));
-  expect(tiles).toEqual(["t-yellow", "t-pink", "t-green", "t-yellow", "t-pink", "t-green", "t-pink", "t-green"]);
+  expect(tiles).toEqual(["t-pink", "t-orange", "t-yellow", "t-purple", "t-green", "t-orange", "t-pink", "t-green"]);
+  await expect(page.locator(".pick .new-tag")).toHaveCount(3);
   await expect(page.locator(".pick .chev")).toHaveCount(8);
   await expect(page.locator(".more")).toHaveText("See all games →");
   await expect(page.locator(".more")).toHaveAttribute("href", "games/");
-  const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more", (a) => a.map((x) => x.getBoundingClientRect().height));
+  const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more, .joinrow input, .joinrow .btn, .tvcard", (a) => a.filter((x) => x.offsetParent !== null).map((x) => x.getBoundingClientRect().height));
+  // phones show the first four picks; the rest are one tap away on See all games
+  expect(await page.$$eval(".pick", (a) => a.filter((x) => x.offsetParent !== null).length)).toBe(4);
   for (const h of sizes) expect(h).toBeGreaterThanOrEqual(43.5);
   const chips = await page.$$eval("#vibe .vibes a", (a) => [a.map((x) => x.textContent.trim()), a.map((x) => x.getAttribute("href"))]);
   expect(chips).toEqual([["Quick", "For 2", "Big groups", "No props", "Cards"], ["games/quick/", "games/for-two/", "games/big-groups/", "games/no-props/", "games/card/"]]);
@@ -242,4 +245,17 @@ test("every rule that paints a white surface is in the white-surface scope", () 
     }
   }
   expect([...new Set(bad)], "white surfaces outside the scope: add them to the list in styles.css").toEqual([]);
+});
+
+test("the hero has a join box that sends the code to the join page, and a big-screen link", async ({ page }) => {
+  await seen(page);
+  await page.goto("/index.html");
+  const form = page.locator(".hero form.joinbox");
+  await expect(form).toBeVisible();
+  await expect(form).toHaveAttribute("action", "play/go.html");
+  await expect(form.locator("input")).toHaveAttribute("name", "room");
+  await expect(page.locator(".hero .tvcard")).toHaveAttribute("href", "play/display.html");
+  await form.locator("input").fill("kqxj");
+  await form.locator("button").click();
+  await expect(page).toHaveURL(/play\/go\.html\?room=kqxj/i);
 });
