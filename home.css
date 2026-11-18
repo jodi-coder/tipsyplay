@@ -1,6 +1,4 @@
 /* Homepage-only layout. Every colour, shadow and radius comes from the tokens in styles.css. */
-body.home{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-@media(min-width:760px){body.home{padding-bottom:0}}
 html,body{overflow-x:clip}
 .sec{padding:30px 0 6px}
 .sec h2{margin:.1em 0 .45em}
@@ -11,8 +9,6 @@ html,body{overflow-x:clip}
 .hero > *{min-width:0}
 .hero h1{margin:.1em 0 .25em}
 .hero .lede{margin:.3em 0 1em;font-size:1.125rem;color:var(--text-2)}
-.hero .cta{width:100%;margin:0}
-.age-line{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin:18px 0 0;font-weight:600;line-height:1.3}
 
 /* join a friend's game */
 .joinbox{margin:18px 0 0;padding:14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow)}
@@ -23,41 +19,62 @@ html,body{overflow-x:clip}
 .joinrow input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .joinrow .btn{flex:none;min-height:52px;min-width:96px;margin:0;background:var(--ink);color:var(--surface);border-color:var(--ink)}
 .joinhint{margin:6px 0 0;font-size:.9rem;color:var(--ink-2)}
-@media(min-width:760px){.hero{grid-template-columns:1.15fr .85fr;gap:48px}.hero .cta{width:auto;min-width:260px}.joinbox{max-width:460px}}
-.hero-side{display:flex;flex-direction:column;align-items:center;gap:22px}
+@media(min-width:760px){.hero{grid-template-columns:1.15fr .85fr;gap:48px}.joinbox{max-width:460px}}
 
-/* the big-screen line */
-.tvcard{display:flex;align-items:center;gap:14px;width:100%;max-width:400px;padding:14px 16px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;min-height:var(--tap)}
-.tvcard:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
-.tvcard > span{display:flex;flex-direction:column;gap:2px}
-.tvcard b{font:800 1.05rem var(--display)}
-.tvcard span span{color:var(--ink-2);font-size:.95rem;line-height:1.3}
-.tvic{flex:none;width:44px;height:38px;fill:var(--primary);stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
-/* phone preview: decorative, hidden from assistive tech, the page reads fine without it */
-.phone-wrap{display:flex;justify-content:center;padding:6px 14px 14px}
-.phone{position:relative;width:236px;height:376px;background:var(--ink);border-radius:34px;padding:10px;transform:rotate(-3deg);box-shadow:8px 8px 0 var(--primary)}
-.pscreens{position:relative;width:100%;height:100%;border-radius:25px;overflow:hidden;background:var(--surface)}
-.pscreen{position:absolute;inset:0;padding:14px 12px;display:flex;flex-direction:column;gap:8px;opacity:0;animation:pshow 12s infinite;color:var(--ink);font:500 .8rem var(--font)}
-.pscreen:nth-child(1){animation-delay:0s}.pscreen:nth-child(2){animation-delay:4s}.pscreen:nth-child(3){animation-delay:8s}
-@keyframes pshow{0%{opacity:0;transform:translateY(8px)}6%,30%{opacity:1;transform:none}36%,100%{opacity:0}}
-.pscreen .ph{font:800 .66rem var(--display);letter-spacing:.14em;color:var(--ink-2);text-align:center}
-.pscreen .code{font:800 1.9rem var(--display);letter-spacing:.2em;text-align:center;margin:6px 0 2px}
-.pscreen .pl{display:flex;flex-direction:column;gap:6px}
-.pscreen .pl span{background:var(--surface);border:var(--bw) solid var(--ink);border-radius:10px;padding:6px 10px;font-weight:700}
-.pscreen .go{margin-top:auto;background:var(--primary);border:var(--bw) solid var(--ink);border-radius:12px;box-shadow:3px 3px 0 var(--ink);text-align:center;padding:10px;font:800 .95rem var(--display)}
-.pscreen .q{border:var(--bw) solid var(--ink);border-radius:16px;padding:22px 10px;text-align:center;font:800 1.05rem/1.12 var(--display);text-transform:uppercase}
-.pscreen .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.pscreen .two div{border:var(--bw) solid var(--ink);border-radius:12px;padding:24px 4px;text-align:center;font:800 1rem var(--display)}
-.pscreen .psk{text-align:center;color:var(--ink-2);text-decoration:underline;font-weight:600}
-.pscreen .banner{background:var(--danger);color:var(--on-danger);border:var(--bw) solid var(--ink);border-radius:12px;padding:12px;text-align:center;font:800 .95rem var(--display)}
-.pscreen .tally{display:flex;gap:6px;flex-wrap:wrap}
-.pscreen .tally span{background:var(--surface);border:var(--bw) solid var(--ink);border-radius:999px;padding:4px 10px;font-weight:700}
-@media(max-width:520px){.phone{height:300px;width:224px}.pscreen .q{padding:12px 8px}}
-@media (prefers-reduced-motion:reduce){.pscreen{animation:none;display:none}.pscreen:nth-child(2){display:flex;opacity:1}}
+/* hero art: three phones mid-game. Decorative, hidden from assistive tech; the page reads fine without it */
+.hero-side{display:flex;justify-content:center}
+.scene{position:relative;width:400px;height:330px}
+.spark{position:absolute;width:26px;height:26px;fill:var(--primary);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;z-index:4}
+.sp1{top:6px;left:60px}.sp2{top:28px;right:6px;width:20px;height:20px;fill:var(--tile-pink)}.sp3{bottom:10px;left:8px;width:18px;height:18px;fill:var(--tile-green)}
+.sphone{position:absolute;width:132px;height:236px;background:var(--ink);border-radius:24px;padding:7px;box-sizing:border-box}
+.sscreen{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:var(--surface);color:var(--ink);padding:10px 8px;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;font:600 .66rem var(--font)}
+.sh{font:800 .5rem var(--display);letter-spacing:.12em;text-align:center;color:var(--ink-2)}
+.sp-left{left:4px;top:62px;transform:rotate(-12deg);z-index:1;box-shadow:6px 6px 0 var(--tile-pink)}
+.sp-right{right:4px;top:56px;transform:rotate(11deg);z-index:2;box-shadow:6px 6px 0 var(--tile-purple)}
+.sp-mid{left:128px;top:34px;width:144px;height:258px;z-index:3;box-shadow:7px 7px 0 var(--primary)}
+/* court */
+.case{border:2px solid var(--ink);border-radius:10px;padding:10px 6px;text-align:center;font:800 .78rem/1.1 var(--display)}
+.votes{display:flex;justify-content:center;gap:5px}
+.votes span{width:24px;height:30px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;font:800 .7rem var(--display);background:var(--tile-pink)}
+.votes span:last-child{background-color:var(--surface)}
+.stamp{position:absolute;left:10px;right:10px;bottom:26px;text-align:center;font:800 1.15rem var(--display);letter-spacing:.06em;color:var(--danger-ink);border:3px solid var(--danger-ink);border-radius:8px;padding:2px 0;transform:rotate(-14deg);background-color:var(--surface)}
+/* vault */
+.code4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.code4 span{border:2px solid var(--ink);border-radius:6px;height:34px;display:grid;place-items:center;font:800 1.05rem var(--display);background:var(--tile-purple)}
+.pegs{display:flex;justify-content:center;gap:5px}
+.pegs i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);background-color:var(--surface)}
+.pegs i.pk{background:var(--ink)}.pegs i.pw{background:var(--primary)}
+.who{margin-top:auto;border:2px solid var(--ink);border-radius:8px;padding:8px 4px;text-align:center;font:800 .62rem var(--display);background:var(--primary)}
+/* drip */
+.ring{align-self:center;width:46px;height:46px;border-radius:50%;border:4px solid var(--ink);border-right-color:var(--primary);border-top-color:var(--primary);display:grid;place-items:center}
+.ring b{font:800 1.1rem var(--display)}
+.dboard{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.dboard span{box-sizing:border-box;width:20px;height:25px;border:2px solid var(--ink);border-radius:5px;display:grid;place-items:center;font:800 .78rem var(--display)}
+.dboard i{flex-basis:100%;height:0}
+.dboard .r{color:transparent;background-color:var(--surface)}
+.buzz{margin-top:auto;background:var(--danger);color:var(--on-danger);border:2px solid var(--ink);border-radius:8px;text-align:center;padding:6px 2px;font:800 .62rem var(--display)}
+.buzz + .solve{margin-top:0}
+.solve{margin-top:auto;background:var(--primary);border:2px solid var(--ink);border-radius:10px;box-shadow:2px 2px 0 var(--ink);text-align:center;padding:9px 0;font:800 .8rem var(--display)}
+@media(prefers-reduced-motion:no-preference){
+ .sp-left{animation:bobL 4s ease-in-out infinite}
+ .sp-right{animation:bobR 4.6s ease-in-out infinite}
+ .sp-mid{animation:bobM 5s ease-in-out infinite}
+ .stamp{animation:stamp 6s ease-in-out infinite}
+ .dboard .r{animation:reveal 8s steps(1) infinite}
+ .dboard .r2{animation-delay:1.2s}.dboard .r3{animation-delay:2.4s}.dboard .r4{animation-delay:3.6s}
+ .spark{animation:twinkle 2.4s ease-in-out infinite}.sp2{animation-delay:.8s}.sp3{animation-delay:1.6s}
+}
+@keyframes bobL{0%,100%{transform:rotate(-12deg) translateY(0)}50%{transform:rotate(-10deg) translateY(-6px)}}
+@keyframes bobR{0%,100%{transform:rotate(11deg) translateY(0)}50%{transform:rotate(9deg) translateY(-7px)}}
+@keyframes bobM{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes stamp{0%,18%{opacity:0;transform:rotate(-14deg) scale(1.8)}24%{opacity:1;transform:rotate(-14deg) scale(.92)}28%,88%{opacity:1;transform:rotate(-14deg) scale(1)}94%,100%{opacity:0;transform:rotate(-14deg) scale(1)}}
+@keyframes reveal{0%{color:transparent;background-color:var(--surface)}10%,90%{color:var(--ink);background:var(--tile-yellow)}100%{color:transparent;background-color:var(--surface)}}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(20deg)}}
+@media(max-width:440px){.scene{transform:scale(.86);margin:-22px -28px -26px}}
 
 /* tonight's picks: three whole-card links */
-.picks{display:grid;gap:16px}
+.picks{display:grid;gap:16px;grid-auto-rows:1fr}
 @media(min-width:760px){.picks{grid-template-columns:repeat(2,1fr);gap:20px}}
 .pick{display:flex;align-items:center;gap:14px;min-height:88px;padding:14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font-weight:400}
 .pick:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
@@ -67,8 +84,9 @@ html,body{overflow-x:clip}
 .ic .s{stroke:var(--ink);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
 .ic .f{fill:var(--surface)}.ic .k{fill:var(--ink)}.ic .y{fill:var(--primary)}.ic .n{fill:none}
 .pick-body{display:flex;flex-direction:column;flex:1;min-width:0}
-.pick-body b{font:800 1.3rem/1.1 var(--display);letter-spacing:-.3px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
-.new-tag{display:inline-block;background:var(--primary);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:1px 8px;font:800 .7rem/1.4 var(--display);letter-spacing:.08em;text-transform:uppercase}
+.pick-body b{font:800 1.3rem/1.1 var(--display);letter-spacing:-.3px}
+.pick{position:relative}
+.new-tag{position:absolute;top:-11px;right:16px;background:var(--primary);color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:1px 8px;font:800 .7rem/1.4 var(--display);letter-spacing:.08em;text-transform:uppercase}
 /* on phones show the first four picks; "See all games" has the rest */
 @media(max-width:759px){.picks .pick:nth-child(n+5){display:none}}
 .pick-body span{color:var(--ink-2);font-weight:500;line-height:1.3;margin-top:3px}
@@ -96,9 +114,3 @@ html,body{overflow-x:clip}
 .foot3 nav{display:flex;flex-wrap:wrap;gap:4px 18px;justify-content:center}
 .foot3 a{display:inline-flex;align-items:center;min-height:var(--tap);font-weight:700;text-decoration:none}
 
-/* the fixed bar on phones, shown only once the hero button and the picks are both out of view */
-.pickbar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent);transform:translateY(115%);transition:transform .2s ease;visibility:hidden}
-.pickbar.on{transform:none;visibility:visible}
-@media (prefers-reduced-motion:reduce){.pickbar{transition:none}}
-.pickbar a{display:flex;width:100%;max-width:520px;margin:0 auto}
-@media(min-width:760px){.pickbar{display:none}}

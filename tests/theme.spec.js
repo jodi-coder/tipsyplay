@@ -64,7 +64,7 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   await page.goto("/index.html");
   const c = await page.evaluate(() => {
     const css = (sel) => { const s = getComputedStyle(document.querySelector(sel)); return { bg: s.backgroundColor, fg: s.color, border: s.borderTopColor + " " + s.borderTopWidth, shadow: s.boxShadow, radius: s.borderTopLeftRadius, h: s.height }; };
-    return { body: css("body"), pick: css(".pick"), cta: css(".hero .cta"), tile: css(".t-yellow"), phone: css(".phone") };
+    return { body: css("body"), pick: css(".pick"), join: css(".joinbox"), tile: css(".t-yellow"), phone: css(".sp-mid") };
   });
   expect(c.body.bg).toBe(rgb(SKY));
   expect(c.pick.bg).toBe(rgb(WHITE));
@@ -72,16 +72,13 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   expect(c.pick.border).toMatch(new RegExp("^" + rgb(INK).replace(/[()]/g, "\\$&") + " 2(\\.5)?px$")); // 2.5px; a 1x screen draws it as 2px
   expect(c.pick.shadow).toBe(rgb(INK) + " 4px 4px 0px 0px");   // hard offset, no blur
   expect(c.pick.radius).toBe("20px");
-  expect(c.cta.bg).toBe(rgb(YELLOW));
-  expect(c.cta.fg).toBe(rgb(INK));
-  expect(c.cta.shadow).toBe(rgb(INK) + " 5px 5px 0px 0px");
-  expect(c.cta.radius).toBe("18px");
-  expect(c.cta.h).toBe("60px");
+  expect(c.join.bg).toBe(rgb(WHITE));
+  expect(c.join.shadow).toBe(rgb(INK) + " 4px 4px 0px 0px");
   expect(c.tile.bg).toBe(rgb(YELLOW));
-  expect(c.phone.shadow).toBe(rgb(YELLOW) + " 8px 8px 0px 0px");
+  expect(c.phone.shadow).toBe(rgb(YELLOW) + " 7px 7px 0px 0px");
   // changing a variable changes the page: nothing is hard-coded
   await page.addStyleTag({ content: ":root{--bg:#123456;--primary:#654321}" });
-  const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cta: getComputedStyle(document.querySelector(".hero .cta")).backgroundColor }));
+  const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cta: getComputedStyle(document.querySelector(".solve")).backgroundColor }));
   expect(after.body).toBe("rgb(18, 52, 86)");
   expect(after.cta).toBe("rgb(101, 67, 33)");
 });
@@ -104,23 +101,14 @@ test("the type scale and logo: H1 46px, weight 800, tight; logo is a lowercase w
   expect(parseFloat(t.body)).toBeLessThanOrEqual(18);
 });
 
-test("the age line sits directly under the hero button, on the first screen", async ({ page }) => {
+test("the hero is the headline, the lede and the join box: no Pick a game button, no age line, no TV card", async ({ page }) => {
   await seen(page);
   await page.goto("/index.html");
-  const note = page.locator(".hero .age-line");
-  await expect(note).toBeVisible();
-  await expect(note.locator(".badge18")).toHaveCount(0);
-  await expect(note).toContainText("Legal drinking age only");
-  await expect(note).toContainText("Drinking is optional");
-  await expect(note).toContainText("Passing is always fine");
-  const order = await page.evaluate(() => {
-    const cta = document.querySelector(".hero .cta"), n = document.querySelector(".hero .age-line");
-    return { next: cta.nextElementSibling === n, ctaBottom: cta.getBoundingClientRect().bottom, noteTop: n.getBoundingClientRect().top, noteBottom: n.getBoundingClientRect().bottom, feat: document.getElementById("featured").getBoundingClientRect().top, vh: innerHeight };
-  });
-  expect(order.next).toBe(true);
-  expect(order.noteTop - order.ctaBottom).toBeLessThan(40);
-  expect(order.noteBottom).toBeLessThan(order.vh);
-  expect(order.noteBottom).toBeLessThan(order.feat);
+  await expect(page.locator(".hero .lede")).toContainText("Drinking is optional.");
+  await expect(page.locator(".hero .cta, .hero .age-line, .tvcard, #pickbar")).toHaveCount(0);
+  await expect(page.locator("text=Pick a game")).toHaveCount(0);
+  const box = await page.locator(".joinbox").boundingBox();
+  expect(box.y + box.height).toBeLessThan(844);
 });
 
 test("the homepage has the spec's sections in order, including the FAQ", async ({ page }) => {
@@ -129,7 +117,7 @@ test("the homepage has the spec's sections in order, including the FAQ", async (
   const ids = await page.$$eval("main > section", (s) => s.map((x) => x.id));
   expect(ids).toEqual(["top", "featured", "vibe", "how", "drinks", "faq", "responsible"]);
   await expect(page.locator("main h1")).toHaveText("Party games on everyone's phone.");
-  await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck.");
+  await expect(page.locator(".hero .lede")).toHaveText("One person hosts, everyone joins with a code. Free, no app, no deck. Drinking is optional.");
   await expect(page.locator("#featured h2")).toHaveText("Tonight's picks");
   await expect(page.locator("#vibe h2")).toHaveText("Find your vibe");
   await expect(page.locator("#how li")).toHaveText(["1Host picks a game and gets a room code.", "2Friends join on their own phones.", "3Play. Every game has a no-drink option."]);
@@ -151,24 +139,16 @@ test("the homepage has the spec's sections in order, including the FAQ", async (
   for (const h of sums) expect(h).toBeGreaterThanOrEqual(44);
 });
 
-test("the homepage is readable when the hero preview is missing and when scripts are off", async ({ browser }) => {
+test("the homepage is readable when the hero art is missing and when scripts are off", async ({ browser }) => {
   const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
   await page.goto("/index.html");
-  await page.evaluate(() => document.querySelector(".phone-wrap") && document.querySelector(".phone-wrap").remove()).catch(() => {});
+  await page.evaluate(() => document.querySelector(".hero-side") && document.querySelector(".hero-side").remove()).catch(() => {});
   await expect(page.locator("h1")).toBeVisible();
-  await expect(page.locator(".hero .cta")).toBeVisible();
-  await expect(page.locator(".hero .age-line")).toBeVisible();
+  await expect(page.locator(".joinbox")).toBeVisible();
   await expect(page.locator("header.top nav a", { hasText: "Play responsibly" })).toBeVisible();
   await expect(page.locator(".pick")).toHaveCount(8);
   await ctx.close();
-  const c2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  const p2 = await c2.newPage();
-  await p2.goto("/index.html");
-  await p2.evaluate(() => document.querySelector(".phone-wrap").remove());
-  await expect(p2.locator(".hero .cta")).toBeVisible();
-  await expect(p2.locator(".hero .age-line")).toBeVisible();
-  await c2.close();
 });
 
 test("the picks are whole-card links with colored icon tiles, and every tap target is 44px or more", async ({ page }) => {
@@ -181,7 +161,7 @@ test("the picks are whole-card links with colored icon tiles, and every tap targ
   await expect(page.locator(".pick .chev")).toHaveCount(8);
   await expect(page.locator(".more")).toHaveText("See all games →");
   await expect(page.locator(".more")).toHaveAttribute("href", "games/");
-  const sizes = await page.$$eval(".pick, .vibes a, .hero .cta, .more, .joinrow input, .joinrow .btn, .tvcard", (a) => a.filter((x) => x.offsetParent !== null).map((x) => x.getBoundingClientRect().height));
+  const sizes = await page.$$eval(".pick, .vibes a, .more, .joinrow input, .joinrow .btn", (a) => a.filter((x) => x.offsetParent !== null).map((x) => x.getBoundingClientRect().height));
   // phones show the first four picks; the rest are one tap away on See all games
   expect(await page.$$eval(".pick", (a) => a.filter((x) => x.offsetParent !== null).length)).toBe(4);
   for (const h of sizes) expect(h).toBeGreaterThanOrEqual(43.5);
@@ -192,21 +172,27 @@ test("the picks are whole-card links with colored icon tiles, and every tap targ
   await expect(page.locator(".more-drinks")).toHaveAttribute("href", "drinks/");
 });
 
-test("on a phone the header folds into a Menu and the Pick a game bar appears only after the hero and the picks scroll away", async ({ page }) => {
+test("on a phone the header folds into a Menu", async ({ page }) => {
   await seen(page);
   await page.goto("/index.html");
   await expect(page.locator(".menu-btn")).toBeVisible();
   await expect(page.locator("header.top nav")).toBeHidden();
   await expect(page.locator("#mute")).toBeVisible();
-  await expect(page.locator("#pickbar")).not.toHaveClass(/on/);
-  await page.evaluate(() => document.getElementById("how").scrollIntoView());
-  await expect(page.locator("#pickbar")).toHaveClass(/on/);
-  await page.evaluate(() => document.getElementById("featured").scrollIntoView());
-  await expect(page.locator("#pickbar")).not.toHaveClass(/on/);
   await page.click(".menu-btn");
   await expect(page.locator(".rm-sheet a", { hasText: "Favourites" })).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.locator(".rm-sheet")).toBeHidden();
+});
+
+test("every game card in Tonight's picks is the same height", async ({ browser }) => {
+  for (const vp of [{ width: 390, height: 844 }, { width: 1280, height: 900 }]) {
+    const ctx = await browser.newContext({ viewport: vp });
+    const p = await ctx.newPage();
+    await p.goto("/index.html");
+    const hs = await p.$$eval(".pick", (a) => a.filter((x) => x.offsetParent !== null).map((x) => Math.round(x.getBoundingClientRect().height)));
+    expect(new Set(hs).size).toBe(1);
+    await ctx.close();
+  }
 });
 
 test("on desktop the nav links sit inline and there is no Menu button", async ({ browser }) => {
@@ -247,15 +233,14 @@ test("every rule that paints a white surface is in the white-surface scope", () 
   expect([...new Set(bad)], "white surfaces outside the scope: add them to the list in styles.css").toEqual([]);
 });
 
-test("the hero has a join box that sends the code to the join page, and a big-screen link", async ({ page }) => {
+test("the hero join box sends the code to the join page", async ({ page }) => {
   await seen(page);
   await page.goto("/index.html");
   const form = page.locator(".hero form.joinbox");
   await expect(form).toBeVisible();
   await expect(form).toHaveAttribute("action", "play/go.html");
   await expect(form.locator("input")).toHaveAttribute("name", "room");
-  await expect(page.locator(".hero .tvcard")).toHaveAttribute("href", "play/display.html");
-  await form.locator("input").fill("kqxj");
+    await form.locator("input").fill("kqxj");
   await form.locator("button").click();
   await expect(page).toHaveURL(/play\/go\.html\?room=kqxj/i);
 });

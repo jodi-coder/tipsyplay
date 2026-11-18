@@ -36,7 +36,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="styles.css?v=26">
-<link rel="stylesheet" href="home.css?v=11">
+<link rel="stylesheet" href="home.css?v=12">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -139,24 +139,38 @@
 <section class="hero" id="top">
 <div>
 <h1>Party games on everyone's phone.</h1>
-<p class="lede">One person hosts, everyone joins with a code. Free, no app, no deck.</p>
-<a class="btn host-cta cta" href="#featured">Pick a game</a>
-<p class="age-line" role="note"><span>Legal drinking age only · Drinking is optional · Passing is always fine</span></p>
+<p class="lede">One person hosts, everyone joins with a code. Free, no app, no deck. Drinking is optional.</p>
 <form class="joinbox" action="play/go.html" method="get" autocomplete="off">
 <label for="joincode">Got a code? Join a friend's game</label>
 <div class="joinrow"><input id="joincode" name="room" inputmode="text" autocapitalize="characters" spellcheck="false" maxlength="4" pattern="[A-Za-z]{4}" placeholder="ABCD" required aria-describedby="joinhint"><button class="btn" type="submit">Join</button></div>
 <p class="joinhint" id="joinhint">4 letters, from the host's screen</p>
 </form>
 </div>
-<div class="hero-side">
-<div class="phone-wrap" aria-hidden="true">
-<div class="phone"><div class="pscreens">
-<div class="pscreen"><div class="ph">LOBBY</div><div class="code">KQXJ</div><div class="pl"><span>Jo · host</span><span>Sam</span><span>Priya</span></div><div class="go">Start game</div></div>
-<div class="pscreen"><div class="ph">ROUND 3 OF 10</div><div class="q">Never have I ever sent a text to the wrong group chat</div><div class="two"><div>I HAVE</div><div>NEVER</div></div><div class="psk">Pass</div></div>
-<div class="pscreen"><div class="ph">RESULTS</div><div class="banner">Take a drink or pass</div><div class="tally"><span>Jo ✓</span><span>Priya ✓</span><span>Sam –</span></div><div class="go">Next round</div></div>
+<div class="hero-side" aria-hidden="true">
+<div class="scene">
+<svg class="spark sp1" viewBox="0 0 24 24"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg>
+<svg class="spark sp2" viewBox="0 0 24 24"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg>
+<svg class="spark sp3" viewBox="0 0 24 24"><path d="M12 1l2.6 8.4L23 12l-8.4 2.6L12 23l-2.6-8.4L1 12l8.4-2.6z"/></svg>
+<div class="sphone sp-left"><div class="sscreen court">
+<div class="sh">HOT TAKE COURT</div>
+<div class="case">Pineapple belongs on pizza</div>
+<div class="votes"><span>G</span><span>G</span><span>N</span></div>
+<div class="stamp">GUILTY</div>
+</div></div>
+<div class="sphone sp-right"><div class="sscreen vault">
+<div class="sh">VAULT TRAITOR</div>
+<div class="code4"><span>4</span><span>?</span><span>7</span><span>?</span></div>
+<div class="pegs"><i class="pk"></i><i class="pk"></i><i class="pw"></i><i></i></div>
+<div class="who">Who's the Traitor?</div>
+</div></div>
+<div class="sphone sp-mid"><div class="sscreen drip">
+<div class="sh">SLOW DRIP</div>
+<div class="ring"><b>7</b></div>
+<div class="dboard"><span>P</span><span class="r r1">A</span><span>R</span><span class="r r2">T</span><span>Y</span><i></i><span class="r r3">T</span><span>I</span><span class="r r4">M</span><span>E</span></div>
+<div class="buzz">Sam buzzed in!</div>
+<div class="solve">SOLVE</div>
 </div></div>
 </div>
-<a class="tvcard" href="play/display.html"><svg class="tvic" viewBox="0 0 48 40" aria-hidden="true"><rect x="3" y="3" width="42" height="27" rx="4"/><path d="M17 37h14M24 30v7"/></svg><span><b>Got a TV or laptop?</b><span>Put Hot Take Court and Category Countdown on the big screen.</span></span></a>
 </div>
 </section>
 
@@ -231,7 +245,6 @@
 <nav aria-label="Footer"><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></nav>
 <p>© TipsyPlay</p>
 </footer>
-<div class="pickbar" id="pickbar"><a class="btn host-cta" href="#featured">Pick a game</a></div>
 <script src="sounds.js?v=18"></script>
 <script src="app.js?v=21"></script>
 </body>
