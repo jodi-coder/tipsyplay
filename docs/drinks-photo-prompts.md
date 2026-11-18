@@ -112,102 +112,104 @@ File name: `pineapple-upside-down-cake-shot.webp`
 
 ## Cocktails
 
-### Classic Canadian Caesar
+Cocktail photos were generated with Grok Bot's built-in GenerateImage tool (model not reported), styled to match the shots set (dark slate board on bar counter, blurred back bar, square). No text, logos, or brand labels. The files are original AI output, not stock or third-party images.
+
+### Classic Canadian Caesar (photo added)
 File name: `classic-canadian-caesar.webp`
 
 > Photorealistic drink photograph of a Classic Canadian Caesar: a tall glass of red-orange tomato cocktail over ice with a celery salt rim, a leafy celery stalk and a lime wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Mojito
+### Mojito (photo added)
 File name: `mojito.webp`
 
 > Photorealistic drink photograph of a Mojito: a tall glass of clear sparkling drink packed with ice, fresh mint leaves and lime wheels. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Margarita
+### Margarita (photo added)
 File name: `margarita.webp`
 
 > Photorealistic drink photograph of a Margarita: a rocks glass of pale yellow-green cocktail over ice with a salted rim and a lime wheel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Old Fashioned
+### Old Fashioned (photo added)
 File name: `old-fashioned.webp`
 
 > Photorealistic drink photograph of a Old Fashioned: a rocks glass of amber whisky over one large clear ice cube with a strip of orange peel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Whiskey Sour
+### Whiskey Sour (photo added)
 File name: `whiskey-sour.webp`
 
 > Photorealistic drink photograph of a Whiskey Sour: a rocks glass of golden cocktail over ice with an orange slice and a red cherry on a pick. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Moscow Mule
+### Moscow Mule (photo added)
 File name: `moscow-mule.webp`
 
 > Photorealistic drink photograph of a Moscow Mule: a copper mug filled with ice and pale sparkling ginger beer cocktail, garnished with a lime wedge and mint. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Cosmopolitan
+### Cosmopolitan (photo added)
 File name: `cosmopolitan.webp`
 
 > Photorealistic drink photograph of a Cosmopolitan: a martini glass of clear pink cocktail with a twist of orange peel on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Daiquiri
+### Daiquiri (photo added)
 File name: `daiquiri.webp`
 
 > Photorealistic drink photograph of a Daiquiri: a coupe glass of pale cloudy white-green cocktail with a thin lime wheel on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Negroni
+### Negroni (photo added)
 File name: `negroni.webp`
 
 > Photorealistic drink photograph of a Negroni: a rocks glass of deep ruby-red cocktail over a large ice cube with a strip of orange peel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Espresso Martini
+### Espresso Martini (photo added)
 File name: `espresso-martini.webp`
 
 > Photorealistic drink photograph of a Espresso Martini: a martini glass of dark coffee cocktail with a thick tan foam on top and three coffee beans. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Aperol Spritz
+### Aperol Spritz (photo added)
 File name: `aperol-spritz.webp`
 
 > Photorealistic drink photograph of a Aperol Spritz: a large wine glass full of ice and bright orange sparkling cocktail with an orange slice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Paloma
+### Paloma (photo added)
 File name: `paloma.webp`
 
 > Photorealistic drink photograph of a Paloma: a tall glass of pale pink sparkling cocktail over ice with a salted rim and a grapefruit wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Gin and Tonic
+### Gin and Tonic (photo added)
 File name: `gin-and-tonic.webp`
 
 > Photorealistic drink photograph of a Gin and Tonic: a tall glass of clear sparkling drink packed with ice cubes and a lime wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Tom Collins
+### Tom Collins (photo added)
 File name: `tom-collins.webp`
 
 > Photorealistic drink photograph of a Tom Collins: a tall glass of pale cloudy sparkling cocktail over ice with a lemon wheel and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Long Island Iced Tea
+### Long Island Iced Tea (photo added)
 File name: `long-island-iced-tea.webp`
 
 > Photorealistic drink photograph of a Long Island Iced Tea: a tall glass of amber-brown cocktail that looks like iced tea, over ice with a lemon wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Tequila Sunrise
+### Tequila Sunrise (photo added)
 File name: `tequila-sunrise.webp`
 
 > Photorealistic drink photograph of a Tequila Sunrise: a tall glass with a gradient from deep red at the bottom to bright orange at the top, with an orange slice and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Mai Tai
+### Mai Tai (photo added)
 File name: `mai-tai.webp`
 
 > Photorealistic drink photograph of a Mai Tai: a rocks glass of golden-amber cocktail over crushed ice with a darker rum layer on top, a mint sprig and a lime wheel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Manhattan
+### Manhattan (photo added)
 File name: `manhattan.webp`
 
 > Photorealistic drink photograph of a Manhattan: a coupe glass of clear deep red-amber cocktail with a dark cherry at the bottom. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### Amaretto Sour
+### Amaretto Sour (photo added)
 File name: `amaretto-sour.webp`
 
 > Photorealistic drink photograph of a Amaretto Sour: a rocks glass of golden-orange cocktail over ice with a light foam, an orange slice and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
 
-### French 75
+### French 75 (photo added)
 File name: `french-75.webp`
 
 > Photorealistic drink photograph of a French 75: a champagne flute of pale gold sparkling cocktail with a long twist of lemon peel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
