@@ -3,7 +3,10 @@
    nhie/who, tally, sealed, revealed. Secrets go in sealed, which other
    players cannot read until the host sets revealed for that round.
    tally is public on purpose and stores only a progress code, never the pick.
-   nhie/cast is readable by the whole room, so it is not used for answers. */
+   nhie/cast is readable by the whole room, so it never holds a live answer. After the
+   reveal the host's phone scores the round once (PosterLogic.scoreRound) and writes one
+   result row per player to nhie/cast/$uid. Every phone draws the reveal and the
+   leaderboard from those stored rows, so all phones agree. */
 (function(){
 "use strict";
 var L=window.PosterLogic;
@@ -19,6 +22,8 @@ var db, authObj, stops=[], secretUnsub=null, connStop=null, hostLock=false, host
 var engine=null, mix={sfx:0.7,muteSfx:false};
 var snapKey="", snapSecrets=null, applied="", resetFor=0, passArm=0, closeArm=0, bootTimer=0, heard=-1, tallyUnsub=null, watchKey="", tallyKey="";
 var serverOffset=0, offsetReady=false, offsetStop=null;
+var cast={}, castLoaded=false, scoredFor="", revealKey="", tickTimer=0;
+var SPLIT_MS=L.SPLIT_SECONDS*1000;
 var ref, onValue, update, set, get, remove, onDisconnect, serverTimestamp, goOnline;
 
 function pack(){return window.SPLIT_DECK||[]}
@@ -298,8 +303,8 @@ function countProgress(ids, pred){
 function mineTally(){return tally[uid]}
 function choiceLocked(kind){
   var v=mineTally();
-  if(GAME==="split" && kind==="pref") return v===1||v===2;
-  if(GAME==="split" && kind==="pred") return v===3||v===4;
+  if(kind==="pref") return v===1||v===3;
+  if(kind==="pred") return v===3;
   return false;
 }
 function el(tag, cls, text){var n=document.createElement(tag); if(cls) n.className=cls; if(text!=null) n.textContent=text; return n}
@@ -309,7 +314,7 @@ function addChoice(parent, label, value, pressed, nums){
   b.dataset.value=value;
   b.setAttribute("aria-pressed", pressed?"true":"false");
   if(nums) parent.classList.add("poster-nums");
-  b.addEventListener("click", function(){submitValue(value, false)});
+  b.addEventListener("click", function(){submitValue(value)});
   parent.appendChild(b);
 }
 function shownSecrets(){
@@ -332,67 +337,216 @@ function paintChoices(){
     if(pass) pass.classList.add("hide");
     return;
   }
+  if(pass) pass.classList.add("hide");
   var card=currentCard();
-  if(GAME==="split" && table.step==="answer"){
-    if(note) note.textContent="Passing sits you out of this whole round.";
-    if(card){addChoice(box, "A · "+card.a, "A", secrets[uid]==="A", false); addChoice(box, "B · "+card.b, "B", secrets[uid]==="B", false)}
-    if(status) status.textContent=choiceLocked("pref")?(secrets[uid]==="pass"?"You passed.":"Locked in. Hidden until reveal."):"Pick one. Nobody sees it yet.";
+  if(table.step!=="answer") return;
+  var roster=parseCsv(table.order);
+  if(roster.indexOf(uid)<0){if(status) status.textContent="You joined after this question started. You're in from the next one."; return}
+  var mine=L.parseSplitSeal(secrets[uid]);
+  var late=timeLeft()<=0;
+  if(secrets[uid]==="pass"){if(status) status.textContent="You passed this one. Back in next round."; return}
+  if(!mine.pref){
+    if(late){if(status) status.textContent="Time's up. You missed this one."; return}
+    if(card){addChoice(box, "A · "+card.a, "A", false, false); addChoice(box, "B · "+card.b, "B", false, false)}
+    if(pass) pass.classList.remove("hide");
+    if(note) note.textContent="Pass sits this question out for 0 points.";
+    if(status) status.textContent="Pick one. Nobody sees it until the reveal.";
     return;
   }
-  if(GAME==="split" && table.step==="vote"){
-    var eligible=parseCsv(table.order);
-    var inRound=eligible.indexOf(uid)>=0;
-    if(!inRound){
-      if(pass) pass.classList.add("hide");
-      if(status) status.textContent="You passed the first pick, so this forecast isn't yours.";
-      return;
-    }
-    var denom=Math.max(0, eligible.length-1);
-    if(note) note.textContent="Passing scores 0 for the forecast. Your A/B pick still counts. You're guessing how many of the other "+denom+" picked A.";
-    var mine=L.parseSplitSeal(secrets[uid]);
+  var denom=Math.max(0, roster.length-1);
+  if(mine.pred==null){
+    if(note) note.textContent="You picked "+mine.pref+(card?" · "+(mine.pref==="A"?card.a:card.b):"")+". Your own pick doesn't count here.";
+    if(late){if(status) status.textContent="Locked. Time's up for the guess."; return}
     var n;
-    for(n=0;n<=denom;n++) addChoice(box, String(n), String(n), mine.pred===n, true);
-    if(status) status.textContent=choiceLocked("pred")?"Forecast locked.":"How many of the other "+denom+" picked A?";
+    for(n=0;n<=denom;n++) addChoice(box, String(n), String(n), false, true);
+    if(status) status.textContent="How many of the other "+denom+" picked A?";
     return;
   }
+  if(note) note.textContent="You picked "+mine.pref+" and guessed "+mine.pred+" of "+denom+".";
+  if(status) status.textContent="Locked in. Hidden until the reveal.";
 }
+function timeLeft(){
+  if(!table||table.step!=="answer") return 0;
+  return Math.max(0, (+table.opened||0)+SPLIT_MS-serverNow());
+}
+function paintTimer(){
+  var box=$("sdtimer"); if(!box) return;
+  var on=!!(table&&table.step==="answer");
+  box.classList.toggle("hide", !on);
+  if(!on) return;
+  var left=timeLeft(), secs=Math.ceil(left/1000);
+  var num=$("sdtimern"); if(num) num.textContent=String(secs);
+  var bar=$("sdtimerbar"); if(bar) bar.style.width=Math.max(0, Math.min(100, left*100/SPLIT_MS))+"%";
+  box.classList.toggle("low", secs<=5);
+  box.setAttribute("aria-label", secs+" seconds left");
+}
+function ensureTick(){
+  var want=!!(table&&table.step==="answer"&&meta&&meta.status==="play");
+  if(want&&!tickTimer){
+    var wasLate=timeLeft()<=0;
+    tickTimer=setInterval(function(){
+      paintTimer();
+      var late=timeLeft()<=0;
+      if(late!==wasLate){wasLate=late; render()}
+      else if(late&&isHost()) hostThink();
+    }, 250);
+  }
+  if(!want&&tickTimer){clearInterval(tickTimer); tickTimer=0}
+}
+function paintWho(){
+  var list=$("sdwho"); if(!list) return;
+  list.textContent="";
+  var on=!!(table&&table.step==="answer");
+  list.classList.toggle("hide", !on);
+  if(!on) return;
+  parseCsv(table.order).forEach(function(id){
+    var v=tally[id], li=el("li", "sd-who-item"+(v===3?" done":v===1?" half":""));
+    li.appendChild(el("span", "sd-who-mark", v===3?"✓":v===1?"…":""));
+    li.appendChild(el("span", "sd-who-name", pname(id)));
+    li.setAttribute("aria-label", pname(id)+(v===3?" is in":v===1?" is guessing":" is thinking"));
+    list.appendChild(li);
+  });
+}
+function reduced(){try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){return false}}
+function countUp(node, from, to, delay, sign){
+  var fmt=function(v){return (sign&&v>0?"+":"")+v};
+  if(reduced()||from===to){node.textContent=fmt(to); return}
+  node.textContent=fmt(from);
+  setTimeout(function(){
+    var t0=0, dur=700;
+    function step(t){
+      if(!t0) t0=t;
+      var k=Math.min(1, (t-t0)/dur);
+      node.textContent=fmt(Math.round(from+(to-from)*k));
+      if(k<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }, delay);
+}
+/* Rows the host stored for this game and round, keyed by uid. */
+function storedRows(round){
+  var out={}, gid=meta?+meta.gameId:0;
+  Object.keys(cast).forEach(function(id){
+    var d=L.decodeResult(cast[id]);
+    if(d&&d.gameId===gid&&(round==null?d.round<=(+table.round||0):d.round===round)) out[id]=d;
+  });
+  return out;
+}
+function roundReady(){
+  if(!table) return false;
+  var rows=storedRows(+table.round||0), roster=parseCsv(table.order);
+  return roster.length>0&&roster.every(function(id){return !!rows[id]});
+}
+var BADGE={"exact":"EXACT", "one-away":"ONE AWAY", "miss":"MISS", "missed":"MISSED"};
+function badge(result, big){return el("span", "sd-badge sd-"+result+(big?" big":""), BADGE[result]||"MISS")}
+function stage(node, d){node.classList.add("sd-step"); node.style.setProperty("--d", String(d)); return node}
 function paintReveal(){
   var box=$("reveallist"); if(!box) return;
-  box.textContent="";
-  var head=$("revealhead");
-  var toast=$("toastline");
-  var show=table&&(table.step==="results"||table.step==="over");
-  var wrap=$("revealbox"); if(wrap) wrap.classList.toggle("hide", !show);
-  if(!show){if(head) head.textContent=""; if(toast) toast.textContent=""; return}
-  if(toast) toast.textContent="Optional: a small drink, or skip it. Whoever picked the minority side takes a bow instead.";
-  var bag=shownSecrets();
-  if(GAME==="split") paintSplitReveal(box, head, bag);
+  var head=$("revealhead"), toast=$("toastline"), wrap=$("revealbox"), board=$("sdboard");
+  var show=!!(table&&table.step==="results");
+  if(wrap) wrap.classList.toggle("hide", !show);
+  if(!show){box.textContent=""; if(board) board.textContent=""; if(head) head.textContent=""; if(toast) toast.textContent=""; revealKey=""; return}
+  if(!roundReady()){
+    if(revealKey!=="wait"){revealKey="wait"; box.textContent=""; if(board) board.textContent=""; if(head) head.textContent="Counting the split…"; if(toast) toast.textContent=""}
+    return;
+  }
+  var key=meta.gameId+"/"+table.round;
+  if(revealKey===key) return;
+  revealKey=key;
+  box.textContent=""; if(head) head.textContent="";
+  paintSplitReveal(box);
+  if(toast){toast.textContent="Optional: a small drink, or skip it. Whoever picked the minority side takes a bow instead."; stage(toast, 3.4)}
+  if(board) paintBoard(board, 3.8);
 }
-function row(parent, left, right){
-  var line=el("div","reveal-row");
-  line.appendChild(el("span","",left));
-  line.appendChild(el("span","",right));
-  parent.appendChild(line);
-}
-function reasonWord(reason, points){
-  if(reason==="exact") return "Exact · "+points;
-  if(reason==="adjacent") return "One away · "+points;
-  if(reason==="pass") return "Pass · 0";
-  if(reason==="need-two") return "Not scored";
-  if(reason==="miss") return "Miss · 0";
-  return String(points||0);
-}
-function paintSplitReveal(box, head, bag){
-  var eligible=parseCsv(table.order);
-  if(String(table.text||"").indexOf("pref")>=0) eligible=L.eligibleFromPref(parseCsv(table.order), tally);
-  var scored=L.scoreSplitRound(eligible, bag);
-  if(head) head.textContent=scored.unscored?"Not enough picks to score":("A "+scored.aCount+" · B "+scored.bCount);
-  if(!scored.rows.length){box.appendChild(el("p","","No locked picks.")); return}
-  scored.rows.forEach(function(r){
-    var pref=r.pref==="A"||r.pref==="B"?r.pref:"Pass";
-    var forecast=r.pred==null?"—":r.pred==="pass"?"Pass":String(r.pred);
-    row(box, pname(r.uid)+" · "+pref, "Said "+forecast+" / "+r.denom+" · "+reasonWord(r.reason, r.points));
+function paintSplitReveal(box){
+  var round=+table.round||0, roster=parseCsv(table.order), rows=storedRows(round), card=currentCard();
+  var a=0, b=0;
+  roster.forEach(function(id){if(rows[id].answer==="A") a++; else if(rows[id].answer==="B") b++});
+  var answered=a+b, pct=answered?Math.round(a*100/answered):0;
+  var mineRow=rows[uid];
+  if(mineRow){
+    var me=stage(el("section", "sd-me"), 0);
+    me.appendChild(el("p", "sd-me-label", "Your result"));
+    me.appendChild(badge(mineRow.result, true));
+    var pts=el("p", "sd-me-pts"), n=el("span", "sd-me-num", "0");
+    pts.appendChild(n); pts.appendChild(document.createTextNode(mineRow.points===1?" point":" points"));
+    me.appendChild(pts);
+    box.appendChild(me);
+    countUp(n, 0, mineRow.points, 400, true);
+  }
+  var split=stage(el("section", "sd-split"), 0.7);
+  split.appendChild(el("p", "sd-split-q", card?card.q:""));
+  split.appendChild(el("p", "sd-split-count", "A "+a+" · B "+b));
+  var bar=el("div", "sd-bar"); bar.setAttribute("role", "img"); bar.setAttribute("aria-label", pct+"% picked A");
+  var fill=el("span", "sd-bar-a"); fill.style.setProperty("--pct", pct+"%");
+  bar.appendChild(fill); split.appendChild(bar);
+  var legend=el("div", "sd-legend");
+  legend.appendChild(el("span", "", "A "+pct+"%"+(card?" · "+card.a:"")));
+  legend.appendChild(el("span", "", "B "+(answered?100-pct:0)+"%"+(card?" · "+card.b:"")));
+  split.appendChild(legend);
+  box.appendChild(split);
+  var cards=el("div", "sd-cards");
+  roster.slice().sort(function(x, y){return (x===uid?-1:0)-(y===uid?-1:0)}).forEach(function(id, i){
+    var r=rows[id], c=stage(el("article", "sd-pcard"+(id===uid?" me":"")), 1.4+i*0.12);
+    c.appendChild(el("p", "sd-pname", pname(id)));
+    c.appendChild(el("p", "sd-pline", r.answer?("Picked "+r.answer+" · guessed "+(r.prediction==null?"—":r.prediction)):"No answer"));
+    var foot=el("div", "sd-pfoot");
+    foot.appendChild(badge(r.result, false));
+    var p=el("span", "sd-ppts", "0"); foot.appendChild(p);
+    c.appendChild(foot);
+    cards.appendChild(c);
+    countUp(p, 0, r.points, (2.2+i*0.12)*1000, true);
   });
+  box.appendChild(cards);
+  if(mineRow) box.appendChild(stage(el("p", "sd-quip", L.quipFor(mineRow.result, meta.gameId+"/"+round+"/"+uid)), 3));
+}
+function boardEntries(){
+  var round=+table.round||0, rows=storedRows(null);
+  return Object.keys(rows).filter(function(id){return players[id]||parseCsv(table.order).indexOf(id)>=0}).map(function(id){
+    var d=rows[id];
+    return {id:id, name:pname(id), total:d.total, points:d.round===round?d.points:0, exact:d.exact, hits:d.hits, played:d.played, streak:d.round===round?d.streak:0};
+  });
+}
+function paintBoard(board, delay){
+  board.textContent="";
+  var list=L.rankBoard(boardEntries(), (+table.round||0)===0);
+  if(!list.length) return;
+  var wrap=stage(el("section", "sd-board"), delay);
+  wrap.appendChild(el("h2", "sd-board-h", "Leaderboard"));
+  var ol=el("ol", "sd-rows");
+  list.forEach(function(e){
+    var li=el("li", "sd-row"+(e.leader?" leader":"")+(e.mover?" mover":"")+(e.id===uid?" me":""));
+    li.dataset.prev=String(e.prevIndex);
+    li.appendChild(el("span", "sd-rank", String(e.rank)));
+    var who=el("span", "sd-rname"); who.appendChild(el("span", "", e.name));
+    if(e.leader) who.appendChild(el("span", "sd-tag", "Leader"));
+    if(e.mover) who.appendChild(el("span", "sd-tag mover", "▲"+e.moved+" biggest mover"));
+    li.appendChild(who);
+    var tot=el("span", "sd-total", String(e.total)); li.appendChild(tot);
+    var stats=el("span", "sd-stats");
+    stats.appendChild(el("span", "sd-delta", (e.points>0?"+":"")+e.points+" this round"));
+    stats.appendChild(el("span", "", e.exact+" exact"));
+    stats.appendChild(el("span", "", e.accuracy+"% close"));
+    stats.appendChild(el("span", "", e.streak?("streak "+e.streak):"no streak"));
+    li.appendChild(stats);
+    ol.appendChild(li);
+    countUp(tot, e.total-e.points, e.total, delay*1000+500, false);
+  });
+  wrap.appendChild(ol);
+  board.appendChild(wrap);
+  if(reduced()) return;
+  /* Slide each row from last round's place to its new one. */
+  setTimeout(function(){
+    var items=Array.prototype.slice.call(ol.children);
+    items.forEach(function(li, i){
+      var from=+li.dataset.prev;
+      if(!isFinite(from)||from===i) return;
+      li.style.transition="none";
+      li.style.transform="translateY("+((from-i)*li.offsetHeight)+"px)";
+    });
+    void ol.offsetHeight;
+    items.forEach(function(li){li.style.transition=""; li.style.transform=""});
+  }, delay*1000+450);
 }
 function paintAwards(){
   var box=$("awards"); if(!box) return;
@@ -402,7 +556,8 @@ function paintAwards(){
   if(!over) return;
   var n=meta&&meta.deck?(Array.isArray(meta.deck)?meta.deck.length:Object.keys(meta.deck).length):8;
   var line=$("recapline"); if(line) line.textContent=(TITLES[GAME]||"This game")+", "+n+" rounds";
-  var list=orderPlayers();
+  var totals=storedRows(null);
+  var list=orderPlayers().map(function(p){return Object.assign({}, p, {points:totals[p.uid]?totals[p.uid].total:0})});
   if(!list.length){box.appendChild(el("p","","No players left.")); return}
   var max=0, i;
   for(i=0;i<list.length;i++) if(list[i].points>max) max=list[i].points;
@@ -436,12 +591,15 @@ function paintTable(){
   }
   var hostP=meta&&players[meta.hostUid];
   if($("away")) $("away").classList.toggle("hide", !hostP||hostP.connected!==false||isHost());
+  if($("card")) $("card").classList.toggle("hide", table.step==="results");
   paintChoices();
+  paintTimer();
+  paintWho();
   paintReveal();
   paintAwards();
+  if(window.SplitFX) SplitFX.show(table.step==="answer"?"tension-loop":table.step==="results"?"reveal-burst":table.step==="over"?"winner-celebrate":"");
   var ids=[], pred=function(){return false};
-  if(GAME==="split" && table.step==="answer"){ids=parseCsv(table.order); pred=function(id){return tally[id]===1||tally[id]===2}}
-  if(GAME==="split" && table.step==="vote"){ids=parseCsv(table.order); pred=function(id){return tally[id]===3||tally[id]===4}}
+  if(table.step==="answer"){ids=parseCsv(table.order); pred=function(id){return tally[id]===3}}
   var prog=countProgress(ids, pred);
   document.body.setAttribute("data-rm-allin", prog.total&&prog.done>=prog.total?"1":"0");
   if($("progress")) $("progress").textContent=table.step==="results"||table.step==="over"?"":(prog.total?prog.done+" of "+prog.total+" in":"");
@@ -449,7 +607,7 @@ function paintTable(){
   if(reveal) reveal.classList.toggle("hide", !isHost()||(table.step!=="answer"&&table.step!=="vote"));
   if(next){
     next.classList.toggle("hide", !isHost()||table.step!=="results");
-    next.textContent=moreAfter()?"Next":"See the result";
+    next.textContent=moreAfter()?"Continue":"See the result";
   }
   if(retry) retry.classList.add("hide");
   if(deal) deal.classList.add("hide");
@@ -463,6 +621,8 @@ function render(){
   if(!meta){screen("home"); return}
   if(meta.createdAt && typeof meta.createdAt==="number" && serverNow()-meta.createdAt>TTL){fail("This room has expired.");}
   if(meta.status==="lobby"){
+    ensureTick();
+    if(window.SplitFX) SplitFX.show("");
     screen("lobby"); paintLobby();
     maybeResetScores();
     return;
@@ -470,7 +630,8 @@ function render(){
   screen("table");
   mountRestart();
   if(table) paintTable();
-  maybeScore();
+  ensureTick();
+  hostScore();
   hear();
   if(isHost()) hostThink();
 }
@@ -479,7 +640,7 @@ function hear(){
   var key=String(table.seq)+":"+table.step;
   if(heard===key) return;
   heard=key;
-  if(table.step==="answer"||table.step==="vote") blip("roll");
+  if(table.step==="answer") blip("roll");
   if(table.step==="over") blip("win");
 }
 function maybeResetScores(){
@@ -491,43 +652,49 @@ function maybeResetScores(){
     writeWho(me.emoji||myEmoji(), 0, 0).catch(function(e){resetFor=0; fail(friendly(e))});
   }else resetFor=meta.gameId;
 }
-function maybeScore(){
-  if(!table||table.step!=="results"||!secretsLoaded||!uid) return;
-  var token=(meta.gameId)+"/"+(table.round);
-  if(applied===token) return;
-  var me=who[uid]||{confessions:0, seen:0, emoji:myEmoji()};
-  if((+me.seen||0)>=(+table.round||0)+1){applied=token; return}
+/* Host only: score the round once and store one row per player.
+   Round-number guard: if this round's rows are already stored, nothing is written. */
+function hostScore(){
+  if(!isHost()||!table||table.step!=="results"||!secretsLoaded||!castLoaded||!uid) return;
+  var gid=+meta.gameId, round=+table.round||0, token=gid+"/"+round;
+  if(scoredFor===token) return;
+  var roster=parseCsv(table.order);
+  var done=storedRows(round);
+  if(Object.keys(done).length){scoredFor=token; return}
+  scoredFor=token;
   var bag=shownSecrets();
-  var add=0;
-  if(GAME==="split"){
-    var eligible=parseCsv(table.order);
-    var scored=L.scoreSplitRound(eligible, bag);
-    scored.rows.forEach(function(r){if(r.uid===uid) add=r.points});
-  }
-  applied=token;
-  var points=Math.min(40,(+me.confessions||0)+add);
-  writeWho(me.emoji||myEmoji(), points, (+table.round||0)+1).catch(function(e){if(applied===token) applied=""; fail(friendly(e))});
+  var scored=L.scoreRound(roster.map(function(id){var s=L.parseSplitSeal(bag[id]); return {id:id, answer:s.pref, prediction:s.pred}}));
+  var prev={};
+  Object.keys(cast).forEach(function(id){var d=L.decodeResult(cast[id]); if(d&&d.gameId===gid&&d.round<round) prev[id]=d});
+  var stats=L.nextStats(prev, scored);
+  var payload={};
+  scored.rows.forEach(function(r){payload[rpath("nhie/cast/"+r.id)]=L.encodeResult(gid, round, r, stats[r.id])});
+  update(ref(db), payload).catch(function(e){if(scoredFor===token) scoredFor=""; fail(friendly(e))});
 }
-function submitValue(value, passed){
-  if(!table||!meta||sending) return;
-  if(table.step!=="answer"&&table.step!=="vote"&&table.step!=="prompt") return;
-  var round=+table.round||0;
-  var gid=meta.gameId;
-  var seal="pass", mark=2;
-  if(GAME==="split"&&table.step==="answer"){
-    seal=passed?"pass":value; mark=passed?2:1;
-  }else if(GAME==="split"&&table.step==="vote"){
-    var prev=L.parseSplitSeal(secrets[uid]);
-    seal=L.encodeSplitSeal(prev.pref, passed?"pass":+value);
-    mark=passed?4:3;
-  }
-  if(!passed && (value==null || value==="")) return;
+/* First answer wins: once a pick or a guess is stored, later taps are ignored. */
+function submitValue(value){
+  if(!table||!meta||sending||table.step!=="answer") return;
+  if(parseCsv(table.order).indexOf(uid)<0||timeLeft()<=0) return;
+  var round=+table.round||0, gid=meta.gameId;
+  var mine=L.parseSplitSeal(secrets[uid]), seal, mark;
+  if(secrets[uid]==="pass") return;
+  if(!mine.pref){
+    if(value==="pass"){seal="pass"; mark=3} /* a pass is a no-answer: scored as missed, and the round doesn't wait */
+    else if(value==="A"||value==="B"){seal=value; mark=1}
+    else return;
+  }else if(mine.pred==null){
+    var n=+value, max=parseCsv(table.order).length-1;
+    if(!/^\d+$/.test(String(value))||n>max) return;
+    seal=L.encodeSplitSeal(mine.pref, n); mark=3;
+  }else return;
   sending=true;
-  blip(passed?"no":"yes");
+  blip("yes");
+  secrets[uid]=seal;
   var payload={};
   payload[rpath("sealed/"+gid+"/"+round+"/"+uid)]=seal;
   payload[rpath("tally/"+gid+"/"+round+"/"+uid)]=mark;
-  update(ref(db), payload).then(function(){sending=false; passArm=0}).catch(function(e){sending=false; fail(friendly(e))});
+  render();
+  update(ref(db), payload).then(function(){sending=false; render()}).catch(function(e){sending=false; secrets[uid]=mine.pref?L.encodeSplitSeal(mine.pref, mine.pred):""; if(!secrets[uid]) delete secrets[uid]; render(); fail(friendly(e))});
 }
 function readyMeta(){return meta&&typeof meta.createdAt==="number"&&meta.createdAt>1700000000000}
 function writePlay(patch, phase){
@@ -546,7 +713,7 @@ function allDone(ids, pred){
 }
 function hostThink(){
   if(!isHost()||hostLock||!readyMeta()||!table) return;
-  if(table.step!=="answer"&&table.step!=="vote"&&table.step!=="prompt") return;
+  if(table.step!=="answer") return;
   var action=null;
   if(GAME==="split") action=splitAuto();
   if(!action) return;
@@ -555,23 +722,14 @@ function hostThink(){
   hostLock=true;
   action.run().then(function(){hostLock=false}, function(e){hostLock=false; hostSig=""; fail(friendly(e))});
 }
+/* Reveal when every connected player has picked and guessed, or when the clock runs out.
+   A player who answered and then dropped keeps their answer in the count. */
 function splitAuto(){
-  if(table.step==="answer"){
-    var roster=parseCsv(table.order);
-    if(!allDone(roster, function(id){return tally[id]===1||tally[id]===2})) return null;
-    var eligible=L.eligibleFromPref(roster, tally);
-    var sig="split-pref-"+table.round+"-"+eligible.join(".");
-    return {sig:sig, run:function(){
-      if(eligible.length<2) return revealWith(playObj({step:"results", order:csv(eligible), text:"s|out", kind:"have"}));
-      return writePlay({step:"vote", kind:"vote", order:csv(eligible), text:"s|pred", seq:Math.min(40,(+table.seq||1)+1)}, "answer");
-    }};
-  }
-  if(table.step==="vote"){
-    var elig=parseCsv(table.order);
-    if(!allDone(elig, function(id){return tally[id]===3||tally[id]===4})) return null;
-    return {sig:"split-pred-"+table.round, run:function(){return revealWith(playObj({step:"results", kind:"have", text:"s|done"}))}};
-  }
-  return null;
+  if(table.step!=="answer") return null;
+  var roster=parseCsv(table.order);
+  var everyone=allDone(roster, function(id){return tally[id]===3});
+  if(!everyone&&timeLeft()>0) return null;
+  return {sig:"split-reveal-"+meta.gameId+"-"+table.round, run:function(){return revealWith(playObj({step:"results", kind:"have", text:"s|done"}))}};
 }
 function revealWith(nextPlay){
   var gid=meta.gameId, round=+table.round||0;
@@ -588,15 +746,10 @@ function finishGame(){
   });
 }
 function forceReveal(){
-  if(!isHost()||!table) return;
+  if(!isHost()||!table||table.step!=="answer") return;
   unlock();
   hostLock=true;
-  var run;
-  if(GAME==="split"&&table.step==="answer"){
-    var eligible=L.eligibleFromPref(parseCsv(table.order), tally);
-    run=revealWith(playObj({step:"results", order:csv(eligible), text:"s|out", kind:"have"}));
-  }else run=revealWith(playObj({step:"results", text:table.text, kind:"have"}));
-  Promise.resolve(run).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
+  Promise.resolve(revealWith(playObj({step:"results", text:"s|done", kind:"have"}))).then(function(){hostLock=false}, function(e){hostLock=false; fail(friendly(e))});
 }
 function goNext(){
   if(!isHost()||!table||table.step!=="results") return;
@@ -681,6 +834,8 @@ function listen(){
   }, function(){fail("That room isn't available.")}));
   stops.push(onValue(ref(db, rpath("players")), function(s){players=s.val()||{}; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("nhie/who")), function(s){who=s.val()||{}; render()}, function(){}));
+  castLoaded=false; cast={};
+  stops.push(onValue(ref(db, rpath("nhie/cast")), function(s){cast=s.val()||{}; castLoaded=true; render()}, function(){}));
   stops.push(onValue(ref(db, rpath("nhie/play")), function(s){
     table=s.val()||null;
     hostLock=false;
@@ -732,6 +887,8 @@ function stopAll(){
   if(tallyUnsub){tallyUnsub(); tallyUnsub=null}
   if(connStop){connStop(); connStop=null}
   tallyKey=""; watchKey=""; tally={};
+  if(tickTimer){clearInterval(tickTimer); tickTimer=0}
+  scoredFor=""; revealKey="";
 }
 function armPresence(){
   if(connStop) connStop();
@@ -901,7 +1058,6 @@ function wire(){
   });
   if($("optin")) $("optin").addEventListener("change", render);
   if($("start")) $("start").addEventListener("click", function(){begin()});
-  if($("passbtn")) $("passbtn").addEventListener("click", function(){submitValue("pass", true)});
   if($("revealbtn")) $("revealbtn").addEventListener("click", forceReveal);
   if($("nextround")) $("nextround").addEventListener("click", goNext);
   if($("again")) $("again").addEventListener("click", function(){rematch().catch(function(e){fail(friendly(e))})});
@@ -909,6 +1065,7 @@ function wire(){
   if($("close")) $("close").addEventListener("click", askClose);
   if($("closestage")) $("closestage").addEventListener("click", askClose);
   if($("leavebtn")) $("leavebtn").addEventListener("click", leaveRoom);
+  if($("passbtn")) $("passbtn").addEventListener("click", function(){submitValue("pass")});
   if($("copylink")) $("copylink").addEventListener("click", function(){unlock(); copyText(invite()).then(function(){fail("Link copied.")}).catch(function(){fail(invite())})});
   if($("copycode")) $("copycode").addEventListener("click", function(){unlock(); copyText(code||"").then(function(){fail("Code copied.")}).catch(function(){fail(code||"")})});
   if($("sharebtn")) $("sharebtn").addEventListener("click", function(){

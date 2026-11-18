@@ -37,11 +37,77 @@ body.poster .poster-award p{margin:.2em 0}
 body.poster #closed.card{background:var(--surface);border-color:var(--outline);color:var(--text)}
 body.poster #closed.card h2,body.poster #closed.card p,body.poster #closed.card .age{color:var(--text)}
 body.poster :focus-visible{outline:3px solid var(--text);outline-offset:3px}
+/* Split Decision round, reveal and leaderboard. Sky tokens only. */
+body.poster .sd-status{font-family:var(--display);font-weight:800;font-size:1.15rem;margin:.6em 0 .2em}
+body.poster .sd-timer{display:flex;align-items:center;gap:10px;margin:10px 0}
+body.poster .sd-timer-n{flex:none;min-width:56px;height:56px;display:grid;place-items:center;border:var(--bw) solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink);font:800 1.6rem var(--display);box-shadow:var(--shadow-sm)}
+body.poster .sd-timer-track{flex:1;height:14px;border:var(--bw) solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink);overflow:hidden}
+body.poster .sd-timer-bar{display:block;height:100%;width:100%;background:var(--primary);transition:width .25s linear}
+body.poster .sd-timer.low .sd-timer-n,body.poster .sd-timer.low .sd-timer-bar{background:var(--danger);color:var(--on-danger)}
+body.poster .sd-timer.low .sd-timer-n{animation:sdPulse .5s ease-in-out infinite alternate}
+body.poster .sd-who{list-style:none;margin:8px 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+body.poster .sd-who-item{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:2px dashed var(--outline);border-radius:999px;font-weight:700;max-width:100%}
+body.poster .sd-who-item.half{border-style:solid}
+body.poster .sd-who-item.done{border-style:solid;background:var(--surface);color:var(--ink)}
+body.poster .sd-who-mark{font-weight:800;min-width:.8em}
+body.poster .sd-who-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.poster .sd-fx{margin:8px 0;height:96px;border:var(--bw) solid var(--outline);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);background:var(--bg)}
+body.poster .sd-fx video,body.poster .sd-fx img{display:block;width:100%;height:100%;object-fit:cover}
+body.poster #revealhead{font-family:var(--display);margin:.4em 0}
+body.poster .sd-me{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px;text-align:center;margin:10px 0}
+body.poster .sd-me-label{margin:0;font:800 .9rem var(--display);letter-spacing:.14em;text-transform:uppercase}
+body.poster .sd-me-pts{margin:6px 0 0;font:800 1.3rem var(--display)}
+body.poster .sd-me-num{font-size:2.2rem}
+body.poster .sd-badge{display:inline-block;padding:3px 10px;border:2px solid var(--ink);border-radius:999px;font:800 .85rem var(--display);letter-spacing:.06em;background:var(--surface);color:var(--ink);white-space:nowrap}
+body.poster .sd-badge.big{display:block;margin:8px auto 0;width:max-content;max-width:100%;padding:6px 18px;font-size:clamp(2rem,11vw,3.2rem);line-height:1;border-width:var(--bw);box-shadow:var(--shadow-btn);animation:sdPop .5s cubic-bezier(.2,1.6,.4,1) .15s both}
+body.poster .sd-badge.sd-exact{background:var(--primary);color:var(--on-primary)}
+body.poster .sd-badge.sd-one-away{background:var(--tile-green);color:var(--ink)}
+body.poster .sd-badge.sd-missed{border-style:dashed}
+body.poster .sd-split{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:14px;margin:12px 0}
+body.poster .sd-split-q{margin:0 0 8px;font:800 1.1rem/1.15 var(--display)}
+body.poster .sd-split-count{margin:0 0 6px;font:800 1.6rem var(--display)}
+body.poster .sd-bar{height:22px;border:var(--bw) solid var(--ink);border-radius:999px;overflow:hidden;background:var(--surface)}
+body.poster .sd-bar-a{display:block;height:100%;width:var(--pct);background:var(--primary);border-right:var(--bw) solid var(--ink);animation:sdGrow .9s ease-out .9s both}
+body.poster .sd-legend{display:flex;justify-content:space-between;gap:10px;margin-top:6px;font-weight:700;font-size:.95rem}
+body.poster .sd-legend span{min-width:0;overflow-wrap:anywhere}
+body.poster .sd-legend span:last-child{text-align:right}
+body.poster .sd-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:12px 0}
+body.poster .sd-pcard{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:10px 12px;min-width:0}
+body.poster .sd-pcard.me{box-shadow:var(--shadow-btn)}
+body.poster .sd-pname{margin:0;font:800 1.05rem var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.poster .sd-pline{margin:4px 0 8px;font-size:.95rem}
+body.poster .sd-pfoot{display:flex;align-items:center;justify-content:space-between;gap:6px}
+body.poster .sd-ppts{font:800 1.3rem var(--display)}
+body.poster .sd-quip{font:800 1.15rem var(--display);text-align:center;margin:12px 0}
+body.poster .sd-board{margin:16px 0}
+body.poster .sd-board-h{font-family:var(--display);margin:0 0 8px}
+body.poster .sd-rows{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+body.poster .sd-row{display:grid;grid-template-columns:40px 1fr auto;grid-template-areas:"rank name total" "rank stats stats";align-items:center;column-gap:10px;row-gap:2px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:10px 12px;transition:transform .6s cubic-bezier(.2,.8,.2,1);position:relative}
+body.poster .sd-row.leader{background:var(--primary);color:var(--on-primary);box-shadow:var(--shadow-btn)}
+body.poster .sd-row.mover{outline:3px dashed var(--ink);outline-offset:2px}
+body.poster .sd-rank{grid-area:rank;font:800 1.6rem var(--display);text-align:center}
+body.poster .sd-rname{grid-area:name;font:800 1.1rem var(--display);display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+body.poster .sd-rname > span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+body.poster .sd-tag{font:800 .72rem var(--display);letter-spacing:.06em;text-transform:uppercase;border:2px solid var(--ink);border-radius:999px;padding:1px 8px;background:var(--surface);color:var(--ink)}
+body.poster .sd-tag.mover{background:var(--tile-green)}
+body.poster .sd-total{grid-area:total;font:800 1.8rem var(--display)}
+body.poster .sd-stats{grid-area:stats;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.88rem;font-weight:650}
+body.poster .sd-delta{font-weight:800}
+body.poster .sd-step{animation:sdIn .45s ease-out both;animation-delay:calc(var(--d, 0) * 1s)}
+body.poster #finale .poster-award{animation:sdPop .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes sdIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes sdPop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes sdGrow{from{width:0}to{width:var(--pct)}}
+@keyframes sdPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
 @media (max-width:360px){
+  body.poster .sd-cards{grid-template-columns:1fr 1fr}
+  body.poster .sd-row{grid-template-columns:32px 1fr auto;padding:8px 10px}
   body.poster .poster-choice{min-height:64px;font-size:1.05rem}
   body.poster .poster-prompt{font-size:1.35rem}
   body.poster .host-cta{font-size:1.25rem}
 }
 @media (prefers-reduced-motion:reduce){
   body.poster .poster-card{box-shadow:none}
+  body.poster .sd-step,body.poster .sd-badge.big,body.poster .sd-bar-a,body.poster .sd-timer.low .sd-timer-n,body.poster #finale .poster-award{animation:none}
+  body.poster .sd-row,body.poster .sd-timer-bar{transition:none}
 }
