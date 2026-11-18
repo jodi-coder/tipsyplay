@@ -23,6 +23,7 @@ from data_cocktails import COCKTAILS  # noqa: E402
 from data_punches import PUNCHES      # noqa: E402
 from data_frozen import FROZEN        # noqa: E402
 from data_hot import HOT              # noqa: E402
+from used_photo_prompts import USED_PHOTO_PROMPTS  # noqa: E402
 
 SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
@@ -425,12 +426,18 @@ def photo_prompts(drinks, by_type):
         out += ["## " + t[2], ""]
         if t[0] == "cocktails":
             out += ["Cocktail photos were generated with Grok Bot's built-in GenerateImage tool (model not reported), styled to match the shots set (dark slate board on bar counter, blurred back bar, square). No text, logos, or brand labels. The files are original AI output, not stock or third-party images.", ""]
+        elif t[0] in ("punches", "frozen", "hot"):
+            kind = {"punches": "Party punch", "frozen": "Frozen drink", "hot": "Hot drink"}[t[0]]
+            out += ["%s photos are original AI-generated images made with GenerateImage (model not reported) on 2026-11-18, square, Shots style (dark slate board on a bar counter, blurred back bar). No text, logos or brand labels." % kind, ""]
         for d in by_type[t[0]]:
             have = " (photo added)" if d.photo else ""
-            out += ["### %s%s" % (d.name, have), "File name: `%s.webp`" % d.slug, "",
-                    "> Photorealistic drink photograph of a %s: %s. Sitting on a light wooden table at a relaxed house party, "
-                    "soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. "
-                    "No people, no hands, no text, no logos, no brand labels. Landscape 4:3." % (d.name, d.look), ""]
+            if t[0] in ("punches", "frozen", "hot"):
+                quote = "> " + USED_PHOTO_PROMPTS[d.slug]
+            else:
+                quote = ("> Photorealistic drink photograph of a %s: %s. Sitting on a light wooden table at a relaxed house party, "
+                         "soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. "
+                         "No people, no hands, no text, no logos, no brand labels. Landscape 4:3." % (d.name, d.look))
+            out += ["### %s%s" % (d.name, have), "File name: `%s.webp`" % d.slug, "", quote, ""]
     write("docs/drinks-photo-prompts.md", "\n".join(out))
 
 

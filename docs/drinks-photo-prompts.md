@@ -216,306 +216,312 @@ File name: `french-75.webp`
 
 ## Party punches
 
-### Classic Rum Punch
+Party punch photos are original AI-generated images made with GenerateImage (model not reported) on 2026-11-18, square, Shots style (dark slate board on a bar counter, blurred back bar). No text, logos or brand labels.
+
+### Classic Rum Punch (photo added)
 File name: `classic-rum-punch.webp`
 
-> Photorealistic drink photograph of a Classic Rum Punch: a glass punch bowl of orange-red punch with floating orange slices and ice, with a ladle and small cups beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Classic Rum Punch: a round glass punch bowl of orange-red rum punch with floating orange slices and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Red Sangria
+### Red Sangria (photo added)
 File name: `red-sangria.webp`
 
-> Photorealistic drink photograph of a Red Sangria: a glass pitcher of deep red sangria full of orange slices and diced apple, with two filled glasses beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Red Sangria: a glass pitcher of deep red sangria full of orange slices, diced apple and ice, with two filled stemless wine glasses beside it. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### White Sangria
+### White Sangria (photo added)
 File name: `white-sangria.webp`
 
-> Photorealistic drink photograph of a White Sangria: a glass pitcher of pale gold sangria with peach slices, green grapes and lemon wheels. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a White Sangria: a glass pitcher of pale gold white sangria with peach slices, halved green grapes, lemon wheels and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Rosé Sangria
+### Rosé Sangria (photo added)
 File name: `rose-sangria.webp`
 
-> Photorealistic drink photograph of a Rosé Sangria: a glass pitcher of pink sangria with sliced strawberries, raspberries and lemon wheels. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Rosé Sangria: a glass pitcher of lightly sparkling pink rosé sangria with sliced strawberries, raspberries, lemon wheels and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Jungle Juice
+### Jungle Juice (photo added)
 File name: `jungle-juice.webp`
 
-> Photorealistic drink photograph of a Jungle Juice: a very large glass drinks dispenser of bright red fruit punch packed with sliced oranges, lemons and strawberries. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Jungle Juice: a large glass punch bowl of bright red fruit punch packed with sliced oranges, lemon slices, sliced strawberries and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Mimosa Pitcher
+### Mimosa Pitcher (photo added)
 File name: `mimosa-pitcher.webp`
 
-> Photorealistic drink photograph of a Mimosa Pitcher: a glass pitcher of bright orange sparkling mimosa with orange slices, beside a row of champagne flutes. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Mimosa Pitcher: a glass pitcher of bright orange sparkling mimosa with orange slices floating in it, beside three filled champagne flutes. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Margarita Pitcher
+### Margarita Pitcher (photo added)
 File name: `margarita-pitcher.webp`
 
-> Photorealistic drink photograph of a Margarita Pitcher: a glass pitcher of pale yellow-green margarita with lime wheels, next to salt-rimmed glasses filled with ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Margarita Pitcher: a glass pitcher of pale yellow-green margarita with ice, next to two salt-rimmed rocks glasses filled with ice and margarita, each with a lime wedge. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Paloma Pitcher
+### Paloma Pitcher (photo added)
 File name: `paloma-pitcher.webp`
 
-> Photorealistic drink photograph of a Paloma Pitcher: a glass pitcher of pale pink sparkling paloma with grapefruit slices and ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Paloma Pitcher: a glass pitcher of pale pink sparkling paloma with grapefruit slices and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Vodka Lemonade Punch
+### Vodka Lemonade Punch (photo added)
 File name: `vodka-lemonade-punch.webp`
 
-> Photorealistic drink photograph of a Vodka Lemonade Punch: a glass pitcher of pale yellow lemonade punch with lemon slices, mint leaves and ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Vodka Lemonade Punch: a glass pitcher of pale yellow sparkling lemonade punch with lemon slices, fresh mint leaves and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Sparkling Cranberry Punch
+### Sparkling Cranberry Punch (photo added)
 File name: `sparkling-cranberry-punch.webp`
 
-> Photorealistic drink photograph of a Sparkling Cranberry Punch: a glass punch bowl of deep red sparkling punch with floating cranberries and orange slices. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Sparkling Cranberry Punch: a round glass punch bowl of deep red sparkling punch with floating fresh cranberries, orange slices and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Pimm's Cup Pitcher
+### Pimm's Cup Pitcher (photo added)
 File name: `pimms-cup-pitcher.webp`
 
-> Photorealistic drink photograph of a Pimm's Cup Pitcher: a glass pitcher of amber-brown sparkling drink filled with cucumber slices, strawberries, orange slices and mint. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Pimm's Cup Pitcher: a glass pitcher of amber-brown sparkling drink filled with cucumber slices, sliced strawberries, orange slices, fresh mint and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Moscow Mule Punch
+### Moscow Mule Punch (photo added)
 File name: `moscow-mule-punch.webp`
 
-> Photorealistic drink photograph of a Moscow Mule Punch: a glass punch bowl of pale sparkling ginger punch with lime slices and mint, with copper mugs beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Moscow Mule Punch: a round glass punch bowl of pale golden sparkling ginger punch with lime slices, fresh mint and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl, and two plain unbranded copper mugs beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Blue Lagoon Punch
+### Blue Lagoon Punch (photo added)
 File name: `blue-lagoon-punch.webp`
 
-> Photorealistic drink photograph of a Blue Lagoon Punch: a glass punch bowl of bright blue punch with lemon slices and ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Blue Lagoon Punch: a round glass punch bowl of bright electric-blue punch with lemon slices and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Whisky Sweet Tea Punch
+### Whisky Sweet Tea Punch (photo added)
 File name: `whisky-sweet-tea-punch.webp`
 
-> Photorealistic drink photograph of a Whisky Sweet Tea Punch: a glass pitcher of amber iced tea punch with peach slices, lemon wheels and mint. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Whisky Sweet Tea Punch: a glass pitcher of amber iced tea punch with peach slices, fresh mint and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Apple Cider Bourbon Punch
+### Apple Cider Bourbon Punch (photo added)
 File name: `apple-cider-bourbon-punch.webp`
 
-> Photorealistic drink photograph of a Apple Cider Bourbon Punch: a glass punch bowl of golden-brown cider punch with thin apple slices and cinnamon sticks. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of an Apple Cider Bourbon Punch: a round glass punch bowl of cloudy golden-brown apple cider punch with thin apple slices, cinnamon sticks and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Tropical Tequila Punch
+### Tropical Tequila Punch (photo added)
 File name: `tropical-tequila-punch.webp`
 
-> Photorealistic drink photograph of a Tropical Tequila Punch: a glass punch bowl of golden-orange tropical punch with pineapple chunks and lime slices. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Tropical Tequila Punch: a round glass punch bowl of golden-orange tropical punch with pineapple chunks and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Champagne Punch
+### Champagne Punch (photo added)
 File name: `champagne-punch.webp`
 
-> Photorealistic drink photograph of a Champagne Punch: a glass punch bowl of pale gold sparkling punch with orange slices and a large block of ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Champagne Punch: a round glass punch bowl of pale gold sparkling punch with orange slices and one large clear block of ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Hurricane Punch
+### Hurricane Punch (photo added)
 File name: `hurricane-punch.webp`
 
-> Photorealistic drink photograph of a Hurricane Punch: a glass punch bowl of deep orange-red punch with orange slices and cherries. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hurricane Punch: a round glass punch bowl of deep orange-red punch with orange slices and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Watermelon Vodka Punch
+### Watermelon Vodka Punch (photo added)
 File name: `watermelon-vodka-punch.webp`
 
-> Photorealistic drink photograph of a Watermelon Vodka Punch: a glass punch bowl of bright pink watermelon punch with mint leaves and small watermelon wedges on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Watermelon Vodka Punch: a round glass punch bowl of smooth bright pink watermelon punch with fresh mint leaves and ice, with a glass punch ladle (deep round cup, long handle) resting in the bowl and two small handled glass punch cups beside it. The punch bowl sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Mojito Pitcher
+### Mojito Pitcher (photo added)
 File name: `mojito-pitcher.webp`
 
-> Photorealistic drink photograph of a Mojito Pitcher: a glass pitcher of clear sparkling mojito packed with mint leaves, lime slices and ice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Mojito Pitcher: a glass pitcher of clear sparkling mojito packed with fresh mint leaves, lime slices and ice. The pitcher sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. Show it as a shared serving vessel for a group. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
 ## Frozen drinks
 
-### Frozen Margarita
+Frozen drink photos are original AI-generated images made with GenerateImage (model not reported) on 2026-11-18, square, Shots style (dark slate board on a bar counter, blurred back bar). No text, logos or brand labels.
+
+### Frozen Margarita (photo added)
 File name: `frozen-margarita.webp`
 
-> Photorealistic drink photograph of a Frozen Margarita: a margarita glass of pale green frozen slush with a salted rim and a lime wheel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Margarita: a wide coupe-style margarita glass of thick pale green blended frozen slush with a salted rim and a lime wedge on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Strawberry Daiquiri
+### Strawberry Daiquiri (photo added)
 File name: `strawberry-daiquiri.webp`
 
-> Photorealistic drink photograph of a Strawberry Daiquiri: a tall curved glass of bright red frozen strawberry slush with a fresh strawberry on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Strawberry Daiquiri: a tall curved hurricane glass of thick bright red blended frozen strawberry slush with a fresh strawberry on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Piña Colada
+### Piña Colada (photo added)
 File name: `pina-colada.webp`
 
-> Photorealistic drink photograph of a Piña Colada: a tall curved glass of creamy white frozen cocktail with a pineapple wedge and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Piña Colada: a tall curved hurricane glass of thick creamy white blended frozen cocktail with a pineapple wedge and a red cherry on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frosé
+### Frosé (photo added)
 File name: `frose.webp`
 
-> Photorealistic drink photograph of a Frosé: a stemmed wine glass of pink frozen rosé slush with a strawberry slice on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frosé: a stemmed wine glass of pink blended frozen rosé slush with a strawberry slice on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Mudslide
+### Frozen Mudslide (photo added)
 File name: `frozen-mudslide.webp`
 
-> Photorealistic drink photograph of a Frozen Mudslide: a tall glass of creamy light brown milkshake-style cocktail with chocolate syrup swirled inside the glass. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Mudslide: a tall curved hurricane glass of thick creamy light brown milkshake-style frozen cocktail with chocolate syrup drizzled in streaks down the inside of the glass. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Miami Vice
+### Miami Vice (photo added)
 File name: `miami-vice.webp`
 
-> Photorealistic drink photograph of a Miami Vice: a tall curved glass with red strawberry slush on one side and creamy white coconut slush on the other, swirled together. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Miami Vice: a tall curved hurricane glass with thick red strawberry slush on one side and thick creamy white coconut slush on the other, meeting in a swirl down the middle. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Mango Margarita
+### Frozen Mango Margarita (photo added)
 File name: `frozen-mango-margarita.webp`
 
-> Photorealistic drink photograph of a Frozen Mango Margarita: a margarita glass of thick bright orange-yellow frozen mango slush with a red chili-lime rim and a lime wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Mango Margarita: a wide coupe-style margarita glass of thick bright orange-yellow blended frozen mango slush with a red chili-lime seasoning rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Peach Bellini
+### Frozen Peach Bellini (photo added)
 File name: `frozen-peach-bellini.webp`
 
-> Photorealistic drink photograph of a Frozen Peach Bellini: a champagne flute of pale peach-orange frozen slush with a peach slice on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Peach Bellini: a champagne flute of pale peach-orange blended frozen slush with a peach slice on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Mojito
+### Frozen Mojito (photo added)
 File name: `frozen-mojito.webp`
 
-> Photorealistic drink photograph of a Frozen Mojito: a tall glass of pale green frozen slush flecked with mint, with a mint sprig and a lime wheel. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Mojito: a tall straight glass of pale green blended frozen slush flecked with tiny bits of mint, topped with a fresh mint sprig. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Paloma
+### Frozen Paloma (photo added)
 File name: `frozen-paloma.webp`
 
-> Photorealistic drink photograph of a Frozen Paloma: a rocks glass of pale pink frozen slush with a salted rim and a small grapefruit wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Paloma: a rocks glass of pale pink blended frozen grapefruit slush with a salted rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Blue Hawaiian
+### Frozen Blue Hawaiian (photo added)
 File name: `frozen-blue-hawaiian.webp`
 
-> Photorealistic drink photograph of a Frozen Blue Hawaiian: a tall curved glass of bright sky-blue creamy frozen cocktail with a pineapple wedge and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Blue Hawaiian: a tall curved hurricane glass of thick bright sky-blue creamy blended frozen cocktail with a pineapple wedge on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Banana Daiquiri
+### Frozen Banana Daiquiri (photo added)
 File name: `frozen-banana-daiquiri.webp`
 
-> Photorealistic drink photograph of a Frozen Banana Daiquiri: a tall curved glass of pale creamy yellow frozen banana cocktail with a banana slice on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Banana Daiquiri: a tall curved hurricane glass of thick pale creamy yellow blended frozen banana cocktail with a banana slice on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Watermelon Margarita
+### Frozen Watermelon Margarita (photo added)
 File name: `frozen-watermelon-margarita.webp`
 
-> Photorealistic drink photograph of a Frozen Watermelon Margarita: a margarita glass of bright pink-red frozen watermelon slush with a salted rim and a small watermelon wedge. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Watermelon Margarita: a wide coupe-style margarita glass of thick bright pink-red blended frozen watermelon slush with a salted rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Espresso Martini
+### Frozen Espresso Martini (photo added)
 File name: `frozen-espresso-martini.webp`
 
-> Photorealistic drink photograph of a Frozen Espresso Martini: a martini glass of dark brown frozen coffee slush with three coffee beans on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Espresso Martini: a martini glass of dark brown blended frozen coffee slush with three coffee beans on top. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Aperol Spritz
+### Frozen Aperol Spritz (photo added)
 File name: `frozen-aperol-spritz.webp`
 
-> Photorealistic drink photograph of a Frozen Aperol Spritz: a large wine glass of bright orange frozen slush with an orange slice on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Aperol Spritz: a large stemmed wine glass of bright orange blended frozen slush with an orange slice on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Bushwacker
+### Bushwacker (photo added)
 File name: `bushwacker.webp`
 
-> Photorealistic drink photograph of a Bushwacker: a tall curved glass of creamy light brown frozen cocktail dusted with nutmeg. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Bushwacker: a tall curved hurricane glass of thick creamy light brown blended frozen cocktail dusted with ground nutmeg on top. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Vodka Lemonade
+### Frozen Vodka Lemonade (photo added)
 File name: `frozen-vodka-lemonade.webp`
 
-> Photorealistic drink photograph of a Frozen Vodka Lemonade: a tall glass of pale yellow frozen lemonade slush with a lemon wheel and a straw. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Vodka Lemonade: a tall straight glass of pale yellow blended frozen lemonade slush with a lemon wheel on the rim and a plain straw. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Gin and Tonic
+### Frozen Gin and Tonic (photo added)
 File name: `frozen-gin-and-tonic.webp`
 
-> Photorealistic drink photograph of a Frozen Gin and Tonic: a tall glass of white frosty slush with a lime wheel and a sprig of rosemary. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Gin and Tonic: a tall straight glass filled with thick, opaque, snow-white blended icy slush, like a granita, mounded slightly above the rim, with a lime wheel on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Hurricane
+### Frozen Hurricane (photo added)
 File name: `frozen-hurricane.webp`
 
-> Photorealistic drink photograph of a Frozen Hurricane: a tall curved hurricane glass of orange-red frozen slush with an orange slice and a cherry. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Hurricane: a tall curved hurricane glass of thick orange-red blended frozen slush with an orange slice and a red cherry on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Frozen Sangria
+### Frozen Sangria (photo added)
 File name: `frozen-sangria.webp`
 
-> Photorealistic drink photograph of a Frozen Sangria: a stemmed wine glass of deep purple-red frozen berry slush with an orange slice on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Frozen Sangria: a stemmed wine glass of thick deep purple-red blended frozen berry slush with an orange slice on the rim. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is a blended frozen cocktail: visibly thick, slushy, icy texture with frost on the outside of the glass. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
 ## Hot drinks
 
-### Hot Toddy
+Hot drink photos are original AI-generated images made with GenerateImage (model not reported) on 2026-11-18, square, Shots style (dark slate board on a bar counter, blurred back bar). No text, logos or brand labels.
+
+### Hot Toddy (photo added)
 File name: `hot-toddy.webp`
 
-> Photorealistic drink photograph of a Hot Toddy: a clear glass mug of golden hot toddy with a lemon slice, a cinnamon stick and a little steam. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hot Toddy: a clear glass mug of golden hot toddy with a lemon slice and a cinnamon stick. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Mulled Wine
+### Mulled Wine (photo added)
 File name: `mulled-wine.webp`
 
-> Photorealistic drink photograph of a Mulled Wine: a glass mug of deep red mulled wine with an orange slice, a cinnamon stick and star anise. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Mulled Wine: a clear glass mug of deep red mulled wine with an orange slice, a cinnamon stick and a star anise. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Irish Coffee
+### Irish Coffee (photo added)
 File name: `irish-coffee.webp`
 
-> Photorealistic drink photograph of a Irish Coffee: a stemmed glass mug of black coffee with a thick white layer of cream floating on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of an Irish Coffee: a stemmed glass mug of black coffee with a thick white layer of cream floating on top. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Hot Buttered Rum
+### Hot Buttered Rum (photo added)
 File name: `hot-buttered-rum.webp`
 
-> Photorealistic drink photograph of a Hot Buttered Rum: a mug of golden-brown hot buttered rum with a cinnamon stick and a small pat of melting butter on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hot Buttered Rum: a clear glass mug of golden-brown hot buttered rum with a cinnamon stick and a small pat of melting butter on top. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Spiked Hot Chocolate
+### Spiked Hot Chocolate (photo added)
 File name: `spiked-hot-chocolate.webp`
 
-> Photorealistic drink photograph of a Spiked Hot Chocolate: a mug of hot chocolate topped with a swirl of whipped cream and chocolate shavings. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Spiked Hot Chocolate: a plain dark ceramic mug of hot chocolate topped with a swirl of whipped cream and chocolate shavings. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Mulled Cider
+### Mulled Cider (photo added)
 File name: `mulled-cider.webp`
 
-> Photorealistic drink photograph of a Mulled Cider: a glass mug of amber hot cider with an orange slice, a cinnamon stick and steam rising. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Mulled Cider: a clear glass mug of amber hot apple cider with an orange slice, a cinnamon stick and a few whole cloves. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Peppermint Hot Chocolate
+### Peppermint Hot Chocolate (photo added)
 File name: `peppermint-hot-chocolate.webp`
 
-> Photorealistic drink photograph of a Peppermint Hot Chocolate: a mug of hot chocolate with whipped cream, crushed red and white candy cane and a candy cane hooked on the rim. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Peppermint Hot Chocolate: a plain white ceramic mug of hot chocolate topped with whipped cream and crushed red and white candy cane pieces. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Hot Apple Pie
+### Hot Apple Pie (photo added)
 File name: `hot-apple-pie.webp`
 
-> Photorealistic drink photograph of a Hot Apple Pie: a glass mug of golden hot cider topped with whipped cream and a dusting of cinnamon. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hot Apple Pie: a clear glass mug of golden hot apple cider topped with whipped cream and a dusting of cinnamon. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Spanish Coffee
+### Spanish Coffee (photo added)
 File name: `spanish-coffee.webp`
 
-> Photorealistic drink photograph of a Spanish Coffee: a stemmed heatproof glass of dark coffee with a sugared rim and a tall swirl of whipped cream. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Spanish Coffee: a stemmed heatproof glass of dark coffee with a sugared rim and a tall swirl of whipped cream on top. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Blueberry Tea
+### Blueberry Tea (photo added)
 File name: `blueberry-tea.webp`
 
-> Photorealistic drink photograph of a Blueberry Tea: a brandy snifter of clear amber hot tea with an orange slice, steam rising. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Blueberry Tea: a brandy snifter of clear amber hot tea with an orange slice. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Hot Gin Toddy
+### Hot Gin Toddy (photo added)
 File name: `hot-gin-toddy.webp`
 
-> Photorealistic drink photograph of a Hot Gin Toddy: a clear glass mug of pale golden hot drink with a lemon wheel studded with cloves. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hot Gin Toddy: a clear glass mug of pale golden hot drink with a lemon wheel studded with three cloves floating on top. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Amaretto Coffee
+### Amaretto Coffee (photo added)
 File name: `amaretto-coffee.webp`
 
-> Photorealistic drink photograph of a Amaretto Coffee: a glass mug of coffee topped with whipped cream and sliced almonds. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of an Amaretto Coffee: a clear glass mug of coffee topped with whipped cream and sliced almonds. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Irish Cream Coffee
+### Irish Cream Coffee (photo added)
 File name: `irish-cream-coffee.webp`
 
-> Photorealistic drink photograph of a Irish Cream Coffee: a mug of creamy light brown coffee topped with whipped cream and a dusting of cocoa. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of an Irish Cream Coffee: a plain ceramic mug of creamy light brown coffee topped with whipped cream. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Mexican Hot Chocolate
+### Mexican Hot Chocolate (photo added)
 File name: `mexican-hot-chocolate.webp`
 
-> Photorealistic drink photograph of a Mexican Hot Chocolate: a rustic mug of dark hot chocolate dusted with cinnamon, with a cinnamon stick and a dried chili beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Mexican Hot Chocolate: a rustic plain terracotta-colored ceramic mug of dark hot chocolate dusted with cinnamon, with a cinnamon stick in it. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Glögg
+### Glögg (photo added)
 File name: `glogg.webp`
 
-> Photorealistic drink photograph of a Glögg: a small glass cup of dark red glögg with raisins and blanched almonds at the bottom and a cinnamon stick beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Glögg: a small clear glass cup filled with deep ruby-red hot spiced red wine, dark like red wine, with a few raisins and blanched almonds visible at the bottom, and a cinnamon stick lying beside the cup. The glass sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Rum Chai
+### Rum Chai (photo added)
 File name: `rum-chai.webp`
 
-> Photorealistic drink photograph of a Rum Chai: a mug of milky light brown chai with a dusting of cinnamon and a star anise on top. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Rum Chai: a plain ceramic mug of milky light brown chai with a dusting of cinnamon on top. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Spiked Pumpkin Spice Latte
+### Spiked Pumpkin Spice Latte (photo added)
 File name: `spiked-pumpkin-spice-latte.webp`
 
-> Photorealistic drink photograph of a Spiked Pumpkin Spice Latte: a mug of pale orange-brown latte topped with whipped cream and a dusting of pumpkin pie spice. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Spiked Pumpkin Spice Latte: a plain ceramic mug of pale orange-brown latte topped with whipped cream and a dusting of pumpkin pie spice. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Hot White Russian
+### Hot White Russian (photo added)
 File name: `hot-white-russian.webp`
 
-> Photorealistic drink photograph of a Hot White Russian: a glass mug of dark coffee with white cream swirling down into it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Hot White Russian: a clear glass coffee mug with a handle, filled with dark hot coffee, with white cream swirling down into it from the top. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Maple Whisky Toddy
+### Maple Whisky Toddy (photo added)
 File name: `maple-whisky-toddy.webp`
 
-> Photorealistic drink photograph of a Maple Whisky Toddy: a clear glass mug of amber hot toddy with a cinnamon stick and a lemon slice, a small jug of maple syrup beside it. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Maple Whisky Toddy: a clear glass mug of amber hot toddy with a cinnamon stick, and a small plain glass jug of maple syrup beside it. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
 
-### Salted Caramel Hot Chocolate
+### Salted Caramel Hot Chocolate (photo added)
 File name: `salted-caramel-hot-chocolate.webp`
 
-> Photorealistic drink photograph of a Salted Caramel Hot Chocolate: a mug of hot chocolate with whipped cream, a caramel drizzle and flakes of sea salt. Sitting on a light wooden table at a relaxed house party, soft warm evening light, shallow depth of field, softly blurred background, shot at a slight angle from the front. No people, no hands, no text, no logos, no brand labels. Landscape 4:3.
+> Photorealistic drink photograph of a Salted Caramel Hot Chocolate: a plain ceramic mug of hot chocolate topped with whipped cream, a caramel drizzle and flakes of sea salt. The mug sits centered on a dark slate serving board on a dark wooden bar counter. Behind it, a softly blurred warm back bar with glowing amber lights and out-of-focus shelves of glassware and plain unlabeled bottles. Moody low-key warm lighting, gentle reflections on the glass, shallow depth of field, camera at counter height angled slightly down from the front. Match the style, lighting and setting of the reference image, but show only the drink described. The drink is hot: soft wisps of steam rise visibly from it. No flames, no fire. No people, no hands, no text, no logos, no brand labels, no readable signage. Square 1:1.
