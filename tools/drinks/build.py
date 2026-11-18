@@ -28,7 +28,7 @@ SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
 CSS_V = "1"
 JS_V = "1"
-STYLES_V = "25"   # keep in step with the other pages
+STYLES_V = "26"   # keep in step with the other pages
 SOUNDS_V = "18"
 APP_V = "21"
 
@@ -423,6 +423,8 @@ def photo_prompts(drinks, by_type):
            "AI photos should show only the drink. Check each one for garbled text, extra garnishes that are not in the recipe, and brand labels before using it.", ""]
     for t in TYPES:
         out += ["## " + t[2], ""]
+        if t[0] == "cocktails":
+            out += ["Cocktail photos were generated with Grok Bot's built-in GenerateImage tool (model not reported), styled to match the shots set (dark slate board on bar counter, blurred back bar, square). No text, logos, or brand labels. The files are original AI output, not stock or third-party images.", ""]
         for d in by_type[t[0]]:
             have = " (photo added)" if d.photo else ""
             out += ["### %s%s" % (d.name, have), "File name: `%s.webp`" % d.slug, "",
