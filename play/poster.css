@@ -93,6 +93,18 @@ body.poster .sd-tag.mover{background:var(--tile-green)}
 body.poster .sd-total{grid-area:total;font:800 1.8rem var(--display)}
 body.poster .sd-stats{grid-area:stats;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.88rem;font-weight:650}
 body.poster .sd-delta{font-weight:800}
+body.poster .sd-stake{display:flex;align-items:center;gap:8px;margin:8px 0 2px}
+body.poster .sd-stake-l{font:800 1rem var(--display);margin-right:2px}
+body.poster .sd-chip{flex:1;min-height:48px;border:var(--bw) solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink);font:800 1.2rem var(--display);box-shadow:var(--shadow-sm);touch-action:manipulation}
+body.poster .sd-chip[aria-pressed="true"]{background:var(--select-bg);color:var(--select-fg);box-shadow:none;transform:translate(2px,2px)}
+body.poster .sd-stake-hint{margin:2px 0 6px;font-size:.95rem;font-weight:650}
+body.poster .sd-me-stake{margin:4px 0 0;font:800 .9rem var(--display);letter-spacing:.06em;text-transform:uppercase}
+body.poster .sd-next{font:800 1.2rem var(--display);text-align:center;margin:10px 0}
+body.poster .sd-awards{margin:16px 0}
+body.poster .sd-award{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r);box-shadow:var(--shadow-sm);padding:12px 14px;margin:0 0 10px}
+body.poster .sd-award-t{margin:0;font:800 .82rem var(--display);letter-spacing:.12em;text-transform:uppercase}
+body.poster .sd-award-n{margin:4px 0 2px;font:800 1.3rem var(--display);overflow-wrap:anywhere}
+body.poster .sd-award-l{margin:0;font-weight:650}
 body.poster .sd-step{animation:sdIn .45s ease-out both;animation-delay:calc(var(--d, 0) * 1s)}
 body.poster #finale .poster-award{animation:sdPop .6s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes sdIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -110,4 +122,5 @@ body.poster #finale .poster-award{animation:sdPop .6s cubic-bezier(.2,1.6,.4,1) 
   body.poster .poster-card{box-shadow:none}
   body.poster .sd-step,body.poster .sd-badge.big,body.poster .sd-bar-a,body.poster .sd-timer.low .sd-timer-n,body.poster #finale .poster-award{animation:none}
   body.poster .sd-row,body.poster .sd-timer-bar{transition:none}
+  body.poster .sd-chip[aria-pressed="true"]{transform:none}
 }

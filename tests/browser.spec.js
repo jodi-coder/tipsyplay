@@ -174,9 +174,24 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
     await expect(ada.page.locator("#revealbox")).toBeVisible();
     if (round < 7) await ada.page.locator("#nextround").click();
   }
+  // Ada and Bea are tied at the top: sudden death, Cal watches. They keep tying, so after three rounds the win is shared.
+  for (let sd = 1; sd <= 3; sd++){
+    await expect(ada.page.locator("#nextround")).toHaveText("Start sudden death");
+    await ada.page.locator("#nextround").click();
+    await expect(ada.page.locator("#roundlabel")).toHaveText("Sudden death " + sd);
+    await expect(cal.page.locator("#statusline")).toContainText("You're watching");
+    await lockPref(ada.page, "A");
+    await lockPref(bea.page, "A");
+    await lockCount(ada.page, "1");
+    await lockCount(bea.page, "1");
+    await expect(ada.page.locator(".sd-me")).toBeVisible();
+  }
+  await expect(ada.page.locator("#nextround")).toHaveText("See the result");
   await ada.page.locator("#nextround").click();
   await expect(ada.page.locator("#finale")).toBeVisible();
   await expect(ada.page.locator("#awards")).toContainText("Shared win");
+  await expect(ada.page.locator("#recapline")).toContainText("sudden death");
+  await expect(ada.page.locator("#awards .reveal-row")).toHaveCount(3);
   await shot(ada.page, "split-finale-mobile");
 
   const before = await bea.page.evaluate(() => window.__tpTest.uid());

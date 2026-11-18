@@ -134,12 +134,12 @@ test("stored rows round-trip and stay under the 128-character rule limit", () =>
 test("running stats: totals, exact count, accuracy inputs and streaks", () => {
   let stats = {};
   stats = L.nextStats(stats, L.scoreRound([p("a", "A", 1), p("b", "A", 0), p("c", "B", 0)]));
-  assert.deepEqual(stats.a, { total: 2, exact: 1, hits: 1, played: 1, streak: 1 });
-  assert.deepEqual(stats.c, { total: 0, exact: 0, hits: 0, played: 1, streak: 0 });
+  assert.deepEqual(stats.a, { total: 2, exact: 1, hits: 1, played: 1, streak: 1, best: 1, minority: 0, bold: 0 });
+  assert.deepEqual(stats.c, { total: 0, exact: 0, hits: 0, played: 1, streak: 0, best: 0, minority: 1, bold: 0 });
   stats = L.nextStats(stats, L.scoreRound([p("a", "A", 0), p("b", "A", 1), p("c", null, null)]));
-  assert.deepEqual(stats.a, { total: 3, exact: 1, hits: 2, played: 2, streak: 2 });
-  assert.deepEqual(stats.b, { total: 3, exact: 1, hits: 2, played: 2, streak: 2 });
-  assert.deepEqual(stats.c, { total: 0, exact: 0, hits: 0, played: 2, streak: 0 });
+  assert.deepEqual(stats.a, { total: 3, exact: 1, hits: 2, played: 2, streak: 2, best: 2, minority: 0, bold: 0 });
+  assert.deepEqual(stats.b, { total: 3, exact: 1, hits: 2, played: 2, streak: 2, best: 2, minority: 0, bold: 0 });
+  assert.deepEqual(stats.c, { total: 0, exact: 0, hits: 0, played: 2, streak: 0, best: 0, minority: 1, bold: 0 });
 });
 
 test("leaderboard ties share a rank, zero-point players are listed, leader and biggest mover", () => {
@@ -187,4 +187,90 @@ test("media mode: still on reduced motion, Save-Data and 2g/3g, video otherwise"
   assert.equal(L.mediaMode({ connection: { effectiveType: "3g" } }), "still");
   assert.equal(L.mediaMode({ connection: { effectiveType: "2g" } }), "still");
   assert.equal(L.mediaMode({ connection: { effectiveType: "slow-2g" } }), "still");
+});
+
+/* ---- Phase 2 ---- */
+
+test("confidence stakes: 1x is the Phase 1 score, 2x and 3x multiply hits and charge for a miss", () => {
+  const base = [p("b", "A", 0), p("c", "B", 0), p("d", "B", 0)];
+  const at = (n, stake) => row(L.scoreRound([Object.assign(p("me", "B", n), { stake })].concat(base)), "me");
+  // target for a B picker = 1
+  assert.deepEqual([at(1, 1).points, at(0, 1).points, at(3, 1).points], [2, 1, 0]);
+  assert.deepEqual([at(1, 2).points, at(0, 2).points, at(3, 2).points], [4, 2, -1]);
+  assert.deepEqual([at(1, 3).points, at(2, 3).points, at(3, 3).points], [6, 3, -2]);
+  assert.equal(at(1, 3).base, 2);
+  assert.equal(at(3, 3).base, 0);
+  // A bad stake value is 1x.
+  assert.equal(at(1, 7).points, 2);
+  assert.equal(at(1, 7).stake, 1);
+});
+
+test("a stake never costs a player who did not answer, or who answered with no guess", () => {
+  const r = L.scoreRound([Object.assign(p("a", null, null), { stake: 3 }), Object.assign(p("b", "A", null), { stake: 3 }), p("c", "B", 0)]);
+  assert.equal(row(r, "a").points, 0);
+  assert.equal(row(r, "a").result, "missed");
+  assert.equal(row(r, "b").points, 0);
+  assert.equal(row(r, "b").result, "miss");
+});
+
+test("minority side: fewer pickers is the minority, an even split or a clean sweep has none", () => {
+  const r = L.scoreRound([p("a", "A", 0), p("b", "B", 1), p("c", "B", 1)]);
+  assert.equal(r.minority, "A");
+  assert.deepEqual(r.rows.map((x) => x.minority), [true, false, false]);
+  assert.equal(L.scoreRound([p("a", "A", 0), p("b", "B", 0)]).minority, null);
+  assert.equal(L.scoreRound([p("a", "B", 0), p("b", "B", 0)]).minority, null);
+});
+
+test("running stats keep the best streak, minority picks and points won on stakes", () => {
+  let s = {};
+  const rounds = [
+    [Object.assign(p("a", "A", 0), { stake: 3 }), p("b", "B", 1), p("c", "B", 1)], // a exact 3x = 6, minority
+    [Object.assign(p("a", "A", 2), { stake: 2 }), p("b", "A", 2), p("c", "A", 2)], // a exact 2x = 4
+    [Object.assign(p("a", "A", 2), { stake: 2 }), p("b", "B", 1), p("c", "B", 1)]  // a miss 2x = -1, minority
+  ];
+  rounds.forEach((r) => { s = L.nextStats(s, L.scoreRound(r)); });
+  assert.deepEqual(s.a, { total: 9, exact: 2, hits: 2, played: 3, streak: 0, best: 2, minority: 2, bold: 10 });
+});
+
+test("v3 rows round-trip with stake and award fields, and Phase 1 v2 rows still decode", () => {
+  const r = L.scoreRound([Object.assign(p("a", "A", 0), { stake: 3 }), p("b", "B", 1), p("c", "B", 3)]);
+  const st = L.nextStats({}, r);
+  const raw = L.encodeResult(4, 9, row(r, "a"), st.a);
+  assert.ok(raw.length <= 128);
+  const d = L.decodeResult(raw);
+  assert.deepEqual([d.round, d.stake, d.result, d.points, d.total, d.best, d.minority, d.bold], [9, 3, "exact", 6, 6, 1, 1, 6]);
+  const neg = L.decodeResult(L.encodeResult(4, 9, Object.assign({}, row(r, "c"), { stake: 3, points: -2 }), { total: -2 }));
+  assert.equal(neg.points, -2);
+  assert.equal(neg.total, -2);
+  const old = L.decodeResult("v2|1|3|A|2|E|2|7|2|3|4|1");
+  assert.deepEqual([old.round, old.stake, old.result, old.total, old.streak, old.best, old.minority, old.bold], [3, 1, "exact", 7, 1, 1, 0, 0]);
+});
+
+test("after round 8: a single leader ends the game, a tie at the top goes to sudden death, capped", () => {
+  const e = (id, total) => ({ id, total });
+  assert.deepEqual(L.afterRound(3, [e("a", 5), e("b", 5)], 0), { next: "round" });
+  assert.deepEqual(L.afterRound(7, [e("a", 6), e("b", 5), e("c", 5)], 0), { next: "over", shared: false });
+  assert.deepEqual(L.afterRound(7, [e("a", 6), e("b", 6), e("c", 2)], 0), { next: "sudden", ids: ["a", "b"] });
+  assert.deepEqual(L.afterRound(9, [e("a", 8), e("b", 8)], 2), { next: "sudden", ids: ["a", "b"] });
+  assert.deepEqual(L.afterRound(10, [e("a", 8), e("b", 8)], 3), { next: "over", shared: true });
+  assert.deepEqual(L.afterRound(8, [e("a", 9), e("b", 8)], 1), { next: "over", shared: false });
+  assert.deepEqual(L.tiedLeaders([e("a", -1), e("b", -1)]), ["a", "b"]);
+  assert.deepEqual(L.tiedLeaders([]), []);
+});
+
+test("end-of-game awards: the best value wins, ties share, nobody at 0 gets one", () => {
+  const awards = L.gameAwards([
+    { id: "a", exact: 3, hits: 4, minority: 1, best: 3, bold: 0 },
+    { id: "b", exact: 3, hits: 3, minority: 4, best: 2, bold: 6 },
+    { id: "c", exact: 0, hits: 2, minority: 0, best: 1, bold: 0 }
+  ]);
+  const by = Object.fromEntries(awards.map((a) => [a.key, a]));
+  assert.deepEqual(by.reader.ids, ["a", "b"]);
+  assert.equal(by.reader.line, "3 exact guesses");
+  assert.deepEqual(by.contrarian.ids, ["b"]);
+  assert.deepEqual(by.streak.ids, ["a"]);
+  assert.deepEqual(by.near.ids, ["c"]);
+  assert.equal(by.near.value, 2);
+  assert.deepEqual(by.roller.ids, ["b"]);
+  assert.equal(L.gameAwards([{ id: "a", exact: 0, hits: 0, minority: 0, best: 0, bold: 0 }]).length, 0);
 });

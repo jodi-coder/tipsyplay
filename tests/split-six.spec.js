@@ -100,7 +100,13 @@ test("six phones: simultaneous answers, a refresh mid-round, a no-show, and a re
   await Promise.all([guess(ada, 2), guess(bea, 3), guess(cal, 0), guess(dev, 3), guess(eli, 1)]);
 
   // The clock runs out for Fay; the host's phone reveals without a tap.
+  await expect(ada.page.locator(".sd-me")).toBeVisible({ timeout: 30000 });
+  // The next round would start on its own; the host pauses so the checks below can take their time.
+  await expect(ada.page.locator("#pausebtn")).toBeVisible();
+  await ada.page.locator("#pausebtn").click();
   for (const p of ps) await expect(p.page.locator(".sd-me")).toBeVisible({ timeout: 30000 });
+  await expect(cal.page.locator("#sdnext")).toHaveText("Paused by the host.");
+  await expect(cal.page.locator("#pausebtn")).toBeHidden();
   const roundMs = Date.now() - t0;
   expect(roundMs).toBeLessThan(60000);
 

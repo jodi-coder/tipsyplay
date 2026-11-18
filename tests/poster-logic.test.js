@@ -28,11 +28,15 @@ test("deal does not repeat until the bag wraps", () => {
 });
 
 test("split seals parse a pick, then a pick and a guess", () => {
-  assert.deepEqual(L.parseSplitSeal("A"), { pref: "A", pred: null });
-  assert.deepEqual(L.parseSplitSeal("B|3"), { pref: "B", pred: 3 });
-  assert.deepEqual(L.parseSplitSeal(""), { pref: null, pred: null });
-  assert.deepEqual(L.parseSplitSeal("pass"), { pref: null, pred: null });
+  assert.deepEqual(L.parseSplitSeal("A"), { pref: "A", pred: null, stake: 1 });
+  assert.deepEqual(L.parseSplitSeal("B|3"), { pref: "B", pred: 3, stake: 1 });
+  assert.deepEqual(L.parseSplitSeal("B|3|3"), { pref: "B", pred: 3, stake: 3 });
+  assert.deepEqual(L.parseSplitSeal("A|1|9"), { pref: "A", pred: 1, stake: 1 });
+  assert.deepEqual(L.parseSplitSeal(""), { pref: null, pred: null, stake: 1 });
+  assert.deepEqual(L.parseSplitSeal("pass"), { pref: null, pred: null, stake: 1 });
   assert.equal(L.encodeSplitSeal("A", 2), "A|2");
+  assert.equal(L.encodeSplitSeal("A", 2, 1), "A|2");
+  assert.equal(L.encodeSplitSeal("A", 2, 3), "A|2|3");
   assert.equal(L.encodeSplitSeal("B", null), "B");
 });
 

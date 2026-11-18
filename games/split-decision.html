@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Split Decision: Would-You-Rather Style Game | TipsyPlay"><meta property="og:description" content="A would-you-rather style party game for adults. Lock A or B, then guess how many friends picked A. The game keeps score in points. For 2–10 players."><meta property="og:url" content="https://tipsyplay.com/games/split-decision.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Split Decision: Would-You-Rather Style Game | TipsyPlay"><meta name="twitter:description" content="A would-you-rather style party game for adults. Lock A or B, then guess how many friends picked A. The game keeps score in points. For 2–10 players."><meta name="twitter:image" content="https://tipsyplay.com/images/og-image.jpg"><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Split Decision", "item": "https://tipsyplay.com/games/split-decision.html"}]}]}</script><title>Split Decision: Would-You-Rather Style Game | TipsyPlay</title>
 <link rel="stylesheet" href="../styles.css?v=26">
-<link rel="stylesheet" href="../play/poster.css?v=7">
+<link rel="stylesheet" href="../play/poster.css?v=8">
 </head>
 <body class="poster" data-root="../" data-game="split">
 <header class="top">
@@ -93,6 +93,8 @@
 <p class="poster-prompt" id="statement">The next scene is on the way.</p>
 </article>
 <p id="statusline" class="lede sd-status" aria-live="polite"></p>
+<div id="sdstake" class="sd-stake hide" role="group" aria-label="How sure are you?"><span class="sd-stake-l">Bet</span><button type="button" class="sd-chip" data-stake="1" aria-pressed="true">1x</button><button type="button" class="sd-chip" data-stake="2" aria-pressed="false">2x</button><button type="button" class="sd-chip" data-stake="3" aria-pressed="false">3x</button></div>
+<p id="sdstakehint" class="lede sd-stake-hint hide"></p>
 <div id="choices" class="poster-choices" role="group" aria-label="Your pick"></div>
 <p id="passnote" class="lede"></p>
 <button type="button" class="btn alt poster-pass hide" id="passbtn">Pass</button>
@@ -104,9 +106,11 @@
 <p id="toastline" class="poster-note"></p>
 <div id="sdboard"></div>
 </section>
+<p id="sdnext" class="sd-next hide" aria-live="polite"></p>
 <div class="ctrl">
 <button type="button" class="btn hostonly" id="revealbtn">Reveal now</button>
 <button type="button" class="btn hostonly hide" id="nextround">Next</button>
+<button type="button" class="btn alt hostonly hide" id="pausebtn">Pause</button>
 <button type="button" class="btn alt hostonly hide" id="retrybtn">Retry mission</button>
 <button type="button" class="btn hostonly hide" id="dealbtn">Deal this mission</button>
 </div>
@@ -119,7 +123,7 @@
 </section>
 <details class="poster-rules">
 <summary>Rules</summary>
-<p>Pick A or B before the 20-second clock runs out. Then guess how many of the other players picked A. Your own pick never counts in that number. Exact is 2 points, one away is 1, anything else is 0. Pass, or no answer in time, scores 0 for that question. Eight rounds. A tie shares the win.</p>
+<p>Pick A or B before the 20-second clock runs out. Then guess how many of the other players picked A. Your own pick never counts in that number. Exact is 2 points, one away is 1, anything else is 0. Feeling sure? Bet 2x or 3x: hits multiply, and a miss costs 1 or 2 points. Pass, or no answer in time, scores 0 for that question. The next question starts on its own after the leaderboard; the host can pause. Eight rounds. If the top score is tied, the tied players go to sudden death, up to three rounds, then the win is shared.</p>
 </details>
 <p class="poster-note">Skip the drink: after each reveal, whoever picked the minority side takes a bow. Points are the whole game.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
@@ -153,13 +157,13 @@
 </footer>
 <script src="../sounds.js?v=18"></script>
 <script src="../app.js?v=21"></script>
-<script src="../play/poster-logic.js?v=3"></script>
+<script src="../play/poster-logic.js?v=4"></script>
 <script src="../data/split-decision.js?v=1"></script>
 <script src="../play/qr.js?v=18"></script>
 <script src="../play/join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","split");</script>
 <script src="../play/party-audio.js?v=19"></script>
 <script src="../play/split-fx.js?v=1"></script>
-<script src="../play/poster-party.js?v=11"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/poster-party.js?v=12"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>
