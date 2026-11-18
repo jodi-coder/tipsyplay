@@ -130,7 +130,7 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
 
   const adaUid = await ada.page.evaluate(() => window.__tpTest.uid());
   await ada.page.locator(".poster-choice").first().click();
-  await expect(ada.page.locator("#statusline")).toContainText(/Locked/);
+  await expect(ada.page.locator("#statusline")).toContainText("How many");
   const leaked = await bea.page.evaluate((uid) => {
     return window.__tpTest.readPath("rooms/" + window.__tpTest.code() + "/sealed/1/0/" + uid);
   }, adaUid);
@@ -149,7 +149,7 @@ test("split full game, hidden answers, rematch, refresh, host away", async ({ br
   }
   await lockPref(bea.page, "A");
   await lockPref(cal.page, "B");
-  await expect(bea.page.locator("#table")).not.toContainText("Ada ·");
+  await expect(bea.page.locator("#table")).not.toContainText("Picked");
   await lockCount(ada.page, "1");
   await lockCount(bea.page, "1");
   await lockCount(cal.page, "0");
