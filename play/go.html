@@ -2,6 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#7CC8FF">
 <meta name="robots" content="noindex">
@@ -26,6 +35,7 @@
 <div class="go-card">
 <h1>Join a game</h1>
 <p>Type the 4-letter code from the host's screen.</p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <form id="goform" class="go-row" action="go.html" method="get" autocomplete="off">
 <input id="gocode" name="room" maxlength="4" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Room code" required>
 <button class="btn host-cta" type="submit">Join</button>
