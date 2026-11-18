@@ -23,6 +23,8 @@
   --tile-yellow:#FFD60A;  /* game icon tiles */
   --tile-pink:#FF8FC7;
   --tile-green:#B6F36B;
+  --tile-orange:#FFB36B;
+  --tile-purple:#C9A7FF;
   --outline:#141414;      /* control and card borders */
   --bw:2.5px;             /* outline width */
   --hairline:rgba(20,20,20,.28);            /* decorative dividers on sky */

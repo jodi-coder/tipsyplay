@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#7CC8FF">
+<meta name="robots" content="noindex">
+<meta name="description" content="Enter a TipsyPlay room code to join a friend's game.">
+<title>Join a game – TipsyPlay</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="stylesheet" href="../styles.css?v=26">
+<style>
+.go-wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.go-card{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:22px}
+.go-card h1{font-size:2rem;margin:0 0 .3em}
+.go-row{display:flex;gap:10px;margin-top:12px}
+.go-row input{flex:1;min-width:0;min-height:52px;padding:0 14px;border:var(--bw) solid var(--outline);border-radius:var(--r-sm);font:800 1.5rem var(--display);letter-spacing:.3em;text-transform:uppercase;color:var(--ink);background:var(--surface)}
+.go-row .btn{flex:none;min-width:96px;margin:0}
+.go-msg{min-height:1.4em;margin:12px 0 0;font-weight:700}
+.go-msg.err{color:var(--danger-ink)}
+</style>
+</head>
+<body data-root="../">
+<header class="top"><a class="logo" href="../index.html">Tipsy<span>Play</span></a></header>
+<main class="go-wrap">
+<div class="go-card">
+<h1>Join a game</h1>
+<p>Type the 4-letter code from the host's screen.</p>
+<form id="goform" class="go-row" action="go.html" method="get" autocomplete="off">
+<input id="gocode" name="room" maxlength="4" autocapitalize="characters" spellcheck="false" placeholder="ABCD" aria-label="Room code" required>
+<button class="btn host-cta" type="submit">Join</button>
+</form>
+<p class="go-msg" id="gomsg" role="status" aria-live="polite"></p>
+<noscript><p class="go-msg err">Joining needs JavaScript. Turn it on and reload.</p></noscript>
+</div>
+<p style="margin-top:18px"><a href="../games/">Or pick a game to host →</a></p>
+</main>
+<script src="../sounds.js?v=19"></script>
+<script src="../app.js?v=21"></script>
+<script type="module" src="go.js?v=1"></script>
+</body>
+</html>
