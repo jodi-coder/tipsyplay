@@ -22,10 +22,10 @@ html,body{overflow-x:clip}
 @media(min-width:760px){.hero{grid-template-columns:1.15fr .85fr;gap:48px}.joinbox{max-width:460px}}
 
 
-/* hero photo: a white-outlined card with the hard offset shadow */
+/* hero art: a picture of phones mid-game that sits straight on the sky page, so it has no frame of its own */
 .hero-side{display:flex;justify-content:center}
-.hero-pic{margin:0;width:100%;color:var(--ink);max-width:440px;border:var(--bw) solid var(--outline);border-radius:var(--r-lg);overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
-.hero-pic img{width:100%;height:auto;display:block;aspect-ratio:1/1;object-fit:cover}
+.hero-pic{margin:0;width:100%;max-width:560px}
+.hero-pic img{width:100%;height:auto;display:block}
 
 /* tonight's picks: three whole-card links */
 .picks{display:grid;gap:16px;grid-auto-rows:1fr}

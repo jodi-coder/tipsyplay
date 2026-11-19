@@ -64,7 +64,7 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   await page.goto("/index.html");
   const c = await page.evaluate(() => {
     const css = (sel) => { const s = getComputedStyle(document.querySelector(sel)); return { bg: s.backgroundColor, fg: s.color, border: s.borderTopColor + " " + s.borderTopWidth, shadow: s.boxShadow, radius: s.borderTopLeftRadius, h: s.height }; };
-    return { body: css("body"), pick: css(".pick"), join: css(".joinbox"), tile: css(".t-yellow"), photo: css(".hero-pic") };
+    return { body: css("body"), pick: css(".pick"), join: css(".joinbox"), tile: css(".t-yellow") };
   });
   expect(c.body.bg).toBe(rgb(SKY));
   expect(c.pick.bg).toBe(rgb(WHITE));
@@ -75,8 +75,8 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   expect(c.join.bg).toBe(rgb(WHITE));
   expect(c.join.shadow).toBe(rgb(INK) + " 4px 4px 0px 0px");
   expect(c.tile.bg).toBe(rgb(YELLOW));
-  expect(c.photo.shadow).toBe(rgb(INK) + " 4px 4px 0px 0px");
-  expect(c.photo.border).toMatch(new RegExp("^" + rgb(INK).replace(/[()]/g, "\\$&") + " 2(\\.5)?px$"));
+  await expect(page.locator(".hero-pic img")).toBeVisible();
+  expect(await page.$eval(".hero-pic img", (i) => i.complete && i.naturalWidth > 0)).toBe(true);
   // changing a variable changes the page: nothing is hard-coded
   await page.addStyleTag({ content: ":root{--bg:#123456;--primary:#654321}" });
   const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cta: getComputedStyle(document.querySelector(".new-tag")).backgroundColor }));
