@@ -25,6 +25,7 @@
 
    The signing key is created on first use inside the storage folder. Do not
    commit that file and do not put a Firebase service account on this server. */
+require_once __DIR__ . "/frenzy-lib.php";
 ini_set("display_errors", "0");
 header("Content-Type: application/json; charset=utf-8");
 header("Cache-Control: no-store");
@@ -59,11 +60,19 @@ if (!preg_match('/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/', $room)) {
 }
 
 $ip = client_ip();
-if (!rate_ok("ip-" . sha1($ip)) || !rate_ok("room-" . $room)) {
+$isRace = strpos($op, "race-") === 0;
+if ($isRace) {
+    if (!rate_ok("race-ip-" . sha1($ip), 240) || !rate_ok("race-room-" . $room, 400)) fail(429, "slow down");
+} else if (!rate_ok("ip-" . sha1($ip)) || !rate_ok("room-" . $room)) {
     fail(429, "slow down");
 }
 
 cleanup_old();
+
+if ($isRace) {
+    echo json_encode(race_route($op, $room, $req));
+    exit;
+}
 
 if ($op === "start") {
     $testWord = "";
@@ -137,7 +146,7 @@ function rate_max() {
     if ($n !== false && (int) $n > 0) return (int) $n;
     return 60;
 }
-function rate_ok($key) {
+function rate_ok($key, $max = null) {
     $path = storage_dir() . "/rl-" . preg_replace('/[^a-z0-9-]/', "", $key) . ".json";
     $now = time();
     $fh = fopen($path, "c+");
@@ -151,7 +160,7 @@ function rate_ok($key) {
     if (!is_array($hits)) $hits = array();
     $keep = array();
     foreach ($hits as $t) { if ($now - (int) $t < 60) $keep[] = (int) $t; }
-    $ok = count($keep) < rate_max();
+    $ok = count($keep) < ($max === null ? rate_max() : $max);
     if ($ok) $keep[] = $now;
     ftruncate($fh, 0);
     rewind($fh);
@@ -175,8 +184,8 @@ function cleanup_old() {
         if ($seen < $cut) @unlink($file);
     }
 }
-function room_path($room) {
-    return storage_dir() . "/" . $room . ".json";
+function room_path($room, $suffix = "") {
+    return storage_dir() . "/" . $room . $suffix . ".json";
 }
 function load_state($room) {
     $path = room_path($room);
@@ -197,8 +206,8 @@ function save_state($room, $state) {
     fclose($fh);
     @chmod($path, 0600);
 }
-function with_state($room, $fn) {
-    $path = room_path($room);
+function with_state($room, $fn, $suffix = "") {
+    $path = room_path($room, $suffix);
     $fh = fopen($path, "c+");
     if (!$fh) fail(500, "storage");
     flock($fh, LOCK_EX);
@@ -242,27 +251,6 @@ function pick_word($testWord) {
     $answers = $lists["answers"];
     $i = random_int(0, count($answers) - 1);
     return $answers[$i];
-}
-function mark_guess($secret, $guess) {
-    $marks = array("absent", "absent", "absent", "absent", "absent");
-    $spare = array();
-    for ($i = 0; $i < 5; $i++) {
-        if ($guess[$i] === $secret[$i]) $marks[$i] = "locked";
-        else {
-            $ch = $secret[$i];
-            if (!isset($spare[$ch])) $spare[$ch] = 0;
-            $spare[$ch]++;
-        }
-    }
-    for ($i = 0; $i < 5; $i++) {
-        if ($marks[$i] === "locked") continue;
-        $ch = $guess[$i];
-        if (!empty($spare[$ch])) {
-            $marks[$i] = "moved";
-            $spare[$ch]--;
-        }
-    }
-    return $marks;
 }
 function round_open_for_reveal($state) {
     return !empty($state["solved"]) || !empty($state["exhausted"]) || !empty($state["ended"]);
@@ -386,4 +374,148 @@ function take_guess($state, $guess, $n) {
         "seal" => $seal["text"],
         "sig" => $seal["sig"]
     ));
+}
+
+/* ---------------- Race mode ----------------
+   Every player races the same word on their own board. The word is never stored: it is recomputed from the room
+   code, the round and a server-side salt (frenzy_race_word). Only race-reveal ever returns it, and only once the
+   race is over. The state kept here holds guesses, colours and times, nothing that could give the word away. */
+function race_salt() {
+    $path = storage_dir() . "/race.salt";
+    $fh = fopen($path, "c+");
+    if (!$fh) fail(500, "Word storage is not available.");
+    flock($fh, LOCK_EX);
+    $salt = trim((string) stream_get_contents($fh));
+    if (strlen($salt) < 32) {
+        $salt = bin2hex(random_bytes(32));
+        ftruncate($fh, 0);
+        rewind($fh);
+        fwrite($fh, $salt);
+        fflush($fh);
+        @chmod($path, 0600);
+    }
+    flock($fh, LOCK_UN);
+    fclose($fh);
+    return $salt;
+}
+function race_word($race) {
+    if (!empty($race["forced"])) return $race["forced"];
+    $lists = load_lists();
+    return frenzy_race_word(race_salt(), $race["room"], $race["round"], $lists["answers"]);
+}
+function now_ms() {
+    return (int) floor(microtime(true) * 1000);
+}
+function race_err($code, $error, $extra = array()) {
+    http_response_code($code);
+    return array("out" => array_merge(array("ok" => false, "error" => $error), $extra));
+}
+/* Who is calling: a player of this race, proven by the secret key whose hash the host registered. */
+function race_caller($race, $req) {
+    $pid = isset($req["pid"]) ? $req["pid"] : "";
+    $pk = isset($req["pk"]) ? $req["pk"] : "";
+    if (!frenzy_pid_ok($pid) || !frenzy_pk_ok($pk) || !isset($race["roster"][$pid])) return "";
+    return hash_equals((string) $race["roster"][$pid], frenzy_pkh($pk)) ? $pid : "";
+}
+function race_route($op, $room, $req) {
+    $round = isset($req["round"]) ? (int) $req["round"] : 0;
+    if ($round < 1 || $round > 99) fail(400, "bad round");
+    if ($op === "race-start") {
+        return with_state($room, function ($state) use ($room, $round, $req) { return race_start($state, $room, $round, $req); }, "-race");
+    }
+    if ($op !== "race-guess" && $op !== "race-me" && $op !== "race-end" && $op !== "race-reveal") fail(400, "bad op");
+    return with_state($room, function ($race) use ($op, $round, $req) {
+        if ($race === null || (int) $race["round"] !== $round) return race_err(404, "no such race");
+        $pid = race_caller($race, $req);
+        if ($pid === "") return race_err(403, "bad key");
+        $now = now_ms();
+        $race["seen"] = time();
+        if ($op === "race-me") {
+            $me = frenzy_me($race, $pid, $now);
+            return array("state" => $race, "out" => array_merge(array("ok" => true, "goAt" => $race["goAt"], "now" => $now, "penalty" => $race["penalty"], "limit" => $race["limit"] / 1000), $me));
+        }
+        if ($op === "race-end") {
+            if ($pid !== $race["host"]) return race_err(403, "host only");
+            $race["ended"] = true;
+            return array("state" => $race, "out" => array("ok" => true, "ended" => true));
+        }
+        if ($op === "race-reveal") {
+            if (!frenzy_race_over($race, $now)) return race_err(403, "not yet");
+            return array("state" => $race, "out" => array("ok" => true, "word" => race_word($race), "results" => frenzy_summary($race, $now)));
+        }
+        return race_guess($race, $pid, $now, isset($req["guess"]) ? (string) $req["guess"] : "", isset($req["n"]) ? (int) $req["n"] : -1);
+    }, "-race");
+}
+function race_start($state, $room, $round, $req) {
+    $pid = isset($req["pid"]) ? $req["pid"] : "";
+    $pk = isset($req["pk"]) ? $req["pk"] : "";
+    $list = isset($req["roster"]) && is_array($req["roster"]) ? $req["roster"] : array();
+    if (!frenzy_pid_ok($pid) || !frenzy_pk_ok($pk)) return race_err(400, "bad key");
+    if (count($list) < 1 || count($list) > 8) return race_err(400, "bad roster");
+    $roster = array();
+    foreach ($list as $row) {
+        if (!is_array($row) || !isset($row["pid"]) || !isset($row["pkh"]) || !frenzy_pid_ok($row["pid"]) || !is_string($row["pkh"]) || !preg_match('/^[a-f0-9]{64}$/', $row["pkh"])) return race_err(400, "bad roster");
+        $roster[$row["pid"]] = $row["pkh"];
+    }
+    if (!isset($roster[$pid]) || !hash_equals($roster[$pid], frenzy_pkh($pk))) return race_err(403, "bad key");
+    $now = time();
+    $nowMs = now_ms();
+    if (is_array($state) && isset($state["host"])) {
+        $over = frenzy_race_over($state, $nowMs);
+        $idle = $now - (int) $state["seen"] >= 120;
+        /* Only the host of this room may start the next round. A stranger can only take over a room that has gone quiet. */
+        if ($state["host"] !== $pid && !$idle && !$over) return race_err(409, "race in play");
+        if ($state["host"] === $pid && $round <= (int) $state["round"] && $nowMs >= $state["goAt"] && !$over) return race_err(409, "race in play");
+    }
+    $limit = isset($req["limit"]) ? (int) $req["limit"] : 0;
+    if (!in_array($limit, array(0, 120, 180, 300), true)) $limit = 0;
+    $penalty = isset($req["penalty"]) ? (string) $req["penalty"] : "none";
+    if (!in_array($penalty, array("none", "lockout", "drink"), true)) $penalty = "none";
+    $countdown = 3000;
+    $race = null;
+    /* Only when the server is run for tests (FRENZY_TEST=1): a known word, a short countdown, a short timer. */
+    $test = getenv("FRENZY_TEST") === "1";
+    if ($test && isset($req["countdownMs"])) $countdown = max(0, min(3000, (int) $req["countdownMs"]));
+    race_salt(); /* made now, so a storage problem shows when the race starts, not halfway through it */
+    $race = frenzy_new_race($room, $round, $pid, $roster, $nowMs + $countdown, $limit, $penalty, $now);
+    if ($test && isset($req["limitMs"])) $race["limit"] = max(0, (int) $req["limitMs"]);
+    if ($test && isset($req["testWord"])) {
+        $w = strtolower((string) $req["testWord"]);
+        $lists = load_lists();
+        if (in_array($w, $lists["answers"], true)) $race["forced"] = $w;
+    }
+    return array("state" => $race, "out" => array("ok" => true, "round" => $round, "goAt" => $race["goAt"], "now" => $nowMs, "limit" => $race["limit"] / 1000, "penalty" => $penalty));
+}
+function race_guess($race, $pid, $now, $guess, $n) {
+    $guess = strtolower(preg_replace('/[^a-z]/', "", $guess));
+    if (strlen($guess) !== 5) return race_err(400, "Use exactly 5 letters.");
+    $lists = load_lists();
+    if (isset($lists["blocked"][$guess])) return race_err(400, "Not a word we accept. Try another one.");
+    if ($now < $race["goAt"] - 700) return race_err(409, "not yet");
+    $p = $race["players"][$pid];
+    $count = count($p["guesses"]);
+    /* The same guess number sent twice is answered again, never counted twice. */
+    if ($n >= 0 && $n < $count) {
+        $prev = $p["guesses"][$n];
+        if ($prev["guess"] === $guess) {
+            return array("out" => array("ok" => true, "duplicate" => true, "marks" => $prev["marks"], "solved" => $prev["marks"] === array("locked", "locked", "locked", "locked", "locked"), "n" => $count, "out" => !$p["solved"] && $count >= 6));
+        }
+        return race_err(409, "out of turn");
+    }
+    if (!empty($p["solved"]) || $count >= 6 || frenzy_race_over($race, $now)) return race_err(409, "round over", array("n" => $count));
+    if ($n !== $count) return race_err(409, "out of turn");
+    foreach ($p["guesses"] as $prev) if ($prev["guess"] === $guess) return race_err(409, "Already guessed.");
+    if ($race["penalty"] === "lockout" && $count > 0 && $now - $p["last"] < 10000) {
+        return race_err(409, "locked out", array("wait" => 10000 - ($now - $p["last"])));
+    }
+    $marks = mark_guess(race_word($race), $guess);
+    $solved = $marks === array("locked", "locked", "locked", "locked", "locked");
+    $p["guesses"][] = array("guess" => $guess, "marks" => $marks);
+    $p["last"] = $now;
+    if ($solved) {
+        $p["solved"] = true;
+        $p["tms"] = max(0, $now - $race["goAt"]);
+    }
+    $race["players"][$pid] = $p;
+    return array("state" => $race, "out" => array("ok" => true, "marks" => $marks, "solved" => $solved, "n" => count($p["guesses"]), "out" => !$solved && count($p["guesses"]) >= 6, "tms" => $p["tms"], "penalty" => $race["penalty"]));
 }

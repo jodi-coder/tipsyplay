@@ -3,7 +3,7 @@
    with motion on and with prefers-reduced-motion, and no sound may play before the first tap or while muted. */
 const { test, expect } = require("@playwright/test");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
-const PAGE = "/games/five-letter-frenzy.html?emulator=1&fast=1&word=crane";
+const PAGE = "/games/five-letter-frenzy.html?mode=table&emulator=1&fast=1&word=crane";
 const PROMPT = "One small drink or a 5-second pose — or Pass.";
 /* TRACE against CRANE: T not in the word, R A locked, C in the wrong place, E locked */
 const TRACE = [["miss", "×"], ["lock", "●"], ["lock", "●"], ["move", "↗"], ["lock", "●"]];
@@ -201,7 +201,7 @@ test("frenzy sounds: silent until the player taps, silent when muted, and muted 
   await a.page.waitForTimeout(300);
   expect(await counts(a.page)).toEqual({ ac: 0, osc: 0 });
   // after the first tap, the same calls make sound
-  await a.page.locator("h1").tap();
+  await a.page.locator("h1:visible").first().tap();
   await everySound(a.page);
   await expect.poll(async () => (await counts(a.page)).osc).toBeGreaterThan(10);
   // mute with the page's own button: the choice is remembered, and nothing more is made
@@ -215,7 +215,7 @@ test("frenzy sounds: silent until the player taps, silent when muted, and muted 
 
   // a first visit with no saved choice starts muted on this game, as before
   const b = await counted(browser, null);
-  await b.page.locator("h1").tap();
+  await b.page.locator("h1:visible").first().tap();
   await everySound(b.page);
   await b.page.waitForTimeout(300);
   expect((await counts(b.page)).osc).toBe(0);
