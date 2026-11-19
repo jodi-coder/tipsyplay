@@ -64,7 +64,7 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   await page.goto("/index.html");
   const c = await page.evaluate(() => {
     const css = (sel) => { const s = getComputedStyle(document.querySelector(sel)); return { bg: s.backgroundColor, fg: s.color, border: s.borderTopColor + " " + s.borderTopWidth, shadow: s.boxShadow, radius: s.borderTopLeftRadius, h: s.height }; };
-    return { body: css("body"), pick: css(".pick"), join: css(".joinbox"), tile: css(".t-yellow"), phone: css(".sp-mid") };
+    return { body: css("body"), pick: css(".pick"), join: css(".joinbox"), tile: css(".t-yellow") };
   });
   expect(c.body.bg).toBe(rgb(SKY));
   expect(c.pick.bg).toBe(rgb(WHITE));
@@ -75,10 +75,11 @@ test("the homepage paints from those variables: sky page, white outlined cards w
   expect(c.join.bg).toBe(rgb(WHITE));
   expect(c.join.shadow).toBe(rgb(INK) + " 4px 4px 0px 0px");
   expect(c.tile.bg).toBe(rgb(YELLOW));
-  expect(c.phone.shadow).toBe(rgb(YELLOW) + " 7px 7px 0px 0px");
+  await expect(page.locator(".hero-pic img")).toBeVisible();
+  expect(await page.$eval(".hero-pic img", (i) => i.complete && i.naturalWidth > 0)).toBe(true);
   // changing a variable changes the page: nothing is hard-coded
   await page.addStyleTag({ content: ":root{--bg:#123456;--primary:#654321}" });
-  const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cta: getComputedStyle(document.querySelector(".solve")).backgroundColor }));
+  const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, cta: getComputedStyle(document.querySelector(".new-tag")).backgroundColor }));
   expect(after.body).toBe("rgb(18, 52, 86)");
   expect(after.cta).toBe("rgb(101, 67, 33)");
 });
@@ -154,9 +155,9 @@ test("the homepage is readable when the hero art is missing and when scripts are
 test("the picks are whole-card links with colored icon tiles, and every tap target is 44px or more", async ({ page }) => {
   await page.goto("/index.html");
   const hrefs = await page.$$eval(".pick", (a) => a.map((x) => x.getAttribute("href")));
-  expect(hrefs).toEqual(["games/hot-take-court.html", "games/category-countdown.html", "games/slow-drip.html", "games/vault-traitor.html", "games/never-have-i-ever.html", "games/punchline-duel.html", "games/odd-word-out.html", "games/five-letter-frenzy.html"]);
+  expect(hrefs).toEqual(["games/hot-take-court.html", "games/category-countdown.html", "games/slow-drip.html", "games/five-letter-frenzy.html", "games/vault-traitor.html", "games/never-have-i-ever.html", "games/punchline-duel.html", "games/odd-word-out.html"]);
   const tiles = await page.$$eval(".pick .tile", (a) => a.map((x) => x.className.replace("tile ", "")));
-  expect(tiles).toEqual(["t-pink", "t-orange", "t-yellow", "t-purple", "t-green", "t-orange", "t-pink", "t-green"]);
+  expect(tiles).toEqual(["t-pink", "t-orange", "t-yellow", "t-green", "t-purple", "t-green", "t-orange", "t-pink"]);
   await expect(page.locator(".pick .new-tag")).toHaveCount(3);
   await expect(page.locator(".pick .chev")).toHaveCount(8);
   await expect(page.locator(".more")).toHaveText("See all games →");

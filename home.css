@@ -22,56 +22,10 @@ html,body{overflow-x:clip}
 @media(min-width:760px){.hero{grid-template-columns:1.15fr .85fr;gap:48px}.joinbox{max-width:460px}}
 
 
-/* hero art: three phones mid-game. Decorative, hidden from assistive tech; the page reads fine without it */
+/* hero art: a picture of phones mid-game that sits straight on the sky page, so it has no frame of its own */
 .hero-side{display:flex;justify-content:center}
-.scene{position:relative;width:400px;height:330px}
-.spark{position:absolute;width:26px;height:26px;fill:var(--primary);stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round;z-index:4}
-.sp1{top:6px;left:60px}.sp2{top:28px;right:6px;width:20px;height:20px;fill:var(--tile-pink)}.sp3{bottom:10px;left:8px;width:18px;height:18px;fill:var(--tile-green)}
-.sphone{position:absolute;width:132px;height:236px;background:var(--ink);border-radius:24px;padding:7px;box-sizing:border-box}
-.sscreen{position:relative;width:100%;height:100%;border-radius:18px;overflow:hidden;background:var(--surface);color:var(--ink);padding:10px 8px;box-sizing:border-box;display:flex;flex-direction:column;gap:7px;font:600 .66rem var(--font)}
-.sh{font:800 .5rem var(--display);letter-spacing:.12em;text-align:center;color:var(--ink-2)}
-.sp-left{left:4px;top:62px;transform:rotate(-12deg);z-index:1;box-shadow:6px 6px 0 var(--tile-pink)}
-.sp-right{right:4px;top:56px;transform:rotate(11deg);z-index:2;box-shadow:6px 6px 0 var(--tile-purple)}
-.sp-mid{left:128px;top:34px;width:144px;height:258px;z-index:3;box-shadow:7px 7px 0 var(--primary)}
-/* court */
-.case{border:2px solid var(--ink);border-radius:10px;padding:10px 6px;text-align:center;font:800 .78rem/1.1 var(--display)}
-.votes{display:flex;justify-content:center;gap:5px}
-.votes span{width:24px;height:30px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;font:800 .7rem var(--display);background:var(--tile-pink)}
-.votes span:last-child{background-color:var(--surface)}
-.stamp{position:absolute;left:10px;right:10px;bottom:26px;text-align:center;font:800 1.15rem var(--display);letter-spacing:.06em;color:var(--danger-ink);border:3px solid var(--danger-ink);border-radius:8px;padding:2px 0;transform:rotate(-14deg);background-color:var(--surface)}
-/* vault */
-.code4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.code4 span{border:2px solid var(--ink);border-radius:6px;height:34px;display:grid;place-items:center;font:800 1.05rem var(--display);background:var(--tile-purple)}
-.pegs{display:flex;justify-content:center;gap:5px}
-.pegs i{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink);background-color:var(--surface)}
-.pegs i.pk{background:var(--ink)}.pegs i.pw{background:var(--primary)}
-.who{margin-top:auto;border:2px solid var(--ink);border-radius:8px;padding:8px 4px;text-align:center;font:800 .62rem var(--display);background:var(--primary)}
-/* drip */
-.ring{align-self:center;width:46px;height:46px;border-radius:50%;border:4px solid var(--ink);border-right-color:var(--primary);border-top-color:var(--primary);display:grid;place-items:center}
-.ring b{font:800 1.1rem var(--display)}
-.dboard{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
-.dboard span{box-sizing:border-box;width:20px;height:25px;border:2px solid var(--ink);border-radius:5px;display:grid;place-items:center;font:800 .78rem var(--display)}
-.dboard i{flex-basis:100%;height:0}
-.dboard .r{color:transparent;background-color:var(--surface)}
-.buzz{margin-top:auto;background:var(--danger);color:var(--on-danger);border:2px solid var(--ink);border-radius:8px;text-align:center;padding:6px 2px;font:800 .62rem var(--display)}
-.buzz + .solve{margin-top:0}
-.solve{margin-top:auto;background:var(--primary);border:2px solid var(--ink);border-radius:10px;box-shadow:2px 2px 0 var(--ink);text-align:center;padding:9px 0;font:800 .8rem var(--display)}
-@media(prefers-reduced-motion:no-preference){
- .sp-left{animation:bobL 4s ease-in-out infinite}
- .sp-right{animation:bobR 4.6s ease-in-out infinite}
- .sp-mid{animation:bobM 5s ease-in-out infinite}
- .stamp{animation:stamp 6s ease-in-out infinite}
- .dboard .r{animation:reveal 8s steps(1) infinite}
- .dboard .r2{animation-delay:1.2s}.dboard .r3{animation-delay:2.4s}.dboard .r4{animation-delay:3.6s}
- .spark{animation:twinkle 2.4s ease-in-out infinite}.sp2{animation-delay:.8s}.sp3{animation-delay:1.6s}
-}
-@keyframes bobL{0%,100%{transform:rotate(-12deg) translateY(0)}50%{transform:rotate(-10deg) translateY(-6px)}}
-@keyframes bobR{0%,100%{transform:rotate(11deg) translateY(0)}50%{transform:rotate(9deg) translateY(-7px)}}
-@keyframes bobM{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes stamp{0%,18%{opacity:0;transform:rotate(-14deg) scale(1.8)}24%{opacity:1;transform:rotate(-14deg) scale(.92)}28%,88%{opacity:1;transform:rotate(-14deg) scale(1)}94%,100%{opacity:0;transform:rotate(-14deg) scale(1)}}
-@keyframes reveal{0%{color:transparent;background-color:var(--surface)}10%,90%{color:var(--ink);background:var(--tile-yellow)}100%{color:transparent;background-color:var(--surface)}}
-@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(20deg)}}
-@media(max-width:440px){.scene{transform:scale(.86);margin:-22px -28px -26px}}
+.hero-pic{margin:0;width:100%;max-width:560px}
+.hero-pic img{width:100%;height:auto;display:block}
 
 /* tonight's picks: three whole-card links */
 .picks{display:grid;gap:16px;grid-auto-rows:1fr}
