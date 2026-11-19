@@ -144,6 +144,25 @@ summary{min-height:var(--tap);padding:10px 0;cursor:pointer;font-weight:600}
 .feature-grid,.why-grid,.steps{display:grid;gap:var(--s-4)}
 .feature-grid>.card,.why-grid>.card,.steps>.card{margin:0}
 .game-card h3{margin:.1em 0 .3em}
+/* Game icon tiles: a coloured square with a 64x64 line icon, beside a card title. */
+.tile{flex:none;width:56px;height:56px;display:grid;place-items:center;border:var(--bw) solid var(--outline);border-radius:14px}
+.t-yellow{background:var(--tile-yellow)}
+.t-pink{background:var(--tile-pink)}
+.t-green{background:var(--tile-green)}
+.t-orange{background:var(--tile-orange)}
+.t-purple{background:var(--tile-purple)}
+.ic{width:36px;height:36px}
+.ic .s{stroke:var(--ink);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.ic .f{fill:var(--surface)} .ic .k{fill:var(--ink)} .ic .y{fill:var(--primary)} .ic .n{fill:none}
+.gc-head{display:flex;align-items:center;gap:14px;margin-bottom:var(--s-2)}
+.gc-head h3{margin:0}
+/* All Games: two columns on wide screens, Host/Play pinned to the bottom of each card. */
+@media(min-width:900px){
+  #gamelist{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-5)}
+  #gamelist .game-card{margin:0;display:flex;flex-direction:column}
+  #gamelist .game-card>.btn{margin-top:auto;align-self:flex-start}
+  #gamelist .game-card>.meta-row{margin-bottom:var(--s-3)}
+}
 .faq h3{margin-bottom:.25em}
 /* Sections that used to be coloured bands are now plain sections on the page background. */
 .band-ink,.band-pink,#featured,#why,#faq,#how{padding:var(--s-6) 0}
