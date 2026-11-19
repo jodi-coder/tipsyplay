@@ -4,7 +4,7 @@ const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
-const PAGE = "/games/five-letter-frenzy.html?emulator=1&fast=1&word=crane";
+const PAGE = "/games/five-letter-frenzy.html?mode=table&emulator=1&fast=1&word=crane";
 const NS = "tipsyplay-f3c95-default-rtdb";
 const ART = "/opt/cursor/artifacts";
 const PROMPT = "One small drink or a 5-second pose — or Pass.";

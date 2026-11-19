@@ -765,5 +765,12 @@ async function boot(){
 }
 var authObj, offsetStop;
 $("retry").addEventListener("click", function(){location.reload()});
-boot().catch(function(err){console.error(err); showBootError("The game didn't open. Check your connection and try again.")});
+/* Table mode starts only when it is chosen, so the mode picker and Solo never wait for the network. */
+var started=false;
+window.FrenzyTable={start:function(){
+  if(started) return; started=true;
+  ["modes", "solo"].forEach(function(id){var n=$(id); if(n) n.classList.add("hide")});
+  show("boot", true);
+  boot().catch(function(err){console.error(err); showBootError("The game didn't open. Check your connection and try again.")});
+}};
 })();

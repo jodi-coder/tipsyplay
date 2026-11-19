@@ -638,6 +638,35 @@
             },
             ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (root.child('rooms').child($code).child('cc').child('host').val() == auth.uid || (!root.child('rooms').child($code).child('cc').child('host').exists() && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid))"
           }
+        },
+        "frenzy": {
+          "pub": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            ".write": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid",
+            ".validate": "newData.hasChildren(['state','round','seq']) && newData.child('state').isString() && newData.child('state').val().matches(/^(lobby|race|results)$/) && newData.child('round').isNumber() && newData.child('round').val() >= 1 && newData.child('round').val() <= 99 && newData.child('seq').isNumber() && newData.child('seq').val() >= 0 && newData.child('seq').val() <= 1000000 && (!newData.child('goAt').exists() || newData.child('goAt').isNumber()) && (!newData.child('limit').exists() || (newData.child('limit').isNumber() && newData.child('limit').val() >= 0 && newData.child('limit').val() <= 600)) && (!newData.child('penalty').exists() || newData.child('penalty').val().matches(/^(none|lockout|drink)$/)) && (!newData.child('roster').exists() || (newData.child('roster').isString() && newData.child('roster').val().length <= 600))"
+          },
+          "keys": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().matches(/^[a-f0-9]{64}$/))"
+            }
+          },
+          "prog": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/)",
+            "$uid": {
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.hasChildren(['n','st']) && newData.child('n').isNumber() && newData.child('n').val() >= 0 && newData.child('n').val() <= 6 && newData.child('st').isString() && newData.child('st').val().matches(/^(play|solved|out)$/) && (!newData.child('t').exists() || (newData.child('t').isNumber() && newData.child('t').val() <= now + 60000)))"
+            }
+          },
+          "players": {
+            ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('frenzy').child('pub').child('state').val() == 'results'",
+            "$uid": {
+              ".read": "auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && (auth.uid == $uid || root.child('rooms').child($code).child('frenzy').child('pub').child('state').val() == 'results')",
+              ".write": "(auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && auth.uid == $uid && root.child('rooms').child($code).child('players').child(auth.uid).exists() && newData.exists()) || (auth != null && $code.matches(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/) && root.child('rooms').child($code).child('meta').child('hostUid').val() == auth.uid && !newData.exists())",
+              ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 600)"
+            }
+          }
         }
       }
     },

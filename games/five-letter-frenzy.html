@@ -13,8 +13,8 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#7CC8FF">
-<meta name="description" content="Five Letter Frenzy: one shared five-letter word for 3 to 8 players. Take turns on the same grid. A miss is one small drink, a 5-second pose, or Pass. Nothing stacks.">
-<title>Five Letter Frenzy: Shared Word Party Game | TipsyPlay</title>
+<meta name="description" content="Five Letter Frenzy: find the secret five-letter word in six tries. Solo with a daily word that works offline, Race friends on your own phones, or share one grid at the table. Drinking is optional.">
+<title>Five Letter Frenzy: Solo, Race and Table Word Game | TipsyPlay</title>
 <link rel="canonical" href="https://tipsyplay.com/games/five-letter-frenzy.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -22,7 +22,7 @@
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="One secret word, one shared grid. Six guesses for the table."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="Solo, Race or Table: find the secret five-letter word in six guesses."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}]}]}</script>
 <link rel="stylesheet" href="../styles.css?v=26">
 <style>
@@ -68,6 +68,23 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 .fl-how summary{font-weight:800;cursor:pointer;min-height:var(--tap);display:flex;align-items:center}
 .fl-howlist{margin:6px 0 2px;padding-left:1.2em;font-size:.95rem;line-height:1.45}
 .fl-howlist li{margin:4px 0}
+/* ---------- mode picker and Solo ---------- */
+.fl-modes{display:grid;gap:12px;margin:14px 0}
+.fl-mode{display:flex;flex-direction:column;gap:4px;text-align:left;min-height:88px;padding:14px 16px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font:inherit;cursor:pointer;--text:var(--ink);--text-2:var(--ink-2)}
+.fl-mode b{font:800 1.4rem/1.1 var(--display)}
+.fl-mode span{color:var(--ink-2);font-weight:500;line-height:1.35}
+.fl-mode:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+#soloword{margin:12px 0}
+.fl-emoji{margin:8px 0;padding:10px;font:400 1.5rem/1.25 var(--font);letter-spacing:.05em;text-align:center;background:none;border:0;white-space:pre-wrap}
+.fl-dist{list-style:none;padding:0;margin:8px 0;display:grid;gap:4px}
+.fl-dist li{display:grid;grid-template-columns:1.6em 1fr;align-items:center;gap:8px;font-weight:700}
+.fl-dist .bar{display:block;height:20px;min-width:22px;width:calc(var(--w,0) * 100%);background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:6px;padding:0 6px;font:800 .8rem/16px var(--font);text-align:right}
+.fl-dist .bar.me{background:var(--tile-yellow)}
+.fl-statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin:6px 0}
+.fl-statrow div{border:var(--bw) solid var(--ink);border-radius:12px;padding:6px 2px;background:var(--surface);color:var(--ink)}
+.fl-statrow b{display:block;font:800 1.5rem/1 var(--display)}
+.fl-statrow span{font-size:.75rem;font-weight:700}
+@media (prefers-reduced-motion: reduce){.fl-mode:active{transform:none}}
 /* ---------- motion ----------
    Every animation is decoration only and is switched off under prefers-reduced-motion (see the end of this block). */
 .fl-tile.fl-pend{background:var(--surface);color:var(--ink)}
@@ -121,7 +138,58 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 </nav>
 </header>
 <main class="play-wrap">
-<div id="boot" class="fl-boot">
+<section id="modes" class="entry">
+<p class="eyebrow">Word game · 1 to 8 players</p>
+<h1>Five Letter Frenzy</h1>
+<p class="lede">Guess the secret five-letter word in six tries. Any five letters are a fair guess, but the secret word is always a real one.</p>
+<div class="fl-modes">
+<button type="button" class="fl-mode" id="mode-solo"><b>Solo</b><span>One player, one board. A daily word or a random one, with streaks and a share card. Works offline.</span></button>
+<a class="fl-mode" id="mode-race" href="five-letter-race.html"><b>Race</b><span>2 to 8 players, each on their own phone and their own board. Same secret word. Fewest guesses, then fastest, wins.</span></a>
+<button type="button" class="fl-mode" id="mode-table"><b>Table</b><span>The whole table shares one grid and takes turns. A miss is one small drink, a 5-second pose, or Pass.</span></button>
+</div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="solo" class="hide">
+<p class="eyebrow">Solo</p>
+<h1>Five Letter Frenzy</h1>
+<div id="solopick">
+<p class="lede">Six tries to find the word. The daily word is the same for everyone on the same date.</p>
+<div class="fl-modes">
+<button type="button" class="fl-mode" id="solo-daily"><b>Daily</b><span id="solo-daily-note">Today's word.</span></button>
+<button type="button" class="fl-mode" id="solo-random"><b>Random</b><span>A fresh word every time.</span></button>
+</div>
+<div class="fl-panel" id="solostats"></div>
+<div class="ctrl"><a class="btn alt" href="five-letter-frenzy.html">Change mode</a></div>
+</div>
+<div id="soloplay" class="hide">
+<p id="solotitle" class="fl-turn"></p>
+<div id="sgrid" class="fl-grid" aria-label="Your grid"></div>
+<ul id="slegend" class="fl-legend" aria-label="How to read a tile"></ul>
+<form id="soloform" autocomplete="off">
+<label class="sr" for="soloinput">Your guess</label>
+<input class="bigin" id="soloinput" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="5 letters" aria-label="Your guess">
+<button type="submit" class="btn host-cta" id="sologuess">Guess</button>
+</form>
+<p id="soloerr" class="fl-act" role="alert"></p>
+<div class="ctrl"><button type="button" class="btn alt" id="soloquit">Back</button></div>
+</div>
+<div id="soloresult" class="hide">
+<div class="fl-panel">
+<h2 id="soloheadline"></h2>
+<p id="soloword" class="fl-word"></p>
+<pre class="fl-emoji" id="soloemoji" aria-label="Your result, as coloured squares"></pre>
+<div id="soloresultstats"></div>
+<p id="solonext" class="fl-act"></p>
+</div>
+<div class="ctrl"><button type="button" class="btn host-cta" id="soloshare">Share result</button></div>
+<div class="ctrl"><button type="button" class="btn alt" id="soloagain">Play a random word</button></div>
+<div class="ctrl"><a class="btn alt" href="five-letter-frenzy.html">Change mode</a></div>
+</div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<div id="boot" class="fl-boot hide">
 <p id="bootmsg">Opening the game…</p>
 <p id="booterr" class="hide"></p>
 <button type="button" class="btn hide" id="retry">Try again</button>
@@ -129,10 +197,11 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <div id="app" class="hide">
 <p id="perr" role="alert"></p>
 <section id="home" class="entry">
-<p class="eyebrow">Party game · 3 to 8 players</p>
+<p class="eyebrow">Table mode · 3 to 8 players</p>
 <h1>Five Letter Frenzy</h1>
 <p class="lede">One secret word on one shared grid. The table gets six guesses. A miss is one small drink, a 5-second pose, or Pass.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<p><a href="five-letter-frenzy.html">← Change mode</a></p>
 <label class="sr" for="pname">Your name</label>
 <input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
 <label class="toggle" for="dryme"><input type="checkbox" id="dryme"> Points only for me</label>
@@ -242,7 +311,9 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
 <script src="../data/frenzy-words.js?v=4"></script>
 <script src="../play/frenzy-logic.js?v=2"></script>
+<script src="../play/frenzy-modes.js?v=1"></script>
 <script src="../play/frenzy-fx.js?v=1"></script>
-<script src="../play/frenzy-party.js?v=3"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/frenzy-party.js?v=4"></script>
+<script src="../play/frenzy-solo.js?v=1"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>

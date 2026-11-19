@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BHY4BXF3V3');
+</script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7CC8FF">
+<meta name="description" content="Five Letter Frenzy Race: 2 to 8 players race to find the same secret five-letter word, each on their own phone and their own board. Fewest guesses, then fastest, wins. Drinking is optional.">
+<title>Five Letter Frenzy Race: Word Race for Friends | TipsyPlay</title>
+<link rel="canonical" href="https://tipsyplay.com/games/five-letter-race.html">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy Race – TipsyPlay"><meta property="og:description" content="Everyone races the same secret word on their own board. Fewest guesses, then fastest, wins."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-race.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}, {"@type": "ListItem", "position": 4, "name": "Race", "item": "https://tipsyplay.com/games/five-letter-race.html"}]}]}</script>
+<link rel="stylesheet" href="../styles.css?v=26">
+<style>
+/* Five Letter Frenzy. Colours come from the theme tokens in styles.css.
+   Three hint colours from the TipsyPlay palette, each with a symbol: yellow ●, pink stripes ↗, ink ×. */
+.fl-boot{padding:28px 0}
+.fl-panel,.fl-tile,.fl-person,.fl-stand li,.fl-key{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface)}
+.fl-turn{margin:8px 0;font-family:var(--display);font-size:clamp(1.4rem,6vw,2rem);font-weight:800}
+.fl-grid{display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px;margin:8px auto}
+.fl-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.fl-tile{height:48px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:var(--bw) solid var(--ink);border-radius:10px;background:var(--surface);color:var(--ink);font:800 clamp(.95rem,5vw,1.35rem)/1 var(--display);overflow:hidden}
+body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
+.fl-tile.empty{background:var(--surface);color:var(--ink)}
+.fl-tile.lock{background:var(--tile-yellow);color:var(--ink)}
+.fl-tile.move{background-color:var(--tile-pink);color:var(--ink);background-image:repeating-linear-gradient(135deg, transparent 0 4px, var(--ink) 4px 5px)}
+.fl-tile.miss{background:var(--ink);color:var(--surface)}
+.fl-mark{font-size:.75rem;font-weight:800;line-height:1}
+.fl-letter{line-height:1}
+.fl-legend{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:8px 0}
+.fl-key{display:flex;align-items:center;gap:6px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:999px;padding:4px 10px;font-weight:700}
+.fl-swatch{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;border:var(--bw) solid var(--ink);font-weight:800}
+.fl-swatch.lock{background:var(--tile-yellow);color:var(--ink)}
+.fl-swatch.move{background-color:var(--tile-pink);color:var(--ink);background-image:repeating-linear-gradient(135deg, transparent 0 3px, var(--ink) 3px 4px)}
+.fl-swatch.miss{background:var(--ink);color:var(--surface)}
+.fl-panel{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:20px;padding:16px;margin:10px 0}
+.fl-panel h2{margin:0 0 6px;font-size:clamp(1.2rem,5vw,1.6rem)}
+.fl-prompt{font-weight:800;margin:0 0 10px}
+.fl-actions{display:flex;flex-direction:column;gap:8px}
+.fl-actions .btn{width:100%;min-height:var(--tap)}
+.fl-hand{width:100%;min-height:var(--tap);margin-top:8px}
+.fl-person{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--hairline);background:var(--surface);color:var(--ink)}
+.fl-person.off{opacity:.55}
+.fl-person .x{border:var(--bw) solid var(--outline);background:var(--surface);color:var(--ink);border-radius:10px;font:600 .8rem var(--font);min-height:var(--tap);padding:4px 8px;cursor:pointer}
+.fl-tools{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.fl-tools .btn{flex:1 1 30%;min-height:var(--tap);min-width:0}
+.fl-word{font-family:var(--display);font-size:clamp(2rem,10vw,2.8rem);letter-spacing:.12em;margin:.1em 0}
+.fl-award{font-weight:700;margin:.3em 0}
+.fl-stand{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:6px}
+.fl-stand li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border:var(--bw) solid var(--ink);border-radius:12px;background:var(--surface);color:var(--ink)}
+#guess{font-size:1.4rem;letter-spacing:.2em;text-align:center;text-transform:uppercase}
+.fl-act{font-weight:700;min-height:1.2em}
+.fl-how{margin:8px 0;padding:10px 14px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:14px}
+.fl-how summary{font-weight:800;cursor:pointer;min-height:var(--tap);display:flex;align-items:center}
+.fl-howlist{margin:6px 0 2px;padding-left:1.2em;font-size:.95rem;line-height:1.45}
+.fl-howlist li{margin:4px 0}
+/* ---------- mode picker and Solo ---------- */
+.fl-modes{display:grid;gap:12px;margin:14px 0}
+.fl-mode{display:flex;flex-direction:column;gap:4px;text-align:left;min-height:88px;padding:14px 16px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:var(--r-lg);box-shadow:var(--shadow);text-decoration:none;font:inherit;cursor:pointer;--text:var(--ink);--text-2:var(--ink-2)}
+.fl-mode b{font:800 1.4rem/1.1 var(--display)}
+.fl-mode span{color:var(--ink-2);font-weight:500;line-height:1.35}
+.fl-mode:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+#soloword{margin:12px 0}
+.fl-emoji{margin:8px 0;padding:10px;font:400 1.5rem/1.25 var(--font);letter-spacing:.05em;text-align:center;background:none;border:0;white-space:pre-wrap}
+.fl-dist{list-style:none;padding:0;margin:8px 0;display:grid;gap:4px}
+.fl-dist li{display:grid;grid-template-columns:1.6em 1fr;align-items:center;gap:8px;font-weight:700}
+.fl-dist .bar{display:block;height:20px;min-width:22px;width:calc(var(--w,0) * 100%);background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:6px;padding:0 6px;font:800 .8rem/16px var(--font);text-align:right}
+.fl-dist .bar.me{background:var(--tile-yellow)}
+.fl-statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;margin:6px 0}
+.fl-statrow div{border:var(--bw) solid var(--ink);border-radius:12px;padding:6px 2px;background:var(--surface);color:var(--ink)}
+.fl-statrow b{display:block;font:800 1.5rem/1 var(--display)}
+.fl-statrow span{font-size:.75rem;font-weight:700}
+@media (prefers-reduced-motion: reduce){.fl-mode:active{transform:none}}
+/* ---------- motion ----------
+   Every animation is decoration only and is switched off under prefers-reduced-motion (see the end of this block). */
+.fl-tile.fl-pend{background:var(--surface);color:var(--ink)}
+.fl-grid{perspective:600px}
+.fl-tile.fl-flip{animation:fl-flip 320ms ease-in-out both}
+@keyframes fl-flip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.fl-tile.fl-pop{animation:fl-pop 150ms ease-out both}
+@keyframes fl-pop{0%{transform:scale(.86)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+.fl-row.fl-shake{animation:fl-shake 360ms ease-in-out both}
+@keyframes fl-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.fl-tile.fl-hop{animation:fl-hop 420ms cubic-bezier(.3,1.6,.5,1) both}
+@keyframes fl-hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}70%{transform:translateY(2px)}}
+.fl-turn.fl-in{animation:fl-in 320ms cubic-bezier(.2,1.2,.4,1) both}
+@keyframes fl-in{from{transform:translateX(-28px);opacity:0}to{transform:none;opacity:1}}
+.fl-who{display:inline-block;background:var(--primary);color:var(--on-primary);border:var(--bw) solid var(--ink);border-radius:999px;padding:0 10px;box-shadow:var(--shadow-sm)}
+.fl-word{display:flex;justify-content:center;gap:6px;letter-spacing:0}
+.fl-wtile{display:grid;place-items:center;width:clamp(38px,12vw,52px);height:clamp(42px,12vw,54px);background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:10px;box-shadow:var(--shadow-sm);font:800 clamp(1.4rem,7vw,2rem)/1 var(--display)}
+.fl-wtile.fl-wflip{animation:fl-wflip 420ms ease-out both}
+@keyframes fl-wflip{from{transform:rotateX(90deg);opacity:0}to{transform:none;opacity:1}}
+/* the drink moment: a pink banner with ink text, holding the drink, the no-drink option and Pass together */
+.fl-panel.fl-drink{background:var(--danger);color:var(--on-danger);border-color:var(--ink);box-shadow:var(--shadow)}
+.fl-drink{--text:var(--on-danger);--text-2:var(--on-danger)}
+.fl-drinktag{margin:0 0 4px;font:800 .8rem var(--font);letter-spacing:.08em;text-transform:uppercase}
+#promptbox:not(.hide){animation:fl-banner 340ms cubic-bezier(.2,1.2,.4,1) both}
+@keyframes fl-banner{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.fl-confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:80}
+#sharecard{width:100%;min-height:var(--tap)}
+@media (prefers-reduced-motion: reduce){
+  .fl-tile,.fl-hand,.btn{transition:none;animation:none}
+  .fl-tile.fl-flip,.fl-tile.fl-pop,.fl-tile.fl-hop,.fl-row.fl-shake,.fl-turn.fl-in,.fl-wtile.fl-wflip,#promptbox:not(.hide){animation:none}
+  .fl-confetti{display:none}
+}
+/* The shared room chrome clips #closestage into the menu. On the recap that
+   button has to be a real control the host can tap. */
+body.fl.rm-on #finale:not(.hide) #closestage{
+  position:static!important;width:100%!important;height:auto!important;
+  min-width:44px!important;min-height:52px!important;max-width:none!important;max-height:none!important;
+  margin:8px 0!important;padding:0 18px!important;overflow:visible!important;
+  clip:auto!important;clip-path:none!important;white-space:normal!important;
+  border:var(--bw) solid var(--outline)!important;
+}
+
+/* ---------- Race ---------- */
+.fr-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0}
+.fr-time{font:800 1.3rem var(--display);padding:2px 14px;border:var(--bw) solid var(--ink);border-radius:999px;background:var(--surface);color:var(--ink)}
+.fr-time.hot{background:var(--danger);color:var(--on-danger)}
+.fr-go{text-align:center;margin:10px 0}
+.fr-cd{font:800 clamp(4rem,26vw,7rem)/1 var(--display);margin:.1em 0}
+.fr-cd.beat{animation:fl-pop .5s cubic-bezier(.2,1.6,.4,1) both}
+.fr-others{list-style:none;padding:0;margin:6px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.fr-others li{display:flex;flex-direction:column;gap:3px;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:12px;padding:4px 8px;font-weight:800;min-width:0}
+.fr-others li.me{box-shadow:var(--shadow-sm);background:var(--tile-yellow)}
+.fr-others .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}
+.fr-pips{display:flex;gap:3px}
+.fr-pips i{width:12px;height:12px;border:2px solid var(--ink);border-radius:3px;background:var(--surface);color:var(--ink);display:block}
+.fr-pips i.on{background:var(--ink)}
+.fr-pips i.win{background:var(--tile-green)}
+.fr-st{font:700 .75rem var(--font);color:var(--ink-2)}
+.fr-others li.me .fr-st{color:var(--ink)}
+.fr-lock{font-weight:800;text-align:center;margin:6px 0}
+.fr-res{list-style:none;padding:0;margin:8px 0;display:grid;gap:12px}
+.fr-res>li{background:var(--surface);color:var(--ink);border:var(--bw) solid var(--ink);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow-sm)}
+.fr-res .hd{display:flex;justify-content:space-between;gap:8px;align-items:baseline;font-weight:800}
+.fr-res .hd b{font:800 1.2rem var(--display)}
+.fr-res .sub{margin:2px 0 8px;color:var(--ink-2);font-weight:700}
+.fr-mini{display:grid;gap:3px;justify-content:start}
+.fr-mini .r{display:grid;grid-template-columns:repeat(5,28px);gap:3px}
+.fr-mini .t{position:relative;width:28px;height:28px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:6px;font:800 .8rem/1 var(--display);background:var(--surface);color:var(--ink)}
+.fr-mini .t::after{content:attr(data-m);position:absolute;top:-1px;right:1px;font-size:.5rem;line-height:1}
+.fr-mini .t.lock{background:var(--tile-yellow)}
+.fr-mini .t.move{background-color:var(--tile-pink);background-image:repeating-linear-gradient(135deg, transparent 0 3px, var(--ink) 3px 4px)}
+.fr-mini .t.miss{background:var(--ink);color:var(--surface)}
+.fr-set{margin:10px 0}
+@media (min-width:700px){.fr-res{grid-template-columns:repeat(2,1fr)}}
+@media (prefers-reduced-motion: reduce){.fr-cd.beat{animation:none}}
+</style>
+</head>
+<body class="fl fr" data-root="../">
+<header class="top">
+<a class="logo" href="../index.html">Tipsy<span>Play</span></a>
+<nav>
+<a href="./">Games</a><a href="../drinks/">Drinks</a><a href="../blog/">Blog</a>
+<a href="../responsible.html">Play responsibly</a>
+<button type="button" class="mute" id="mute" aria-label="Mute sound effects" aria-pressed="false">🔊</button>
+</nav>
+</header>
+<main class="play-wrap">
+<div id="boot" class="fl-boot">
+<p id="bootmsg">Opening the race…</p>
+<p id="booterr" class="hide"></p>
+<button type="button" class="btn hide" id="retry">Try again</button>
+</div>
+<div id="app" class="hide">
+<p id="perr" role="alert"></p>
+<section id="home" class="entry">
+<p class="eyebrow">Race · 2 to 8 players</p>
+<h1>Five Letter Frenzy Race</h1>
+<p class="lede">Everyone races the same secret word on their own board. Fewest guesses wins, then the fastest solve. Any five letters are a fair guess.</p>
+<p><a href="five-letter-frenzy.html">← Change mode</a></p>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<label class="sr" for="pname">Your name</label>
+<input class="bigin" id="pname" maxlength="12" autocomplete="nickname" placeholder="Your name (up to 12)" aria-label="Your name">
+<button type="button" class="btn host-cta" id="hostbtn">Host a race</button>
+<form class="join-row" id="joinform">
+<input class="bigin" id="roomcode" maxlength="80" autocomplete="off" autocapitalize="characters" placeholder="Join with code" aria-label="Room code">
+<button type="button" class="btn alt" id="joinbtn">Join</button>
+</form>
+</section>
+
+<section id="lobby" class="hide">
+<p class="eyebrow">Race lobby</p>
+<p id="codebig" class="codebig" aria-live="polite"></p>
+<p id="sharelink" class="linkbox"></p>
+<div class="fl-share">
+<button type="button" class="btn" id="copylink">Copy Link</button>
+<button type="button" class="btn alt" id="sharebtn">Share</button>
+<button type="button" class="btn alt" id="copycode">Copy code</button>
+</div>
+<figure class="hostonly" id="qrfig">
+<figcaption>Scan to join</figcaption>
+<canvas id="qr" width="180" height="180"></canvas>
+<button type="button" class="btn alt" id="qrhide">Hide QR</button>
+<p class="sr" id="qrcredit"></p>
+</figure>
+<div class="fr-set">
+<p class="tag">Penalty for a wrong guess</p>
+<div class="chips" role="group" aria-label="Penalty for a wrong guess">
+<button type="button" class="chip" data-penalty="none" aria-pressed="true">None</button>
+<button type="button" class="chip" data-penalty="lockout" aria-pressed="false">10-second lockout</button>
+<button type="button" class="chip" data-penalty="drink" aria-pressed="false">Drink card</button>
+</div>
+<p class="tag">Race timer</p>
+<div class="chips" role="group" aria-label="Race timer">
+<button type="button" class="chip" data-limit="0" aria-pressed="true">Off</button>
+<button type="button" class="chip" data-limit="120" aria-pressed="false">2 min</button>
+<button type="button" class="chip" data-limit="180" aria-pressed="false">3 min</button>
+<button type="button" class="chip" data-limit="300" aria-pressed="false">5 min</button>
+</div>
+<p id="setnote" class="lede"></p>
+</div>
+<details class="fl-how"><summary>How a race works</summary>
+<ol class="fl-howlist">
+<li>The host starts the race. A 3-2-1 countdown plays, then everyone sees their own empty board.</li>
+<li>Everyone is hunting the same secret word, with six guesses each. Other players see only your progress, not your letters.</li>
+<li>Solving it ranks you first, by fewest guesses and then fastest. Then come players who used all six guesses.</li>
+<li>When everyone is done, the word is revealed and every board is shown side by side.</li>
+<li>Drinking is optional. A drink card is only an offer, with a no-drink pose and Pass beside it.</li>
+</ol>
+</details>
+<div class="na"><b>Play responsibly:</b> passing is always fine, and the default has no penalty at all.</div>
+<div aria-live="polite">
+<h2>Players</h2>
+<div id="plist"></div>
+</div>
+<p id="lobbynote" class="lede"></p>
+<button type="button" class="btn host-cta hostonly" id="start" disabled>Start the race</button>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="close">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="table" class="hide">
+<div class="fr-top"><p id="roundline" class="fl-turn"></p><p id="clock" class="fr-time hide" role="timer"></p></div>
+<div id="getready" class="fr-go hide" aria-live="assertive"><p class="tag">Get ready</p><p id="cd" class="fr-cd">3</p></div>
+<h2 class="sr">Everyone's progress</h2>
+<ul id="others" class="fr-others" aria-label="Everyone's progress"></ul>
+<div id="grid" class="fl-grid" aria-label="Your board"></div>
+<p id="lockline" class="fr-lock hide" aria-live="polite"></p>
+<form id="guessform" class="hide">
+<label class="sr" for="guess">Your guess</label>
+<input class="bigin" id="guess" maxlength="5" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="5 letters" aria-label="Your guess">
+<button type="submit" class="btn host-cta" id="sendguess">Guess</button>
+</form>
+<p id="status" class="fl-act" aria-live="polite"></p>
+<div id="drinkcard" class="fl-panel fl-drink hide" aria-live="polite">
+<p class="fl-drinktag">Drink card</p>
+<p class="fl-prompt">Wrong guess. One small drink, <span id="altpose"></span>, or Pass.</p>
+<div class="fl-actions">
+<button type="button" class="btn" id="dcdrink">One small drink</button>
+<button type="button" class="btn" id="dcpose">Do the pose</button>
+<button type="button" class="btn alt" id="dcpass">Pass</button>
+</div>
+</div>
+<ul id="legend" class="fl-legend" aria-label="How to read a tile"></ul>
+<div id="hosttools" class="fl-tools hide">
+<button type="button" class="btn alt hostonly" id="endrace">End the race now</button>
+</div>
+<div class="ctrl"><button type="button" class="btn alt" id="leave">Leave race</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="finale" class="hide">
+<div class="fl-panel" id="awards"></div>
+<ol id="results" class="fr-res"></ol>
+<div class="ctrl"><button type="button" class="btn host-cta hostonly" id="again">Race again</button></div>
+<div class="ctrl"><button type="button" class="btn alt hostonly" id="closestage">Close room</button></div>
+<p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+</section>
+
+<section id="closed" class="card hide">
+<h2>Room closed</h2>
+<p id="closedmsg">This race has already started. Join the next one from the lobby.</p>
+<a class="btn" href="five-letter-race.html">Back to the start</a>
+</section>
+</div>
+</main>
+<footer class="site-foot" data-keep>
+<nav class="foot-nav"><a href="./">Games</a><a href="../blog/">Blog</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><a href="../privacy.html">Privacy</a><a href="../terms.html">Terms</a></nav>
+<p class="foot-c">© TipsyPlay</p>
+</footer>
+<script src="../sounds.js?v=19"></script>
+<script src="../app.js?v=21"></script>
+<script src="../play/qr.js?v=18"></script>
+<script src="../play/join-qr.js?v=1"></script>
+<script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fr");</script>
+<script src="../data/frenzy-words.js?v=4"></script>
+<script src="../play/frenzy-logic.js?v=2"></script>
+<script src="../play/frenzy-modes.js?v=1"></script>
+<script src="../play/frenzy-fx.js?v=1"></script>
+<script src="../play/frenzy-race.js?v=1"></script><script src="../play/room-ui.js?v=4"></script>
+</body>
+</html>
