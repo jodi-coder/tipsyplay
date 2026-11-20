@@ -111,6 +111,11 @@ body.fl.rm-room{padding-bottom:calc(210px + env(safe-area-inset-bottom))}
 #promptbox:not(.hide){animation:fl-banner 340ms cubic-bezier(.2,1.2,.4,1) both}
 @keyframes fl-banner{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
 .fl-confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:80}
+.fl-intro{position:fixed;inset:0;z-index:120;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:1;transition:opacity 260ms ease}
+.fl-intro.fl-out{opacity:0;pointer-events:none}
+.fl-intro-vid{width:100%;height:100%;max-width:calc(100dvh * 9 / 16);object-fit:cover;display:block}
+.fl-intro-skip{position:fixed;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));z-index:121;min-width:44px;min-height:44px;padding:8px 18px;border:var(--bw) solid var(--ink);border-radius:999px;background:var(--surface);color:var(--ink);font:800 .95rem/1 var(--font);box-shadow:var(--shadow-sm);cursor:pointer}
+.fl-intro-skip:active{transform:translate(1px,1px)}
 #sharecard{width:100%;min-height:var(--tap)}
 @media (prefers-reduced-motion: reduce){
   .fl-tile,.fl-hand,.btn{transition:none;animation:none}
@@ -312,8 +317,8 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <script src="../data/frenzy-words.js?v=4"></script>
 <script src="../play/frenzy-logic.js?v=2"></script>
 <script src="../play/frenzy-modes.js?v=1"></script>
-<script src="../play/frenzy-fx.js?v=1"></script>
-<script src="../play/frenzy-party.js?v=4"></script>
-<script src="../play/frenzy-solo.js?v=1"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/frenzy-fx.js?v=3"></script>
+<script src="../play/frenzy-party.js?v=6"></script>
+<script src="../play/frenzy-solo.js?v=3"></script><script src="../play/room-ui.js?v=4"></script>
 </body>
 </html>

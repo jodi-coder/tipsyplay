@@ -186,7 +186,101 @@ function share(rows, info){
   });
 }
 
+/* ---------- fullscreen video cutscenes (intro & win) ---------- */
+/* Full-screen 9:16-friendly overlay. Auto-dismisses on ended, Skip click, Escape,
+   error, autoplay block (e.g. iOS Low Power Mode), or startup stall timeout. */
+var activeClip=null;
+function playClip(file, opts, onDone){
+  opts=opts||{};
+  var cb=typeof onDone==="function"?onDone:function(){};
+  var emu=/[?&]emulator=1(?:&|$)/.test(location.search);
+  if(reduced()||emu||!document.body){cb(); return false}
+  if(activeClip) activeClip.finish(true);
+
+  var done=false, startTimer=0, maxTimer=0, fadeTimer=0;
+  var rootPath=(document.body.getAttribute("data-root")||"../");
+  var src=rootPath+"assets/video/"+file;
+  var fadeMs=opts.fadeMs||0;
+  var btnLabel=opts.buttonLabel||"Skip";
+  var tapDismiss=!!opts.tapDismiss;
+
+  var wrap=document.createElement("div");
+  wrap.className="fl-intro";
+  wrap.setAttribute("role", "dialog");
+  wrap.setAttribute("aria-modal", "true");
+  wrap.setAttribute("aria-label", opts.label||"Cutscene");
+
+  var v=document.createElement("video");
+  v.className="fl-intro-vid";
+  v.autoplay=true; v.muted=true; v.defaultMuted=true; v.playsInline=true;
+  v.preload="auto"; v.disableRemotePlayback=true;
+  v.setAttribute("autoplay", "");
+  v.setAttribute("muted", "");
+  v.setAttribute("playsinline", "");
+  v.setAttribute("webkit-playsinline", "");
+  v.src=src;
+
+  var skip=document.createElement("button");
+  skip.type="button";
+  skip.className="fl-intro-skip";
+  skip.textContent=btnLabel;
+  skip.setAttribute("aria-label", opts.buttonAria||"Skip video");
+
+  function cleanup(){
+    clearTimeout(startTimer); clearTimeout(maxTimer); clearTimeout(fadeTimer);
+    document.removeEventListener("keydown", onKey);
+    try{v.pause(); v.removeAttribute("src"); v.load()}catch(e){}
+    if(wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    if(activeClip&&activeClip.finish===finish) activeClip=null;
+    cb();
+  }
+  function finish(immediate){
+    if(done) return;
+    done=true;
+    clearTimeout(startTimer); clearTimeout(maxTimer);
+    if(!immediate&&fadeMs>0&&!reduced()){
+      wrap.classList.add("fl-out");
+      fadeTimer=setTimeout(cleanup, fadeMs);
+    }else cleanup();
+  }
+  function onKey(e){if(e.key==="Escape") finish(true)}
+
+  skip.addEventListener("click", function(e){e.stopPropagation(); finish(true)});
+  if(tapDismiss) wrap.addEventListener("click", function(){finish(true)});
+  v.addEventListener("ended", function(){finish(false)});
+  v.addEventListener("error", function(){finish(true)});
+  v.addEventListener("playing", function(){clearTimeout(startTimer)});
+  document.addEventListener("keydown", onKey);
+
+  wrap.appendChild(v);
+  wrap.appendChild(skip);
+  document.body.appendChild(wrap);
+  activeClip={finish:finish};
+
+  /* Timeout guards: skip if playback never starts (Low Power Mode / slow net) or stalls */
+  startTimer=setTimeout(function(){if(v.currentTime===0||v.paused) finish(true)}, 2200);
+  maxTimer=setTimeout(function(){finish(true)}, 12000);
+
+  try{
+    v.currentTime=0;
+    var p=v.play();
+    if(p&&typeof p.catch==="function") p.catch(function(){finish(true)});
+  }catch(e){finish(true)}
+  return true;
+}
+function playIntro(onDone){
+  return playClip("frenzy-intro.mp4", {
+    label:"Round start cutscene", buttonLabel:"Skip", buttonAria:"Skip intro video", fadeMs:220
+  }, onDone);
+}
+function playWin(onDone){
+  return playClip("frenzy-win.mp4", {
+    label:"Round win celebration", buttonLabel:"Continue", buttonAria:"Continue to round results",
+    fadeMs:260, tapDismiss:true
+  }, onDone);
+}
+
 root.FrenzyFX={VOLUME:VOLUME, STEP_MS:STEP_MS, FLIP_MS:FLIP_MS, reduced:reduced,
   type:type, reveal:reveal, reject:reject, turn:turn, solved:solved, outOfGuesses:outOfGuesses, clink:clink,
-  confetti:confetti, shareCanvas:shareCanvas, share:share};
+  confetti:confetti, shareCanvas:shareCanvas, share:share, playIntro:playIntro, playWin:playWin};
 })(window);
