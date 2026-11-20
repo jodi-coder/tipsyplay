@@ -102,9 +102,7 @@ function open(kind){
   $("solotitle").textContent=kind==="Daily"?"Daily word · "+key:"Random word";
   $("soloerr").textContent=""; $("soloinput").value=""; typedLen=0; popAt=null; shakeAt=0;
   paintLegend(); paintGrid("", -1);
-  var focusIn=function(){try{$("soloinput").focus()}catch(e){}};
-  if(g.rows.length===0&&FX&&typeof FX.playIntro==="function") FX.playIntro(focusIn);
-  else focusIn();
+  try{$("soloinput").focus()}catch(e){}
 }
 function openPicker(){
   window.clearTimeout(finishTimer);
@@ -137,11 +135,7 @@ function submit(raw){
     if(solved) fx("solved", (FX?FX.STEP_MS*4+FX.FLIP_MS:600));
     else window.setTimeout(function(){fx("outOfGuesses")}, 700);
     $("soloinput").disabled=true; $("sologuess").disabled=true;
-    finishTimer=window.setTimeout(function(){
-      if(solved&&FX&&typeof FX.playWin==="function"){
-        FX.playWin(function(){showResult(false)});
-      }else showResult(false);
-    }, reduced()?0:(FX?FX.STEP_MS*4+FX.FLIP_MS+250:700));
+    finishTimer=window.setTimeout(function(){showResult(false)}, reduced()?0:(FX?FX.STEP_MS*4+FX.FLIP_MS+250:700));
   }
 }
 

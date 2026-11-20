@@ -166,13 +166,7 @@ function paintTable(){
   if(cdOn){
     var n=Math.max(1, Math.ceil((goAt()-now)/1000));
     if(n!==lastCd){lastCd=n; $("cd").textContent=String(n); var c=$("cd"); c.classList.remove("beat"); void c.offsetWidth; if(!reduced()) c.classList.add("beat")}
-  }else if(!wentGo){
-    wentGo=true; lastCd=-1;
-    var startPlay=function(){fx("turn"); try{$("guess").focus()}catch(e){}};
-    if(mySt==="play"&&rows.length===0&&FX&&typeof FX.playIntro==="function"){
-      FX.playIntro(startPlay);
-    }else startPlay();
-  }
+  }else if(!wentGo){wentGo=true; fx("turn"); lastCd=-1; try{$("guess").focus()}catch(e){}}
   var lim=timeLeftMs();
   show("clock", pub.limit>0&&!cdOn);
   if(pub.limit>0){$("clock").textContent=M.clock(Math.max(0, lim)); $("clock").classList.toggle("hot", lim<=30000)}
@@ -280,14 +274,7 @@ function sendGuess(raw){
           rows.push({w:w, m:res.marks}); $("guess").value=""; typedLen=0;
           if(res.solved){mySt="solved"} else if(res.out){mySt="out"}
           fx("reveal", res.marks);
-          if(res.solved){
-            fx("solved", FX?FX.STEP_MS*4+FX.FLIP_MS:600);
-            setTimeout(function(){
-              if(FX&&typeof FX.playWin==="function"){
-                FX.playWin(function(){fx("confetti"); render()});
-              }else fx("confetti");
-            }, FX?FX.STEP_MS*4+FX.FLIP_MS+250:800);
-          }
+          if(res.solved){fx("solved", FX?FX.STEP_MS*4+FX.FLIP_MS:600); setTimeout(function(){fx("confetti")}, FX?FX.STEP_MS*4+FX.FLIP_MS+250:800)}
           else if(res.out) setTimeout(function(){fx("outOfGuesses")}, 700);
           else if(pub.penalty==="lockout") lockUntil=Date.now()+10000;
           else if(pub.penalty==="drink"){drinkOn=true; $("altpose").textContent=ALTS[rows.length%ALTS.length]; setTimeout(function(){fx("clink")}, 500)}

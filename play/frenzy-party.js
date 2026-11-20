@@ -28,7 +28,7 @@ var claimLog=[], lastSeq=-1, lastPhase="";
 var FX=window.FrenzyFX||null;
 var STEP=FX?FX.STEP_MS:120, FLIP=FX?FX.FLIP_MS:320, ROW_MS=4*STEP+FLIP;
 var anim={reveal:null, bounce:null, shake:null, pop:null, word:null};
-var rowsKey="", rowsSeen=0, typedLen=0, turnKey="", promptKey="", introKey="", live=false, sawLobby=false;
+var rowsKey="", rowsSeen=0, typedLen=0, turnKey="", promptKey="", live=false, sawLobby=false;
 var PROMPT="One small drink or a 5-second pose — or Pass.";
 
 function serverNow(){return Date.now()+(offsetReady?serverOffset:0)}
@@ -112,11 +112,7 @@ function watchRows(){
   if(solved){
     anim.bounce={row:r, t0:now+ROW_MS};
     repaintLater(ROW_MS+5); repaintLater(ROW_MS+5*80+460);
-    setTimeout(function(){
-      if(FX&&typeof FX.playWin==="function"){
-        FX.playWin(function(){fx("confetti")});
-      }else fx("confetti");
-    }, ROW_MS+350);
+    setTimeout(function(){fx("confetti")}, ROW_MS+250);
   }
 }
 function buzz(ms){
@@ -138,13 +134,6 @@ function render(){
   if(meta.status==="lobby"||!pub||!D){screen("lobby"); paintLobby(); return}
   if(pub.phase==="end"||meta.status==="over"){screen("table"); paintEnd(); return}
   screen("table"); paintTable();
-  var rk=roundKey();
-  if(sawLobby&&introKey!==rk&&pub.phase==="guess"&&((D.guesses||[]).length===0)){
-    introKey=rk;
-    if(FX&&typeof FX.playIntro==="function"){
-      FX.playIntro(function(){if(pub&&pub.turn===uid&&pub.phase==="guess"){try{$("guess").focus()}catch(e){}}});
-    }
-  }
 }
 function paintLobby(){
   $("codebig").textContent=code||"";
