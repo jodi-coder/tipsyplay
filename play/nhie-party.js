@@ -133,7 +133,35 @@ function currentMode(){
 }
 function modeLabel(mode){return mode==="mild"?"Mild":mode==="spicy"?"Spicy":mode==="likely"?"Most likely":"Classic"}
 function myEmoji(){return sessionStorage.getItem("tp_nhie_emoji")||""}
-function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)})}
+function screen(id){["home","lobby","table","closed"].forEach(function(s){var n=$(s); if(n) n.classList.toggle("hide", s!==id)}); dockMenu(id==="table")}
+/* In a round the room Menu button rides in the controller bar; everywhere else it goes back to the room chrome. */
+function dockMenu(inTable){
+  var mb=$("rmmenubtn"), slot=$("ctlmenu"), home=$("rmbar"); if(!mb||!slot||!home) return;
+  var want=inTable?slot:home;
+  if(mb.parentNode!==want) want.appendChild(mb);
+}
+/* Controller bar: room code (tap to copy), round progress, and who has locked in (never what they answered). */
+function paintBar(over, num, total){
+  var ct=$("ctlcodetxt"); if(ct&&!ct.dataset.flash&&ct.textContent!==(code||"")) ct.textContent=code||"";
+  var rt=$("ctlround"); if(rt) rt.textContent=over?(total+" rounds played"):("Round "+num+" of "+total);
+  var fill=$("ctlfill"); if(fill) fill.style.width=Math.round((over?1:Math.max(0,Math.min(1,num/total)))*100)+"%";
+  var ul=$("ctlavatars"); if(!ul) return;
+  var answering=!!(table&&table.step==="answer"), mine=myCast();
+  var list=order().filter(function(p){return p.connected!==false});
+  var key=list.map(function(p){var done=answering&&(castValue(p.uid)||(p.uid===uid&&mine)); return p.uid+":"+(p.emoji||"")+":"+shown(p.uid)+":"+(done?1:0)}).join(",")+"|"+answering;
+  if(ul.dataset.key===key) return;
+  ul.dataset.key=key; ul.textContent="";
+  list.forEach(function(p){
+    var done=answering&&!!(castValue(p.uid)||(p.uid===uid&&mine));
+    var li=document.createElement("li"), name=shown(p.uid);
+    li.textContent=p.emoji||(name.charAt(0)||"?").toUpperCase();
+    if(!p.emoji) li.className="ini";
+    if(p.uid===uid) li.classList.add("me");
+    if(done) li.classList.add("in");
+    li.title=name; li.setAttribute("aria-label", name+(p.uid===uid?" (you)":"")+(done?", locked in":""));
+    ul.appendChild(li);
+  });
+}
 function savedName(){
   var el=$("pname")||$("playername");
   var name=el?normName(el.value):"";
@@ -663,6 +691,7 @@ function paintTable(){
   var kicker=$("kicker"); if(kicker) kicker.textContent=over?"That's the game":face.kicker;
   var statement=$("statement"); if(statement) statement.textContent=face.rest;
   var card=$("card"); if(card&&table) card.setAttribute("aria-label", table.text||"Never have I ever");
+  paintBar(over, num, total);
   paintAnswers();
   paintHaves();
   paintQueue();
@@ -1060,6 +1089,16 @@ function wire(){
     if(!code) return;
     unlock();
     copyText(code).then(function(){cue("clink"); fail("")}).catch(function(){fail(code)});
+  });
+  if($("ctlcode")) $("ctlcode").addEventListener("click", function(){
+    if(!code) return;
+    unlock();
+    var t=$("ctlcodetxt"), btn=$("ctlcode");
+    copyText(code).then(function(){
+      cue("clink");
+      if(t){t.dataset.flash="1"; t.textContent="Copied!"; btn.classList.add("ok")}
+      setTimeout(function(){if(t){delete t.dataset.flash; t.textContent=code||""; btn.classList.remove("ok")}}, 1400);
+    }).catch(function(){fail(code)});
   });
   if($("qrhide")) $("qrhide").addEventListener("click", function(){
     var canvas=$("qr"); if(!canvas) return;

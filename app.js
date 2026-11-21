@@ -1,14 +1,50 @@
 (function(){
 var NOTICE="You must be of legal drinking age in your location.";
 var root=document.body.dataset.root||"";
-// age gate
-if(localStorage.getItem("tp_age_ok")!=="yes"){
- var g=document.createElement("div");g.id="gate";
- g.innerHTML='<div class="card"><div style="font-size:3rem">🥂</div><h1>Welcome to TipsyPlay</h1><p><strong>'+NOTICE+'</strong></p><p>Are you of legal drinking age where you are?</p><div class="row"><button class="btn primary" id="gyes">Yes, I am</button><button class="btn alt" id="gno">No</button></div><p id="gmsg" class="hide">Thanks for being honest! TipsyPlay isn\'t for you just yet — come back when you\'re of legal age. Take care! 👋</p></div>';
+// age gate. Browsing is open: the gate asks once, at the moment someone tries to play
+// (Pick a Game, Host, Join, or submitting a room code). Game screens under /play/ and invite links (?room=) still ask on load.
+var AGE_KEY="tp_age_ok";
+function ageOk(){try{return localStorage.getItem(AGE_KEY)==="yes"}catch(e){return false}}
+var GATE_SEL='[data-gate],#hostbtn,#joinbtn,[data-act="host"],[data-act="join"],.game-card a.btn';
+var GATE_FORM='[data-gate],form.joinbox,#joinform';
+var gateEl=null;
+function openGate(after,mandatory){
+ if(gateEl)return;
+ var back=document.activeElement;
+ var g=document.createElement("div");g.id="gate";gateEl=g;
+ g.innerHTML='<div class="card" role="dialog" aria-modal="true" aria-labelledby="gtitle" aria-describedby="gnotice"><div class="gate-emoji" aria-hidden="true">🥂</div><h2 id="gtitle">Before the first round</h2><p id="gnotice"><strong>'+NOTICE+'</strong></p><p>Are you of legal drinking age where you are?</p><div class="row"><button type="button" class="btn primary" id="gyes">Yes, I am</button><button type="button" class="btn alt" id="gno">No</button></div><p id="gmsg" class="hide">Thanks for being honest! TipsyPlay isn\'t for you just yet — come back when you\'re of legal age. Take care! 👋</p>'+(mandatory?'':'<button type="button" class="btn alt hide" id="gback">Back to browsing</button>')+'</div>';
  document.body.appendChild(g);document.documentElement.style.overflow="hidden";
- g.querySelector("#gyes").onclick=function(){localStorage.setItem("tp_age_ok","yes");g.remove();document.documentElement.style.overflow=""};
- g.querySelector("#gno").onclick=function(){g.querySelector(".row").classList.add("hide");g.querySelector("#gmsg").classList.remove("hide")};
+ var close=function(){if(!gateEl)return;g.remove();gateEl=null;document.documentElement.style.overflow="";if(back&&back.focus&&document.contains(back))try{back.focus({preventScroll:true})}catch(e){}};
+ g.querySelector("#gyes").onclick=function(){try{localStorage.setItem(AGE_KEY,"yes")}catch(e){}close();if(after)after()};
+ g.querySelector("#gno").onclick=function(){g.querySelector(".row").classList.add("hide");g.querySelector("#gmsg").classList.remove("hide");var b=g.querySelector("#gback");if(b){b.classList.remove("hide");b.focus()}};
+ var gb=g.querySelector("#gback");if(gb)gb.onclick=close;
+ if(!mandatory)g.addEventListener("click",function(e){if(e.target===g)close()});
+ g.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&!mandatory){e.preventDefault();close();return}
+  if(e.key!=="Tab")return;
+  var f=[].slice.call(g.querySelectorAll("button")).filter(function(b){return b.offsetParent!==null});if(!f.length)return;
+  var first=f[0],last=f[f.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+ });
+ g.querySelector("#gyes").focus();
 }
+window.TipsyAgeGate={ok:ageOk,require:function(fn){if(ageOk())fn();else openGate(fn,false)}};
+if(!ageOk()&&(/\/play\//.test(location.pathname)||/[?&]room=/i.test(location.search)))openGate(null,true);
+document.addEventListener("click",function(e){
+ if(ageOk())return;
+ var el=e.target;if(el&&el.nodeType!==1)el=el.parentElement;if(!el||!el.closest)return;
+ var t=el.closest(GATE_SEL);if(!t||t.tagName==="FORM"||t.closest("#gate"))return;
+ if(t.type==="submit"&&t.form&&t.form.matches(GATE_FORM))return; // the submit listener asks
+ e.preventDefault();e.stopImmediatePropagation();
+ openGate(function(){if(t.tagName==="A"&&t.getAttribute("href"))location.href=t.href;else t.click()},false);
+},true);
+document.addEventListener("submit",function(e){
+ if(ageOk())return;
+ var f=e.target;if(!f||!f.matches||!f.matches(GATE_FORM))return;
+ var by=e.submitter||null;
+ e.preventDefault();e.stopImmediatePropagation();
+ openGate(function(){if(f.requestSubmit){try{f.requestSubmit(by)}catch(x){f.requestSubmit()}}else f.submit()},false);
+},true);
 // footer
 var f=document.querySelector("footer");
 if(f&&!f.hasAttribute("data-keep"))f.innerHTML='<p><strong>'+NOTICE+'</strong></p><p>Every game is opt-in. Non-alcoholic drinks are always welcome. Never drink and drive.</p><a href="'+root+'responsible.html">Responsible play</a> · <a href="'+root+'games/">Games</a><p>© TipsyPlay</p>';
