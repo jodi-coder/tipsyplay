@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="An open book sending linked story bubbles">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB020"/><stop offset=".55" stop-color="#D9480F"/><stop offset="1" stop-color="#3B1F0A"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<circle cx="320" cy="200" r="130" fill="#FFB020" opacity=".35" filter="url(#soft)"/>
+<g filter="url(#shadow)">
+ <path d="M320 190c-40-20-100-24-150-14v84c50-10 110-6 150 14z" fill="#FFF6EC"/>
+ <path d="M320 190c40-20 100-24 150-14v84c-50-10-110-6-150 14z" fill="#F3E3CF"/>
+ <path d="M320 190v84" stroke="#C9A97F" stroke-width="3"/>
+ <path d="M190 206c40-8 80-6 112 6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/><path d="M190 222c40-8 80-6 112 6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/><path d="M190 238c40-8 80-6 112 6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/>
+ <path d="M338 206c32-12 72-14 112-6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/><path d="M338 222c32-12 72-14 112-6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/><path d="M338 238c32-12 72-14 112-6" stroke="#C9A97F" stroke-width="3" fill="none" opacity=".7"/>
+</g>
+<path d="M210 150C200 110 230 80 270 70M430 150C440 110 410 80 370 70" stroke="#FFF6EC" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" fill="none" opacity=".8"/>
+<g filter="url(#shadow)"><rect x="80" y="70" width="120" height="52" rx="18" fill="#FFF6EC"/><path d="M100.0 120l-6 22 26-20z" fill="#FFF6EC"/></g><circle cx="116" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="140" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="164" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/><g filter="url(#shadow)"><rect x="260" y="26" width="120" height="52" rx="18" fill="#FF5A5F"/><path d="M280.0 76l-6 22 26-20z" fill="#FF5A5F"/></g><circle cx="296" cy="52" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="320" cy="52" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="344" cy="52" r="4.7" fill="#0D0F1A" opacity=".75"/><g filter="url(#shadow)"><rect x="440" y="70" width="120" height="52" rx="18" fill="#2ED3A0"/><path d="M520.0 120l-6 22 26-20z" fill="#2ED3A0"/></g><circle cx="476" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="500" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/><circle cx="524" cy="96" r="4.7" fill="#0D0F1A" opacity=".75"/>
+<path d="M580 208C582.16 217.84 582.16 217.84 592 220C582.16 222.16 582.16 222.16 580 232C577.84 222.16 577.84 222.16 568 220C577.84 217.84 577.84 217.84 580 208z" fill="#FFF6EC" opacity="0.9"/><path d="M60 200C61.8 208.2 61.8 208.2 70 210C61.8 211.8 61.8 211.8 60 220C58.2 211.8 58.2 211.8 50 210C58.2 208.2 58.2 208.2 60 200z" fill="#FFF6EC" opacity="0.8"/>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>

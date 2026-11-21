@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="Four word cards with one odd card out">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E5CE6"/><stop offset=".55" stop-color="#3B2A9E"/><stop offset="1" stop-color="#1A1240"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<circle cx="350" cy="150" r="130" fill="#5E5CE6" opacity=".4" filter="url(#soft)"/>
+<g filter="url(#shadow)" transform="rotate(-10 155 160)"><rect x="110" y="90" width="90" height="128" rx="14" fill="#2E2A6E" stroke="#6E6AE8" stroke-width="3"/><text x="155" y="162" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="20" fill="#FFF6EC" text-anchor="middle">LIME</text></g><g filter="url(#shadow)" transform="rotate(-4 255 160)"><rect x="210" y="90" width="90" height="128" rx="14" fill="#2E2A6E" stroke="#6E6AE8" stroke-width="3"/><text x="255" y="162" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="20" fill="#FFF6EC" text-anchor="middle">LIME</text></g><g filter="url(#shadow)" transform="rotate(4 355 160)"><rect x="310" y="90" width="90" height="128" rx="14" fill="#FF5A5F" stroke="#FFF6EC" stroke-width="3"/><text x="355" y="168" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="46" fill="#FFF6EC" text-anchor="middle">?</text></g><g filter="url(#shadow)" transform="rotate(10 455 160)"><rect x="410" y="90" width="90" height="128" rx="14" fill="#2E2A6E" stroke="#6E6AE8" stroke-width="3"/><text x="455" y="162" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="20" fill="#FFF6EC" text-anchor="middle">LIME</text></g>
+<g filter="url(#shadow)"><circle cx="500" cy="170" r="44" fill="#FFF6EC" fill-opacity=".15" stroke="#FFB020" stroke-width="10"/><path d="M532 204l46 46" stroke="#FFB020" stroke-width="16" stroke-linecap="round"/><path d="M478 150a30 30 0 0 1 22-10" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".7"/></g>
+<path d="M560 48C562.16 57.84 562.16 57.84 572 60C562.16 62.16 562.16 62.16 560 72C557.84 62.16 557.84 62.16 548 60C557.84 57.84 557.84 57.84 560 48z" fill="#FFF6EC" opacity="0.9"/><path d="M70 60C71.8 68.2 71.8 68.2 80 70C71.8 71.8 71.8 71.8 70 80C68.2 71.8 68.2 71.8 60 70C68.2 68.2 68.2 68.2 70 60z" fill="#FF5A5F" opacity="1"/><path d="M80 232C81.44 238.56 81.44 238.56 88 240C81.44 241.44 81.44 241.44 80 248C78.56 241.44 78.56 241.44 72 240C78.56 238.56 78.56 238.56 80 232z" fill="#FFF6EC" opacity="0.7"/>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>

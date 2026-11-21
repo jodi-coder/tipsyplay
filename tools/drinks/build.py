@@ -29,7 +29,7 @@ SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
 CSS_V = "1"
 JS_V = "1"
-STYLES_V = "28"   # keep in step with the other pages
+STYLES_V = "29"   # keep in step with the other pages
 SOUNDS_V = "18"
 APP_V = "22"
 

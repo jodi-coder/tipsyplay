@@ -373,14 +373,11 @@ body.mlt .host-cta{min-height:64px;font-size:1.5rem;margin:0}
 .art-indigo-amber{--g1:var(--indigo);--g2:var(--amber)}
 .art-amber-indigo{--g1:var(--amber);--g2:var(--indigo)}
 .art-teal-coral{--g1:var(--tile-green);--g2:var(--coral)}
-.game-card{--g1:var(--coral);--g2:var(--indigo);overflow:hidden;transition:transform .2s,border-color .2s}
-.game-card:hover{border-color:color-mix(in srgb,var(--g1) 45%,transparent)}
-.game-card .gc-head{position:relative;margin:calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-3);padding:var(--s-5) var(--s-5) var(--s-4);min-height:104px;align-items:flex-end;color:var(--tile-paper);
-  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--g1) 85%,transparent),transparent 60%),linear-gradient(125deg,color-mix(in srgb,var(--g1) 60%,var(--surface)),color-mix(in srgb,var(--g2) 70%,var(--bg)))}
-.game-card .gc-deco{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.game-card .gc-head .tile{position:relative;transform:rotate(-6deg)}
-.game-card .gc-head h3{position:relative;color:var(--tile-paper);text-shadow:0 2px 12px color-mix(in srgb,var(--bg) 70%,transparent)}
-.game-card .gc-head .gc-new{top:var(--s-3);right:var(--s-3)}
+.game-card{--g1:var(--coral);--g2:var(--indigo);overflow:hidden;border-color:color-mix(in srgb,var(--g1) 38%,transparent);transition:border-color .2s,box-shadow .2s}
+.game-card:hover{border-color:color-mix(in srgb,var(--g1) 70%,transparent);box-shadow:var(--shadow),0 18px 44px -22px color-mix(in srgb,var(--g1) 80%,transparent)}
+.game-card .gc-img{position:relative;margin:calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) var(--s-4);aspect-ratio:640/300;max-width:none;overflow:hidden;background:color-mix(in srgb,var(--g1) 40%,var(--bg))}
+.game-card .gc-img img{display:block;width:100%;height:100%;object-fit:cover}
+.game-card .gc-head h3{text-transform:uppercase;letter-spacing:.01em}
 .game-card .tag.gc-players{color:var(--text);border-color:color-mix(in srgb,var(--g1) 50%,transparent);background:color-mix(in srgb,var(--g1) 16%,var(--surface-2));font-weight:600}
 .game-card p.gc-zero{margin:0 0 var(--s-2)}
 

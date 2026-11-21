@@ -66,18 +66,17 @@ test("the homepage paints from those variables: midnight page, slate cards with 
   await page.goto("/index.html");
   const c = await page.evaluate(() => {
     const css = (sel) => { const s = getComputedStyle(document.querySelector(sel)); return { bg: s.backgroundColor, img: s.backgroundImage, fg: s.color, border: s.borderTopColor + " " + s.borderTopWidth, radius: s.borderTopLeftRadius }; };
-    return { body: css("body"), card: css(".gc"), cta: css(".hero .cta"), tile: css(".gc .t-yellow"), join: css(".joinbox") };
+    return { body: css("body"), card: css(".gc"), cta: css(".hero .cta"), join: css(".joinbox") };
   });
   expect(c.body.bg).toBe(rgb(NIGHT));
   expect(c.card.bg).toBe(rgb(CARD));
   expect(c.card.fg).toBe(rgb(INK));
-  expect(c.card.border).toBe(LINE + " 1px");
-  expect(c.card.radius).toBe("20px");
+  expect(c.card.border).toMatch(/ 1px$/);
+  expect(c.card.radius).toBe("22px");
   expect(c.join.border).toBe(LINE + " 1px");
   expect(c.cta.bg).toBe(rgb(CORAL));
   expect(c.cta.img).toContain("linear-gradient");
   expect(c.cta.fg).toBe(rgb(NIGHT));
-  expect(c.tile.bg).toBe(rgb(AMBER));
   // changing a variable changes the page: nothing is hard-coded
   await page.addStyleTag({ content: ":root{--bg:#123456;--amber:#654321}" });
   const after = await page.evaluate(() => ({ body: getComputedStyle(document.body).backgroundColor, badge: getComputedStyle(document.querySelector(".gc-new")).backgroundColor }));
@@ -189,8 +188,11 @@ test("the homepage is readable when scripts are off: every game card and link is
 test("the illustrated catalog: art, player badges, vibe tags, one NEW badge on Slow Drip, Zero-Drink Friendly markers", async ({ page }) => {
   await page.goto("/index.html");
   await expect(page.locator(".gc")).toHaveCount(15);
-  await expect(page.locator(".gc .gc-art .gc-deco use")).toHaveCount(15);
-  await expect(page.locator(".gc .gc-players")).toHaveCount(15);
+  const imgs = await page.$$eval(".gc .gc-art img", (a) => a.map((i) => i.getAttribute("src")));
+  expect(imgs).toHaveLength(15);
+  for (const src of imgs) { expect(src).toMatch(/^images\/games\/[a-z-]+\.svg$/); expect(fs.existsSync(path.join(ROOT, src)), src).toBe(true); }
+  await expect(page.locator(".gc .gc-art .gc-players")).toHaveCount(15);
+  await expect(page.locator(".gc .gc-play")).toHaveCount(15);
   for (const t of await page.locator(".gc-players").allTextContents()) expect(t).toMatch(/^\d+–\d+ players$/);
   await expect(page.locator(".gc-new")).toHaveCount(1);
   await expect(page.locator(".gc", { has: page.locator(".gc-new") }).locator(".gc-name")).toHaveText("Slow Drip");
