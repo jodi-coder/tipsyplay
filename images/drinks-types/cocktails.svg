@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="A martini and a coupe cocktail clinking">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF4FA3"/><stop offset=".55" stop-color="#8B5CF6"/><stop offset="1" stop-color="#2A0F4F"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<circle cx="320" cy="170" r="140" fill="#FF4FA3" opacity=".3" filter="url(#soft)"/>
+<g filter="url(#shadow)" transform="rotate(-10 250 170)">
+ <path d="M168 70H332L260 156H240z" fill="#FFFFFF" fill-opacity=".14" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>
+ <path d="M184 86H316L258 152H242z" fill="#E6F7FF" fill-opacity=".75"/>
+ <path d="M250 156V250M210 254H290" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+ <path d="M220 40L272 120" stroke="#FFB020" stroke-width="4" stroke-linecap="round"/><circle cx="262" cy="104" r="12" fill="#7BAA3B"/><circle cx="264" cy="102" r="4" fill="#FF5A5F"/>
+ <path d="M196 82L228 118" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+</g>
+<g filter="url(#shadow)" transform="rotate(10 400 170)">
+ <path d="M330 90C330 150 470 150 470 90z" fill="#FFFFFF" fill-opacity=".14" stroke="#FFFFFF" stroke-width="4"/>
+ <path d="M338 100C344 140 456 140 462 100z" fill="#FF5A5F"/>
+ <path d="M400 136V250M360 254H440" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+ <path d="M440 80c18-6 30 4 26 18s-20 12-24 4" fill="none" stroke="#FFB020" stroke-width="7" stroke-linecap="round"/>
+ <path d="M344 104L360 124" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+</g>
+<g filter="url(#glow)"><path d="M326 50C329.6 66.4 329.6 66.4 346 70C329.6 73.6 329.6 73.6 326 90C322.4 73.6 322.4 73.6 306 70C322.4 66.4 322.4 66.4 326 50z" fill="#FFF6EC" opacity="1"/><circle cx="300" cy="56" r="4" fill="#FFB020"/><circle cx="352" cy="50" r="3.5" fill="#FFB020"/></g>
+<circle cx="106" cy="207" r="4.5" fill="#FFF6EC" opacity="0.71"/><rect x="616" y="55" width="15" height="4" rx="2" fill="#FFB020" transform="rotate(95 616 55)" opacity="0.66"/><circle cx="481" cy="276" r="3.8" fill="#FFF6EC" opacity="0.89"/><circle cx="394" cy="10" r="3.6" fill="#FFF6EC" opacity="0.92"/><rect x="15" y="222" width="12" height="4" rx="2" fill="#FFB020" transform="rotate(16 15 222)" opacity="0.79"/><rect x="120" y="11" width="10" height="5" rx="2" fill="#FFB020" transform="rotate(156 120 11)" opacity="0.92"/><rect x="421" y="285" width="12" height="5" rx="2" fill="#2ED3A0" transform="rotate(162 421 285)" opacity="0.76"/><rect x="218" y="44" width="12" height="4" rx="2" fill="#FFF6EC" transform="rotate(96 218 44)" opacity="1.00"/><circle cx="247" cy="8" r="4.5" fill="#2ED3A0" opacity="0.50"/><circle cx="45" cy="180" r="3.4" fill="#2ED3A0" opacity="0.78"/><rect x="116" y="51" width="13" height="4" rx="2" fill="#FFF6EC" transform="rotate(63 116 51)" opacity="0.64"/><rect x="42" y="244" width="8" height="5" rx="2" fill="#FFF6EC" transform="rotate(140 42 244)" opacity="0.86"/><rect x="155" y="275" width="15" height="4" rx="2" fill="#2ED3A0" transform="rotate(29 155 275)" opacity="0.75"/><rect x="158" y="263" width="11" height="5" rx="2" fill="#FFB020" transform="rotate(29 158 263)" opacity="0.62"/><rect x="184" y="256" width="9" height="3" rx="2" fill="#FFB020" transform="rotate(119 184 256)" opacity="0.74"/><rect x="575" y="295" width="9" height="5" rx="2" fill="#FFF6EC" transform="rotate(134 575 295)" opacity="0.96"/><circle cx="307" cy="286" r="4.2" fill="#FFF6EC" opacity="0.77"/><rect x="273" y="174" width="13" height="3" rx="2" fill="#FFF6EC" transform="rotate(153 273 174)" opacity="0.89"/>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>

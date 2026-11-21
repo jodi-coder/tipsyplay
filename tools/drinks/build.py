@@ -27,7 +27,7 @@ from used_photo_prompts import USED_PHOTO_PROMPTS  # noqa: E402
 
 SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
-CSS_V = "1"
+CSS_V = "2"
 JS_V = "1"
 STYLES_V = "29"   # keep in step with the other pages
 SOUNDS_V = "18"
@@ -333,6 +333,7 @@ def type_page(t, rows):
 <h1>%s</h1>
 <p class="lede">%s</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<figure class="dk-banner"><img src="%simages/drinks-types/%s.svg" width="640" height="300" alt="" decoding="async"></figure>
 %s
 %s
 </section>
@@ -342,7 +343,7 @@ def type_page(t, rows):
 %s
 </div>
 </section>
-""" % (root, e(h1), e(lede), type_chips(root, key), chips, len(rows), "\n".join(d.card(root) for d in rows))
+""" % (root, e(h1), e(lede), root, tdir, type_chips(root, key), chips, len(rows), "\n".join(d.card(root) for d in rows))
     return head(root, title, lede, url, ld) + body + foot(root, script=True)
 
 
@@ -360,21 +361,21 @@ def hub_page(drinks, by_type):
     tiles = []
     for i, t in enumerate(TYPES):
         first = by_type[t[0]][0]
-        tiles.append('<a class="pick dk-type" href="%s/"><span class="tile %s">%s</span>'
-                     '<span class="pick-body"><b>%s</b><span>%d recipes · %s</span></span>'
-                     '<svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5l7.5 7.5L9 19.5"/></svg></a>'
-                     % (t[1], TILES[i % 3], glass_svg(first.glass if t[0] != "cocktails" else "martini", first.liq),
-                        e(t[2]), len(by_type[t[0]]), e(", ".join(d.name for d in by_type[t[0]][:3]))))
+        tiles.append('<a class="dk-type" href="%s/"><span class="dk-type-art"><img src="%simages/drinks-types/%s.svg" width="640" height="300" alt="" loading="lazy" decoding="async">'
+                     '<span class="dk-type-count">%d recipes</span></span>'
+                     '<span class="dk-type-body"><b>%s</b><span>%s</span></span></a>'
+                     % (t[1], root, t[1], len(by_type[t[0]]), e(t[2]), e(", ".join(d.name for d in by_type[t[0]][:3]))))
     az = sorted(drinks, key=lambda d: d.name.lower())
     body = """<section class="entry" id="top">
 <p class="crumbs"><a href="%sindex.html">Home</a></p>
 <h1>Drink Recipes for Game Night</h1>
 <p class="lede">100 drinks you can make at home, sorted by type. Every recipe has an alcohol-free version.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
+<figure class="dk-banner"><img src="%simages/drinks-types/all.svg" width="640" height="300" alt="A glowing bar shelf lined with a shot, a martini, a frozen drink, a hot mug and a punch bowl" decoding="async"></figure>
 </section>
 <section class="dk-sec" id="types">
 <h2>Pick a type</h2>
-<div class="picks">
+<div class="dk-types-grid">
 %s
 </div>
 </section>
@@ -393,7 +394,7 @@ def hub_page(drinks, by_type):
 %s
 </ul>
 </section>
-""" % (root, "\n".join(tiles), "\n".join(by_slug[s].card(root) for s in FEATURED),
+""" % (root, root, "\n".join(tiles), "\n".join(by_slug[s].card(root) for s in FEATURED),
        "\n".join('<li data-name="%s"><a href="%s.html">%s</a> <span>%s</span></li>' % (e(d.name.lower()), d.slug, e(d.name), e(d.tlabel)) for d in az))
     return head(root, title, desc, url, ld) + body + foot(root, script=True)
 

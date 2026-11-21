@@ -121,6 +121,16 @@ html,body{overflow-x:clip}
 .more,.more-drinks{display:inline-flex;align-items:center;min-height:var(--tap);margin-top:14px;font-weight:800;color:var(--coral);text-decoration:none}
 .more:hover,.more-drinks:hover{text-decoration:underline}
 
+/* ---------- make a drink: illustrated type cards ---------- */
+#drinks .drink-types{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,44%);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 -24px;padding:4px 24px 8px;scroll-padding:24px}
+#drinks .drink-types::-webkit-scrollbar{display:none}
+@media(min-width:760px){#drinks .drink-types{grid-auto-flow:row;grid-template-columns:repeat(5,minmax(0,1fr));overflow:visible;margin:0;padding:0}}
+.dt{display:flex;flex-direction:column;gap:8px;padding:6px 6px 10px;scroll-snap-align:start;background:var(--surface);color:var(--ink);border:var(--bw) solid var(--outline);border-radius:18px;text-decoration:none;font-weight:400;transition:transform .2s,border-color .2s}
+.dt:hover,.dt:focus-visible{transform:translateY(-3px);border-color:color-mix(in srgb,var(--coral) 55%,transparent)}
+.dt img{display:block;width:100%;height:auto;aspect-ratio:640/300;border-radius:12px;object-fit:cover}
+.dt span{padding:0 6px;font:800 1rem var(--display);text-transform:uppercase;letter-spacing:.02em;color:var(--text)}
+@media(max-width:390px){#drinks .drink-types{margin:0 -16px;padding:4px 16px 8px}}
+
 /* ---------- how it works ---------- */
 .steps3{list-style:none;margin:0;padding:0;display:grid;gap:14px}
 @media(min-width:760px){.steps3{grid-template-columns:repeat(3,1fr);gap:20px}}

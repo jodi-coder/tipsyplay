@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="A frozen drink with a straw, umbrella and ice">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2ED3A0"/><stop offset=".55" stop-color="#2563EB"/><stop offset="1" stop-color="#141B4D"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<circle cx="320" cy="170" r="140" fill="#5AC8FA" opacity=".3" filter="url(#soft)"/>
+<g transform="translate(90 70)" stroke="#FFF6EC" stroke-width="3" stroke-linecap="round" opacity="0.8"><path d="M0 -12V12M-10 -6L10 6M-10 6L10 -6"/></g><g transform="translate(560 60)" stroke="#FFF6EC" stroke-width="3" stroke-linecap="round" opacity="0.9"><path d="M0 -12V12M-10 -6L10 6M-10 6L10 -6"/></g><g transform="translate(130 220)" stroke="#FFF6EC" stroke-width="3" stroke-linecap="round" opacity="0.6"><path d="M0 -12V12M-10 -6L10 6M-10 6L10 -6"/></g><g transform="translate(540 230)" stroke="#FFF6EC" stroke-width="3" stroke-linecap="round" opacity="0.7"><path d="M0 -12V12M-10 -6L10 6M-10 6L10 -6"/></g><g transform="translate(470 40)" stroke="#FFF6EC" stroke-width="3" stroke-linecap="round" opacity="0.5"><path d="M0 -12V12M-10 -6L10 6M-10 6L10 -6"/></g>
+<g filter="url(#shadow)">
+ <path d="M366 30L340 130" stroke="#FF5A5F" stroke-width="10" stroke-linecap="round"/><path d="M362 46l-4 14" stroke="#fff" stroke-width="10" opacity=".5"/>
+ <path d="M270 60C250 110 280 130 274 170 268 210 290 230 320 230S372 210 366 170C360 130 390 110 370 60z" fill="#FFFFFF" fill-opacity=".14" stroke="#FFFFFF" stroke-width="5"/>
+ <path d="M276 96C266 124 290 140 284 172 278 206 296 222 320 222S362 206 356 172C350 140 374 124 364 96z" fill="#FF7AA8"/>
+ <path d="M276 96c10-16 30-24 44-10 14-14 34-6 44 10" fill="#FFC2D8"/>
+ <circle cx="300" cy="140" r="4" fill="#fff" opacity=".6"/><circle cx="336" cy="170" r="3" fill="#fff" opacity=".6"/><circle cx="312" cy="196" r="3.5" fill="#fff" opacity=".6"/>
+ <path d="M320 230V256M280 260H360" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+ <path d="M284 110L292 200" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+</g>
+<g filter="url(#shadow)" transform="rotate(-24 250 70)"><path d="M190 76a60 40 0 0 1 120 0z" fill="#FFB020"/><path d="M190 76a60 40 0 0 1 40-34L250 76zM250 76l20-38a60 40 0 0 1 40 38z" fill="#FF5A5F"/><path d="M250 76v70" stroke="#A8743E" stroke-width="4"/></g>
+<g filter="url(#shadow)"><rect x="150" y="190" width="40" height="40" rx="9" fill="#E6F7FF" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width="2" transform="rotate(14 170.0 210.0)"/><rect x="460" y="180" width="46" height="46" rx="10" fill="#E6F7FF" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width="2" transform="rotate(-10 483.0 203.0)"/><rect x="500" y="226" width="30" height="30" rx="7" fill="#E6F7FF" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width="2" transform="rotate(22 515.0 241.0)"/></g>
+<g filter="url(#glow)"><path d="M420 76C422.52 87.48 422.52 87.48 434 90C422.52 92.52 422.52 92.52 420 104C417.48 92.52 417.48 92.52 406 90C417.48 87.48 417.48 87.48 420 76z" fill="#FFF6EC" opacity="1"/></g>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>
