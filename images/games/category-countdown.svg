@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="A glowing stopwatch counting down">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB020"/><stop offset=".55" stop-color="#FF5A5F"/><stop offset="1" stop-color="#5A1430"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<circle cx="320" cy="160" r="130" fill="#FFB020" opacity=".35" filter="url(#soft)"/>
+<g filter="url(#shadow)">
+ <rect x="300" y="30" width="40" height="22" rx="6" fill="#FFF6EC"/><rect x="312" y="48" width="16" height="16" fill="#FFF6EC"/>
+ <path d="M406 70l18-18 14 14-18 18z" fill="#FFF6EC"/>
+ <circle cx="320" cy="164" r="104" fill="#2A1630" stroke="#FFF6EC" stroke-width="10"/>
+ <circle cx="320" cy="164" r="84" fill="none" stroke="#4A2A4E" stroke-width="16"/>
+ <path d="M320 80A84 84 0 1 1 247 206" fill="none" stroke="#FFB020" stroke-width="16" stroke-linecap="round" filter="url(#glow)"/>
+ <path d="M390.0 164.0L382.0 164.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M380.6 199.0L373.7 195.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M355.0 224.6L351.0 217.7" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M320.0 234.0L320.0 226.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M285.0 224.6L289.0 217.7" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M259.4 199.0L266.3 195.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M250.0 164.0L258.0 164.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M259.4 129.0L266.3 133.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M285.0 103.4L289.0 110.3" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M320.0 94.0L320.0 102.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M355.0 103.4L351.0 110.3" stroke="#FFF6EC" stroke-width="3" opacity=".6"/><path d="M380.6 129.0L373.7 133.0" stroke="#FFF6EC" stroke-width="3" opacity=".6"/>
+ <text x="320" y="184" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="56" fill="#FFF6EC" text-anchor="middle">7</text>
+</g>
+<g font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="16" fill="#0D0F1A" text-anchor="middle">
+ <g filter="url(#shadow)"><rect x="60" y="60" width="120" height="40" rx="20" fill="#FFF6EC"/><text x="120" y="86">FRUITS</text></g>
+ <g filter="url(#shadow)"><rect x="470" y="70" width="120" height="40" rx="20" fill="#FFB020"/><text x="530" y="96">CITIES</text></g>
+ <g filter="url(#shadow)"><rect x="480" y="200" width="110" height="40" rx="20" fill="#2ED3A0"/><text x="535" y="226">BANDS</text></g>
+</g>
+<path d="M110 196C112.52 207.48 112.52 207.48 124 210C112.52 212.52 112.52 212.52 110 224C107.48 212.52 107.48 212.52 96 210C107.48 207.48 107.48 207.48 110 196z" fill="#FFF6EC" opacity="0.9"/><path d="M440 32C441.44 38.56 441.44 38.56 448 40C441.44 41.44 441.44 41.44 440 48C438.56 41.44 438.56 41.44 432 40C438.56 38.56 438.56 38.56 440 32z" fill="#FFF6EC" opacity="0.8"/>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>

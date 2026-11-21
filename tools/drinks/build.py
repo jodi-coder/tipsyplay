@@ -29,9 +29,9 @@ SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
 CSS_V = "1"
 JS_V = "1"
-STYLES_V = "26"   # keep in step with the other pages
+STYLES_V = "29"   # keep in step with the other pages
 SOUNDS_V = "18"
-APP_V = "21"
+APP_V = "22"
 
 GTAG = """<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
@@ -198,7 +198,7 @@ def head(root, title, desc, canonical, ld, og_image=None):
 <meta charset="utf-8">
 %s
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#7CC8FF">
+<meta name="theme-color" content="#0D0F1A">
 <meta name="description" content="%s">
 <title>%s</title>
 <link rel="canonical" href="%s">

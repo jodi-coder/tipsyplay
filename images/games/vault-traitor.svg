@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" role="img" aria-label="A spy beside a vault door and padlock">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E7A63"/><stop offset=".55" stop-color="#0B4F48"/><stop offset="1" stop-color="#06231F"/></linearGradient>
+<radialGradient id="hl" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<radialGradient id="vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0D0F1A" stop-opacity="0"/><stop offset="1" stop-color="#0D0F1A" stop-opacity=".55"/></radialGradient>
+<filter id="glow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="9" flood-color="#0D0F1A" flood-opacity=".55"/></filter>
+</defs>
+<rect width="640" height="300" fill="url(#bg)"/>
+<rect width="640" height="300" fill="url(#hl)"/>
+
+<g opacity=".18" stroke="#2ED3A0" stroke-width="2"><path d="M20 0v300"/><path d="M60 0v300"/><path d="M100 0v300"/><path d="M140 0v300"/><path d="M180 0v300"/><path d="M220 0v300"/><path d="M260 0v300"/><path d="M300 0v300"/><path d="M340 0v300"/><path d="M380 0v300"/><path d="M420 0v300"/><path d="M460 0v300"/><path d="M500 0v300"/><path d="M540 0v300"/><path d="M580 0v300"/><path d="M620 0v300"/></g>
+<circle cx="330" cy="150" r="120" fill="#2ED3A0" opacity=".25" filter="url(#soft)"/>
+<g filter="url(#shadow)">
+ <rect x="230" y="40" width="200" height="220" rx="22" fill="#1F6F5F" stroke="#2ED3A0" stroke-width="4"/>
+ <rect x="244" y="54" width="172" height="192" rx="14" fill="#155547"/>
+ <circle cx="330" cy="150" r="62" fill="#1F6F5F" stroke="#2ED3A0" stroke-width="5"/>
+ <circle cx="330" cy="150" r="40" fill="#0F3F36" stroke="#7FF2CF" stroke-width="3"/>
+ <path d="M330 150L366.0 150.0" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/><path d="M330 150L348.0 181.2" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/><path d="M330 150L312.0 181.2" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/><path d="M330 150L294.0 150.0" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/><path d="M330 150L312.0 118.8" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/><path d="M330 150L348.0 118.8" stroke="#7FF2CF" stroke-width="4" stroke-linecap="round"/>
+ <circle cx="330" cy="150" r="10" fill="#2ED3A0"/>
+ <rect x="236" y="90" width="14" height="30" rx="5" fill="#7FF2CF"/><rect x="236" y="180" width="14" height="30" rx="5" fill="#7FF2CF"/>
+</g>
+<g filter="url(#shadow)" transform="translate(470 70)">
+ <path d="M30 60V40a36 36 0 0 1 72 0v20" fill="none" stroke="#7FF2CF" stroke-width="16" stroke-linecap="round"/>
+ <rect x="10" y="58" width="112" height="100" rx="18" fill="#2ED3A0"/><rect x="10" y="58" width="112" height="24" rx="12" fill="#7FF2CF" opacity=".5"/>
+ <circle cx="66" cy="102" r="12" fill="#0D0F1A"/><rect x="61" y="106" width="10" height="26" rx="5" fill="#0D0F1A"/>
+</g>
+<g filter="url(#shadow)" fill="#04130F">
+ <path d="M70 300c4-70 22-110 64-120 42 10 60 50 64 120z"/>
+ <circle cx="134" cy="150" r="30"/>
+ <path d="M84 138c10-4 30-6 50-6s40 2 50 6c-4 6-20 8-50 8s-46-2-50-8z"/><path d="M106 134c2-26 12-38 28-38s26 12 28 38z"/>
+ <rect x="112" y="144" width="44" height="8" rx="4" fill="#2ED3A0" opacity=".8"/>
+</g>
+<path d="M560 240C561.8 248.2 561.8 248.2 570 250C561.8 251.8 561.8 251.8 560 260C558.2 251.8 558.2 251.8 550 250C558.2 248.2 558.2 248.2 560 240z" fill="#7FF2CF" opacity="0.9"/><path d="M210 32C211.44 38.56 211.44 38.56 218 40C211.44 41.44 211.44 41.44 210 48C208.56 41.44 208.56 41.44 202 40C208.56 38.56 208.56 38.56 210 32z" fill="#7FF2CF" opacity="0.8"/>
+
+<rect width="640" height="300" fill="url(#vg)"/>
+</svg>
