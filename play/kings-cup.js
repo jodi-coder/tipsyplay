@@ -126,16 +126,10 @@ function friendly(e){
 }
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
-  var s=String(v||"");
-  /* A query string is an invite only when it carries ?code= or ?room=.
-     Other params (including ?emulator=1) are not a room code. */
-  if(/[?&]/.test(s)){
-    var m=s.match(/[?&](?:room|code)=([A-Za-z]{4})(?![A-Za-z])/i);
-    if(!m) return "";
-    var fromQuery=m[1].toUpperCase();
-    return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(fromQuery)?fromQuery:"";
-  }
-  return s.toUpperCase().replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
+  var up=String(v||"").toUpperCase();
+  var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
+  if(q) return q[1];
+  return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
 }
 function ageOk(){try{return localStorage.getItem("tp_age_ok")==="yes"}catch(e){return false}}
 function afterAge(fn){

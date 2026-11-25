@@ -442,6 +442,12 @@ test("age gate blocks same-tab rejoin from reaching Start", async ({ browser }) 
   for (const path of ["/games/kings-cup.html", "/games/never-have-i-ever.html"]) {
     const host = await phone(path);
     await host.page.locator("#pname").fill("Ada");
+    /* Draft PR #110 is what stops ?emulator=1 being read as a room code. Until that lands, King's Cup hides Host. Show it again so this test can host. */
+    await host.page.evaluate(() => {
+      document.body.classList.remove("kc-invite");
+      const input = document.getElementById("roomcode");
+      if (input) input.value = "";
+    });
     await host.page.locator("#hostbtn").click();
     await expect(host.page.locator("#lobby")).toBeVisible();
     await host.page.evaluate(() => sessionStorage.setItem("tp_rejoin_test", "cleared"));

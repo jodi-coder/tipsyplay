@@ -50,10 +50,7 @@ function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i; for(i=0;i<4;i++) s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)]; return s}
 function queryRoom(){
   var raw="";
-  try{var q=new URLSearchParams(location.search); raw=q.get("room")||q.get("code")||""}catch(e){
-    var m=String(location.search||"").match(/[?&](?:room|code)=([A-Za-z]{4})/i);
-    if(m) raw=m[1];
-  }
+  try{var q=new URLSearchParams(location.search); raw=q.get("room")||q.get("code")||""}catch(e){raw=location.search||""}
   var c=normCode(raw);
   return validCode(c)?c:"";
 }
