@@ -29,9 +29,9 @@ SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
 CSS_V = "2"
 JS_V = "1"
-STYLES_V = "30"   # keep in step with the other pages
+STYLES_V = "31"   # keep in step with the other pages
 SOUNDS_V = "18"
-APP_V = "22"
+APP_V = "23"
 
 GTAG = """<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BHY4BXF3V3"></script>
