@@ -1,5 +1,7 @@
 const { defineConfig } = require("@playwright/test");
 module.exports = defineConfig({
+  globalSetup: require.resolve("./guard-setup.js"),
+  globalTeardown: require.resolve("./guard-teardown.js"),
   testDir: ".",
   testMatch: ["browser.spec.js", "audio.spec.js", "room-ui.spec.js", "theme.spec.js", "vault.spec.js", "drip.spec.js", "split-end.spec.js", "split-six.spec.js", "split-fx.spec.js", "kings-cup-screens.spec.js", "quiplash.spec.js", "mole.spec.js", "frenzy.spec.js", "frenzy-fx.spec.js", "frenzy-modes.spec.js", "court.spec.js", "countdown.spec.js"],
   timeout: 240000,

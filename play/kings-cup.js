@@ -129,6 +129,8 @@ function normCode(v){
   var up=String(v||"").toUpperCase();
   var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
   if(q) return q[1];
+  /* The test flag ?emulator=1 is not a room code. Leaving it in would turn those letters into MATR and hide Host. */
+  up=up.replace(/[?&]EMULATOR=[^&#]*/g,"");
   return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}

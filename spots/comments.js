@@ -8,7 +8,7 @@ var msgEl=document.getElementById("comment-msg");
 var form=document.getElementById("comment-form");
 var STEP=8,limit=STEP,sending=false,uid=null,db=null,stop=null;
 var BAD=/\b(fuck|fucking|fucked|fucker|shit|shitty|bullshit|bitch|bastard|asshole|dick|cock|cunt|pussy|slut|whore|nigger|nigga|faggot|fag|retard|retarded|kike|spic|chink|tranny)\b/i;
-var ref,query,orderByChild,limitToLast,onValue,update,set,push,serverTimestamp,getAuth,signInAnonymously,getDatabase,initializeApp,authObj;
+var ref,query,orderByChild,limitToLast,onValue,update,set,push,serverTimestamp,getAuth,signInAnonymously,connectAuthEmulator,connectDatabaseEmulator,getDatabase,initializeApp,authObj;
 
 function say(text){if(msgEl)msgEl.textContent=text||""}
 function clean(s){return String(s||"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u200B-\u200D\uFEFF]/g,"").trim()}
@@ -92,6 +92,8 @@ async function boot(){
  initializeApp=appMod.initializeApp;
  getAuth=authMod.getAuth;
  signInAnonymously=authMod.signInAnonymously;
+ connectAuthEmulator=authMod.connectAuthEmulator;
+ connectDatabaseEmulator=dbMod.connectDatabaseEmulator;
  getDatabase=dbMod.getDatabase;
  ref=dbMod.ref;
  query=dbMod.query;
@@ -105,6 +107,11 @@ async function boot(){
  var app=initializeApp(cfg.firebaseConfig);
  authObj=getAuth(app);
  db=getDatabase(app);
+ /* Spot pages are opened by the narrow-pages test. Without this, ?emulator=1 is ignored and sign-in hits production. */
+ if(/[?&]emulator=1(?:&|$)/.test(location.search)){
+  connectAuthEmulator(authObj,"http://127.0.0.1:9099",{disableWarnings:true});
+  connectDatabaseEmulator(db,"127.0.0.1",9000);
+ }
  if(authObj.authStateReady)await authObj.authStateReady();
  try{await ensureUser()}catch(e){say("Comments need a connection and anonymous sign-in.")}
  listen();

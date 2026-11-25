@@ -1,6 +1,6 @@
 /* Vault Traitor in real browsers against the Firebase emulators: a full three-phone game,
    and the database rules that keep the code, roles, lies and ballots private. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const PAGE = "/games/vault-traitor.html?emulator=1&fast=1";
 const NS = "tipsyplay-f3c95-default-rtdb";

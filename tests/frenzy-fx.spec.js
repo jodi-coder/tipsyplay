@@ -1,7 +1,7 @@
 /* Five Letter Frenzy sound and motion, on the Firebase emulators and the local word keeper.
    The effects only decorate the screen: every tile must still end with the right mark class and symbol,
    with motion on and with prefers-reduced-motion, and no sound may play before the first tap or while muted. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const PAGE = "/games/five-letter-frenzy.html?mode=table&emulator=1&fast=1&word=crane";
 const PROMPT = "One small drink or a 5-second pose — or Pass.";

@@ -1,6 +1,6 @@
 /* King's Cup screens: joined view, invite view, tap race, 5-second clock, call out, Never Have I Ever on Jack.
    Firebase is stubbed in the page (same stub as split-end.spec.js). Nothing talks to production. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const fs = require("fs");
 const path = require("path");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";

@@ -1,6 +1,6 @@
 /* Theme and homepage checks. No Firebase needed.
    The page colours, font and shadows must come from the theme variables in styles.css (the midnight nightlife palette). */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const fs = require("fs");
 const path = require("path");
 const ROOT = process.env.TIPSY_ROOT || path.join(__dirname, "..");
@@ -208,7 +208,7 @@ test("Find your vibe pills filter the catalog in place, and fall back to the cat
   expect(chips).toEqual([["All", "Quick", "For 2", "Big Groups", "No Props", "Cards"], ["games/", "games/quick/", "games/for-two/", "games/big-groups/", "games/no-props/", "games/card/"]]);
   const names = () => page.$$eval(".gc:not([hidden])", (a) => a.map((x) => x.querySelector(".gc-name").textContent));
   await page.click("#vibes [data-filter=two]");
-  await expect(page).toHaveURL(/index\.html$/);
+  await expect(page).toHaveURL(/index\.html(?:\?.*)?$/);
   await expect(page.locator("#vibes [data-filter=two]")).toHaveAttribute("aria-pressed", "true");
   expect((await names()).sort()).toEqual(["Card Lottery", "King's Cup", "Never Have I Ever", "Split Decision"]);
   await page.click("#vibes [data-filter=cards]");
@@ -241,7 +241,7 @@ test("age gate is deferred: browsing opens nothing, playing asks first", async (
   await expect(page.locator("#gate")).toContainText("You must be of legal drinking age in your location.");
   await page.keyboard.press("Escape");
   await expect(page.locator("#gate")).toHaveCount(0);
-  await expect(page).toHaveURL(/index\.html$/);
+  await expect(page).toHaveURL(/index\.html(?:\?.*)?$/);
   await page.fill("#joincode", "kqxj");
   await page.press("#joincode", "Enter");
   await expect(page.locator("#gate")).toBeVisible();
@@ -260,10 +260,10 @@ test("age gate is deferred: browsing opens nothing, playing asks first", async (
   await page.goto("/index.html");
   await page.click(".hero .cta");
   await page.click("#gyes");
-  await expect(page).toHaveURL(/\/games\/$/);
+  await expect(page).toHaveURL(/\/games\/(?:\?.*)?$/);
   await page.goto("/index.html");
   await page.click(".hero .cta");
-  await expect(page).toHaveURL(/\/games\/$/); // remembered: no second ask
+  await expect(page).toHaveURL(/\/games\/(?:\?.*)?$/); // remembered: no second ask
   await ctx.close();
   ({ ctx, page } = await fresh(browser));
   await page.goto("/play/party.html");

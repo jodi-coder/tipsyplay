@@ -1,6 +1,6 @@
 /* Hot Take Court on the Firebase emulators: three phones and a TV display play a full game, the rules keep votes and
    offers private, a player refreshes mid-round, and the host's phone goes away. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const PAGE = "/play/hot-take-court.html?emulator=1&fast=1";
 const NS = "tipsyplay-f3c95-default-rtdb";

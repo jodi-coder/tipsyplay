@@ -1,7 +1,9 @@
 /* Five Letter Frenzy on the Firebase emulators. Nothing talks to production.
    Three phones play a round, then the rules are checked, including host takeover. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
+const { spawn } = require("child_process");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const PAGE = "/games/five-letter-frenzy.html?mode=table&emulator=1&fast=1&word=crane";
@@ -409,11 +411,36 @@ test("the word keeper refuses direct abuse", async ({ browser }) => {
   expect((await post({ op: "guess", room: room, token: live, guess: "party", n: 6 })).status()).toBe(409);
   const revealed = await (await post({ op: "reveal", room: room, token: live })).json();
   expect(revealed.word).toBe("crane");
-  let limited = 0;
-  for (let i = 0; i < 80 && !limited; i++) {
-    const res = await post({ op: "beat", room: "ABCD", token: "00" });
-    if (res.status() === 429) limited = 1;
-  }
-  expect(limited).toBe(1);
   await ctx.close();
+  /* The shared PHP used by the game tests may set FRENZY_RATE_MAX very high so a long
+     round is not throttled, or leave it unset (the default is 60). This check starts
+     its own PHP with the cap set to 5, so the result does not depend on that. */
+  const root = path.join(__dirname, "..");
+  const store = fs.mkdtempSync(path.join(os.tmpdir(), "frenzy-rl-"));
+  const port = 19000 + Math.floor(Math.random() * 2000);
+  const php = spawn("php", ["-S", "127.0.0.1:" + port, "-t", root], {
+    env: { ...process.env, FRENZY_TEST: "1", FRENZY_STORAGE: store, FRENZY_RATE_MAX: "5" },
+    stdio: "ignore"
+  });
+  const url = "http://127.0.0.1:" + port + "/api/frenzy-word.php";
+  try {
+    let up = false;
+    for (let i = 0; i < 50 && !up; i++) {
+      try { await fetch(url); up = true; } catch (e) { await new Promise((r) => setTimeout(r, 100)); }
+    }
+    expect(up, "rate-limit PHP did not start").toBe(true);
+    let limited = 0;
+    for (let i = 0; i < 12 && !limited; i++) {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ op: "beat", room: "ABCD", token: "00" })
+      });
+      if (res.status === 429) limited = 1;
+    }
+    expect(limited, "FRENZY_RATE_MAX=5 refuses the next request after five in a minute").toBe(1);
+  } finally {
+    php.kill();
+    fs.rmSync(store, { recursive: true, force: true });
+  }
 });

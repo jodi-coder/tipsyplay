@@ -1,6 +1,6 @@
 /* Split Decision: End session from the Room sheet must survive a normal pause.
    Firebase is stubbed in the page. Nothing here talks to production or opens a real room. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const fs = require("fs");
 const path = require("path");
 

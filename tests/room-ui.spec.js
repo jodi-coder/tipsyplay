@@ -1,6 +1,6 @@
 /* Room chrome shared by every hosted game (play/room-ui.js): Menu, Invite sheet with QR, the always-visible
    responsible-play line, and one pinned main action. Runs against the Firebase emulators, like browser.spec.js. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const jsqr = require("jsqr");
 
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
