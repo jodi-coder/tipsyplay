@@ -116,6 +116,9 @@ p{margin:.55em 0}
 .eyebrow{margin:0;font-family:var(--display);font-weight:700;letter-spacing:.02em;background:var(--surface);color:var(--ink);display:inline-block;padding:var(--s-1) var(--s-3);border:var(--bw) solid var(--outline);border-radius:999px;font-size:.9rem}
 .entry{padding:var(--s-4) 0 var(--s-3)}
 .entry h1{margin:.35em 0 .2em}
+/* A second screen's title on a page that already has its H1: an H2 that looks like an H1. */
+.as-h1{font-size:46px;line-height:1;letter-spacing:-1.5px;margin:.35em 0 .2em}
+@media(min-width:760px){.as-h1{font-size:clamp(46px,6vw,64px)}}
 
 /* Buttons. A plain .btn is secondary. Yellow is for .host-cta / .primary only,
    and only one of those should be visible on a screen. */

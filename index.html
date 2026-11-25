@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
+<meta property="og:image:alt" content="TipsyPlay: party games on everyone&#x27;s phone, with game cards for Never Have I Ever, Hot Take Court, Vault Traitor and Slow Drip">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TipsyPlay – Free Drinking &amp; Party Games">
 <meta name="twitter:description" content="Play free drinking games and party games for adults on your phone tonight. No app download. Browse card drinking games, quick rounds, and games for 2.">
@@ -34,9 +34,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<meta name="twitter:image:alt" content="TipsyPlay: party games on everyone&#x27;s phone, with game cards for Never Have I Ever, Hot Take Court, Vault Traitor and Slow Drip">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=29">
+<link rel="preload" href="fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css?v=30">
 <link rel="stylesheet" href="home.css?v=15">
 <script type="application/ld+json">
 {
@@ -53,41 +55,119 @@
           "urlTemplate": "https://tipsyplay.com/games/?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
-      }
+      },
+      "@id": "https://tipsyplay.com/#website",
+      "publisher": {
+        "@id": "https://tipsyplay.com/#org"
+      },
+      "inLanguage": "en"
     },
     {
       "@type": "Organization",
       "name": "TipsyPlay",
       "url": "https://tipsyplay.com/",
-      "logo": "https://tipsyplay.com/icons/icon-512.png"
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tipsyplay.com/icons/icon-512.png",
+        "width": 512,
+        "height": 512
+      },
+      "@id": "https://tipsyplay.com/#org"
     },
     {
       "@type": "ItemList",
-      "name": "Tonight's picks",
+      "name": "TipsyPlay party games",
+      "numberOfItems": 15,
       "itemListElement": [
         {
           "@type": "ListItem",
           "position": 1,
+          "name": "Slow Drip",
+          "url": "https://tipsyplay.com/games/slow-drip.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
           "name": "Never Have I Ever",
           "url": "https://tipsyplay.com/games/never-have-i-ever.html"
         },
         {
           "@type": "ListItem",
-          "position": 2,
+          "position": 3,
           "name": "Hot Take Court",
           "url": "https://tipsyplay.com/games/hot-take-court.html"
         },
         {
           "@type": "ListItem",
-          "position": 3,
+          "position": 4,
+          "name": "Vault Traitor",
+          "url": "https://tipsyplay.com/games/vault-traitor.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "Punchline Duel",
+          "url": "https://tipsyplay.com/games/punchline-duel.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 6,
+          "name": "Five Letter Frenzy",
+          "url": "https://tipsyplay.com/games/five-letter-frenzy.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 7,
+          "name": "Odd Word Out",
+          "url": "https://tipsyplay.com/games/odd-word-out.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 8,
+          "name": "Category Countdown",
+          "url": "https://tipsyplay.com/games/category-countdown.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 9,
+          "name": "Split Decision",
+          "url": "https://tipsyplay.com/games/split-decision.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 10,
           "name": "Two Truths & a Twist",
           "url": "https://tipsyplay.com/games/two-truths.html"
         },
         {
           "@type": "ListItem",
-          "position": 4,
-          "name": "Five Letter Frenzy",
-          "url": "https://tipsyplay.com/games/five-letter-frenzy.html"
+          "position": 11,
+          "name": "Story Chain",
+          "url": "https://tipsyplay.com/games/story-chain.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 12,
+          "name": "King's Cup",
+          "url": "https://tipsyplay.com/games/kings-cup.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 13,
+          "name": "Card Lottery",
+          "url": "https://tipsyplay.com/games/card-lottery.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 14,
+          "name": "Rule Maker",
+          "url": "https://tipsyplay.com/games/rule-maker.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 15,
+          "name": "Sketchy Guess",
+          "url": "https://tipsyplay.com/games/sketchy-guess.html"
         }
       ]
     },

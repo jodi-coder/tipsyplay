@@ -29,7 +29,7 @@ SITE = "https://tipsyplay.com"
 TODAY = "2026-11-14"
 CSS_V = "2"
 JS_V = "1"
-STYLES_V = "29"   # keep in step with the other pages
+STYLES_V = "30"   # keep in step with the other pages
 SOUNDS_V = "18"
 APP_V = "22"
 
@@ -190,8 +190,12 @@ def load():
 
 
 # ---------- page shell ----------
-def head(root, title, desc, canonical, ld, og_image=None):
+SITE_OG_ALT = "TipsyPlay: party games on everyone's phone, with game cards for Never Have I Ever, Hot Take Court, Vault Traitor and Slow Drip"
+
+
+def head(root, title, desc, canonical, ld, og_image=None, og_alt=None, og_size=(1200, 630)):
     img = og_image or (SITE + "/images/og-image.jpg")
+    alt = e(og_alt or SITE_OG_ALT)
     return ("""<!doctype html>
 <html lang="en">
 <head>
@@ -202,14 +206,15 @@ def head(root, title, desc, canonical, ld, og_image=None):
 <meta name="description" content="%s">
 <title>%s</title>
 <link rel="canonical" href="%s">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:url" content="%s"><meta property="og:image" content="%s">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="%s"><meta name="twitter:description" content="%s"><meta name="twitter:image" content="%s">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:url" content="%s"><meta property="og:image" content="%s"><meta property="og:image:width" content="%d"><meta property="og:image:height" content="%d"><meta property="og:image:alt" content="%s">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="%s"><meta name="twitter:description" content="%s"><meta name="twitter:image" content="%s"><meta name="twitter:image:alt" content="%s">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
 <link rel="manifest" href="%smanifest.webmanifest">
 <link rel="apple-touch-icon" href="%sicons/apple-touch-icon.png">
+<link rel="preload" href="%sfonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="%sstyles.css?v=%s">
 <link rel="stylesheet" href="%sdrinks/drinks.css?v=%s">
 <script type="application/ld+json">%s</script>
@@ -217,8 +222,8 @@ def head(root, title, desc, canonical, ld, og_image=None):
 <body data-root="%s" class="drinks no-tabs">
 <header class="top"><a class="logo" href="%sindex.html">Tipsy<span>Play</span></a><nav><a href="%sgames/">Games</a><a href="%sdrinks/" aria-current="page">Drinks</a><a href="%sblog/">Blog</a><a href="%sresponsible.html">Play responsibly</a></nav></header>
 <main>
-""" % (GTAG, e(desc), e(title), canonical, e(title), e(desc), canonical, img, e(title), e(desc), img,
-       root, root, root, STYLES_V, root, CSS_V, json.dumps(ld, ensure_ascii=False), root, root, root, root, root, root))
+""" % (GTAG, e(desc), e(title), canonical, e(title), e(desc), canonical, img, og_size[0], og_size[1], alt, e(title), e(desc), img, alt,
+       root, root, root, root, STYLES_V, root, CSS_V, json.dumps(ld, ensure_ascii=False), root, root, root, root, root, root))
 
 
 def foot(root, script=False):
@@ -310,7 +315,7 @@ def recipe_page(d, by_type):
 """ % (root, d.tdir, e(d.tlabel), e(d.name), e(d.blurb), d.time(), d.makes, GLASS_NAMES[d.glass], BASES[d.base], hero,
        "\n".join("<li>%s</li>" % e(x) for x in d.ings), "\n".join("<li>%s</li>" % e(x) for x in d.steps),
        e(d.na), games, e(d.tlabel.lower()), "\n".join(m.card(root) for m in more), d.tdir, e(d.tlabel.lower()))
-    return head(root, title, desc, d.url, ld, og) + body + foot(root)
+    return head(root, title, desc, d.url, ld, og, (d.name + ": " + d.look) if d.photo else None, (1200, 900) if d.photo else (1200, 630)) + body + foot(root)
 
 
 def type_page(t, rows):
@@ -344,13 +349,14 @@ def type_page(t, rows):
 </div>
 </section>
 """ % (root, e(h1), e(lede), root, tdir, type_chips(root, key), chips, len(rows), "\n".join(d.card(root) for d in rows))
-    return head(root, title, lede, url, ld) + body + foot(root, script=True)
+    og_img = "%s/images/og/drinks-%s.jpg" % (SITE, tdir)
+    return head(root, title, lede, url, ld, og_img, "%s on TipsyPlay: 20 recipes, each with an alcohol-free version" % label) + body + foot(root, script=True)
 
 
 def hub_page(drinks, by_type):
     root = "../"
     url = SITE + "/drinks/"
-    title = "Drink Recipes for Game Night: Shots, Cocktails and Punch | TipsyPlay"
+    title = "Drink Recipes for Game Night: Shots to Punch | TipsyPlay"
     desc = "100 drink recipes for game night: shots, cocktails, party punches, frozen drinks and hot drinks. Each one has an alcohol-free version."
     by_slug = {d.slug: d for d in drinks}
     ld = {"@context": "https://schema.org", "@graph": [
@@ -396,7 +402,7 @@ def hub_page(drinks, by_type):
 </section>
 """ % (root, root, "\n".join(tiles), "\n".join(by_slug[s].card(root) for s in FEATURED),
        "\n".join('<li data-name="%s"><a href="%s.html">%s</a> <span>%s</span></li>' % (e(d.name.lower()), d.slug, e(d.name), e(d.tlabel)) for d in az))
-    return head(root, title, desc, url, ld) + body + foot(root, script=True)
+    return head(root, title, desc, url, ld, SITE + "/images/og/drinks-all.jpg", "TipsyPlay drink recipes: shots, cocktails, party punches, frozen and hot drinks on a glowing bar shelf") + body + foot(root, script=True)
 
 
 def write(rel, text):
@@ -406,12 +412,16 @@ def write(rel, text):
         f.write(text)
 
 
+HUBS_UPDATED = "2026-11-21"   # the hub and type pages got their illustrated banners and cards
+
+
 def update_sitemap(drinks):
     path = os.path.join(ROOT, "sitemap.xml")
     lines = [l for l in open(path, encoding="utf-8").read().split("\n") if "/drinks/" not in l]
-    new = ["  <url><loc>%s/drinks/</loc><lastmod>%s</lastmod></url>" % (SITE, TODAY)]
-    new += ["  <url><loc>%s/drinks/%s/</loc><lastmod>%s</lastmod></url>" % (SITE, t[1], TODAY) for t in TYPES]
-    new += ["  <url><loc>%s</loc><lastmod>%s</lastmod></url>" % (d.url, TODAY) for d in drinks]
+    img = lambda u: "<image:image><image:loc>%s</image:loc></image:image>" % u
+    new = ["  <url><loc>%s/drinks/</loc><lastmod>%s</lastmod>%s</url>" % (SITE, HUBS_UPDATED, img(SITE + "/images/og/drinks-all.jpg"))]
+    new += ["  <url><loc>%s/drinks/%s/</loc><lastmod>%s</lastmod>%s</url>" % (SITE, t[1], HUBS_UPDATED, img("%s/images/og/drinks-%s.jpg" % (SITE, t[1]))) for t in TYPES]
+    new += ["  <url><loc>%s</loc><lastmod>%s</lastmod>%s</url>" % (d.url, TODAY, img("%s/%s" % (SITE, d.photo)) if d.photo else "") for d in drinks]
     at = lines.index("</urlset>")
     open(path, "w", encoding="utf-8").write("\n".join(lines[:at] + new + lines[at:]))
 
