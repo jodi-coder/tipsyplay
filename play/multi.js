@@ -17,10 +17,14 @@ function motionOk(){return !(window.matchMedia&&window.matchMedia("(prefers-redu
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
- var up=String(v||"").toUpperCase();
- var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
- if(q)return q[1];
- return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
+ var s=String(v||"");
+ if(/[?&]/.test(s)){
+  var m=s.match(/[?&](?:room|code)=([A-Za-z]{4})(?![A-Za-z])/i);
+  if(!m) return "";
+  var fromQuery=m[1].toUpperCase();
+  return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(fromQuery)?fromQuery:"";
+ }
+ return s.toUpperCase().replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i;for(i=0;i<4;i++)s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)];return s}

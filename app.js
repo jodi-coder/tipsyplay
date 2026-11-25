@@ -5,7 +5,7 @@ var root=document.body.dataset.root||"";
 // (Pick a Game, Host, Join, or submitting a room code). Game screens under /play/ and invite links (?room=) still ask on load.
 var AGE_KEY="tp_age_ok";
 function ageOk(){try{return localStorage.getItem(AGE_KEY)==="yes"}catch(e){return false}}
-var GATE_SEL='[data-gate],#hostbtn,#joinbtn,[data-act="host"],[data-act="join"],.game-card a.btn';
+var GATE_SEL='[data-gate],#hostbtn,#joinbtn,#start,[data-act="host"],[data-act="join"],.game-card a.btn';
 var GATE_FORM='[data-gate],form.joinbox,#joinform';
 var gateEl=null;
 function openGate(after,mandatory){

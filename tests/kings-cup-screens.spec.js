@@ -57,6 +57,37 @@ test("lobby has no opt-in box, the Deal button works with two players, and the r
   await context.close();
 });
 
+test("emulator=1 does not hide Host, and ?room= is a real invite", async ({ browser }) => {
+  const emu = await open(browser, "/games/kings-cup.html?emulator=1", "");
+  await expect(emu.page.locator("#hostbtn")).toBeVisible();
+  await expect(emu.page.locator("#roomcode")).toHaveValue("");
+  await expect(emu.page.locator("#invited")).toBeHidden();
+  await emu.context.close();
+  const fast = await open(browser, "/games/kings-cup.html?emulator=1&fast=1", "");
+  await expect(fast.page.locator("#hostbtn")).toBeVisible();
+  await expect(fast.page.locator("#roomcode")).toHaveValue("");
+  await fast.context.close();
+  const room = await open(browser, "/games/kings-cup.html?room=WXYZ&emulator=1", "Cy");
+  await expect(room.page.locator("#hostbtn")).toBeHidden();
+  await expect(room.page.locator("#roomcode")).toHaveValue("WXYZ");
+  await expect(room.page.locator("#joinbtn")).toHaveText("Join room");
+  await room.context.close();
+});
+
+test("age gate catches Start after the confirmation is cleared", async ({ browser }) => {
+  const { context, page } = await open(browser, "/games/kings-cup.html?emulator=1", "Ada");
+  await page.evaluate(() => {
+    localStorage.removeItem("tp_age_ok");
+    document.getElementById("home").classList.add("hide");
+    document.getElementById("lobby").classList.remove("hide");
+    document.getElementById("start").disabled = false;
+  });
+  await page.locator("#start").click();
+  await expect(page.locator("#gate")).toBeVisible();
+  await expect(page.locator("#table")).toBeHidden();
+  await context.close();
+});
+
 test("an invite link hides Host Game and offers Join room", async ({ browser }) => {
   const { context, page } = await open(browser, "/games/kings-cup.html?code=ABCD", "Cy");
   await expect(page.locator("#hostbtn")).toBeHidden();

@@ -126,10 +126,23 @@ function friendly(e){
 }
 function normName(v){return String(v||"").trim().slice(0,20)}
 function normCode(v){
-  var up=String(v||"").toUpperCase();
-  var q=up.match(/[?&]CODE=([ABCDEFGHJKMNPQRSTUVWXYZ]{4})/);
-  if(q) return q[1];
-  return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
+  var s=String(v||"");
+  /* A query string is an invite only when it carries ?code= or ?room=.
+     Other params (including ?emulator=1) are not a room code. */
+  if(/[?&]/.test(s)){
+    var m=s.match(/[?&](?:room|code)=([A-Za-z]{4})(?![A-Za-z])/i);
+    if(!m) return "";
+    var fromQuery=m[1].toUpperCase();
+    return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(fromQuery)?fromQuery:"";
+  }
+  return s.toUpperCase().replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
+}
+function ageOk(){try{return localStorage.getItem("tp_age_ok")==="yes"}catch(e){return false}}
+function afterAge(fn){
+  if(ageOk()){fn(); return}
+  var yes=document.getElementById("gyes");
+  if(yes){yes.addEventListener("click", function(){setTimeout(fn, 0)}, {once:true}); return}
+  if(window.TipsyAgeGate&&TipsyAgeGate.require) TipsyAgeGate.require(fn);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i; for(i=0;i<4;i++) s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)]; return s}
@@ -951,9 +964,11 @@ async function boot(){
   var back=sessionStorage.getItem("tp_kc_room");
   var nm=normName($("pname").value);
   if(back&&validCode(back)&&nm){
-    joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(e){
-      sessionStorage.removeItem("tp_kc_room");
-      if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+    afterAge(function(){
+      joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(e){
+        sessionStorage.removeItem("tp_kc_room");
+        if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+      });
     });
   }
 }

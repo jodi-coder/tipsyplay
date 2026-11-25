@@ -422,6 +422,42 @@ test("lobby removal works and baseline rules still reject a host claim", async (
   await bea.context.close();
 });
 
+test("age gate blocks same-tab rejoin from reaching Start", async ({ browser }) => {
+  async function phone(path){
+    const context = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, hasTouch: true });
+    await context.route(/googletagmanager|google-analytics|analytics\.google/, (route) => route.abort());
+    const prod = [];
+    const page = await context.newPage();
+    page.on("request", (req) => { if (/firebaseio\.com|firebaseapp\.com|firebasedatabase\.app/.test(req.url())) prod.push(req.url()); });
+    await page.addInitScript(() => {
+      localStorage.setItem("tp_sound", "off");
+      localStorage.setItem("tp_name", "Ada");
+      if (sessionStorage.getItem("tp_rejoin_test") === "cleared") localStorage.removeItem("tp_age_ok");
+      else localStorage.setItem("tp_age_ok", "yes");
+    });
+    await page.goto(BASE + path + "?emulator=1", { waitUntil: "domcontentloaded" });
+    await page.locator("#app").waitFor({ state: "visible" });
+    return { context, page, prod };
+  }
+  for (const path of ["/games/kings-cup.html", "/games/never-have-i-ever.html"]) {
+    const host = await phone(path);
+    await host.page.locator("#pname").fill("Ada");
+    await host.page.locator("#hostbtn").click();
+    await expect(host.page.locator("#lobby")).toBeVisible();
+    await host.page.evaluate(() => sessionStorage.setItem("tp_rejoin_test", "cleared"));
+    await host.page.reload({ waitUntil: "domcontentloaded" });
+    await expect(host.page.locator("#gate")).toBeVisible();
+    await expect(host.page.locator("#lobby")).toBeHidden();
+    await expect(host.page.locator("#start")).toBeHidden();
+    await host.page.locator("#gyes").click();
+    await expect(host.page.locator("#gate")).toHaveCount(0);
+    await expect(host.page.locator("#lobby")).toBeVisible();
+    await expect(host.page.locator("#start")).toBeVisible();
+    expect(host.prod).toEqual([]);
+    await host.context.close();
+  }
+});
+
 test("narrow pages do not scroll sideways", async ({ browser }) => {
   const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html", "/drinks/", "/drinks/cocktails/", "/drinks/classic-canadian-caesar.html", "/drinks/pineapple-upside-down-cake-shot.html"];
   for (const width of [320, 375, 390]) {
