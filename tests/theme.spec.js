@@ -115,6 +115,7 @@ test("the hero: headline, lede, a Pick a Game button, the inline room code box, 
   await expect(page.locator("#joincode")).toHaveAttribute("maxlength", "4");
   await expect(page.locator(".hero-side .phone")).toBeVisible();
   await expect(page.locator("#demo [role=tab]")).toHaveText(["Lobby", "Round 3", "Results"]);
+  await expect(page.locator(".ph-sip")).toHaveText("Strike a pose. Passing is fine.");
 });
 
 test("on desktop the hero is two columns; on a phone it stacks", async ({ browser }) => {

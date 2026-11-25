@@ -57,6 +57,20 @@ test("lobby has no opt-in box, the Deal button works with two players, and the r
   await context.close();
 });
 
+test("age gate catches Start after the confirmation is cleared", async ({ browser }) => {
+  const { context, page } = await open(browser, "/games/kings-cup.html?emulator=1", "Ada");
+  await page.evaluate(() => {
+    localStorage.removeItem("tp_age_ok");
+    document.getElementById("home").classList.add("hide");
+    document.getElementById("lobby").classList.remove("hide");
+    document.getElementById("start").disabled = false;
+  });
+  await page.locator("#start").click();
+  await expect(page.locator("#gate")).toBeVisible();
+  await expect(page.locator("#table")).toBeHidden();
+  await context.close();
+});
+
 test("an invite link hides Host Game and offers Join room", async ({ browser }) => {
   const { context, page } = await open(browser, "/games/kings-cup.html?code=ABCD", "Cy");
   await expect(page.locator("#hostbtn")).toBeHidden();

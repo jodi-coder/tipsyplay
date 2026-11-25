@@ -133,6 +133,13 @@ function normCode(v){
   up=up.replace(/[?&]EMULATOR=[^&#]*/g,"");
   return up.replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(-4);
 }
+function ageOk(){try{return localStorage.getItem("tp_age_ok")==="yes"}catch(e){return false}}
+function afterAge(fn){
+  if(ageOk()){fn(); return}
+  var yes=document.getElementById("gyes");
+  if(yes){yes.addEventListener("click", function(){setTimeout(fn, 0)}, {once:true}); return}
+  if(window.TipsyAgeGate&&TipsyAgeGate.require) TipsyAgeGate.require(fn);
+}
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
 function makeCode(){var s="",i; for(i=0;i<4;i++) s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)]; return s}
 function emuOn(){return /[?&]emulator=1(?:&|$)/.test(location.search)}
@@ -953,9 +960,11 @@ async function boot(){
   var back=sessionStorage.getItem("tp_kc_room");
   var nm=normName($("pname").value);
   if(back&&validCode(back)&&nm){
-    joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(e){
-      sessionStorage.removeItem("tp_kc_room");
-      if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+    afterAge(function(){
+      joinRoom(back, nm, sessionStorage.getItem("tp_kc_group")||"everyone").catch(function(e){
+        sessionStorage.removeItem("tp_kc_room");
+        if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
+      });
     });
   }
 }

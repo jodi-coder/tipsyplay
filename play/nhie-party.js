@@ -87,6 +87,13 @@ function normCode(v){
   return s.toUpperCase().replace(/[^ABCDEFGHJKMNPQRSTUVWXYZ]/g,"").slice(0,4);
 }
 function validCode(c){return /^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/.test(c)}
+function ageOk(){try{return localStorage.getItem("tp_age_ok")==="yes"}catch(e){return false}}
+function afterAge(fn){
+  if(ageOk()){fn(); return}
+  var yes=document.getElementById("gyes");
+  if(yes){yes.addEventListener("click", function(){setTimeout(fn, 0)}, {once:true}); return}
+  if(window.TipsyAgeGate&&TipsyAgeGate.require) TipsyAgeGate.require(fn);
+}
 function makeCode(){var s="",i; for(i=0;i<4;i++) s+=ALPHABET[Math.floor(Math.random()*ALPHABET.length)]; return s}
 function queryRoom(){
   var raw="";
@@ -1129,14 +1136,16 @@ function wire(){
     if(yes) yes.addEventListener("click", function(){setTimeout(focusName, 60)}, {once:true});
   }
   var nm=normName($("pname").value);
-  if(!linked&&back&&validCode(back)&&nm) joinRoom(back, nm).catch(function(e){
-    try{sessionStorage.removeItem("tp_nhie_room")}catch(err){}
-    if(String((e&&e.message)||"")==="missing") fail("This room has closed.");
-  });
-  else if(same&&nm) joinRoom(back, nm).catch(function(e){
-    if(String((e&&e.message)||"")==="missing"){try{sessionStorage.removeItem("tp_nhie_room")}catch(err){} fail("This room has closed.")}
-    else focusName();
-  });
+  function rejoinSaved(fromLink){
+    joinRoom(back, nm).catch(function(e){
+      var missing=String((e&&e.message)||"")==="missing";
+      if(!fromLink){try{sessionStorage.removeItem("tp_nhie_room")}catch(err){} if(missing) fail("This room has closed."); return}
+      if(missing){try{sessionStorage.removeItem("tp_nhie_room")}catch(err){} fail("This room has closed.")}
+      else focusName();
+    });
+  }
+  if(!linked&&back&&validCode(back)&&nm) afterAge(function(){rejoinSaved(false)});
+  else if(same&&nm) afterAge(function(){rejoinSaved(true)});
 }
 function showReady(){
   if(bootTimer){clearTimeout(bootTimer); bootTimer=0}
