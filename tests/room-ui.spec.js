@@ -45,6 +45,27 @@ const menuItems = async (page) => {
   return page.locator("#rmsheet .rm-item").allInnerTexts();
 };
 
+test("card lottery shows one age line on the home screen, in the lobby, and during play", async ({ browser }) => {
+  const line = "You must be of legal drinking age in your location.";
+  const ada = await boot(browser, "/play/card-lottery.html", "Ada");
+  const bea = await boot(browser, "/play/card-lottery.html", "Bea");
+  const ages = (page) => page.locator("p.age", { hasText: line });
+  await expect(ages(ada.page)).toHaveCount(1);
+  await expect(ages(ada.page)).toBeVisible();
+  const code = await host(ada.page, "Ada");
+  await join(bea.page, "Bea", code);
+  await expect(ages(ada.page)).toBeVisible();
+  await expect(ages(bea.page)).toBeVisible();
+  await ada.page.locator("#startbtn").click();
+  await expect(ada.page.locator("#stage")).toBeVisible();
+  await expect(ages(ada.page)).toBeVisible();
+  await expect(ages(bea.page)).toBeVisible();
+  const html = await ada.page.content();
+  expect(html.split(line).length - 1).toBe(1);
+  await ada.context.close();
+  await bea.context.close();
+});
+
 test("lobby: one Invite, one pinned Start, the rest in the Menu, responsible-play line always there", async ({ browser }) => {
   const ada = await boot(browser, "/play/card-lottery.html", "Ada");
   const bea = await boot(browser, "/play/card-lottery.html", "Bea");
