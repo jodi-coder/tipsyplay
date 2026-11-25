@@ -13,18 +13,26 @@
 </script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0D0F1A">
-<meta name="description" content="Five Letter Frenzy: find the secret five-letter word in six tries. Solo with a daily word that works offline, Race friends on your own phones, or share one grid at the table. Drinking is optional.">
+<meta name="description" content="Find the secret five-letter word in six tries. Play solo with a daily word, race friends on your phones, or share one grid at the table. Drinks optional.">
 <title>Five Letter Frenzy: Solo, Race and Table Word Game | TipsyPlay</title>
 <link rel="canonical" href="https://tipsyplay.com/games/five-letter-frenzy.html">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TipsyPlay">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay">
+<meta name="twitter:description" content="Solo, Race or Table: find the secret five-letter word in six guesses.">
+<meta name="twitter:image" content="https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg">
+<meta name="twitter:image:alt" content="Five Letter Frenzy on TipsyPlay: Six tries to find the word. A free party game for 1–8 players on your phones">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="Solo, Race or Table: find the secret five-letter word in six guesses."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og-image.jpg"><meta property="og:image:alt" content="TipsyPlay on a sky-blue background with a yellow goblet and the words Free Drinking and Party Games">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}]}]}</script>
-<link rel="stylesheet" href="../styles.css?v=29">
+<meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="Solo, Race or Table: find the secret five-letter word in six guesses."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg"><meta property="og:image:alt" content="Five Letter Frenzy on TipsyPlay: Six tries to find the word. A free party game for 1–8 players on your phones">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}]}, {"@type": "VideoGame", "name": "Five Letter Frenzy", "url": "https://tipsyplay.com/games/five-letter-frenzy.html", "description": "Find the secret five-letter word in six tries. Play solo with a daily word, race friends on your phones, or share one grid at the table. Drinks optional.", "image": {"@type": "ImageObject", "url": "https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg", "width": 1200, "height": 630}, "genre": ["Party game", "Wordplay", "Chill"], "gamePlatform": "Web browser", "applicationCategory": "GameApplication", "operatingSystem": "Any (runs in a phone or computer browser)", "playMode": ["SinglePlayer", "MultiPlayer"], "numberOfPlayers": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 8}, "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/OnlineOnly"}, "inLanguage": "en", "publisher": {"@type": "Organization", "@id": "https://tipsyplay.com/#org", "name": "TipsyPlay", "url": "https://tipsyplay.com/", "logo": {"@type": "ImageObject", "url": "https://tipsyplay.com/icons/icon-512.png", "width": 512, "height": 512}}}]}</script>
+<link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../styles.css?v=30">
 <style>
 /* Five Letter Frenzy. Colours come from the theme tokens in styles.css.
    Three hint colours from the TipsyPlay palette, each with a symbol: yellow ●, pink stripes ↗, ink ×. */
@@ -152,7 +160,7 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 
 <section id="solo" class="hide">
 <p class="eyebrow">Solo</p>
-<h1>Five Letter Frenzy</h1>
+<h2 class="as-h1">Five Letter Frenzy</h2>
 <div id="solopick">
 <p class="lede">Six tries to find the word. The daily word is the same for everyone on the same date.</p>
 <div class="fl-modes">
@@ -198,7 +206,7 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <p id="perr" role="alert"></p>
 <section id="home" class="entry">
 <p class="eyebrow">Table mode · 3 to 8 players</p>
-<h1>Five Letter Frenzy</h1>
+<h2 class="as-h1">Five Letter Frenzy</h2>
 <p class="lede">One secret word on one shared grid. The table gets six guesses. A miss is one small drink, a 5-second pose, or Pass.</p>
 <p class="age"><strong>You must be of legal drinking age in your location.</strong></p>
 <p><a href="five-letter-frenzy.html">← Change mode</a></p>

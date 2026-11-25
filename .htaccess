@@ -1,18 +1,26 @@
 # Hostinger / LiteSpeed / Apache.
 # HTML and sw.js must revalidate. CSS and JS are requested as file.css?v=15,
 # so each version can stay cached until the query changes.
+# Unknown addresses get a real 404 with links back into the site (not a soft 404 on the home page).
+ErrorDocument 404 /404.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # One address for the whole site: www.tipsyplay.com sends visitors and search engines to tipsyplay.com.
+  RewriteCond %{HTTP_HOST} ^www\.tipsyplay\.com$ [NC]
+  RewriteRule ^(.*)$ https://tipsyplay.com/$1 [R=301,L]
   # Internal notes and rules files are not public pages.
   RewriteRule ^docs/ - [F,L]
   RewriteRule ^tools/ - [F,L]
   RewriteRule ^private/ - [F,L]
+  RewriteRule ^tests/ - [F,L]
   RewriteRule ^(firebase-rules|database\.rules)\.json$ - [F,L]
   # Retired games. Old links and search results keep working.
   # Who's Most Likely is now the "Most likely" mode in Never Have I Ever; the rest go to the games list.
   RewriteRule ^(games|play)/whos-most-likely\.html$ /games/never-have-i-ever.html [R=301,L,QSD]
   RewriteRule ^games/(vibe-checkpoint|chaos-crew|cup-toss)\.html$ /games/ [R=301,L,QSD]
   RewriteRule ^play/cup-toss\.html$ /games/ [R=301,L,QSD]
+  # The old Games stub page moved to the games list.
+  RewriteRule ^library\.html$ /games/ [R=301,L,QSD]
   # Exact category query only. Any extra parameter stays on /games/.
   RewriteCond %{QUERY_STRING} ^category=card$
   RewriteRule ^games/?$ /games/card/ [R=301,L,QSD]
@@ -46,8 +54,23 @@
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
+  # Images are not versioned in their URLs, so they keep for 30 days. The font never changes.
+  <FilesMatch "\.(svg|jpg|jpeg|png|webp|gif|ico)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.woff2$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
   <Files "sw.js">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
   </Files>
+</IfModule>
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml .svg
+</IfModule>
+# Compress text responses (LiteSpeed also compresses on its own; this covers Apache).
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript text/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
