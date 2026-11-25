@@ -69,3 +69,13 @@ python3 tools/drinks/build.py
 It rewrites the pages under `drinks/`, the drinks entries in `sitemap.xml`, and `docs/drinks-photo-prompts.md`. Commit the result. `drinks/drinks.css` and `drinks/drinks.js` are hand-written.
 
 Photos: a drink shows a drawn glass until it has a photo. Save a 4:3 photo as `images/drinks/<slug>.webp` (or `.jpg`) and run the script again. `docs/drinks-photo-prompts.md` lists the file name and an image prompt for every drink.
+
+## Search and AI assistants
+
+`llms.txt` and `llms-full.txt` at the site root describe TipsyPlay for AI assistants: a short map of games, drinks and guides, and every game's rules as plain text. They are generated from the pages, so after adding or renaming a game, drink type or blog post, run this from the repository root and commit the result:
+
+```bash
+python3 tools/seo/build_llms.py
+```
+
+Every indexable page carries JSON-LD (games: `VideoGame`; recipes: `Recipe`; blog posts: `BlogPosting`; lists: `ItemList`; all: `BreadcrumbList`). The `play/` game screens set their canonical to the matching `games/` page and stay out of the sitemap.

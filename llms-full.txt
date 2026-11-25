@@ -1,0 +1,310 @@
+# TipsyPlay
+
+> TipsyPlay (tipsyplay.com) is a free website of party games and drinking games for adults that runs in a phone's browser, with no app download and no account. One person hosts a room and gets a short code; friends join on their own phones. Every game has a non-alcoholic way to play, drinking is always optional, and there is no chugging, racing or stacking penalties. Players must be of legal drinking age in their location.
+
+Key facts:
+- Price: free. No sign-up; online rooms use anonymous sign-in.
+- Players: 1 to 12 depending on the game. Each game page lists its player count.
+- Devices: any phone or computer with a modern browser. Some games can also show a board on a TV.
+- Responsible play: one small optional drink at most per turn, or a non-alcoholic alternative (points, poses, tallies). Passing is always fine. House rules: https://tipsyplay.com/responsible.html
+- Also on the site: 100 drink recipes, each with an alcohol-free version, and guides for planning a game night.
+
+This file holds the rules of every TipsyPlay game as plain text. Each section is taken from the game's page.
+
+## Slow Drip
+
+URL: https://tipsyplay.com/games/slow-drip.html
+Players: 3–10 players
+Summary: A phrase-guessing party game for adults. Letters drop one at a time, the first buzz gets to solve, and everyone else bets on SOLVE or FAIL. Drinks optional.
+
+What is Slow Drip?
+Slow Drip hides a phrase behind blanks and reveals it one letter at a time. Anyone can buzz in to solve it, but the moment you buzz, everyone else gets 3 seconds to bet on whether you will get it. It is a race and a bluff at once: buzz early and the table doubts you, wait too long and someone else takes the round.
+Best with 3–10 players, each on their own phone. No props required.
+Rules
+- Drip. The board shows the category and the phrase as blanks. Spaces and punctuation always show, and about 30% of the letters start revealed. Every 10 seconds one more letter drops.
+- Buzz. Tap SOLVE when you think you know it. The first buzz wins and the drip clock freezes.
+- Bet. Everyone else has 3 seconds to pick SOLVE or FAIL in secret. No pick in time counts as FAIL. You can also tap Pass: no bet, no drink either way.
+- Hot seat. The solver has 10 seconds to type the phrase. Out of time counts as wrong.
+- Payout. Right answer: the solver and the SOLVE bets are safe, and the FAIL bets take a drink. Wrong answer: the solver and the SOLVE bets take a drink, and the FAIL bets are safe.
+- Penalty box. A wrong solver cannot buzz again until 2 more letters have dropped. The drip picks up where it stopped.
+- Round end. A correct solve ends the round. If every letter drops with no solve, the phrase is shown and nobody drinks. The scoreboard counts rounds solved.
+
+## Never Have I Ever
+
+URL: https://tipsyplay.com/games/never-have-i-ever.html
+Players: 2–12 players
+Summary: Play Never Have I Ever on your phones, plus a Most likely mode where everyone votes for a friend. One small optional drink or a 3-second pose. Nothing stacks.
+
+How Never Have I Ever works on TipsyPlay
+Never Have I Ever is a party game for adults. One person hosts a room and shares a code. Friends open it, type a name, and land in the same game. The host picks Mild, Classic, Spicy, or Most likely, plus a game length such as 15 rounds.
+Each round puts one original line on every phone. A short countdown is only for answering. Tap I HAVE or NEVER once. No second confirm. If you said I have, take one small drink or hold a 3-second pose. Nothing stacks, and there is no timer on the drink.
+When the rounds are done, the table gets playful awards such as The Saint and Most Chaotic. Those are about who said yes, not about who drank. You can also type your own line for the next round. The packs are there if you don't.
+Most likely mode
+Pick Most likely and each round asks "Who's most likely to…". Everyone taps a friend on their own phone instead of I HAVE or NEVER, and you can't vote for yourself. The person with the most votes (everyone tied) gets the optional drink or pose, and may explain themselves. Classic, Spicy and Couples question packs are included. Awards in this mode are about who got mentioned, not who drank.
+Non-alcoholic option
+The pose is on screen whenever a yes lands. Skip the drink and hold it for three seconds. Passing is always fine.
+Play responsibly
+Legal drinking age only. Drinking is optional and small. No chugging and no pressure. See the house code. Only one phone at the table? Use the solo card mode and pass it around. Looking for another game? Open Two Truths & a Twist or the full games list.
+
+## Hot Take Court
+
+URL: https://tipsyplay.com/games/hot-take-court.html
+Players: 3–8 players
+Summary: Hot Take Court: defend a hot take, face the prosecution and let the jury vote in secret. 3–8 players on their phones, optional TV display. Drinks optional.
+
+What is Hot Take Court?
+Hot Take Court puts one player on the stand with a hot take to defend. A Prosecutor argues against it, the jury votes in secret, and the verdict flips over one vote at a time before the gavel falls. Everyone plays on their own phone, and a TV or laptop can show the courtroom for the whole room.
+Best with 3–8 players. No props: just phones, and a TV if you have one.
+Setup
+- Host a room. Friends join with the code or the QR.
+- Optional: open "Show on a TV or laptop" and put the display link on a big screen. Without one, the host's phone shows the courtroom.
+- Pick a pack (Mild, Spicy or Absurd), how many cases, and Points only if the table wants no drinking.
+How a case works
+- The case (10 s). The next player is the Defendant. Their phone privately offers three hot takes; they pick one, or one is picked for them.
+- Opening argument (30 s). The Defendant argues for it, out loud.
+- Prosecution (20 s). A random other player argues against it. Any juror can shout "Objection!" once from their phone. It's just for fun and doesn't stop the clock.
+- Deliberation (10 s). Every juror votes Guilty or Not guilty in secret.
+- Verdict. The votes flip over one at a time, then GUILTY, NOT GUILTY, or HUNG JURY on a tie, when nobody drinks.
+- Sentencing. Guilty: the Defendant takes a drink, takes the jury's funny sentence instead, or passes. Not guilty: the Prosecutor takes a drink, does a quick pose, or passes.
+Scoring
+Not guilty: the Defendant gets 2 points. Guilty: the Prosecutor gets 1. Every juror who voted with the majority gets 1. At the end come the awards: Most Convicted, Smooth Talker, Hanging Judge and Swing Vote.
+Play responsibly
+One drink per case at most, every drink has a no-drink option, and passing never costs anything. Of legal drinking age only. House code.
+
+## Vault Traitor
+
+URL: https://tipsyplay.com/games/vault-traitor.html
+Players: 3–8 players
+Summary: Vault Traitor: crack a four-digit code together while one or two Traitors bend the clues. Social deduction for adults on their phones. Drinks optional.
+
+How Vault Traitor works
+The host opens a room and friends join on their own phones. The game draws a secret four-digit code and quietly picks one Traitor (two with 6 or more players). Everyone else is a Codebreaker.
+Take turns guessing. After each guess everyone sees how many digits are exact and how many are right but misplaced. Traitors can secretly bend that feedback twice per game. You have 10 guesses.
+After each clue there's a 30-second debate. Anyone can call a secret vote. A majority catches a Traitor, but a wrong call costs two guesses and a tie costs one.
+Play responsibly
+Legal drinking age only. Every drink has a no-drink alternative, and "No drinking" turns every drink into one. Pace yourself.
+
+## Punchline Duel
+
+URL: https://tipsyplay.com/games/punchline-duel.html
+Players: 3–12 players
+Summary: Punchline Duel: two phones answer the same funny prompt and everyone else votes for the better one. A party game for 3–12 adults. Drinks optional.
+
+What is Punchline Duel?
+Punchline Duel is TipsyPlay's answer-and-vote party game. Two players get the same funny prompt and each write an answer on their own phone. Everyone else votes for the funnier one, and the writer of the losing answer takes a drink or sits the sip out. It is an easy party game for adults that works for 3–12 players with no props.
+Every phone shows the prompt and both answers at the same time, so remote joiners and couch hangouts stay in sync. Host a room, pass the code or QR, pick how many rounds, and let the duels rotate around the table.
+
+## Five Letter Frenzy
+
+URL: https://tipsyplay.com/games/five-letter-frenzy.html
+Players: 1–8 players
+Summary: Find the secret five-letter word in six tries. Play solo with a daily word, race friends on your phones, or share one grid at the table. Drinks optional.
+
+How Five Letter Frenzy works
+Five Letter Frenzy is a word-guessing game for adults. Find the secret five-letter word in six tries. Any five letters count as a guess, but the secret word is always a real word.
+After each guess every tile is marked: ● means the right letter in the right place, ↗ means the letter is in the word but somewhere else, and × means the letter is not in the word.
+Three ways to play
+- Solo: one player and one board. Play the daily word or a random one, keep a streak and share your result as coloured squares. Solo works offline.
+- Race: 2 to 8 players, each on their own phone and board, chase the same secret word. Fewest guesses wins, and the fastest finish breaks a tie.
+- Table: 3 to 8 players share one grid and take turns guessing. A miss is one small optional drink, a 5-second pose, or Pass.
+Non-alcoholic option
+Solo and Race are score-only. In Table mode, a 5-second pose or a pass is always a full answer. Legal age only — play responsibly.
+Want another word game? Try Slow Drip, or browse all games.
+
+## Odd Word Out
+
+URL: https://tipsyplay.com/games/odd-word-out.html
+Players: 4–10 players
+Summary: Odd Word Out: everyone shares a secret word except the mole, who only sees the category. Give clues and vote out the bluffer. 4–10 players. Drinks optional.
+
+What is Odd Word Out?
+Odd Word Out is TipsyPlay's secret-word bluffing game. Everyone sees the same word except one player, the mole, who only sees the category. Each player says a one-word clue out loud, then the group votes for who they think is bluffing. Catch the mole and the group scores. Slip away and the mole scores. It works for 4–10 players with no props.
+Every phone gets a private card, so nobody can peek. Host a room, pass the code or QR, and play a few rounds. Drinks are optional, and a no-drink setting is always one tap away.
+
+## Category Countdown
+
+URL: https://tipsyplay.com/games/category-countdown.html
+Players: 3–10 players
+Summary: Category Countdown: name answers before the ring timer runs out, or survive Hot Potato. 3–10 players on their phones, optional TV board. Drinks optional.
+
+What is Category Countdown?
+Category Countdown is a fast naming game with two modes. In Spotlight, one player races a ring timer to name as many answers as they can while everyone else watches the tiles pop up and challenges the dodgy ones. In Hot Potato, the whole table shares a category and goes round adding one answer each, with less time every lap, until one player is left.
+Best with 3–10 players, each on their own phone. A TV or laptop can show the board.
+Setup
+- Host a room. Friends join with the code or the QR.
+- Optional: open "Show on a TV or laptop" for the big board. Without one, the host's phone shows it.
+- Pick a mode, a pack (Mild, Spicy or Absurd), a difficulty and a length. Turn on Points only for no drinking.
+Spotlight
+- The active player gets a category and a target ("Fruits: name 7"), after a 3-2-1 count-in.
+- They have 30 seconds to type answers. Each one pops onto the board, and repeats and near-repeats (plurals, spacing, capitals) are dropped automatically.
+- Anyone else can tap an answer to challenge it. When time is up, the table gives each challenged answer a thumbs up or down. More downs throws it out, and a tie keeps it.
+- Hit the target and everyone else takes a drink or does the alternative. Miss and the active player does.
+Scoring
+1 point per accepted answer, plus 1 for hitting the target.
+Hot Potato
+- Everyone gets the same category. Take turns adding one answer each: 8 seconds on the first lap, 6 on the second, then 5.
+- After each answer the table has 3 seconds to challenge it, and a challenged answer goes to a quick vote.
+- A repeat, an answer voted out, or running out of time knocks you out. Take a drink or do the alternative.
+- The last player standing gets 3 points, and second place gets 1.
+Play responsibly
+One drink per round at most, every drink has a no-drink option, and passing never costs anything. Of legal drinking age only. House code.
+
+## Split Decision
+
+URL: https://tipsyplay.com/games/split-decision.html
+Players: 2–10 players
+Summary: A would-you-rather style party game for adults. Lock A or B, then guess how many friends picked A. The game keeps score in points. For 2–10 players.
+
+How Split Decision works
+Split Decision is a phone party game for adults. One person hosts. Friends scan a QR code or type the four-letter room code. Everyone secretly picks A or B, then predicts how many of the others chose A. You never score for matching the majority. You score for reading the room.
+Passing is always fine. Pass, or let the clock run, and you score zero for that question. Nothing stacks. Points are the whole game. A small drink or nothing is fine after the reveal. Instead of a drink, whoever picked the minority side takes a bow, and the bow can be skipped too.
+Legal drinking age only. See the house code, or try Never Have I Ever and Two Truths & a Twist.
+
+## Two Truths & a Twist
+
+URL: https://tipsyplay.com/games/two-truths.html
+Players: 3–10 players
+Summary: A two-truths-and-a-fib icebreaker for 3–10 adults. Share two truths and one fib; the group guesses. Fooled guessers can give a point instead of drinking.
+
+What is Two Truths & a Twist?
+Two Truths & a Twist is TipsyPlay's take on the classic icebreaker. The storyteller writes three lines — two true, one fib. Everyone else guesses which line is fake. Fooled guessers hand over a point. It is an easy party game for adults that works for 3–10 players with no props.
+Every phone sees the three lines so remote joiners and couch hangouts stay in sync. Host a room, pass the code, and rotate storytellers.
+Setup
+- One person hosts a room and reads the join code out loud. Everyone joins on their own phone.
+- The game picks a storyteller and shows a topic, such as "a job you almost took" or "a trip that went sideways".
+- Keep it light. Pick stories you are happy for the whole table to hear.
+Rules
+- The storyteller types three short lines about the topic: two true, one invented.
+- Everyone else reads the lines on their own phone and locks in the one they think is the fib. Passing is always fine.
+- When every guess is in, the phones reveal the fib.
+- Anyone who was fooled takes one small optional drink or hands the storyteller a point. Nothing stacks.
+- The next player becomes the storyteller with a new topic.
+Variations
+- Theme night: every topic is about travel, food or school.
+- Story time: after the reveal, the storyteller tells the full story behind one true line.
+- Couples round: partners write lines about each other and the table guesses.
+Non-alcoholic option
+Turn on points only: fooled guessers give the storyteller a point instead of drinking. Points are a full way to play, and passing is always welcome. Legal age only — play responsibly.
+Try Story Chain next, or browse all games.
+
+## Story Chain
+
+URL: https://tipsyplay.com/games/story-chain.html
+Players: 3–10 players
+Summary: A collaborative storytelling game for adults. Type one short sentence or pass on your phone. Pose instead of drinking if you want. Free party game for 3–10.
+
+What is Story Chain?
+Story Chain is a no-props party game for adults. In each round, every phone can type one short sentence or pass, and the submitted lines show for the room. TipsyPlay puts the prompt on every phone so nobody loses the thread. Themes and a shared story make it funny fast — without needing cards or cups.
+It shines with 3–10 people at a house hang, pre-game, or campus night in. Host starts a room, friends join with a code, and the chain grows until the table decides the tale is done.
+Setup
+- Host a room and share the join code.
+- Agree on a light theme if you want one (vacation gone wrong, cooking disaster, etc.).
+- Phones stay unlocked so everyone can type a short sentence or pass during the same round.
+Rules
+- Each phone may type exactly one short sentence, or pass, in the same round.
+- Keep it party-friendly and keep the story moving.
+- If someone freezes or breaks the vibe rule your table set, they can take one small optional drink — or the alternative below.
+- Nothing stacks. The next round starts clean.
+Variations
+- Genre night: only sci-fi, only sports, or only cooking shows.
+- Emoji-only endings for the last word of each sentence.
+- Reader's chair: one person narrates the full story at the end.
+Non-alcoholic option
+Do a 5-second dramatic pose instead of drinking. Points and poses are a full way to play. Legal age only — play responsibly.
+Try Two Truths & a Twist next, or browse all games.
+
+## King's Cup
+
+URL: https://tipsyplay.com/games/kings-cup.html
+Players: 2–10 players
+Summary: King's Cup on your phones: a card drinking game for 2–10 adults. Join with a code, draw your card and race to tap. Every card has a no-drink option.
+
+How King's Cup works on TipsyPlay
+King's Cup is a classic card drinking game for adults. On TipsyPlay, one person hosts a room and everyone else joins with a short code on their own phone. There is no shared deck to pass around — each draw happens in the app so every player sees the same card and the same rule.
+When it is your turn, tap to draw. The card shows a rank, a suit, and a clearly named rule. You may take one small optional drink or the named alternative on the screen, or decline both. Nothing stacks from one card into the next, and the cup at the top of the table only counts kings — it is not a drink.
+Fives and sixes can match a player group you pick when you join (everyone, guys, or girls). Active rules such as mates and house rules stay visible so the table stays fair. When the fourth king lands, the round ends with a final-king moment, then the host can deal a new deck at the same table.
+
+## Card Lottery
+
+URL: https://tipsyplay.com/games/card-lottery.html
+Players: 2–8 players
+Summary: A red-or-black card game for 2–8 adults. Lock a color on your phone. Correct guesses score points. Any drink is one small optional drink — never stacked.
+
+What is Card Lottery?
+Card Lottery is a fast card drinking game for adults that needs no physical deck. The phone is the dealer. Everyone secretly locks red or black, or passes the guess. When all guesses are in, TipsyPlay flips a color. Correct guesses score points. A miss does not add a point, and the app does not keep a miss tally. Any drink is one small optional drink — never a penalty saved for later. Pass skips that color guess; it is not a “no drink” button. One drink per round, maximum. No chugging and no bonus drinks that stack into later rounds.
+It works for 2–8 players and is one of the easiest card drinking games on TipsyPlay. Host a room, share the code, and friends join from their own phones. You can set 5, 10, 15, or 20 rounds in the lobby.
+Setup
+- No physical deck. The phone is the dealer.
+- Host a room. Friends join with the code.
+- Each round is one guess. Nothing stacks into the next round.
+Rules
+- Everyone secretly picks red or black.
+- When all guesses are in, the phone flips a color.
+- Correct guesses score points. Pass skips the color guess. Any drink is one small optional drink — never stacked.
+- One drink per round, maximum. No chugging and no bonus drinks.
+Variations
+- Points night: keep score on correct guesses; any drink stays optional.
+- Best of five, then the leader picks the next snack.
+- Say your color out loud after you lock it, not before.
+Non-alcoholic option
+Correct guesses score points. Soft drinks are always welcome. You may decline both a drink and any alternative. Legal drinking age only — see the house code.
+More card drinking games: King's Cup and Rule Maker.
+Optional drinks, no stacked penalties
+Card Lottery is a fast red-or-black card game for 2–8 adults. The phone is the dealer, so you do not need a physical deck.
+House policy: alcohol is never required. If a drink comes up, keep it one and small. You may decline both a drink and any alternative, with no replacement action. Drink penalties do not carry into later rounds.
+How the screen actually works: everyone locks red or black, or passes the guess. Pass skips that color guess; it is not a “no drink” button. Correct guesses score points. The app does not keep a miss tally. Any drink is optional — never a stacked punishment.
+You must be of legal drinking age in your location. Host a room, share the code, and read the house code before you start.
+
+## Rule Maker
+
+URL: https://tipsyplay.com/games/rule-maker.html
+Players: 4–10 players
+Summary: A table-rules card drinking game for 4–10 adults. Cards invent silly rules. A slip is one small optional drink or a point — no escalation and no stacking.
+
+What is Rule Maker?
+Rule Maker is a card drinking game for adults where cards invent silly table rules. Slip once and it is one optional drink or a point — then the night continues. There is no escalation ladder and no king's cup mechanic. TipsyPlay keeps the active rules visible so newcomers can catch up.
+Designed for 4–10 players who like light structure and a lot of laughter. Host on a phone, friends join with a code, and the deck drives the pace.
+Setup
+- Host a room and share the join code.
+- Read each new rule aloud when it appears.
+- Agree that rules stay kind and reversible if someone is uncomfortable.
+Rules
+- Draw or reveal the next card when the app says it is time.
+- Follow the table rule it creates.
+- A slip costs one small optional drink — or a point. Nothing stacks.
+- No pirate-style escalation. One consequence per slip, max.
+Variations
+- Soft mode: points only for the first half of the deck.
+- Veto token: each player may retire one rule per night.
+- Theme rules: only gesture rules, or only speech rules.
+Because Rule Maker never escalates into a king's cup, it is a safer on-ramp for friends who are new to card drinking games. Keep the active-rules list visible, retire anything awkward, and celebrate creative slips with points when the table prefers a dry night.
+Non-alcoholic option
+Slip-ups cost a point. Legal drinking age only — play responsibly.
+For a fuller card circle, open King's Cup.
+
+## Sketchy Guess
+
+URL: https://tipsyplay.com/games/sketchy-guess.html
+Players: 4–12 players
+Summary: A drawing-and-guessing game for 4–12 adults. Sketch a secret word on your phone; everyone else guesses. Scoring is points — no drink ladder.
+
+What is Sketchy Guess?
+Sketchy Guess is a drawing party game for adults. One player gets a secret word and sketches it on their phone. The drawing appears for everyone else so the room can guess. Scoring is points-only — perfect when you want laughs without any drink ladder.
+It fits 4–12 players and needs phones, not paper. Host a room, share the code, and rotate artists each round.
+Setup
+- Host and join so every phone shares the same sketch stream.
+- Everyone guesses for themselves. Most points wins.
+- Keep fingers clean enough to draw — snacks after the round.
+Rules
+- The artist draws the secret word. No letters or numbers in the sketch.
+- Guessers type or call out answers as your table prefers.
+- A correct guess scores 1 for the guesser and 1 for the artist.
+- The player with the most points wins.
+Variations
+- Relay art: two artists swap halfway through the timer.
+- Emoji-only guesses in the chat.
+- Movie night pack: titles and characters only.
+Sketchy Guess is already a complete non-drinking party game, which makes it perfect between card drinking games when the table needs a palate cleanser. Encourage wild guesses, ban spoilers of the secret word, and let the high score pick the next TipsyPlay room.
+Non-alcoholic option
+The player with the most points wins — already a full non-drinking game. If others drink separately, keep it optional and small. House code.
+Try Category Countdown when you want words without drawing.

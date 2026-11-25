@@ -1,0 +1,64 @@
+# TipsyPlay
+
+> TipsyPlay (tipsyplay.com) is a free website of party games and drinking games for adults that runs in a phone's browser, with no app download and no account. One person hosts a room and gets a short code; friends join on their own phones. Every game has a non-alcoholic way to play, drinking is always optional, and there is no chugging, racing or stacking penalties. Players must be of legal drinking age in their location.
+
+Key facts:
+- Price: free. No sign-up; online rooms use anonymous sign-in.
+- Players: 1 to 12 depending on the game. Each game page lists its player count.
+- Devices: any phone or computer with a modern browser. Some games can also show a board on a TV.
+- Responsible play: one small optional drink at most per turn, or a non-alcoholic alternative (points, poses, tallies). Passing is always fine. House rules: https://tipsyplay.com/responsible.html
+- Also on the site: 100 drink recipes, each with an alcohol-free version, and guides for planning a game night.
+
+## Games
+
+- [Slow Drip](https://tipsyplay.com/games/slow-drip.html): A phrase-guessing party game for adults. Letters drop one at a time, the first buzz gets to solve, and everyone else bets on SOLVE or FAIL. Drinks optional. (3–10 players)
+- [Never Have I Ever](https://tipsyplay.com/games/never-have-i-ever.html): Play Never Have I Ever on your phones, plus a Most likely mode where everyone votes for a friend. One small optional drink or a 3-second pose. Nothing stacks. (2–12 players)
+- [Hot Take Court](https://tipsyplay.com/games/hot-take-court.html): Hot Take Court: defend a hot take, face the prosecution and let the jury vote in secret. 3–8 players on their phones, optional TV display. Drinks optional. (3–8 players)
+- [Vault Traitor](https://tipsyplay.com/games/vault-traitor.html): Vault Traitor: crack a four-digit code together while one or two Traitors bend the clues. Social deduction for adults on their phones. Drinks optional. (3–8 players)
+- [Punchline Duel](https://tipsyplay.com/games/punchline-duel.html): Punchline Duel: two phones answer the same funny prompt and everyone else votes for the better one. A party game for 3–12 adults. Drinks optional. (3–12 players)
+- [Five Letter Frenzy](https://tipsyplay.com/games/five-letter-frenzy.html): Find the secret five-letter word in six tries. Play solo with a daily word, race friends on your phones, or share one grid at the table. Drinks optional. (1–8 players)
+- [Odd Word Out](https://tipsyplay.com/games/odd-word-out.html): Odd Word Out: everyone shares a secret word except the mole, who only sees the category. Give clues and vote out the bluffer. 4–10 players. Drinks optional. (4–10 players)
+- [Category Countdown](https://tipsyplay.com/games/category-countdown.html): Category Countdown: name answers before the ring timer runs out, or survive Hot Potato. 3–10 players on their phones, optional TV board. Drinks optional. (3–10 players)
+- [Split Decision](https://tipsyplay.com/games/split-decision.html): A would-you-rather style party game for adults. Lock A or B, then guess how many friends picked A. The game keeps score in points. For 2–10 players. (2–10 players)
+- [Two Truths & a Twist](https://tipsyplay.com/games/two-truths.html): A two-truths-and-a-fib icebreaker for 3–10 adults. Share two truths and one fib; the group guesses. Fooled guessers can give a point instead of drinking. (3–10 players)
+- [Story Chain](https://tipsyplay.com/games/story-chain.html): A collaborative storytelling game for adults. Type one short sentence or pass on your phone. Pose instead of drinking if you want. Free party game for 3–10. (3–10 players)
+- [King's Cup](https://tipsyplay.com/games/kings-cup.html): King's Cup on your phones: a card drinking game for 2–10 adults. Join with a code, draw your card and race to tap. Every card has a no-drink option. (2–10 players)
+- [Card Lottery](https://tipsyplay.com/games/card-lottery.html): A red-or-black card game for 2–8 adults. Lock a color on your phone. Correct guesses score points. Any drink is one small optional drink — never stacked. (2–8 players)
+- [Rule Maker](https://tipsyplay.com/games/rule-maker.html): A table-rules card drinking game for 4–10 adults. Cards invent silly rules. A slip is one small optional drink or a point — no escalation and no stacking. (4–10 players)
+- [Sketchy Guess](https://tipsyplay.com/games/sketchy-guess.html): A drawing-and-guessing game for 4–12 adults. Sketch a secret word on your phone; everyone else guesses. Scoring is points — no drink ladder. (4–12 players)
+- [All games](https://tipsyplay.com/games/): the full list with filters for quick games, games for 2, big groups, no props and card games
+
+## Drink recipes
+
+- [All 100 drinks](https://tipsyplay.com/drinks/): shots, cocktails, party punches, frozen and hot drinks, each with an alcohol-free version
+- [Shots](https://tipsyplay.com/drinks/shots/): includes Lemon Drop Shot, Kamikaze Shot, B-52 Shot
+- [Cocktails](https://tipsyplay.com/drinks/cocktails/): includes Classic Canadian Caesar, Mojito, Margarita
+- [Party punches](https://tipsyplay.com/drinks/party-punches/): includes Classic Rum Punch, Red Sangria, White Sangria
+- [Frozen drinks](https://tipsyplay.com/drinks/frozen/): includes Frozen Margarita, Strawberry Daiquiri, Piña Colada
+- [Hot drinks](https://tipsyplay.com/drinks/hot/): includes Hot Toddy, Mulled Wine, Irish Coffee
+
+## Guides
+
+- [After-Dinner Games for Adults That Keep Everyone Seated](https://tipsyplay.com/blog/after-dinner-games-adults.html): Keep the table together after dinner with three seated adult party games: a paper sculpture gallery, fictional menu pitch and object-story finale.
+- [How to Host an Alcohol-Free Party Game Night](https://tipsyplay.com/blog/alcohol-free-party-game-night.html): Plan an alcohol-free party game night for adults with a ready-to-use running order, low-pressure activities, snacks and an easy host script.
+- [10 Best Card Drinking Games for Adults (With Non-Alcoholic Options)](https://tipsyplay.com/blog/best-card-drinking-games.html): Ten best card drinking games for adults, with a drink-or-swap non-alcoholic option for every game. Beginner-friendly rules and links to play on TipsyPlay.
+- [Card Drinking Games: Set Friendly House Rules Before You Deal](https://tipsyplay.com/blog/card-drinking-games-house-rules.html): Set clear boundaries for card drinking games: no stacking, no shared drinking cup, visible alternatives and a simple pre-game agreement for adults.
+- [How to Choose a Party Game for Your Group Tonight](https://tipsyplay.com/blog/choose-party-game-adults.html): Choose an adult party game by player count, energy, equipment and comfort, with verified TipsyPlay examples and an easy no-pressure trial round.
+- [Drop-In Party Games: Welcome Late Arrivals Without Restarting](https://tipsyplay.com/blog/drop-in-party-games.html): Run a flexible adult game night with standalone paper rounds, an easy late-arrival welcome and no catch-up penalties or forced introductions.
+- [Games for 2: A No-Pressure Night-In Plan](https://tipsyplay.com/blog/games-for-two-night-in.html): Try a relaxed games-for-2 plan with cooperative word play, a paper-building activity and an optional verified TipsyPlay card game.
+- [Party Icebreakers for Adults Who Just Met](https://tipsyplay.com/blog/party-icebreakers-adults.html): Welcome adults who do not know each other with three complete, low-pressure icebreakers using fictional choices instead of personal revelations.
+- [Phone Party Games for Adults: Everyone Plays on Their Own Phone](https://tipsyplay.com/blog/phone-party-games-adults.html): Four phone party games for adults, each on their own phone: guess the split, duel with punchlines, catch a bluffer or crack one word. Drinks optional.
+- [Quiet Party Games for an Apartment Night In](https://tipsyplay.com/blog/quiet-party-games-apartment.html): Try three quiet adult party games for a small apartment: drawing exchanges, a written museum and a cooperative clue round, with no shouting or timers.
+- [Story Game Prompts for Adults: Start Small, Get Weird](https://tipsyplay.com/blog/story-game-prompts-adults.html): Use original story starters and a complete turn structure for an adult game night, with easy endings, gentle boundaries and no personal disclosures.
+- [Two-Player Card Games Without Drinking Penalties](https://tipsyplay.com/blog/two-player-card-games-no-penalties.html): Play two original two-player card activities with a standard deck: cooperative suit building and a clue puzzle, with clear endings and no drinking penalties.
+
+## About
+
+- [Play responsibly](https://tipsyplay.com/responsible.html): the house code every game follows
+- [About TipsyPlay](https://tipsyplay.com/about.html)
+- [Privacy](https://tipsyplay.com/privacy.html): what is stored on the device and how anonymous rooms work
+
+## Optional
+
+- [Full game rules](https://tipsyplay.com/llms-full.txt): every game's setup, rules and no-drink option as plain text
+- [Sitemap](https://tipsyplay.com/sitemap.xml)

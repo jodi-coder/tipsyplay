@@ -2,4 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin-comments.html
 
+# Plain-text guides for AI assistants: https://tipsyplay.com/llms.txt and https://tipsyplay.com/llms-full.txt
 Sitemap: https://tipsyplay.com/sitemap.xml
