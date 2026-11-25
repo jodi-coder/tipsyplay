@@ -41,6 +41,48 @@ function friendly(e){
 }
 function showOffline(detail){$("connecting").classList.add("hide");$("app").classList.add("hide");$("offline").classList.remove("hide");$("offdetail").textContent=detail||""}
 function showApp(){$("connecting").classList.add("hide");$("offline").classList.add("hide");$("app").classList.remove("hide")}
+/* Mid-game the boot card is already gone. Say the connection dropped, then keep the same room when it returns.
+   The boot card ("Join again") only covers a page that never opened. */
+var OFFLINE_NOTE="You're offline. We'll keep trying when you're back.";
+var connWatch=false;
+function showOfflineNote(){
+ var app=$("app"); if(!app||app.classList.contains("hide")) return;
+ var n=$("offbanner");
+ if(!n){
+  n=el("p","card",OFFLINE_NOTE);
+  n.id="offbanner";
+  n.setAttribute("role","alert");
+  n.style.scrollMarginTop="80px";
+  app.insertBefore(n, app.firstChild);
+ }
+ try{n.scrollIntoView({block:"nearest"})}catch(e){}
+}
+function clearOfflineNote(){
+ var n=$("offbanner"); if(n) n.remove();
+ var p=$("perr");
+ if(p&&(p.textContent===OFFLINE_NOTE||p.textContent==="You're offline.")) fail("");
+}
+function offlineCardUp(){
+ var card=$("offline");
+ if(!card||card.classList.contains("hide")) return false;
+ var detail=($("offdetail")&&$("offdetail").textContent)||"";
+ return detail.indexOf("missing its deck")<0;
+}
+function resumeNet(){if(goOnline&&db){try{goOnline(db)}catch(e){}}}
+function watchConnection(){
+ if(connWatch) return; connWatch=true;
+ window.addEventListener("offline", function(){showOfflineNote()});
+ window.addEventListener("online", function(){
+  var playing=$("app")&&!$("app").classList.contains("hide");
+  if(playing){clearOfflineNote(); resumeNet(); return}
+  if(offlineCardUp()) location.reload();
+ });
+ window.addEventListener("pageshow", function(ev){
+  if(!ev.persisted) return;
+  if(navigator.onLine){clearOfflineNote(); resumeNet()}
+  else showOfflineNote();
+ });
+}
 function screen(id){["home","lobby","stage","over","closed"].forEach(function(s){var n=$(s);if(n)n.classList.toggle("hide",s!==id)})}
 function savedName(){
  var el=$("playername")||$("pname");
@@ -1013,9 +1055,16 @@ function wire(){
  if(window.TPSound)TPSound.bindMute($("mute"));
 }
 function lockScreen(){if("wakeLock" in navigator)navigator.wakeLock.request("screen").then(function(){}).catch(function(){})}
-document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"&&meta&&meta.status==="play")lockScreen()});
+document.addEventListener("visibilitychange",function(){
+ if(document.visibilityState!=="visible") return;
+ if(meta&&meta.status==="play") lockScreen();
+ if(!navigator.onLine){showOfflineNote(); return}
+ clearOfflineNote();
+ resumeNet();
+});
 
 async function boot(){
+ watchConnection();
  GAME=window.PARTY&&window.PARTY[document.body.dataset.game];
  if(!GAME){showOffline("This game is missing its deck.");return}
  if(!navigator.onLine&&!emuOn()){showOffline();return}

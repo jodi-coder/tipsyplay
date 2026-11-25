@@ -464,6 +464,64 @@ test("age gate blocks same-tab rejoin from reaching Start", async ({ browser }) 
   }
 });
 
+test("story chain shows a note when the connection drops", async ({ browser }) => {
+  const ctx = await browser.newContext({
+    serviceWorkers: "block",
+    viewport: { width: 390, height: 844 },
+    hasTouch: true
+  });
+  await ctx.route(/googletagmanager|google-analytics|analytics\.google/, (route) => route.abort());
+  const page = await ctx.newPage();
+  await page.addInitScript(() => {
+    localStorage.setItem("tp_age_ok", "yes");
+    localStorage.setItem("tp_sound", "off");
+    localStorage.setItem("tp_name", "Ada");
+  });
+  await page.goto(BASE + "/play/story-chain.html?emulator=1", { waitUntil: "domcontentloaded" });
+  await page.locator("#app").waitFor({ state: "visible" });
+  await expect(page.locator("#home strong", { hasText: "You must be of legal drinking age in your location." })).toBeVisible();
+  await ctx.setOffline(true);
+  const note = page.locator("#offbanner");
+  await expect(note).toBeVisible();
+  await expect(note).toHaveText("You're offline. We'll keep trying when you're back.");
+  await expect(page.locator("#app")).toBeVisible();
+  await expect(page.locator("#hostbtn")).toBeVisible();
+  const box = await note.boundingBox();
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y).toBeLessThan(420);
+  await shot(page, "story-chain-offline");
+  await ctx.setOffline(false);
+  await expect(note).toHaveCount(0);
+  await expect(page.locator("#hostbtn")).toBeVisible();
+  await shot(page, "story-chain-back-online");
+  await page.locator("#hostbtn").click();
+  await expect(page.locator("#lobby")).toBeVisible();
+  const code = (await page.locator("#codebig").innerText()).trim();
+  expect(code).toMatch(/^[ABCDEFGHJKMNPQRSTUVWXYZ]{4}$/);
+  await ctx.setOffline(true);
+  await expect(note).toBeVisible();
+  await expect(page.locator("#lobby")).toBeVisible();
+  await expect(page.locator("#codebig")).toHaveText(code);
+  await shot(page, "story-chain-lobby-offline");
+  await ctx.setOffline(false);
+  await expect(note).toHaveCount(0);
+  await expect(page.locator("#lobby")).toBeVisible();
+  await expect(page.locator("#codebig")).toHaveText(code);
+  const reopened = page.waitForEvent("load");
+  await page.evaluate(() => {
+    document.getElementById("app").classList.add("hide");
+    document.getElementById("offline").classList.remove("hide");
+    window.dispatchEvent(new Event("online"));
+  }).catch((err) => {
+    if (!/destroyed|navigation|context/i.test(String(err))) throw err;
+  });
+  await reopened;
+  await page.locator("#app").waitFor({ state: "visible" });
+  await expect(page.locator("#offline")).toBeHidden();
+  await expect(page.locator("#hostbtn")).toBeVisible();
+  await ctx.close();
+});
+
 test("narrow pages do not scroll sideways", async ({ browser }) => {
   const pages = ["/", "/games/", "/blog/", "/spots/canada-cities/halifax.html", "/games/kings-cup.html", "/drinks/", "/drinks/cocktails/", "/drinks/classic-canadian-caesar.html", "/drinks/pineapple-upside-down-cake-shot.html"];
   for (const width of [320, 375, 390]) {
