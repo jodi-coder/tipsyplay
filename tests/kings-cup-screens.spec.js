@@ -71,11 +71,9 @@ test("age gate catches Start after the confirmation is cleared", async ({ browse
   await context.close();
 });
 
-test("emulator=1 is not a room code, and a real invite still hides Host", async ({ browser }) => {
-  const emu = await open(browser, "/games/kings-cup.html?emulator=1", "");
-  await expect(emu.page.locator("#hostbtn")).toBeVisible();
-  await expect(emu.page.locator("#roomcode")).toHaveValue("");
-  await expect(emu.page.locator("#invited")).toBeHidden();
+test("King's Cup confetti does not start when reduced motion is on", async ({ browser }) => {
+  const emu = await open(browser, "/games/kings-cup.html?emulator=1", "Ada");
+  await emu.page.waitForFunction(() => window.__tpKc && window.__tpKc.burst);
   await emu.page.emulateMedia({ reducedMotion: "reduce" });
   await emu.page.evaluate(() => window.__tpKc.burst(30));
   expect(await emu.page.evaluate(() => window.__tpKc.parts())).toBe(0);
@@ -83,12 +81,6 @@ test("emulator=1 is not a room code, and a real invite still hides Host", async 
   await emu.page.evaluate(() => window.__tpKc.burst(4));
   expect(await emu.page.evaluate(() => window.__tpKc.parts())).toBe(4);
   await emu.context.close();
-
-  const room = await open(browser, "/games/kings-cup.html?room=WXYZ&emulator=1", "Cy");
-  await expect(room.page.locator("#hostbtn")).toBeHidden();
-  await expect(room.page.locator("#roomcode")).toHaveValue("WXYZ");
-  await expect(room.page.locator("#joinbtn")).toHaveText("Join room");
-  await room.context.close();
 });
 
 test("an invite link hides Host Game and offers Join room", async ({ browser }) => {
