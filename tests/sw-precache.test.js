@@ -55,10 +55,11 @@ test("the new precache is small, and the full drink-photo set stays out", () => 
 
 test("pages ask for the same shell versions the service worker precaches", () => {
   const list = files();
-  for (const item of ["styles.css?v=31", "home.css?v=16", "app.js?v=23", "play/kings-cup.js?v=33", "play/nhie-party.js?v=38", "play/frenzy-party.js?v=5"]) {
+  for (const item of ["styles.css?v=31", "home.css?v=16", "app.js?v=23", "play/kings-cup.js?v=34", "play/multi.js?v=29", "spots/comments.js?v=18", "play/nhie-party.js?v=38", "play/frenzy-party.js?v=5"]) {
     assert.equal(list.includes(item), true, item);
   }
-  const stale = /(?:styles\.css\?v=30|home\.css\?v=15|app\.js\?v=22|kings-cup\.js\?v=32|nhie-party\.js\?v=37|frenzy-party\.js\?v=4|sounds\.js\?v=19)(?!\d)/;
+  assert.equal(list.includes("spots/admin-comments.js?v=17"), true);
+  const stale = /(?:styles\.css\?v=30|home\.css\?v=15|app\.js\?v=22|kings-cup\.js\?v=3[23]|multi\.js\?v=28|(?<!admin-)comments\.js\?v=17|nhie-party\.js\?v=37|frenzy-party\.js\?v=4|sounds\.js\?v=19)(?!\d)/;
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if ([".git", "node_modules", "media", "tests"].includes(entry.name)) continue;
