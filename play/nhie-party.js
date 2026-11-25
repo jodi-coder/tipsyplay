@@ -37,10 +37,20 @@ function unlock(){
   audioOn=true;
   try{var eng=audioEngine(); if(eng) eng.unlock(); if(window.TPSound) TPSound.unlock()}catch(e){}
 }
+function reducedMotion(){
+  try{return !!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){return false}
+}
 function buzz(){
   var used=false;
-  try{if(typeof navigator.vibrate==="function") used=navigator.vibrate(30)===true}catch(e){used=false}
-  if(!used) flash();
+  /* Vibration is on unless this device saved tp_vibrate=off (Settings) or the player asked for reduced motion.
+     Missing key stays on, same as sound, so a phone that already buzzes keeps buzzing until they turn it off. */
+  if(window.TipsyVibrate) used=TipsyVibrate.pulse(30)===true;
+  else if(!reducedMotion()){
+    try{if(localStorage.getItem("tp_vibrate")!=="off"&&typeof navigator.vibrate==="function") used=navigator.vibrate(30)===true}catch(e){used=false}
+  }
+  /* No motor, or vibration is switched off: a short flash is the stand-in.
+     Reduced motion skips the flash too. Its fade is an animation, and with that animation off the tint would stay. */
+  if(!used&&!reducedMotion()) flash();
 }
 function tapSound(name){unlock(); cue(name||"crack"); buzz()}
 function isHost(){return !!(meta&&uid&&meta.hostUid===uid)}
@@ -1199,12 +1209,20 @@ async function boot(){
       step:function(){return table&&table.step},
       mode:function(){return currentMode()},
       deck:function(){return currentDeck().slice(0,3)},
-      clean:function(s){return cleanText(s)}
+      clean:function(s){return cleanText(s)},
+      buzz:buzz,
+      flashed:function(){return document.body.classList.contains("nh-flash")}
     };
   }
   showReady();
   try{wire()}catch(err){console.error(err); fail("The table glitched. Reload and try again.")}
 }
 if($("retry")) $("retry").addEventListener("click", function(){location.reload()});
+if(emuOn()){
+  var hook=window.__tpNhie||{};
+  hook.buzz=buzz;
+  hook.flashed=function(){return document.body.classList.contains("nh-flash")};
+  window.__tpNhie=hook;
+}
 boot().catch(function(err){console.error(err); showBootError("The game didn't open. Check your connection and try again.")});
 })();

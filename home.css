@@ -40,7 +40,7 @@ html,body{overflow-x:clip}
 .hero-side{display:flex;justify-content:center}
 .demo{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:14px}
 .demo-tabs{display:flex;gap:4px;padding:4px;border:var(--bw) solid var(--outline);border-radius:999px;background:var(--surface);color:var(--ink)}
-.demo-tabs button{min-height:40px;padding:0 16px;border:0;border-radius:999px;background:none;color:var(--text-2);font:700 .95rem var(--display);cursor:pointer}
+.demo-tabs button{min-height:44px;padding:0 16px;border:0;border-radius:999px;background:none;color:var(--text-2);font:700 .95rem var(--display);cursor:pointer}
 .demo-tabs button[aria-selected=true]{background:var(--indigo);color:var(--on-indigo);box-shadow:var(--glow-indigo)}
 .phone{position:relative;width:100%;max-width:300px;aspect-ratio:9/18.5;padding:10px;border-radius:46px;background:linear-gradient(160deg,var(--surface-2),var(--bg));box-shadow:0 0 0 1px var(--outline-strong),0 40px 80px -30px color-mix(in srgb,var(--indigo) 55%,transparent),0 20px 60px -20px color-mix(in srgb,var(--coral) 35%,transparent)}
 .phone-screen{position:relative;height:100%;border-radius:37px;overflow:hidden;background:var(--grad-night),var(--bg);display:flex;flex-direction:column;padding:38px 14px 14px}
@@ -70,7 +70,7 @@ html,body{overflow-x:clip}
 .ph-never{background:var(--indigo);color:var(--on-indigo);box-shadow:var(--glow-indigo)}
 .ph-answers .ph-btn[aria-pressed=false]:disabled{opacity:.35;box-shadow:none}
 .ph-btn[aria-pressed=true]{outline:3px solid var(--text);outline-offset:2px}
-.ph-pass{align-self:center;margin-top:8px;min-height:36px;padding:0 16px;border:var(--bw) solid var(--outline);border-radius:999px;background:transparent;color:var(--text-2);font:600 .8rem var(--display);cursor:pointer}
+.ph-pass{align-self:center;margin-top:8px;min-height:44px;padding:0 16px;border:var(--bw) solid var(--outline);border-radius:999px;background:transparent;color:var(--text-2);font:600 .8rem var(--display);cursor:pointer}
 .ph-pass[aria-pressed=true]{background:var(--surface-2);color:var(--text);border-color:var(--outline-strong)}
 .ph-pass:disabled[aria-pressed=false]{opacity:.4}
 .ph-bigcode{margin:.1em 0 .25em;text-align:center;font:800 2.8rem/1 var(--display);letter-spacing:.18em;background:var(--grad-primary);-webkit-background-clip:text;background-clip:text;color:transparent}
