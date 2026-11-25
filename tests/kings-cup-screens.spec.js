@@ -71,6 +71,18 @@ test("age gate catches Start after the confirmation is cleared", async ({ browse
   await context.close();
 });
 
+test("King's Cup confetti does not start when reduced motion is on", async ({ browser }) => {
+  const emu = await open(browser, "/games/kings-cup.html?emulator=1", "Ada");
+  await emu.page.waitForFunction(() => window.__tpKc && window.__tpKc.burst);
+  await emu.page.emulateMedia({ reducedMotion: "reduce" });
+  await emu.page.evaluate(() => window.__tpKc.burst(30));
+  expect(await emu.page.evaluate(() => window.__tpKc.parts())).toBe(0);
+  await emu.page.emulateMedia({ reducedMotion: "no-preference" });
+  await emu.page.evaluate(() => window.__tpKc.burst(4));
+  expect(await emu.page.evaluate(() => window.__tpKc.parts())).toBe(4);
+  await emu.context.close();
+});
+
 test("an invite link hides Host Game and offers Join room", async ({ browser }) => {
   const { context, page } = await open(browser, "/games/kings-cup.html?code=ABCD", "Cy");
   await expect(page.locator("#hostbtn")).toBeHidden();

@@ -116,7 +116,12 @@ function watchRows(){
   }
 }
 function buzz(ms){
-  try{if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return; if(navigator.vibrate) navigator.vibrate(ms||12)}catch(e){}
+  try{
+    if(window.TipsyVibrate){TipsyVibrate.pulse(ms||12); return}
+    if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if(localStorage.getItem("tp_vibrate")==="off") return;
+    if(navigator.vibrate) navigator.vibrate(ms||12);
+  }catch(e){}
 }
 function parseTagged(v){var s=String(v||""), i=s.lastIndexOf(":"); if(i<0) return null; return {v:s.slice(0,i), seq:+s.slice(i+1)}}
 function dupName(list){

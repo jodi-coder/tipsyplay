@@ -31,7 +31,7 @@
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Play Slow Drip – TipsyPlay"><meta property="og:description" content="A hidden phrase, one letter at a time. Buzz in, and everyone else bets on you."><meta property="og:url" content="https://tipsyplay.com/play/slow-drip.html"><meta property="og:image" content="https://tipsyplay.com/images/og/game-slow-drip.jpg"><meta property="og:image:alt" content="Slow Drip on TipsyPlay: Race to solve the hidden phrase. A free party game for 3–10 players on your phones">
 <link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=31">
+<link rel="stylesheet" href="../styles.css?v=32">
 <style>
 /* Slow Drip. Every colour comes from the theme tokens in styles.css. Pink appears at drink moments and as a timer runs out. */
 .sd-boot{padding:28px 0}
@@ -54,7 +54,9 @@
 .sd-panel h2{margin:0 0 6px;font-size:clamp(1.4rem,6vw,1.9rem)}
 .sd-panel p{margin:.35em 0}
 .sd-panel .btn{width:100%;margin-top:10px}
-/* Timers: a number you can read, a bar that shrinks, and a fill that moves from yellow to pink. --p runs 0 to 1. */
+/* Timers: a number you can read, a bar that shrinks, and a fill that mixes --primary into --danger as --p runs 0 to 1.
+   NEEDS REVIEW: this used to read as yellow fading to pink. --primary is now coral and --danger is now amber, so the bar fades coral to amber.
+   Left unchanged. Proposal, existing tokens only: start on --amber (time left) and end on --coral (time's up). */
 .sd-timer{display:flex;align-items:center;gap:12px;margin:10px 0}
 .sd-timer .num{min-width:2.2ch;font:800 clamp(2rem,10vw,2.8rem)/1 var(--display);text-align:center}
 .sd-timer .lab{font:700 .8rem var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:left}
@@ -248,7 +250,7 @@ body.sd-practice .rm-bar{display:none}
 </section>
 </main>
 <script src="../sounds.js?v=18"></script>
-<script src="../app.js?v=23"></script>
+<script src="../app.js?v=24"></script>
 <script src="qr.js?v=18"></script>
 <script src="join-qr.js?v=1"></script>
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","sd");</script>

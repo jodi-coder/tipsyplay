@@ -1,4 +1,4 @@
-/* The offline list is tipsyplay-v69. Main already published v68, so this is the next name.
+/* The offline list is tipsyplay-v70. v69 shipped with the catalog precache; v70 adds the vibration and reduced-motion changes.
    It keeps one copy of sounds.js, and it precaches the illustrated game catalog plus the drink
    pictures that cached pages actually show. */
 const test = require("node:test");
@@ -31,9 +31,9 @@ function bytes(list) {
   return list.reduce((sum, rel) => sum + fs.statSync(path.join(root, rel)).size, 0);
 }
 
-test("service worker is v69 and lists each new picture once", () => {
-  assert.match(sw, /const CACHE="tipsyplay-v69"/);
-  assert.doesNotMatch(sw, /tipsyplay-v68/);
+test("service worker is v70 and lists each new picture once", () => {
+  assert.match(sw, /const CACHE="tipsyplay-v70"/);
+  assert.doesNotMatch(sw, /tipsyplay-v69/);
   const list = files();
   assert.equal(new Set(list).size, list.length, "the precache list has a duplicate");
   assert.equal(list.filter((item) => item.startsWith("sounds.js?")).length, 1);
@@ -55,10 +55,10 @@ test("the new precache is small, and the full drink-photo set stays out", () => 
 
 test("pages ask for the same shell versions the service worker precaches", () => {
   const list = files();
-  for (const item of ["styles.css?v=31", "home.css?v=16", "app.js?v=23", "play/kings-cup.js?v=33", "play/nhie-party.js?v=38", "play/frenzy-party.js?v=5"]) {
+  for (const item of ["styles.css?v=32", "home.css?v=17", "app.js?v=24", "play/kings-cup.js?v=34", "play/nhie-party.js?v=39", "play/frenzy-party.js?v=6"]) {
     assert.equal(list.includes(item), true, item);
   }
-  const stale = /(?:styles\.css\?v=30|home\.css\?v=15|app\.js\?v=22|kings-cup\.js\?v=32|nhie-party\.js\?v=37|frenzy-party\.js\?v=4|sounds\.js\?v=19)(?!\d)/;
+  const stale = /(?:styles\.css\?v=31|home\.css\?v=16|app\.js\?v=23|kings-cup\.js\?v=33|nhie-party\.js\?v=38|frenzy-party\.js\?v=5|sounds\.js\?v=19)(?!\d)/;
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       if ([".git", "node_modules", "media", "tests"].includes(entry.name)) continue;
