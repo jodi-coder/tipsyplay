@@ -1,6 +1,6 @@
 /* Five Letter Frenzy: Solo, Race and Table, on the Firebase emulators and the local word server.
    Nothing talks to production. Race needs the PHP endpoint, so the static server must run PHP. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const HOME = "/games/five-letter-frenzy.html";
 const RACE = "/games/five-letter-race.html?emulator=1&fast=1&word=crane";

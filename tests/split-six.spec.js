@@ -1,7 +1,7 @@
 /* Split Decision Phase 1 on six phones, against the Firebase emulator and the real rules.
    Simultaneous answers, one player refreshing mid-round, one player who never answers.
    The reveal on every phone must match PosterLogic.scoreRound. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const L = require("../play/poster-logic.js");
 
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";

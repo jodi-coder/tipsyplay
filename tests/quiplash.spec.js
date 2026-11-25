@@ -1,7 +1,7 @@
 /* Punchline Duel host flow with a stubbed Firebase (same stub as split-end.spec.js).
    The test page is the host; bot players and their answers/votes are injected through window.__tpMock.
    Nothing talks to production. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const fs = require("fs");
 const path = require("path");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";

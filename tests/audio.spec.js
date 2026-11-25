@@ -1,6 +1,6 @@
 /* Sound: one mute toggle on every page, remembered between visits, and nothing plays before the first tap.
    These tests need no Firebase. They count what the page asks the browser's audio system to do. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 
 /* Counts AudioContexts, oscillators and spoken lines, so a test can tell "nothing was scheduled" from "a sound was". */
 async function countAudio(context) {
@@ -111,8 +111,12 @@ test("muted means silent for both sound engines, and unmuting brings them back",
 });
 
 test("nothing plays before the first tap, and only after it", async ({ browser }) => {
-  const context = await browser.newContext({ serviceWorkers: "block", viewport: { width: 390, height: 844 }, hasTouch: true });
+  const opts = { serviceWorkers: "block", viewport: { width: 390, height: 844 }, hasTouch: true };
+  const context = await browser.newContext(opts);
   await countAudio(context);
+  /* Vault Traitor writes tp_sound=off when the key has never been set. Each visit starts from an empty key,
+     so that default cannot mute the next page in this same browser profile. */
+  await context.addInitScript(() => { try { localStorage.removeItem("tp_sound"); } catch (e) {} });
   const page = await context.newPage();
   await page.route(/googletagmanager|google-analytics|analytics\.google/, (r) => r.abort());
   for (const url of ["/games/kings-cup.html", "/games/never-have-i-ever.html", "/play/card-lottery.html", "/games/vault-traitor.html", "/games/split-decision.html", "/play/slow-drip.html"]) {
@@ -121,27 +125,34 @@ test("nothing plays before the first tap, and only after it", async ({ browser }
     await page.waitForTimeout(500);
     expect(await audio(page), url + " is silent on load").toEqual({ ac: 0, osc: 0, spk: 0 });
   }
+  await context.close();
+  // The tap check has its own empty storage. It never sees Vault Traitor's write.
+  const fresh = await browser.newContext(opts);
+  await countAudio(fresh);
+  await fresh.addInitScript(() => { try { localStorage.removeItem("tp_sound"); } catch (e) {} });
+  const tap = await fresh.newPage();
+  await tap.route(/googletagmanager|google-analytics|analytics\.google/, (r) => r.abort());
   // game events can fire before the player has touched the page. They must be dropped, not queued.
-  await page.goto("/games/kings-cup.html", { waitUntil: "domcontentloaded" });
-  await page.locator("#mute").waitFor({ state: "visible" });
-  await page.evaluate(() => {
+  await tap.goto("/games/kings-cup.html", { waitUntil: "domcontentloaded" });
+  await tap.locator("#mute").waitFor({ state: "visible" });
+  await tap.evaluate(() => {
     TPSound.yes(); TPSound.card(); TPSound.celebrate();
     const e = PartyAudio.create({}); e.cue("flip"); e.cue("sting"); e.cue("payoff"); e.unlock();
   });
-  await page.waitForTimeout(400);
-  expect(await audio(page), "events before a tap create no audio context and schedule nothing").toEqual({ ac: 0, osc: 0, spk: 0 });
+  await tap.waitForTimeout(400);
+  expect(await audio(tap), "events before a tap create no audio context and schedule nothing").toEqual({ ac: 0, osc: 0, spk: 0 });
   // the first real tap unlocks sound
-  await page.mouse.click(8, 300);
-  expect(await page.evaluate(() => TPSound.tapped())).toBe(true);
-  await page.evaluate(() => { TPSound.yes(); });
-  await page.waitForTimeout(200);
-  const afterTap = await audio(page);
+  await tap.mouse.click(8, 300);
+  expect(await tap.evaluate(() => TPSound.tapped())).toBe(true);
+  await tap.evaluate(() => { TPSound.yes(); });
+  await tap.waitForTimeout(200);
+  const afterTap = await audio(tap);
   expect(afterTap.ac, "an audio context exists only after the tap").toBeGreaterThanOrEqual(1);
   expect(afterTap.osc, "and the sound is played").toBeGreaterThan(0);
-  await page.evaluate(() => { window.__pe = PartyAudio.create({}); window.__pe.cue("flip"); });
-  await page.waitForTimeout(200);
-  expect((await audio(page)).osc, "party effects play after the tap").toBeGreaterThan(afterTap.osc);
-  await context.close();
+  await tap.evaluate(() => { window.__pe = PartyAudio.create({}); window.__pe.cue("flip"); });
+  await tap.waitForTimeout(200);
+  expect((await audio(tap)).osc, "party effects play after the tap").toBeGreaterThan(afterTap.osc);
+  await fresh.close();
 });
 
 test("no background music, no spoken announcer, nothing scheduled while idle", async ({ browser }) => {

@@ -1,6 +1,6 @@
 /* Slow Drip in real browsers against the Firebase emulators: a full round on three phones (a wrong solve, then a
    correct one), the database rules that keep the phrase and the bets private, the host handoff, and practice mode. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const PAGE = "/play/slow-drip.html?emulator=1";
 const FAST = PAGE + "&fast=1";

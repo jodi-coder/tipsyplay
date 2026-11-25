@@ -1,7 +1,7 @@
 /* Split Decision video moments are an enhancement only.
    Clips load only when their phase starts; a missing clip falls back to its still, a missing still
    hides the strip; reduced motion and slow connections never load video. Uses the Firebase emulator. */
-const { test, expect } = require("@playwright/test");
+const { test, expect } = require("./harness");
 
 const BASE = process.env.TIPSY_BASE || "http://127.0.0.1:8765";
 const GAME = "/games/split-decision.html";
