@@ -117,6 +117,67 @@ test("the hero: headline, lede, a Pick a Game button, the inline room code box, 
   await expect(page.locator("#demo [role=tab]")).toHaveText(["Lobby", "Round 3", "Results"]);
 });
 
+test("hero demo tabs, the Pass pill, and the solo Never Have I Ever checkbox are 44px tap targets", async ({ page }) => {
+  await seen(page);
+  await page.goto("/index.html");
+  await page.locator("#demo").scrollIntoViewIfNeeded();
+  for (const sel of ["#dt-lobby", "#dt-round", "#dt-results", ".ph-pass"]) {
+    const box = await page.locator(sel).boundingBox();
+    expect(box.height, sel).toBeGreaterThanOrEqual(44);
+    expect(box.width, sel).toBeGreaterThanOrEqual(44);
+  }
+  await page.goto("/play/never-have-i-ever.html");
+  const na = await page.locator("#na").boundingBox();
+  expect(na.width).toBeGreaterThanOrEqual(44);
+  expect(na.height).toBeGreaterThanOrEqual(44);
+});
+
+test("party buzz follows the vibration switch and falls back to a flash", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("tp_age_ok", "yes");
+    localStorage.setItem("tp_sound", "off");
+    const seen = [];
+    window.__vibes = seen;
+    navigator.vibrate = (ms) => { seen.push(ms); return true; };
+  });
+  await page.route(/firebaseio\.com|firebasedatabase\.app|firebaseapp\.com|googleapis\.com|gstatic\.com\/firebasejs|identitytoolkit|securetoken|googletagmanager|google-analytics/, (r) => r.abort());
+  await page.goto("/games/never-have-i-ever.html?emulator=1");
+  await page.waitForFunction(() => window.__tpNhie && window.__tpNhie.buzz);
+  await page.evaluate(() => window.__tpNhie.buzz());
+  expect(await page.evaluate(() => window.__vibes.slice())).toEqual([30]);
+  expect(await page.evaluate(() => window.__tpNhie.flashed())).toBe(false);
+  await page.evaluate(() => { window.TipsyVibrate.set(false); document.body.classList.remove("nh-flash"); window.__tpNhie.buzz(); });
+  expect(await page.evaluate(() => window.__vibes.length)).toBe(1);
+  expect(await page.evaluate(() => window.__tpNhie.flashed())).toBe(true);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.evaluate(() => { window.TipsyVibrate.set(true); document.body.classList.remove("nh-flash"); window.__vibes.length = 0; window.__tpNhie.buzz(); });
+  expect(await page.evaluate(() => window.__vibes.length)).toBe(0);
+  expect(await page.evaluate(() => window.__tpNhie.flashed())).toBe(false);
+});
+
+test("vibration defaults on, remembers off, and skips reduced motion", async ({ page }) => {
+  await page.addInitScript(() => {
+    const seen = [];
+    window.__vibes = seen;
+    navigator.vibrate = (ms) => { seen.push(ms); return true; };
+  });
+  await page.goto("/settings.html");
+  const box = page.locator("#s_vibrate");
+  await expect(box).toBeChecked();
+  expect(await page.evaluate(() => localStorage.getItem("tp_vibrate"))).toBe(null);
+  expect(await page.evaluate(() => window.TipsyVibrate.pulse(30))).toBe(true);
+  expect(await page.evaluate(() => window.__vibes.slice())).toEqual([30]);
+  await box.uncheck();
+  expect(await page.evaluate(() => localStorage.getItem("tp_vibrate"))).toBe("off");
+  expect(await page.evaluate(() => window.TipsyVibrate.pulse(30))).toBe(false);
+  await page.reload();
+  await expect(page.locator("#s_vibrate")).not.toBeChecked();
+  await page.evaluate(() => window.TipsyVibrate.set(true));
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(await page.evaluate(() => window.TipsyVibrate.pulse(30))).toBe(false);
+  expect(await page.evaluate(() => window.__vibes.length)).toBe(0);
+});
+
 test("on desktop the hero is two columns; on a phone it stacks", async ({ browser }) => {
   for (const [vp, side] of [[{ width: 1280, height: 900 }, true], [{ width: 390, height: 844 }, false]]) {
     const { ctx, page } = await fresh(browser, vp);

@@ -166,7 +166,11 @@ function pilePayload(list, prevLen){
 }
 
 
+function reducedMotion(){
+  try{return !!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){return false}
+}
 function burst(n){
+  if(reducedMotion()) return;
   var c=$("fx"); if(!c) return;
   c.width=window.innerWidth; c.height=window.innerHeight;
   var cs=getComputedStyle(document.documentElement),c1=cs.getPropertyValue("--danger").trim()||"#FF3D7F",c2=cs.getPropertyValue("--primary").trim()||"#FFD60A";
@@ -948,6 +952,7 @@ async function boot(){
   $("connecting").classList.add("hide");
   $("app").classList.remove("hide");
   wire();
+  if(emuOn()) window.__tpKc={burst:burst, parts:function(){return parts.length}, normCode:normCode, reduced:reducedMotion};
   var back=sessionStorage.getItem("tp_kc_room");
   var nm=normName($("pname").value);
   if(back&&validCode(back)&&nm){

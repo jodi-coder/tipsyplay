@@ -4,7 +4,20 @@ var root=document.body.dataset.root||"";
 // age gate. Browsing is open: the gate asks once, at the moment someone tries to play
 // (Pick a Game, Host, Join, or submitting a room code). Game screens under /play/ and invite links (?room=) still ask on load.
 var AGE_KEY="tp_age_ok";
+var VIBRATE_KEY="tp_vibrate";
 function ageOk(){try{return localStorage.getItem(AGE_KEY)==="yes"}catch(e){return false}}
+/* Vibration follows the same on-device pattern as sound (tp_sound): missing means on, "off" means off.
+   prefers-reduced-motion always wins, even when the switch is on. */
+function vibrateOn(){try{return localStorage.getItem(VIBRATE_KEY)!=="off"}catch(e){return true}}
+function motionOk(){try{return !(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)}catch(e){return true}}
+window.TipsyVibrate={
+ on:vibrateOn,
+ set:function(on){try{localStorage.setItem(VIBRATE_KEY,on?"on":"off")}catch(e){}},
+ pulse:function(ms){
+  if(!vibrateOn()||!motionOk())return false;
+  try{return typeof navigator.vibrate==="function"&&navigator.vibrate(ms)===true}catch(e){return false}
+ }
+};
 var GATE_SEL='[data-gate],#hostbtn,#joinbtn,[data-act="host"],[data-act="join"],.game-card a.btn';
 var GATE_FORM='[data-gate],form.joinbox,#joinform';
 var gateEl=null;
@@ -86,10 +99,11 @@ if(fv){var render=function(){var f=favs(),k=Object.keys(f);fv.innerHTML=k.map(fu
  fv.querySelectorAll(".card").forEach(function(c){var b=document.createElement("button");b.className="heart";b.textContent="❤️";b.setAttribute("aria-label","Remove favourite");b.onclick=function(){var f=favs();delete f[c.dataset.id];localStorage.setItem("tp_favs",JSON.stringify(f));render()};c.appendChild(b)})};render()}
 // settings
 var sn=document.getElementById("s_na");
-if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spice"),sd=document.getElementById("s_sound");
+if(sn){var sr=document.getElementById("s_rem"),ss=document.getElementById("s_spice"),sd=document.getElementById("s_sound"),sv=document.getElementById("s_vibrate");
  sn.checked=localStorage.getItem("tp_na")==="on";sr.checked=localStorage.getItem("tp_rem")!=="off";ss.value=localStorage.getItem("tp_spice")||"mild";
  sn.onchange=function(){localStorage.setItem("tp_na",sn.checked?"on":"off")};sr.onchange=function(){localStorage.setItem("tp_rem",sr.checked?"on":"off")};ss.onchange=function(){localStorage.setItem("tp_spice",ss.value)};
  if(sd&&window.TPSound){sd.checked=TPSound.enabled();sd.onchange=function(){TPSound.setEnabled(sd.checked);if(sd.checked)TPSound.click()}}
+ if(sv){sv.checked=vibrateOn();sv.onchange=function(){TipsyVibrate.set(sv.checked)}}
  document.getElementById("s_age").onclick=function(){localStorage.removeItem("tp_age_ok");document.getElementById("s_msg").textContent="Done — reloading…";setTimeout(function(){location.reload()},600)}}
 document.addEventListener("click",function(e){var el=e.target;if(!el)return;if(el.nodeType!==1)el=el.parentElement;if(!el||!el.closest)return;var b=el.closest("button");if(!b)return;/* A soft click only on the one main action of a screen. Every other tap is silent. */
 if(!b.matches(".host-cta,.btn.primary,[data-primary]")||b.dataset.cue)return;if(window.TPSound)TPSound.click()},true);

@@ -54,7 +54,9 @@
 .sd-panel h2{margin:0 0 6px;font-size:clamp(1.4rem,6vw,1.9rem)}
 .sd-panel p{margin:.35em 0}
 .sd-panel .btn{width:100%;margin-top:10px}
-/* Timers: a number you can read, a bar that shrinks, and a fill that moves from yellow to pink. --p runs 0 to 1. */
+/* Timers: a number you can read, a bar that shrinks, and a fill that mixes --primary into --danger as --p runs 0 to 1.
+   NEEDS REVIEW: this used to read as yellow fading to pink. --primary is now coral and --danger is now amber, so the bar fades coral to amber.
+   Left unchanged. Proposal, existing tokens only: start on --amber (time left) and end on --coral (time's up). */
 .sd-timer{display:flex;align-items:center;gap:12px;margin:10px 0}
 .sd-timer .num{min-width:2.2ch;font:800 clamp(2rem,10vw,2.8rem)/1 var(--display);text-align:center}
 .sd-timer .lab{font:700 .8rem var(--font);letter-spacing:.08em;text-transform:uppercase;text-align:left}
