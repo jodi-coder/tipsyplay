@@ -232,6 +232,8 @@ button.mute{display:inline-flex;align-items:center;justify-content:center;width:
 .ctrl{display:flex;gap:var(--s-3);flex-wrap:wrap;justify-content:center}
 .toggle{display:flex;align-items:center;gap:var(--s-3);min-height:var(--tap)}
 .toggle input{width:26px;height:26px;min-height:26px;accent-color:var(--text)}
+/* Solo Never Have I Ever: the checkbox is the tap target. Same accent box, grown to 44px. */
+#na{width:44px;height:44px;min-width:44px;min-height:44px}
 .score,.board{display:flex;flex-wrap:wrap;gap:var(--s-2);justify-content:center;margin:var(--s-2) 0}
 .board span{background:var(--surface);border:1px solid var(--hairline);border-radius:999px;padding:6px var(--s-3);font-weight:600;font-size:.95rem}
 .board span.on{background:var(--select-bg);color:var(--select-fg)}
