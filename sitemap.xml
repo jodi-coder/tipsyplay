@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url><loc>https://tipsyplay.com/</loc><lastmod>2026-11-21</lastmod><image:image><image:loc>https://tipsyplay.com/images/og-image.jpg</image:loc></image:image></url>
-  <url><loc>https://tipsyplay.com/blog/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://tipsyplay.com/blog/</loc><lastmod>2026-11-26</lastmod></url>
+  <url><loc>https://tipsyplay.com/blog/drinking-games-no-cards.html</loc><lastmod>2026-11-26</lastmod><image:image><image:loc>https://tipsyplay.com/blog/images/drinking-games-no-cards.jpg</image:loc></image:image></url>
+  <url><loc>https://tipsyplay.com/blog/drinking-games-big-groups.html</loc><lastmod>2026-11-26</lastmod><image:image><image:loc>https://tipsyplay.com/blog/images/drinking-games-big-groups.jpg</image:loc></image:image></url>
   <url><loc>https://tipsyplay.com/blog/best-card-drinking-games.html</loc><lastmod>2026-11-05</lastmod></url>
   <url><loc>https://tipsyplay.com/blog/alcohol-free-party-game-night.html</loc><lastmod>2026-11-07</lastmod></url>
   <url><loc>https://tipsyplay.com/blog/games-for-two-night-in.html</loc><lastmod>2026-11-07</lastmod></url>
