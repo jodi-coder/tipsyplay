@@ -286,12 +286,10 @@ test("slow drip: timers show a number and respect reduced motion; the colour mix
   expect(late.hot).toBe(true);                     // and so is a class, for browsers without color-mix
   expect(late.transition).toBe("0s");              // reduced motion: no sliding bar
   expect(late.anim).toBe("none");                  // and no pulsing number
-  /* NEEDS REVIEW: this mix used to read as yellow (--primary) fading toward pink (--danger).
-     Those tokens are now coral and amber, so the bar fades coral toward amber. The colours were left unchanged.
-     A proposal that stays on the existing tokens: start on --amber and end on --coral. */
+  /* The fill starts amber (time left) and mixes into coral (time's up); the hot class makes it full coral. */
   const css = fs.readFileSync(path.join(__dirname, "../play/slow-drip.html"), "utf8");
-  expect(css).toContain("color-mix(in srgb,var(--danger) calc(var(--p,0) * 100%),var(--primary))");
-  expect(css).toContain("NEEDS REVIEW");
+  expect(css).toContain("color-mix(in srgb,var(--coral) calc(var(--p,0) * 100%),var(--amber))");
+  expect(css).toContain(".sd-timer.hot .fill{background:var(--coral)}");
   expect(start.bg.length).toBeGreaterThan(0);
   expect(late.bg.length).toBeGreaterThan(0);
   await context.close();
