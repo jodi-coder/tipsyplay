@@ -32,10 +32,10 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy: Shared Word Party Game | TipsyPlay"><meta property="og:description" content="Solo, Race or Table: find the secret five-letter word in six guesses."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-frenzy.html"><meta property="og:image" content="https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg"><meta property="og:image:alt" content="Five Letter Frenzy on TipsyPlay: Six tries to find the word. A free party game for 1–8 players on your phones">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}]}, {"@type": "VideoGame", "name": "Five Letter Frenzy", "url": "https://tipsyplay.com/games/five-letter-frenzy.html", "description": "Find the secret five-letter word in six tries. Play solo with a daily word, race friends on your phones, or share one grid at the table. Drinks optional.", "image": {"@type": "ImageObject", "url": "https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg", "width": 1200, "height": 630}, "genre": ["Party game", "Wordplay", "Chill"], "gamePlatform": "Web browser", "applicationCategory": "GameApplication", "operatingSystem": "Any (runs in a phone or computer browser)", "playMode": ["SinglePlayer", "MultiPlayer"], "numberOfPlayers": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 8}, "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/OnlineOnly"}, "inLanguage": "en", "publisher": {"@type": "Organization", "@id": "https://tipsyplay.com/#org", "name": "TipsyPlay", "url": "https://tipsyplay.com/", "logo": {"@type": "ImageObject", "url": "https://tipsyplay.com/icons/icon-512.png", "width": 512, "height": 512}}}]}</script>
 <link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=32">
+<link rel="stylesheet" href="../styles.css?v=34">
 <style>
 /* Five Letter Frenzy. Colours come from the theme tokens in styles.css.
-   Three hint colours from the TipsyPlay palette, each with a symbol: yellow ●, pink stripes ↗, ink ×. */
+   Three hint colours from the TipsyPlay palette, each with a symbol: green ●, yellow ↗, grey × (see the word-game colours at the end of this block). */
 .fl-boot{padding:28px 0}
 .fl-panel,.fl-tile,.fl-person,.fl-stand li,.fl-key{--text:var(--ink);--text-2:var(--ink-2);--outline:var(--ink);--hairline:var(--hairline-on-surface)}
 .fl-turn{margin:8px 0;font-family:var(--display);font-size:clamp(1.4rem,6vw,2rem);font-weight:800}
@@ -133,6 +133,75 @@ body.fl.rm-on #finale:not(.hide) #closestage{
   margin:8px 0!important;padding:0 18px!important;overflow:visible!important;
   clip:auto!important;clip-path:none!important;white-space:normal!important;
   border:var(--bw) solid var(--outline)!important;
+}
+
+/* Tile colours follow the familiar word-game convention: green = right place, yellow = wrong place, grey = not in the word.
+   The ● ↗ × marks stay on every tile, so the game never relies on colour alone. */
+.fl-tile{border:2px solid var(--fl-empty);border-radius:4px;background:transparent;color:var(--ink)}
+.fl-tile.empty,.fl-tile.fl-pend{background:transparent;color:var(--ink);border-color:var(--fl-empty)}
+.fl-tile.lock,.fl-swatch.lock{background:var(--fl-hit);border-color:var(--fl-hit);color:var(--fl-text);background-image:none}
+.fl-tile.move,.fl-swatch.move{background:var(--fl-near);border-color:var(--fl-near);color:var(--fl-text);background-image:none}
+.fl-tile.miss,.fl-swatch.miss{background:var(--fl-miss);border-color:var(--fl-miss);color:var(--fl-text);background-image:none}
+.fl-swatch{border-radius:4px;color:var(--fl-text)}
+.fl-mark{opacity:.8}
+.fl-dist .bar.me{background:var(--fl-hit);border-color:var(--fl-hit);color:var(--fl-text)}
+
+/* Square tiles, like a classic word grid. On phones, a board on screen gets the whole screen. */
+.fl-grid{max-width:340px}
+.fl-tile{height:auto;aspect-ratio:1/1;font-size:clamp(1.3rem,7vw,2rem)}
+@media (max-width:759px){
+  body.fl:has(#soloplay:not(.hide)) header.top,body.fl:has(#table:not(.hide)) header.top,
+  body.fl:has(#soloplay:not(.hide)) .tabbar,body.fl:has(#table:not(.hide)) .tabbar{display:none}
+  body.fl:has(#soloplay:not(.hide)){padding-bottom:env(safe-area-inset-bottom)}
+  body.fl:has(#soloplay:not(.hide)) main.play-wrap,body.fl:has(#table:not(.hide)) main.play-wrap{padding-top:8px;min-height:0}
+  #solo:has(#soloplay:not(.hide))>.eyebrow,#solo:has(#soloplay:not(.hide))>.as-h1,#solo:has(#soloplay:not(.hide))>.age{display:none}
+  /* Solo: title and Back on one line, then the board, the key and the guess row at the bottom */
+  #soloplay:not(.hide){display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr auto auto auto;align-items:center;column-gap:8px;
+    min-height:calc(100vh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+  #soloplay>*{grid-column:1/-1}
+  #solotitle{grid-column:1;grid-row:1;margin:0;font-size:1.25rem}
+  #soloplay>.ctrl{grid-column:2;grid-row:1;margin:0}
+  #soloplay>.ctrl .btn{min-height:var(--tap);padding:0 16px;font-size:.95rem}
+  #sgrid{grid-row:2;max-width:min(100%,340px,calc((100dvh - 210px) * 5 / 6))}
+  #slegend{grid-row:3}
+  #soloform{grid-row:4}
+  #soloerr{grid-row:5;margin:2px 0 0;min-height:1.2em}
+  #soloform,#guessform:not(.hide){display:flex;gap:8px;align-items:stretch}
+  #soloform .bigin,#guessform .bigin{flex:1;min-width:0;margin:0}
+  #soloform .host-cta,#guessform .host-cta{width:auto;flex:none;margin:0;min-height:52px;padding:0 22px}
+  /* Table and Race keep the room bar and the responsible-play line, so the board gets a little less height */
+  #grid{max-width:min(100%,340px,calc((100dvh - 330px) * 5 / 6))}
+  #turnlabel{margin:4px 0;font-size:1.25rem}
+  body.fl.rm-room:has(#table:not(.hide)) .rm-strip{bottom:0;padding-bottom:env(safe-area-inset-bottom)}
+  body.fl.rm-on:has(#table:not(.hide)) .rm-primary{bottom:calc(var(--rm-strip-h) + 10px + env(safe-area-inset-bottom))}
+  .fl-legend{margin:6px 0;gap:6px;justify-content:center}
+  .fl-key{padding:2px 8px;font-size:.8rem}
+  .fl-swatch{width:22px;height:22px;font-size:.7rem}
+}
+
+/* On-screen keyboard (play/frenzy-keys.js). It sits inside the guess form, so it hides whenever the form does. */
+#soloform,#guessform:not(.hide){display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+#soloform .bigin,#guessform .bigin{flex:1;min-width:0;margin:0}
+#soloform .host-cta,#guessform .host-cta{width:auto;flex:none;margin:0;min-height:52px;padding:0 22px}
+.fl-kb{flex:0 0 100%;display:flex;flex-direction:column;gap:6px;margin:4px 0 0;user-select:none;-webkit-user-select:none}
+.fl-kb-row{display:flex;gap:5px;justify-content:center;width:100%;max-width:500px;margin:0 auto}
+.fl-kb-row:nth-child(2){padding:0 25px}
+.fl-kb-key{flex:1 1 0;min-width:0;height:52px;padding:0;border:0;border-radius:6px;background:var(--fl-key);color:var(--fl-text);font:700 1.1rem/1 var(--display);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fl-kb-key.wide{flex:1.5 1 0;font-size:.82rem;letter-spacing:.02em}
+.fl-kb-key[data-k="back"]{font-size:1.25rem}
+.fl-kb-key.lock{background:var(--fl-hit)}
+.fl-kb-key.move{background:var(--fl-near)}
+.fl-kb-key.miss{background:var(--fl-miss)}
+.fl-kb-key:active{filter:brightness(1.25)}
+.fl-kb-key:focus-visible{outline:3px solid var(--amber);outline-offset:1px}
+/* Touch screens: the keyboard replaces the guess box and the system keyboard. The tiles keep their ● ↗ × marks. */
+body.fl-kb-touch #soloform .bigin,body.fl-kb-touch #soloform .host-cta,
+body.fl-kb-touch #guessform .bigin,body.fl-kb-touch #guessform .host-cta{display:none}
+@media (max-width:759px){
+  body.fl-kb-touch #slegend,body.fl-kb-touch #legend{display:none}
+  body.fl-kb-touch #sgrid{max-width:min(100%,340px,calc((100dvh - 290px) * 5 / 6))}
+  body.fl-kb-touch #grid{max-width:min(100%,340px,calc((100dvh - 390px) * 5 / 6))}
+  .fl-kb-key{height:50px}
 }
 </style>
 </head>
@@ -332,9 +401,10 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <script>if(window.TipsyJoinQR) TipsyJoinQR.prefill("roomcode","fl");</script>
 <script src="../data/frenzy-words.js?v=4"></script>
 <script src="../play/frenzy-logic.js?v=2"></script>
-<script src="../play/frenzy-modes.js?v=1"></script>
-<script src="../play/frenzy-fx.js?v=1"></script>
+<script src="../play/frenzy-modes.js?v=2"></script>
+<script src="../play/frenzy-fx.js?v=2"></script>
 <script src="../play/frenzy-party.js?v=6"></script>
 <script src="../play/frenzy-solo.js?v=1"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/frenzy-keys.js?v=1"></script>
 </body>
 </html>

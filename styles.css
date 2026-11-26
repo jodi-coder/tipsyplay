@@ -33,6 +33,12 @@
   --tile-orange:#FF8A3D;
   --tile-purple:#5E5CE6;
   --tile-ink:#0D0F1A;     /* icon strokes on a coloured tile */
+  --fl-hit:#538D4E;       /* word game: right letter, right place (green) */
+  --fl-near:#B59F3B;      /* word game: right letter, wrong place (yellow) */
+  --fl-miss:#3A3A3C;      /* word game: letter not in the word (grey) */
+  --fl-empty:#3A3A3C;     /* word game: border of an empty tile */
+  --fl-text:#FFFFFF;      /* letters on a played tile */
+  --fl-key:#818384;       /* word game: an on-screen key not used yet */
   --tile-paper:#FFF6EC;   /* icon fills on a coloured tile */
   --line:rgba(255,255,255,.1);      /* white/10 */
   --outline:var(--line);            /* control and card borders */

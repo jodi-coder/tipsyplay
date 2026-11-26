@@ -48,7 +48,7 @@ function cleanStats(raw){
 }
 
 /* ---------- Solo: the result card ---------- */
-var EMOJI={locked:"🟨", moved:"🟪", absent:"⬛"};
+var EMOJI={locked:"🟩", moved:"🟨", absent:"⬛"};
 /* rows: an array of mark arrays. Colours and shapes only, never a letter. */
 function emojiGrid(rows){
   return rows.map(function(marks){return marks.map(function(m){return EMOJI[m]||EMOJI.absent}).join("")}).join("\n");

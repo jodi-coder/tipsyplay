@@ -139,7 +139,7 @@ function shareCanvas(rows, info){
   var cs=getComputedStyle(document.documentElement);
   /* every colour is a theme token; nothing is hard-coded */
   function tok(k){return cs.getPropertyValue(k).trim()}
-  var C={bg:tok("--bg"), surface:tok("--surface"), ink:tok("--ink"), lock:tok("--tile-yellow"), move:tok("--tile-pink")};
+  var C={bg:tok("--bg"), surface:tok("--surface"), ink:tok("--ink"), lock:tok("--fl-hit"), move:tok("--fl-near"), miss:tok("--fl-miss"), text:tok("--fl-text")};
   var font=getComputedStyle(document.body).fontFamily||"sans-serif";
   var cell=88, gap=12, pad=48, n=Math.max(1, rows.length);
   var W=pad*2+cell*5+gap*4, H=pad+70+n*(cell+gap)-gap+40+60+pad;
@@ -152,10 +152,9 @@ function shareCanvas(rows, info){
   rows.forEach(function(marks, r){
     (marks||[]).forEach(function(m, i){
       var cx=pad+i*(cell+gap), cy=pad+90+r*(cell+gap);
-      x.fillStyle=m==="locked"?C.lock:m==="moved"?C.move:C.ink;
-      x.strokeStyle=C.ink; x.lineWidth=4;
-      roundRect(x, cx, cy, cell, cell, 14); x.fill(); x.stroke();
-      x.fillStyle=m==="absent"?C.surface:C.ink;
+      x.fillStyle=m==="locked"?C.lock:m==="moved"?C.move:C.miss;
+      roundRect(x, cx, cy, cell, cell, 10); x.fill();
+      x.fillStyle=C.text;
       x.font="800 40px "+font;
       x.fillText(m==="locked"?"●":m==="moved"?"↗":"×", cx+cell/2, cy+cell/2+2);
     });
