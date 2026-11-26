@@ -32,7 +32,7 @@
 <meta property="og:type" content="website"><meta property="og:site_name" content="TipsyPlay"><meta property="og:title" content="Five Letter Frenzy Race – TipsyPlay"><meta property="og:description" content="Everyone races the same secret word on their own board. Fewest guesses, then fastest, wins."><meta property="og:url" content="https://tipsyplay.com/games/five-letter-race.html"><meta property="og:image" content="https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg"><meta property="og:image:alt" content="Five Letter Frenzy on TipsyPlay: Six tries to find the word. A free party game for 1–8 players on your phones">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://tipsyplay.com/"}, {"@type": "ListItem", "position": 2, "name": "Games", "item": "https://tipsyplay.com/games/"}, {"@type": "ListItem", "position": 3, "name": "Five Letter Frenzy", "item": "https://tipsyplay.com/games/five-letter-frenzy.html"}, {"@type": "ListItem", "position": 4, "name": "Race", "item": "https://tipsyplay.com/games/five-letter-race.html"}]}, {"@type": "VideoGame", "name": "Five Letter Frenzy: Race", "url": "https://tipsyplay.com/games/five-letter-race.html", "description": "Five Letter Frenzy Race: 2–8 players chase the same five-letter word on their own phones. Fewest guesses, then fastest, wins. Drinking is optional.", "image": {"@type": "ImageObject", "url": "https://tipsyplay.com/images/og/game-five-letter-frenzy.jpg", "width": 1200, "height": 630}, "genre": ["Party game", "Wordplay", "Chill"], "gamePlatform": "Web browser", "applicationCategory": "GameApplication", "operatingSystem": "Any (runs in a phone or computer browser)", "playMode": ["SinglePlayer", "MultiPlayer"], "numberOfPlayers": {"@type": "QuantitativeValue", "minValue": 1, "maxValue": 8}, "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/OnlineOnly"}, "inLanguage": "en", "publisher": {"@type": "Organization", "@id": "https://tipsyplay.com/#org", "name": "TipsyPlay", "url": "https://tipsyplay.com/", "logo": {"@type": "ImageObject", "url": "https://tipsyplay.com/icons/icon-512.png", "width": 512, "height": 512}}}]}</script>
 <link rel="preload" href="../fonts/bricolage-grotesque-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../styles.css?v=33">
+<link rel="stylesheet" href="../styles.css?v=34">
 <style>
 /* Five Letter Frenzy. Colours come from the theme tokens in styles.css.
    Three hint colours from the TipsyPlay palette, each with a symbol: green ●, yellow ↗, grey × (see the word-game colours at the end of this block). */
@@ -216,6 +216,31 @@ body.fl.rm-on #finale:not(.hide) #closestage{
   .fl-key{padding:2px 8px;font-size:.8rem}
   .fl-swatch{width:22px;height:22px;font-size:.7rem}
 }
+
+/* On-screen keyboard (play/frenzy-keys.js). It sits inside the guess form, so it hides whenever the form does. */
+#soloform,#guessform:not(.hide){display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+#soloform .bigin,#guessform .bigin{flex:1;min-width:0;margin:0}
+#soloform .host-cta,#guessform .host-cta{width:auto;flex:none;margin:0;min-height:52px;padding:0 22px}
+.fl-kb{flex:0 0 100%;display:flex;flex-direction:column;gap:6px;margin:4px 0 0;user-select:none;-webkit-user-select:none}
+.fl-kb-row{display:flex;gap:5px;justify-content:center;width:100%;max-width:500px;margin:0 auto}
+.fl-kb-row:nth-child(2){padding:0 25px}
+.fl-kb-key{flex:1 1 0;min-width:0;height:52px;padding:0;border:0;border-radius:6px;background:var(--fl-key);color:var(--fl-text);font:700 1.1rem/1 var(--display);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.fl-kb-key.wide{flex:1.5 1 0;font-size:.82rem;letter-spacing:.02em}
+.fl-kb-key[data-k="back"]{font-size:1.25rem}
+.fl-kb-key.lock{background:var(--fl-hit)}
+.fl-kb-key.move{background:var(--fl-near)}
+.fl-kb-key.miss{background:var(--fl-miss)}
+.fl-kb-key:active{filter:brightness(1.25)}
+.fl-kb-key:focus-visible{outline:3px solid var(--amber);outline-offset:1px}
+/* Touch screens: the keyboard replaces the guess box and the system keyboard. The tiles keep their ● ↗ × marks. */
+body.fl-kb-touch #soloform .bigin,body.fl-kb-touch #soloform .host-cta,
+body.fl-kb-touch #guessform .bigin,body.fl-kb-touch #guessform .host-cta{display:none}
+@media (max-width:759px){
+  body.fl-kb-touch #slegend,body.fl-kb-touch #legend{display:none}
+  body.fl-kb-touch #sgrid{max-width:min(100%,340px,calc((100dvh - 290px) * 5 / 6))}
+  body.fl-kb-touch #grid{max-width:min(100%,340px,calc((100dvh - 390px) * 5 / 6))}
+  .fl-kb-key{height:50px}
+}
 </style>
 </head>
 <body class="fl fr" data-root="../">
@@ -360,5 +385,6 @@ body.fl.rm-on #finale:not(.hide) #closestage{
 <script src="../play/frenzy-modes.js?v=2"></script>
 <script src="../play/frenzy-fx.js?v=2"></script>
 <script src="../play/frenzy-race.js?v=1"></script><script src="../play/room-ui.js?v=4"></script>
+<script src="../play/frenzy-keys.js?v=1"></script>
 </body>
 </html>

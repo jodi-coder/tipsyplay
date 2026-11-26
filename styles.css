@@ -38,6 +38,7 @@
   --fl-miss:#3A3A3C;      /* word game: letter not in the word (grey) */
   --fl-empty:#3A3A3C;     /* word game: border of an empty tile */
   --fl-text:#FFFFFF;      /* letters on a played tile */
+  --fl-key:#818384;       /* word game: an on-screen key not used yet */
   --tile-paper:#FFF6EC;   /* icon fills on a coloured tile */
   --line:rgba(255,255,255,.1);      /* white/10 */
   --outline:var(--line);            /* control and card borders */
