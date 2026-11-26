@@ -70,7 +70,7 @@ test("solo stats: applying a result never changes the old object, and bad saved 
 test("result card: an emoji grid with shapes and colours only, never a letter", () => {
   const rows = [L.markGuess("crane", "house"), L.markGuess("crane", "crate"), L.markGuess("crane", "crane")];
   const grid = M.emojiGrid(rows);
-  assert.equal(grid, "⬛⬛⬛⬛🟨\n🟨🟨🟨⬛🟨\n🟨🟨🟨🟨🟨");
+  assert.equal(grid, "⬛⬛⬛⬛🟩\n🟩🟩🟩⬛🟩\n🟩🟩🟩🟩🟩");
   const text = M.shareText("Daily", "2026-11-19", true, rows);
   assert.match(text, /^Five Letter Frenzy Daily 2026-11-19 3\/6\n\n/);
   assert.ok(text.endsWith("tipsyplay.com/games/five-letter-frenzy.html"));
@@ -78,7 +78,7 @@ test("result card: an emoji grid with shapes and colours only, never a letter", 
   const lost = M.shareText("Random", "x", false, [rows[0], rows[0], rows[0], rows[0], rows[0], rows[0]]);
   assert.match(lost, /^Five Letter Frenzy Random X\/6/);
   const moved = M.emojiGrid([["moved", "absent", "locked", "moved", "absent"]]);
-  assert.equal(moved, "🟪⬛🟨🟪⬛");
+  assert.equal(moved, "🟨⬛🟩🟨⬛");
 });
 
 /* ---------- race standings ---------- */
